@@ -30,13 +30,22 @@ define("DATA_LAYER_CONFIG", [
 /**
  * Email config
  */
+//define("MAIL", [
+//    "host" => "orditi.com",
+//    "port" => "465",
+//    "user" => "contato@orditi.com",
+//    "passwd" => "UU@T@fMn1M-F",
+//    "from_name" => "Orditi",
+//    "from_email" => "contato@orditi.com"
+//]);
+
 define("MAIL", [
-    "host" => "orditi.com",
-    "port" => "465",
-    "user" => "contato@orditi.com",
-    "passwd" => "UU@T@fMn1M-F",
+    "host" => "smtp.gmail.com",
+    "port" => "587",
+    "user" => "orditibrasil@gmail.com",
+    "passwd" => "c40028922",
     "from_name" => "Orditi",
-    "from_email" => "contato@orditi.com"
+    "from_email" => "orditibrasil@gmail.com"
 ]);
 
 /**

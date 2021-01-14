@@ -541,7 +541,7 @@ class Web
 
         $street = $data['street'] . ', ' . $data['city'] . ', ' . $data['neighborhood'] . ', ' . $data['number'];
 
-        $user = new \Source\Models\User();
+        $user = new User();
         $user->cpf = $data['identity'];
         $user->rg = $data['rg'];
         $user->nome = $data['name'];
@@ -557,13 +557,32 @@ class Web
             $email = new Email();
             $email->add(
                 "Confirmação de cadastro",
-                "<p>Olá " . $user->name . "! Para confirmar seu cadastro no Orditi, clique no botão abaixo.</p>
-                        <a class='btn-3 primary' href='https://maceio.orditi.com/" . md5($user->id) . "'>Confirmar</a>
-                    <div> <img style='width: 20%' src='https://www.maceio.orditi.com/i/themes/assets/img/nav-logo.png'> </div>",
+                "<p>Olá " . $user->nome . "! Para confirmar seu cadastro no Orditi, clique no botão abaixo.</p>
+                    <a href='" . ROOT . "/confirmAccount/" . md5($user->id) . "' 
+                    style='
+                            border: none;
+                            width: 115px;
+                            height: 42px;
+                            font-size: 1.2em;
+                            border-radius: 5px;
+                            text-decoration: none;
+                            color: #fff;
+                            background-color: #4bc2ce;
+                            box-shadow: none;
+                            padding: 12px;
+                            top: 10px;
+                            position: relative;
+                    '>Confirmar</a>
+                    <div> <img style='width: 10%; margin-top: 30px' src='https://www.maceio.orditi.com/themes/assets/img/nav-logo.png'> </div>",
                 $user->nome,
                 $user->email
             )->send();
-            echo 0;
+            if ($email->error()) {
+                $user->destroy();
+                var_dump($email->error()->getMessage());
+            } else {
+                echo 0;
+            }
         }
     }
 
@@ -575,12 +594,27 @@ class Web
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
-        $user = (new User())->find('MD5(id) = :id AND senha = NULL', 'id=' . $data['userId'])->fetch();
+        $user = (new User())->find('MD5(id) = :id AND senha IS NULL', 'id=' . $data['userId'])->fetch();
         if ($user) {
-            echo 1;
+            echo $this->view->render('confirmPassword', [
+               'title' => 'Confirmar senha | ' . SITE,
+               'userId' => $data['userId'],
+                'userName' => $user->nome
+            ]);
         } else {
-            echo 0;
+            $this->router->redirect('web.home');
         }
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
+    public function confirmPassword($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        var_dump($data);
     }
 
     /**

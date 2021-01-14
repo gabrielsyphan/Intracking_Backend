@@ -21,11 +21,10 @@ $router->group(null);
 $router->get("/", "Web:home", "web.home");
 $router->post("/formContact", "Web:formContact", "web.formContact");
 
-//$router->get("/dashboard", "Web:dashboard", "web.dashboard");
-
 $router->get("/createAccount", "Web:createAccount", "web.createAccount");
 $router->post("/validateAccount", "Web:validateAccount", "web.validateAccount");
-$router->post("/confirmAccount/{userId}", "Web:confirmAccount", "web.confirmAccount");
+$router->get("/confirmAccount/{userId}", "Web:confirmAccount", "web.confirmAccount");
+
 $router->post("/checkAccount", "Web:checkAccount", "web.checkAccount");
 $router->post("/checkCnpj", "Web:checkCnpj", "web.checkCnpj");
 
