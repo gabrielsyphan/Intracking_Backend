@@ -10,7 +10,7 @@ jQuery(document).ready(function($) {
 
   
   $(".loader").delay(1000).fadeOut("slow");
-  $("#overlayer").delay(1000).fadeOut("slow");  
+  $("#overlayer").delay(1000).fadeOut("slow");
   
 
   let siteMenuClone = function() {
@@ -414,4 +414,38 @@ jQuery(document).ready(function($) {
      });
      $('#'+ inputName).val('');
    }
+ }
+
+ function formSubmit() {
+   let validate = true;
+   $('form').find(':input').not(':button').each(function(){
+     if (!$(this).val()) {
+       $(this).addClass('is-invalid').next().text('Campo obrigatório!');
+       validate = false;
+     } else if ($(this).attr('name') == 'name') {
+       let name = $('#'+ $(this).attr('id')).val();
+       name = name.split(' ');
+       if (!name[1]) {
+         $("#"+ $(this).attr('id')).addClass('is-invalid').next().text('Insira seu nome completo!');
+
+         swal({
+           title: "Atenção",
+           icon: "warning",
+           text: "Você precisa informar seu nome completo!",
+         });
+         validate = false;
+       }
+     }
+   });
+   return validate;
+ }
+
+ function changeFile(e) {
+   let inputId = e.id;
+   inputId = inputId.split('-')[0];
+   $('.'+ inputId +'-file-uploaded').hide();
+   $('.hidden-input-file').val(null);
+   $('.'+ inputId +'-file').show();
+   $('.'+ inputId +'-type').empty();
+   $('.'+ inputId +'-name').empty();
  }

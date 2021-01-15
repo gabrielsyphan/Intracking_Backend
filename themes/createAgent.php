@@ -142,7 +142,7 @@
                 $(this).addClass("is-invalid").next().text("Campo obrigatório!");
                 validate = false;
             }
-        })
+        });
 
         let name = $("#name").val();
         name = name.split(' ');

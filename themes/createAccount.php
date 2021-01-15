@@ -10,7 +10,7 @@
 <?php $v->end(); ?>
 
 <div class="container pt-5 mt-5">
-    <div class="web-div-box">
+    <div class="web-div-box mb-5">
         <div class="box-div-info-no-padding justify-content-center">
             <div class="row m-0">
                 <div class="col-xl-5 pt-3 pl-5 pr-5 pb-5 div-create-account-green">
@@ -44,34 +44,40 @@
                         </div>
                     </div>
                     <hr class="ml-5 mr-5 hr-white">
-                    <form id="form">
+                    <form>
                         <div id="inputHidden"></div>
                         <div id="page-1">
                             <h2 class="pl-5 pr-5 h2-title-header-black">Dados Pessoais</h2>
                             <div class="row pl-5 pr-5 pt-3">
                                 <div class="col-xl-6 form-group">
                                     <label>Nome:</label>
-                                    <input type="text" class="form-input" id="name" name="name" placeholder="Seu Nome" required>
+                                    <input type="text" class="form-input" id="name" name="name" placeholder="Seu Nome" >
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="col-xl-6 form-group">
                                     <label>Mãe:</label>
-                                    <input type="text" class="form-input" id="maternalName" name="maternalName" placeholder="Nome de sua mãe" required>
+                                    <input type="text" class="form-input" id="maternalName" name="maternalName" placeholder="Nome de sua mãe" >
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="col-xl-6 form-group">
                                     <label>CPF:</label>
-                                    <input type="text" class="form-input" id="identity" name="identity" onfocusout="validateCpf(this)" placeholder="Seu CPF" required>
+                                    <input type="text" class="form-input" id="identity" name="identity" onfocusout="validateCpf(this)" placeholder="Seu CPF" >
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="col-xl-6 form-group">
                                     <label>RG:</label>
-                                    <input type="text" class="form-input" id="rg" name="rg" placeholder="Seu RG" required>
+                                    <input type="text" class="form-input" id="rg" name="rg" placeholder="Seu RG" >
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="col-xl-6 form-group">
                                     <label>E-mail:</label>
-                                    <input type="email" class="form-input" id="email" name="email" placeholder="Seu E-mail" required>
+                                    <input type="email" class="form-input" id="email" name="email" placeholder="Seu E-mail" >
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="col-xl-6 form-group">
                                     <label>Telefone:</label>
-                                    <input type="text" class="form-input" id="phone" name="phone" placeholder="Seu Telefone" required>
+                                    <input type="text" class="form-input" id="phone" name="phone" placeholder="Seu Telefone" >
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <hr class="ml-5 mr-5 hr-gray">
@@ -84,23 +90,28 @@
                             <div class="row pl-5 pr-5 pt-3">
                                 <div class="col-xl-12 form-group">
                                     <label>Endereço Residencial:</label>
-                                    <input type="text" class="form-input" id="street" name="street" placeholder="Endereço da sua casa" required>
+                                    <input type="text" class="form-input" id="street" name="street" placeholder="Endereço da sua casa" >
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="col-xl-6 form-group">
                                     <label>Nº:</label>
-                                    <input type="text" class="form-input" id="number" name="number" placeholder="Número da sua casa" required>
+                                    <input type="text" class="form-input" id="number" name="number" placeholder="Número da sua casa" >
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="col-xl-6 form-group">
                                     <label>Bairro:</label>
-                                    <input type="text" class="form-input" id="neighborhood" name="neighborhood" placeholder="Seu Bairro" required>
+                                    <input type="text" class="form-input" id="neighborhood" name="neighborhood" placeholder="Seu Bairro" >
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="col-xl-6 form-group">
                                     <label>Cidade:</label>
-                                    <input type="text" class="form-input" id="city" name="city" placeholder="Sua Cidade" required>
+                                    <input type="text" class="form-input" id="city" name="city" placeholder="Sua Cidade" >
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="col-xl-6 form-group">
                                     <label>CEP:</label>
-                                    <input type="text" class="form-input" id="postcode" name="postcode" placeholder="Seu CEP" required>
+                                    <input type="text" class="form-input" id="postcode" name="postcode" placeholder="Seu CEP" >
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <hr class="ml-5 mr-5 hr-gray">
@@ -111,13 +122,14 @@
                         </div>
                         <div id="page-3">
                             <h2 class="pl-5 pr-5 h2-title-header-black">Anexos</h2>
-                            <div class="row pl-5 pr-5 pt-3">
-                                <div class="col-xl-6 mb-3">
+                            <div class="row pl-5 pr-5 pt-3" style="height: 322px;">
+                                <div class="col-xl-6">
                                     <p class="label-left">Foto do rosto: </p>
                                 </div>
                                 <div class="col-xl-6 text-center">
                                     <label class="label-file userImage-file" for="userImage"><span class="icon-plus mr-2"></span> Selecionar Arquivo</label>
-                                    <input class="hidden-input-file" type="file" onchange="uploadImage(this)" id="userImage" name="userImage" accept="image/png, image/jpg, image/jpeg" required>
+                                    <input class="hidden-input-file" type="file" onchange="uploadImage(this)" id="userImage" name="userImage" accept="image/png, image/jpg, image/jpeg" >
+                                    <div class="invalid-feedback"></div>
                                     <div class="userImage-file-uploaded file-uploaded-container">
                                         <div class="card-content-upload text-center p-3">
                                             <div class="card-content-type-upload">
@@ -125,17 +137,22 @@
                                             </div>
                                         </div>
                                         <div class="ml-3 text-left">
-                                            <p class="userImage-name"></p>
+                                            <div class="d-flex">
+                                                <p class="userImage-name"></p>
+                                                <span id="userImage-span-close" class="icon-close ml-3 card-close-file userImage"
+                                                      onclick="changeFile(this)"></span>
+                                            </div>
                                             <div class="card-content-progress"></div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xl-6 mb-3">
+                                <div class="col-xl-6 second-attach">
                                     <p class="label-left">Foto da identidade (CPF + RG): </p>
                                 </div>
-                                <div class="col-xl-6 text-center">
+                                <div class="col-xl-6 text-center second-attach">
                                     <label class="label-file identityImage-file" for="identityImage"><span class="icon-plus mr-2"></span> Selecionar Arquivo</label>
-                                    <input class="hidden-input-file" type="file" onchange="uploadImage(this)" id="identityImage" name="identityImage" accept="image/png, image/jpg, image/jpeg" required>
+                                    <input class="hidden-input-file" type="file" onchange="uploadImage(this)" id="identityImage" name="identityImage" accept="image/png, image/jpg, image/jpeg" >
+                                    <div class="invalid-feedback"></div>
                                     <div class="identityImage-file-uploaded file-uploaded-container">
                                         <div class="card-content-upload text-center p-3">
                                             <div class="card-content-type-upload">
@@ -143,7 +160,11 @@
                                             </div>
                                         </div>
                                         <div class="ml-3 text-left">
-                                            <p class="identityImage-name"></p>
+                                            <div class="d-flex">
+                                                <p class="identityImage-name"></p>
+                                                <span id="identityImage-span-close" class="icon-close ml-3 card-close-file"
+                                                      onclick="changeFile(this)"></span>
+                                            </div>
                                             <div class="card-content-progress"></div>
                                         </div>
                                     </div>
@@ -165,62 +186,63 @@
 <?php $v->start('scripts'); ?>
 <script>
     $(function(){
-        $('#form').on('submit', (function(e) {
+        $('form').on('submit', (function(e) {
             e.preventDefault();
 
-            $("#loader-div").show();
             let data = new FormData(this);
-
-            $.ajax({
-                type:'POST',
-                url: "<?= $router->route("web.validateAccount"); ?>",
-                data:data,
-                cache:false,
-                contentType: false,
-                processData: false,
-                success:function(returnData){
-                    $("#loader-div").hide();
-                    if(returnData == 0){
-                        swal({
-                            icon: "success",
-                            title: "Tudo certo!",
-                            text: "Acesse seu email para confirmar seu cadastro e criar sua senha.",
-                        }).then((result) => {
-                            window.location.href = "<?= $router->route('web.home') ?>";
-                        });
-                    } else if(returnData == 1){
-                        swal({
-                            icon: "error",
-                            title: "Erro",
-                            text: "Já existe alguém cadastrado com esses dados.",
-                        });
-                    } else if(returnData == 2){
-                        swal({
-                            icon: "error",
-                            title: "Erro",
-                            text: "Não será possível realizar o cadastro. Por favor, dirija-se a secretaria de economia e realize seu cadastro mercantil de pessoa física ou jurídica para então dar prosseguimento ao seu cadastro no Orditi.",
-                        });
-                    } else if(returnData == 3) {
-                        swal({
-                            icon: "error",
-                            title: "Erro",
-                            text: "CPF inválido. Por favor, insira um CPF válido.",
-                        });
-                    } else {
-                        swal({
-                            icon: "error",
-                            title: "Erro!",
-                            text: "Não foi possível realizar o cadastro. Por favor, tente novamente mais tarde.",
-                        });
+            if(formSubmit() == true) {
+                $("#loader-div").show();
+                $.ajax({
+                    type:'POST',
+                    url: "<?= $router->route("web.validateAccount"); ?>",
+                    data:data,
+                    cache:false,
+                    contentType: false,
+                    processData: false,
+                    success:function(returnData){
+                        $("#loader-div").hide();
+                        if(returnData == 0){
+                            swal({
+                                icon: "success",
+                                title: "Tudo certo!",
+                                text: "Acesse seu email para confirmar seu cadastro e criar sua senha.",
+                            }).then((result) => {
+                                window.location.href = "<?= $router->route('web.home') ?>";
+                            });
+                        } else if(returnData == 1){
+                            swal({
+                                icon: "error",
+                                title: "Erro",
+                                text: "Já existe alguém cadastrado com esses dados.",
+                            });
+                        } else if(returnData == 2){
+                            swal({
+                                icon: "error",
+                                title: "Erro",
+                                text: "Não será possível realizar o cadastro. Por favor, dirija-se a secretaria de economia e realize seu cadastro mercantil de pessoa física ou jurídica para então dar prosseguimento ao seu cadastro no Orditi.",
+                            });
+                        } else if(returnData == 3) {
+                            swal({
+                                icon: "error",
+                                title: "Erro",
+                                text: "CPF inválido. Por favor, insira um CPF válido.",
+                            });
+                        } else {
+                            swal({
+                                icon: "error",
+                                title: "Erro!",
+                                text: "Não foi possível realizar o cadastro. Por favor, tente novamente mais tarde.",
+                            });
+                        }
+                        console.log(returnData);
+                    },
+                    error: function(returnData){
+                        $("#loader-div").hide();
+                        console.log("error");
+                        console.log(returnData);
                     }
-                    console.log(returnData);
-                },
-                error: function(returnData){
-                    $("#loader-div").hide();
-                    console.log("error");
-                    console.log(returnData);
-                }
-            });
+                });
+            }
         }));
 
         let identity = $("#identity");

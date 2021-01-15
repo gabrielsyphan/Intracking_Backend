@@ -1217,3 +1217,8 @@ input[type=file].hidden-input-file {
     box-shadow: 0 0px 10px 0px rgba(0, 0, 0, 0.12);
     border: 1px solid #c1c1c1;
 }
+
+.second-attach {
+    position: relative;
+    top: -60px;
+}
