@@ -24,6 +24,7 @@ $router->post("/formContact", "Web:formContact", "web.formContact");
 $router->get("/createAccount", "Web:createAccount", "web.createAccount");
 $router->post("/validateAccount", "Web:validateAccount", "web.validateAccount");
 $router->get("/confirmAccount/{userId}", "Web:confirmAccount", "web.confirmAccount");
+$router->post("/confirmAccountPassword", "Web:confirmAccountPassword", "web.confirmAccountPassword");
 
 $router->post("/checkAccount", "Web:checkAccount", "web.checkAccount");
 $router->post("/checkCnpj", "Web:checkCnpj", "web.checkCnpj");

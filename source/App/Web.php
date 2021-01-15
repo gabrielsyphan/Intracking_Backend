@@ -539,50 +539,95 @@ class Web
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
-        $street = $data['street'] . ', ' . $data['city'] . ', ' . $data['neighborhood'] . ', ' . $data['number'];
+        if ($_FILES) {
+            $street = $data['street'] . ', ' . $data['city'] . ', ' . $data['neighborhood'] . ', ' . $data['number'];
 
-        $user = new User();
-        $user->cpf = $data['identity'];
-        $user->rg = $data['rg'];
-        $user->nome = $data['name'];
-        $user->endereco = $street;
-        $user->email = $data['email'];
-        $user->telefone = $data['phone'];
-        $user->nome_mae = $data['maternalName'];
-        $user->save();
+            $user = new User();
+            $user->cpf = $data['identity'];
+            $user->rg = $data['rg'];
+            $user->nome = $data['name'];
+            $user->endereco = $street;
+            $user->email = $data['email'];
+            $user->telefone = $data['phone'];
+            $user->nome_mae = $data['maternalName'];
+            $user->save();
 
-        if ($user->fail()) {
-            var_dump($user->fail()->getMessage());
-        } else {
-            $email = new Email();
-            $email->add(
-                "Confirmação de cadastro",
-                "<p>Olá " . $user->nome . "! Para confirmar seu cadastro no Orditi, clique no botão abaixo.</p>
-                    <a href='" . ROOT . "/confirmAccount/" . md5($user->id) . "' 
-                    style='
-                            border: none;
-                            width: 115px;
-                            height: 42px;
-                            font-size: 1.2em;
-                            border-radius: 5px;
-                            text-decoration: none;
-                            color: #fff;
-                            background-color: #4bc2ce;
-                            box-shadow: none;
-                            padding: 12px;
-                            top: 10px;
-                            position: relative;
-                    '>Confirmar</a>
-                    <div> <img style='width: 10%; margin-top: 30px' src='https://www.maceio.orditi.com/themes/assets/img/nav-logo.png'> </div>",
-                $user->nome,
-                $user->email
-            )->send();
-            if ($email->error()) {
-                $user->destroy();
-                var_dump($email->error()->getMessage());
+            if ($user->fail()) {
+                var_dump($user->fail()->getMessage());
             } else {
-                echo 0;
+                /**
+                 * Load all images
+                 */
+                foreach ($_FILES as $key => $file) {
+                    $target_file = basename($file['name']);
+
+                    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                    $extensions_arr = array("jpg", "jpeg", "png");
+
+                    if (in_array($imageFileType, $extensions_arr)) {
+                        $folder =  THEMES . '/assets/uploads/users';
+                        if(!file_exists($folder) || !is_dir($folder)){
+                            mkdir($folder, 0755);
+                        }
+                        $fileName = $key . '.' . $imageFileType;
+                        $dir = $folder . '/' . $user->id;
+
+                        if(!file_exists($dir) || !is_dir($dir)){
+                            mkdir($dir, 0755);
+                        }
+
+                        $dir = $dir . '/' . $fileName;
+
+                        move_uploaded_file($file['tmp_name'], $dir);
+
+                        $attach = new Attach();
+                        $attach->id_usuario = $user->id;
+                        $attach->tipo_usuario = 0;
+                        $attach->nome = $fileName;
+                        $attach->save();
+
+                        if ($attach->fail()) {
+                            $user->destroy();
+                            var_dump($attach->fail()->getMessage());
+                            exit();
+                        }
+                    }
+                }
+
+                $email = new Email();
+                $email->add(
+                    "Confirmação de cadastro",
+                    "<p>Olá " . $user->nome . "! Para confirmar seu cadastro no Orditi, clique no botão abaixo.</p>
+                        <a href='" . ROOT . "/confirmAccount/" . md5($user->id) . "' 
+            style='
+                    border: none;
+                    width: 115px;
+                    height: 42px;
+                    font-size: 1.2em;
+                    border-radius: 5px;
+                    text-decoration: none;
+                    color: #fff;
+                    background-color: #4bc2ce;
+                    box-shadow: none;
+                    padding: 12px;
+                    top: 10px;
+                    position: relative;
+            '>Confirmar</a>
+            <div> <img style='width: 10%; margin-top: 30px' src='https://www.maceio.orditi.com/themes/assets/img/nav-logo.png'> </div>",
+                    $user->nome,
+                    $user->email
+                )->send();
+                if ($email->error()) {
+                    $attach->destroy();
+                    $user->destroy();
+                    var_dump($email->error()->getMessage());
+                } else {
+                    echo 0;
+                }
             }
+        } else {
+            echo "fail";
         }
     }
 
@@ -596,13 +641,49 @@ class Web
 
         $user = (new User())->find('MD5(id) = :id AND senha IS NULL', 'id=' . $data['userId'])->fetch();
         if ($user) {
-            echo $this->view->render('confirmPassword', [
-               'title' => 'Confirmar senha | ' . SITE,
-               'userId' => $data['userId'],
-                'userName' => $user->nome
-            ]);
+            $attach = (new Attach())->find('id_usuario = :id', 'id=' . $user->id)->fetch(true);
+            if ($attach) {
+                foreach ($attach as $att) {
+                    if (explode('.', $att->nome)[0] == 'userImage') {
+                        $userImage = ROOT . '/themes/assets/uploads/users/' . $user->id
+                            . '/' . $att->nome;
+                    }
+                }
+                echo $this->view->render('confirmPassword', [
+                    'title' => 'Confirmar senha | ' . SITE,
+                    'userId' => $data['userId'],
+                    'userName' => $user->nome,
+                    'userImage' => $userImage
+                ]);
+            }
         } else {
             $this->router->redirect('web.home');
+        }
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
+    public function confirmAccountPassword($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        if ($data['password'] === $data['rePassword']) {
+            $user = (new User())->find('MD5(id) = :id AND senha IS NULL', 'id=' . $data['userId'])->fetch();
+            if ($user) {
+                $user->senha = md5($data['password']);
+                $user->save();
+                if ($user->fail()) {
+                    $user->fail()->getMessage();
+                } else {
+                    echo 1;
+                }
+            } else {
+                $this->router->redirect('web.home');
+            }
+        } else {
+            echo 0;
         }
     }
 

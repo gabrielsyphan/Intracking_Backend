@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 14-Jan-2021 às 14:13
+-- Tempo de geração: 15-Jan-2021 às 15:45
 -- Versão do servidor: 10.4.14-MariaDB
 -- versão do PHP: 7.4.11
 
@@ -50,11 +50,23 @@ CREATE TABLE `ambulantes` (
 --
 
 CREATE TABLE `anexos` (
-  `idanexos` int(11) NOT NULL,
+  `id` int(45) NOT NULL,
   `nome` varchar(45) DEFAULT NULL,
-  `tipo` varchar(45) DEFAULT NULL,
-  `id` varchar(45) NOT NULL
+  `tipo_usuario` varchar(45) DEFAULT NULL,
+  `id_usuario` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Extraindo dados da tabela `anexos`
+--
+
+INSERT INTO `anexos` (`id`, `nome`, `tipo_usuario`, `id_usuario`) VALUES
+(1, 'userImage.jpeg', '0', 26),
+(2, 'identityImage.jpeg', '0', 26),
+(3, 'userImage.jpeg', '0', 27),
+(4, 'identityImage.jpeg', '0', 27),
+(5, 'userImage.jpeg', '0', 28),
+(6, 'identityImage.jpeg', '0', 28);
 
 -- --------------------------------------------------------
 
@@ -199,10 +211,10 @@ CREATE TABLE `status-licencas` (
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `tipo-fiscal`
+-- Estrutura da tabela `tipo_fiscal`
 --
 
-CREATE TABLE `tipo-fiscal` (
+CREATE TABLE `tipo_fiscal` (
   `id` int(11) NOT NULL,
   `numero` int(11) NOT NULL,
   `nome` varchar(45) NOT NULL
@@ -237,6 +249,13 @@ CREATE TABLE `usuarios` (
   `senha` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Extraindo dados da tabela `usuarios`
+--
+
+INSERT INTO `usuarios` (`id`, `cpf`, `nome`, `endereco`, `telefone`, `email`, `rg`, `nome_mae`, `senha`) VALUES
+(28, '034.325.347-01', 'Lucas Gabriel Peixoto de Oliveira', 'Rua Doutor Batista Aciole, Rio Largo, Centro, 294', '82 98718-0470', 'lucasgabrielpdoliveira@gmail.com', '3651746-1', 'Izabel Cristina Barros Peixoto', '123');
+
 -- --------------------------------------------------------
 
 --
@@ -266,7 +285,7 @@ ALTER TABLE `ambulantes`
 -- Índices para tabela `anexos`
 --
 ALTER TABLE `anexos`
-  ADD PRIMARY KEY (`idanexos`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Índices para tabela `boletos`
@@ -340,9 +359,9 @@ ALTER TABLE `status-licencas`
   ADD PRIMARY KEY (`id`);
 
 --
--- Índices para tabela `tipo-fiscal`
+-- Índices para tabela `tipo_fiscal`
 --
-ALTER TABLE `tipo-fiscal`
+ALTER TABLE `tipo_fiscal`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -368,6 +387,12 @@ ALTER TABLE `zonas`
 --
 
 --
+-- AUTO_INCREMENT de tabela `anexos`
+--
+ALTER TABLE `anexos`
+  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
 -- AUTO_INCREMENT de tabela `fiscais`
 --
 ALTER TABLE `fiscais`
@@ -386,16 +411,16 @@ ALTER TABLE `status-licencas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de tabela `tipo-fiscal`
+-- AUTO_INCREMENT de tabela `tipo_fiscal`
 --
-ALTER TABLE `tipo-fiscal`
+ALTER TABLE `tipo_fiscal`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de tabela `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- Restrições para despejos de tabelas
@@ -431,7 +456,7 @@ ALTER TABLE `eventual`
 -- Limitadores para a tabela `fiscais`
 --
 ALTER TABLE `fiscais`
-  ADD CONSTRAINT `fk_fiscais_tipo-fiscal1` FOREIGN KEY (`tipo-fiscal_id`) REFERENCES `tipo-fiscal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_fiscais_tipo-fiscal1` FOREIGN KEY (`tipo-fiscal_id`) REFERENCES `tipo_fiscal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Limitadores para a tabela `licencas`

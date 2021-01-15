@@ -681,14 +681,6 @@ a[data-toggle="collapse"] {
     color: #5EA9A4 !important;
 }
 
-.form-group > label, .label-file {
-    display: inline-block;
-    max-width: 100%;
-    margin-bottom: 11px;
-    font-weight: 500 !important;
-    color: #7a7f85;
-}
-
 .padding-header {
     padding: 15px;
 }
@@ -1107,6 +1099,13 @@ input[type=file].hidden-input-file {
     box-sizing: border-box;
     border-radius: 10px;
     line-height: 53px;
+
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 11px;
+    font-weight: 500 !important;
+    color: #7a7f85;
+    cursor: pointer;
 }
 
 .card-close-file {
@@ -1144,6 +1143,10 @@ input[type=file].hidden-input-file {
     width: 140px;
     height: 5px;
     background: #33a0aa;
+}
+
+.file-uploaded-container > div > p {
+    width: 40px;
 }
 
 #img-page-2, #page-2, #img-page-3, #page-3, #img-page-4, #page-4, #img-page-5, #page-5, #img-page-6, #page-6,
@@ -1206,4 +1209,11 @@ input[type=file].hidden-input-file {
 
 .icon-arrow_upward {
     color: #4bc2ce;
+}
+
+.image-card-bubble {
+    width: 40%;
+    border-radius: 50%;
+    box-shadow: 0 0px 10px 0px rgba(0, 0, 0, 0.12);
+    border: 1px solid #c1c1c1;
 }

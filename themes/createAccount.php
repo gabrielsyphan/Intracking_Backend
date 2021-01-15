@@ -21,6 +21,7 @@
                         <div class="p-5 mt-5 text-center">
                             <img id="img-page-1" class="img-page" src="<?= url('themes/assets/img/create-account-step-1.svg') ?>">
                             <img id="img-page-2" class="img-page" src="<?= url('themes/assets/img/create-account-step-2.svg') ?>">
+                            <img id="img-page-3" class="img-page" src="<?= url('themes/assets/img/create-account-step-6.svg') ?>">
                         </div>
                     </div>
                 </div>
@@ -34,6 +35,11 @@
                         <div class="text-center pl-5 pr-5">
                             <div class="box-list box-2">
                                 <h3>2</h3>
+                            </div>
+                        </div>
+                        <div class="text-center pl-5 pr-5">
+                            <div class="box-list box-3">
+                                <h3>3</h3>
                             </div>
                         </div>
                     </div>
@@ -100,6 +106,52 @@
                             <hr class="ml-5 mr-5 hr-gray">
                             <div class="pl-5 pr-5 text-right">
                                 <button type="button" class="btn-3 quartenary-color mb-5" onclick="prevPage(2, 1)">Voltar</button>
+                                <button type="button" class="btn-3 tertiary-color mb-5" onclick="nextPage(2, 3)">Próximo</button>
+                            </div>
+                        </div>
+                        <div id="page-3">
+                            <h2 class="pl-5 pr-5 h2-title-header-black">Anexos</h2>
+                            <div class="row pl-5 pr-5 pt-3">
+                                <div class="col-xl-6 mb-3">
+                                    <p class="label-left">Foto do rosto: </p>
+                                </div>
+                                <div class="col-xl-6 text-center">
+                                    <label class="label-file userImage-file" for="userImage"><span class="icon-plus mr-2"></span> Selecionar Arquivo</label>
+                                    <input class="hidden-input-file" type="file" onchange="uploadImage(this)" id="userImage" name="userImage" accept="image/png, image/jpg, image/jpeg" required>
+                                    <div class="userImage-file-uploaded file-uploaded-container">
+                                        <div class="card-content-upload text-center p-3">
+                                            <div class="card-content-type-upload">
+                                                <span class="userImage-type"></span>
+                                            </div>
+                                        </div>
+                                        <div class="ml-3 text-left">
+                                            <p class="userImage-name"></p>
+                                            <div class="card-content-progress"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 mb-3">
+                                    <p class="label-left">Foto da identidade (CPF + RG): </p>
+                                </div>
+                                <div class="col-xl-6 text-center">
+                                    <label class="label-file identityImage-file" for="identityImage"><span class="icon-plus mr-2"></span> Selecionar Arquivo</label>
+                                    <input class="hidden-input-file" type="file" onchange="uploadImage(this)" id="identityImage" name="identityImage" accept="image/png, image/jpg, image/jpeg" required>
+                                    <div class="identityImage-file-uploaded file-uploaded-container">
+                                        <div class="card-content-upload text-center p-3">
+                                            <div class="card-content-type-upload">
+                                                <span class="identityImage-type"></span>
+                                            </div>
+                                        </div>
+                                        <div class="ml-3 text-left">
+                                            <p class="identityImage-name"></p>
+                                            <div class="card-content-progress"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="ml-5 mr-5 hr-gray">
+                            <div class="pl-5 pr-5 text-right">
+                                <button type="button" class="btn-3 quartenary-color mb-5" onclick="prevPage(3, 2)">Voltar</button>
                                 <button type="submit" class="btn-3 tertiary-color mb-5">Cadastrar</button>
                             </div>
                         </div>
