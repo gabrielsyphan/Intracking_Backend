@@ -36,8 +36,6 @@ $router->post("/newPsw", "Web:newPsw", "web.newPsw");
 
 $router->get("/login", "Web:login", "web.login");
 $router->post("/validateLogin", "Web:validateLogin", "web.validateLogin");
-$router->get("/agent", "Web:agent", "web.agent");
-$router->post("/validateAgent", "Web:validateAgent", "web.validateAgent");
 
 $router->get("/logout", "Web:logout", "web.logout");
 
@@ -73,6 +71,9 @@ $router->post("/createPayment", "Web:createPayment", "web.createPayment");
 
 $router->post("/updateUserImg", "Web:updateUserImg", "web.updateUserImg");
 $router->get("/downloadFile/{groupName}/{userId}/{fileName}", "Web:downloadFile", "web.downloadFile");
+
+$router->get("/requestLicense", "Web:requestLicense", "web.requestLicense");
+$router->get("/licenseList", "Web:licenseList", "web.licenseList");
 
 /*
  * ERROS

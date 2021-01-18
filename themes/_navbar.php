@@ -15,6 +15,22 @@
                 <a href="<?= url('') ?>"><span class="icon-home"></span>Início</a>
             </li>
             <?php if ($_SESSION['user']['login'] === 1): ?>
+                <hr>
+                <p class="p-0 pl-3">Licenças</p>
+                <li class="<?= ($router->isCurrentRoute("web.licenseList") ? 'active': ''); ?>">
+                    <a href="<?= url("licenseList"); ?>">
+                        <span class="icon-drivers-license"></span>
+                        Minhas licenças
+                    </a>
+                </li>
+                <li class="<?= ($router->isCurrentRoute("web.requestLicense") ? 'active': ''); ?>">
+                    <a href="<?= url("requestLicense"); ?>">
+                        <span class="icon-drivers-license-o"></span>
+                        Solicitar licença
+                    </a>
+                </li>
+                <hr>
+                <p class="p-0 pl-3">Geral</p>
                 <li class="<?= ($router->isCurrentRoute("web.profile") ? 'active': ''); ?>">
                     <a href="<?= url("profile"); ?>">
                         <span class="icon-user"></span>

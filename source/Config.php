@@ -1,6 +1,6 @@
 <?php
 
-define("ROOT", "https://localhost/backup");
+define("ROOT", "https://localhost/orditi");
 define("THEMES", __DIR__."/../themes");
 define("SERVICES", __DIR__."/../themes/services");
 define("EAGATA", "http://www.smf.maceio.al.gov.br:8090/e-agata/servlet/awstaxaexternas");
@@ -16,7 +16,7 @@ define("DATA_LAYER_CONFIG", [
     "driver" => "mysql",
     "host" => "localhost",
     "port" => "3306",
-    "dbname" => "teste",
+    "dbname" => "teste2",
     "username" => "root",
     "passwd" => "",
     "options" => [

@@ -118,9 +118,9 @@
                     </div>
                     <hr style="margin-bottom: 0">
                     <div class="box-div-info-overflow-x">
-                        <?php if($salesmans == NULL and $companys == NULL): ?>
+                        <?php if($users == NULL): ?>
                             <div class="p-5 mt-5 text-center">
-                                <img style="width: 40%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
+                                <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
                                 <p class="mt-5">Ops! Não encontramos nenhum ambulante ou empresa. 😥</p>
                             </div>
                         <?php else: ?>
@@ -135,49 +135,27 @@
                             </tr>
                             </thead>
                             <tbody id="table-data">
-                                <?php
-                                    if($salesmans !== NULL):
-                                        foreach ($salesmans as $salesman): ?>
-                                            <tr onclick="openPage('<?= $salesman->id ?>')">
-                                                <td><?= $salesman->identidade ?></td>
-                                                <td><?= $salesman->nome ?></td>
-                                                <td><?= $salesman->email ?></td>
-                                                <td>
-                                                    <?php switch ($salesman->situacao):
-                                                    case 0: ?>
-                                                        <div class="status-button tertiary">Pendente</div>
-                                                    <?php break; case 1: ?>
-                                                        <div class="status-button primary">Ativo</div>
-                                                    <?php break; case 2: ?>
-                                                        <div class="status-button secondary">Inadimplente</div>
-                                                    <?php break; case 3: ?>
-                                                        <div class="status-button tertiary">Pendente</div>
-                                                    <?php break; endswitch; ?>
-                                                </td>
-                                                <td><?= $salesman->end_local ?></td>
-                                            </tr>
-                                            <?php endforeach; endif;
-                                    if($companys !== NULL):
-                                        foreach ($companys as $company): ?>
-                                            <tr onclick="openCompanyPage('<?= $company->id ?>')">
-                                                <td><?= $company->cnpj ?></td>
-                                                <td><?= $company->nome_fantasia ?></td>
-                                                <td><?= $company->email ?></td>
-                                                <td>
-                                                <?php switch ($company->situacao):
-                                                    case 0: ?>
-                                                        <div class="status-button tertiary">Pendente</div>
-                                                    <?php break; case 1: ?>
-                                                    <div class="status-button primary">Ativo</div>
-                                                    <?php break; case 2: ?>
-                                                        <div class="status-button secondary">Inadimplente</div>
-                                                    <?php break; case 3: ?>
-                                                        <div class="status-button tertiary">Pendente</div>
-                                                    <?php break; endswitch; ?>
-                                                </td>
-                                                <td><?= $company->endereco ?>, <?= $company->numero ?>, <?= $company->bairro ?>, <?= $company->cidade ?>, <?= $company->cep ?></td>
-                                            </tr>
-                                    <?php endforeach; endif; ?>
+                            <?php if($users !== NULL):
+                            foreach ($users as $user): ?>
+                                <tr onclick="openPage('<?= $user->id ?>')">
+                                    <td><?= $user->cpf ?></td>
+                                    <td><?= $user->nome ?></td>
+                                    <td><?= $user->email ?></td>
+                                    <td>
+                                        <?php switch ($user->situacao):
+                                        case 0: ?>
+                                            <div class="status-button tertiary">Pendente</div>
+                                        <?php break; case 1: ?>
+                                            <div class="status-button primary">Ativo</div>
+                                        <?php break; case 2: ?>
+                                            <div class="status-button secondary">Inadimplente</div>
+                                        <?php break; case 3: ?>
+                                            <div class="status-button tertiary">Pendente</div>
+                                        <?php break; endswitch; ?>
+                                    </td>
+                                    <td><?= $user->endereco ?></td>
+                                </tr>
+                                <?php endforeach; endif; ?>
                             </tbody>
                         </table>
                         <div class="text-center p-4 empty-table">

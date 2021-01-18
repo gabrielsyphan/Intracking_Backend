@@ -158,7 +158,8 @@
             return false;
         }
 
-        const data = _thisForm.serialize();
+        const data = $(this).serialize();
+        console.log(data);
 
         const fieldsetDisable = _thisForm.find("fieldset");
         fieldsetDisable.attr("disabled", true);

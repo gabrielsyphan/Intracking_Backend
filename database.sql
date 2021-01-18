@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.3
+-- version 5.0.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 15-Jan-2021 às 15:45
--- Versão do servidor: 10.4.14-MariaDB
--- versão do PHP: 7.4.11
+-- Tempo de geração: 18-Jan-2021 às 18:17
+-- Versão do servidor: 10.4.13-MariaDB
+-- versão do PHP: 7.4.8
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Banco de dados: `teste`
+-- Banco de dados: `teste2`
 --
 
 -- --------------------------------------------------------
@@ -28,7 +28,8 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `ambulantes` (
-  `licencas_idlicencas` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
+  `id_licenca` int(11) NOT NULL,
   `local_endereco` varchar(400) NOT NULL,
   `ponto_referencia` varchar(200) DEFAULT NULL,
   `produto` int(11) NOT NULL,
@@ -61,12 +62,9 @@ CREATE TABLE `anexos` (
 --
 
 INSERT INTO `anexos` (`id`, `nome`, `tipo_usuario`, `id_usuario`) VALUES
-(1, 'userImage.jpeg', '0', 26),
-(2, 'identityImage.jpeg', '0', 26),
-(3, 'userImage.jpeg', '0', 27),
-(4, 'identityImage.jpeg', '0', 27),
-(5, 'userImage.jpeg', '0', 28),
-(6, 'identityImage.jpeg', '0', 28);
+(15, 'userImage.png', '3', 1),
+(20, 'userImage.png', '0', 35),
+(21, 'identityImage.png', '0', 35);
 
 -- --------------------------------------------------------
 
@@ -75,8 +73,8 @@ INSERT INTO `anexos` (`id`, `nome`, `tipo_usuario`, `id_usuario`) VALUES
 --
 
 CREATE TABLE `boletos` (
-  `idboletos` int(11) NOT NULL,
-  `licencas_idlicencas` int(11) DEFAULT NULL,
+  `id` int(11) NOT NULL,
+  `id_licenca` int(11) DEFAULT NULL,
   `licencas_zonas_idzonas` int(11) DEFAULT NULL,
   `status-boletos_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -88,7 +86,8 @@ CREATE TABLE `boletos` (
 --
 
 CREATE TABLE `empresas` (
-  `licencas_idlicencas` int(11) NOT NULL
+  `id` int(11) NOT NULL,
+  `id_licenca` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -98,9 +97,9 @@ CREATE TABLE `empresas` (
 --
 
 CREATE TABLE `eventos` (
-  `ideventos` int(11) NOT NULL,
-  `data-inicio` datetime DEFAULT NULL,
-  `data-fim` datetime DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `data_inicio` datetime DEFAULT NULL,
+  `data_fim` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -110,8 +109,9 @@ CREATE TABLE `eventos` (
 --
 
 CREATE TABLE `eventual` (
-  `licencas_idlicencas` int(11) NOT NULL,
-  `eventos_ideventos` int(11) NOT NULL
+  `id` int(11) NOT NULL,
+  `id_licenca` int(11) NOT NULL,
+  `id_eventos` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -121,15 +121,22 @@ CREATE TABLE `eventual` (
 --
 
 CREATE TABLE `fiscais` (
+  `id` int(11) NOT NULL,
   `matricula` varchar(15) NOT NULL,
   `nome` varchar(150) NOT NULL,
   `email` varchar(150) NOT NULL,
   `senha` varchar(60) NOT NULL,
   `cpf` varchar(45) DEFAULT NULL,
-  `tipo-fiscal_id` int(11) NOT NULL,
-  `senha_temporaria` varchar(60) DEFAULT NULL,
-  `id` int(11) NOT NULL
+  `tipo_fiscal` int(11) NOT NULL,
+  `situacao` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Extraindo dados da tabela `fiscais`
+--
+
+INSERT INTO `fiscais` (`id`, `matricula`, `nome`, `email`, `senha`, `cpf`, `tipo_fiscal`, `situacao`) VALUES
+(1, '111111-1', 'Lucas Gabriel Peixoto de Oliveira', 'lucasgabrielpdoliveira@gmail.com', '698d51a19d8a121ce581499d7b701668', '111.657.194-36', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -138,14 +145,14 @@ CREATE TABLE `fiscais` (
 --
 
 CREATE TABLE `licencas` (
-  `idlicencas` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `tipo` varchar(45) NOT NULL,
   `geopoint` varchar(45) DEFAULT NULL,
   `zonas_idzonas` int(11) DEFAULT NULL,
-  `data-inicio` varchar(45) DEFAULT NULL,
-  `data-fim` varchar(45) DEFAULT NULL,
+  `data_inicio` varchar(45) DEFAULT NULL,
+  `data_fim` varchar(45) DEFAULT NULL,
   `status` int(11) DEFAULT NULL,
-  `status-licencas_id` int(11) NOT NULL,
+  `status_licencas_id` int(11) NOT NULL,
   `usuarios_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -156,41 +163,22 @@ CREATE TABLE `licencas` (
 --
 
 CREATE TABLE `notificacoes` (
-  `idnotificacoes` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `data` datetime NOT NULL,
   `hora` datetime NOT NULL,
   `descricao` varchar(300) NOT NULL,
   `boletos_idboletos` int(11) DEFAULT NULL,
   `fiscais_id` int(11) NOT NULL,
-  `fiscais_tipo-fiscal_id` int(11) NOT NULL,
   `usuarios_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `ocorrencias`
+-- Estrutura da tabela `status_boletos`
 --
 
-CREATE TABLE `ocorrencias` (
-  `idocorrencias` int(11) NOT NULL,
-  `data` varchar(45) DEFAULT NULL,
-  `hora` varchar(45) DEFAULT NULL,
-  `latitude` varchar(45) DEFAULT NULL,
-  `longitude` varchar(45) DEFAULT NULL,
-  `regiao` varchar(45) DEFAULT NULL,
-  `foto` longblob DEFAULT NULL,
-  `fiscais_id` int(11) NOT NULL,
-  `fiscais_tipo-fiscal_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `status-boletos`
---
-
-CREATE TABLE `status-boletos` (
+CREATE TABLE `status_boletos` (
   `id` int(11) NOT NULL,
   `numero` int(11) NOT NULL,
   `nome` varchar(45) NOT NULL
@@ -199,10 +187,10 @@ CREATE TABLE `status-boletos` (
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `status-licencas`
+-- Estrutura da tabela `status_licencas`
 --
 
-CREATE TABLE `status-licencas` (
+CREATE TABLE `status_licencas` (
   `id` int(11) NOT NULL,
   `numero` int(11) NOT NULL,
   `nome` varchar(45) NOT NULL
@@ -223,11 +211,33 @@ CREATE TABLE `tipo_fiscal` (
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `uso de solo`
+-- Estrutura da tabela `tipo_usuario`
 --
 
-CREATE TABLE `uso de solo` (
-  `licencas_idlicencas` int(11) NOT NULL,
+CREATE TABLE `tipo_usuario` (
+  `id` int(11) NOT NULL,
+  `tipo` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Extraindo dados da tabela `tipo_usuario`
+--
+
+INSERT INTO `tipo_usuario` (`id`, `tipo`) VALUES
+(0, 'usuario'),
+(1, 'ambulante'),
+(2, 'empresa'),
+(3, 'fiscal');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `uso_de_solo`
+--
+
+CREATE TABLE `uso_de_solo` (
+  `id` int(11) NOT NULL,
+  `id_licenca` int(11) NOT NULL,
   `licencas_usuarios_cpf` varchar(14) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -246,15 +256,16 @@ CREATE TABLE `usuarios` (
   `email` varchar(100) NOT NULL,
   `rg` varchar(45) NOT NULL,
   `nome_mae` varchar(150) DEFAULT NULL,
-  `senha` varchar(45) DEFAULT NULL
+  `senha` varchar(45) DEFAULT NULL,
+  `situacao` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Extraindo dados da tabela `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `cpf`, `nome`, `endereco`, `telefone`, `email`, `rg`, `nome_mae`, `senha`) VALUES
-(28, '034.325.347-01', 'Lucas Gabriel Peixoto de Oliveira', 'Rua Doutor Batista Aciole, Rio Largo, Centro, 294', '82 98718-0470', 'lucasgabrielpdoliveira@gmail.com', '3651746-1', 'Izabel Cristina Barros Peixoto', '123');
+INSERT INTO `usuarios` (`id`, `cpf`, `nome`, `endereco`, `telefone`, `email`, `rg`, `nome_mae`, `senha`, `situacao`) VALUES
+(35, '034.325.347-01', 'Lucas Gabriel Pexito de Oliveira', 'Rua Doutor Batista Acioly, Rio Largo, Centro, 294', '82 98718-0470', 'lucasgabrielpdoliveira@gmail.com', '3651746-1', 'Izabel Cristina Barros Peixoto', '202cb962ac59075b964b07152d234b70', 0);
 
 -- --------------------------------------------------------
 
@@ -279,7 +290,7 @@ CREATE TABLE `zonas` (
 -- Índices para tabela `ambulantes`
 --
 ALTER TABLE `ambulantes`
-  ADD PRIMARY KEY (`licencas_idlicencas`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Índices para tabela `anexos`
@@ -291,71 +302,54 @@ ALTER TABLE `anexos`
 -- Índices para tabela `boletos`
 --
 ALTER TABLE `boletos`
-  ADD PRIMARY KEY (`idboletos`,`status-boletos_id`),
-  ADD KEY `fk_boletos_licencas1` (`licencas_idlicencas`),
-  ADD KEY `fk_boletos_status-boletos1` (`status-boletos_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Índices para tabela `empresas`
 --
 ALTER TABLE `empresas`
-  ADD PRIMARY KEY (`licencas_idlicencas`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Índices para tabela `eventos`
 --
 ALTER TABLE `eventos`
-  ADD PRIMARY KEY (`ideventos`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Índices para tabela `eventual`
 --
 ALTER TABLE `eventual`
-  ADD PRIMARY KEY (`licencas_idlicencas`,`eventos_ideventos`),
-  ADD KEY `fk_eventual_eventos1` (`eventos_ideventos`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Índices para tabela `fiscais`
 --
 ALTER TABLE `fiscais`
-  ADD PRIMARY KEY (`id`,`tipo-fiscal_id`),
-  ADD KEY `fk_fiscais_tipo-fiscal1` (`tipo-fiscal_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Índices para tabela `licencas`
 --
 ALTER TABLE `licencas`
-  ADD PRIMARY KEY (`idlicencas`,`status-licencas_id`,`usuarios_id`),
-  ADD KEY `fk_licencas_zonas1` (`zonas_idzonas`),
-  ADD KEY `fk_licencas_status-licencas1` (`status-licencas_id`),
-  ADD KEY `fk_licencas_usuarios1` (`usuarios_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Índices para tabela `notificacoes`
 --
 ALTER TABLE `notificacoes`
-  ADD PRIMARY KEY (`idnotificacoes`,`fiscais_id`,`fiscais_tipo-fiscal_id`,`usuarios_id`),
-  ADD KEY `fk_notificacoes_boletos1` (`boletos_idboletos`),
-  ADD KEY `fk_notificacoes_fiscais1` (`fiscais_id`,`fiscais_tipo-fiscal_id`),
-  ADD KEY `fk_notificacoes_usuarios1` (`usuarios_id`);
-
---
--- Índices para tabela `ocorrencias`
---
-ALTER TABLE `ocorrencias`
-  ADD PRIMARY KEY (`idocorrencias`,`fiscais_id`,`fiscais_tipo-fiscal_id`),
-  ADD KEY `fk_ocorrencias_fiscais1` (`fiscais_id`,`fiscais_tipo-fiscal_id`);
-
---
--- Índices para tabela `status-boletos`
---
-ALTER TABLE `status-boletos`
   ADD PRIMARY KEY (`id`);
 
 --
--- Índices para tabela `status-licencas`
+-- Índices para tabela `status_boletos`
 --
-ALTER TABLE `status-licencas`
+ALTER TABLE `status_boletos`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices para tabela `status_licencas`
+--
+ALTER TABLE `status_licencas`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -365,49 +359,79 @@ ALTER TABLE `tipo_fiscal`
   ADD PRIMARY KEY (`id`);
 
 --
--- Índices para tabela `uso de solo`
---
-ALTER TABLE `uso de solo`
-  ADD PRIMARY KEY (`licencas_idlicencas`,`licencas_usuarios_cpf`);
-
---
 -- Índices para tabela `usuarios`
 --
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`);
 
 --
--- Índices para tabela `zonas`
---
-ALTER TABLE `zonas`
-  ADD PRIMARY KEY (`idzonas`);
-
---
 -- AUTO_INCREMENT de tabelas despejadas
 --
+
+--
+-- AUTO_INCREMENT de tabela `ambulantes`
+--
+ALTER TABLE `ambulantes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de tabela `anexos`
 --
 ALTER TABLE `anexos`
-  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT de tabela `boletos`
+--
+ALTER TABLE `boletos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `empresas`
+--
+ALTER TABLE `empresas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `eventos`
+--
+ALTER TABLE `eventos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `eventual`
+--
+ALTER TABLE `eventual`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de tabela `fiscais`
 --
 ALTER TABLE `fiscais`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de tabela `licencas`
 --
 ALTER TABLE `licencas`
-  MODIFY `idlicencas` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de tabela `status-licencas`
+-- AUTO_INCREMENT de tabela `notificacoes`
 --
-ALTER TABLE `status-licencas`
+ALTER TABLE `notificacoes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `status_boletos`
+--
+ALTER TABLE `status_boletos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `status_licencas`
+--
+ALTER TABLE `status_licencas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -420,71 +444,7 @@ ALTER TABLE `tipo_fiscal`
 -- AUTO_INCREMENT de tabela `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
-
---
--- Restrições para despejos de tabelas
---
-
---
--- Limitadores para a tabela `ambulantes`
---
-ALTER TABLE `ambulantes`
-  ADD CONSTRAINT `fk_Ambulantes_licencas1` FOREIGN KEY (`licencas_idlicencas`) REFERENCES `licencas` (`idlicencas`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Limitadores para a tabela `boletos`
---
-ALTER TABLE `boletos`
-  ADD CONSTRAINT `fk_boletos_licencas1` FOREIGN KEY (`licencas_idlicencas`) REFERENCES `licencas` (`idlicencas`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_boletos_status-boletos1` FOREIGN KEY (`status-boletos_id`) REFERENCES `status-boletos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Limitadores para a tabela `empresas`
---
-ALTER TABLE `empresas`
-  ADD CONSTRAINT `fk_empresas_licencas1` FOREIGN KEY (`licencas_idlicencas`) REFERENCES `licencas` (`idlicencas`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Limitadores para a tabela `eventual`
---
-ALTER TABLE `eventual`
-  ADD CONSTRAINT `fk_eventual_eventos1` FOREIGN KEY (`eventos_ideventos`) REFERENCES `eventos` (`ideventos`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_eventual_licencas1` FOREIGN KEY (`licencas_idlicencas`) REFERENCES `licencas` (`idlicencas`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Limitadores para a tabela `fiscais`
---
-ALTER TABLE `fiscais`
-  ADD CONSTRAINT `fk_fiscais_tipo-fiscal1` FOREIGN KEY (`tipo-fiscal_id`) REFERENCES `tipo_fiscal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Limitadores para a tabela `licencas`
---
-ALTER TABLE `licencas`
-  ADD CONSTRAINT `fk_licencas_status-licencas1` FOREIGN KEY (`status-licencas_id`) REFERENCES `status-licencas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_licencas_usuarios1` FOREIGN KEY (`usuarios_id`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_licencas_zonas1` FOREIGN KEY (`zonas_idzonas`) REFERENCES `zonas` (`idzonas`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Limitadores para a tabela `notificacoes`
---
-ALTER TABLE `notificacoes`
-  ADD CONSTRAINT `fk_notificacoes_boletos1` FOREIGN KEY (`boletos_idboletos`) REFERENCES `boletos` (`idboletos`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_notificacoes_fiscais1` FOREIGN KEY (`fiscais_id`,`fiscais_tipo-fiscal_id`) REFERENCES `fiscais` (`id`, `tipo-fiscal_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_notificacoes_usuarios1` FOREIGN KEY (`usuarios_id`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Limitadores para a tabela `ocorrencias`
---
-ALTER TABLE `ocorrencias`
-  ADD CONSTRAINT `fk_ocorrencias_fiscais1` FOREIGN KEY (`fiscais_id`,`fiscais_tipo-fiscal_id`) REFERENCES `fiscais` (`id`, `tipo-fiscal_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Limitadores para a tabela `uso de solo`
---
-ALTER TABLE `uso de solo`
-  ADD CONSTRAINT `fk_uso de solo_licencas1` FOREIGN KEY (`licencas_idlicencas`) REFERENCES `licencas` (`idlicencas`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

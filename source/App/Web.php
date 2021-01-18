@@ -60,12 +60,8 @@ class Web
         if (empty($_SESSION['user'])) {
             $this->login();
         } else {
-            $salesmans = (new Salesman())
-                ->find('situacao = 1', '', 'latitude, longitude, nome, foto')->fetch(true);
-
             echo $this->view->render('home', [
-                'title' => 'Início | ' . SITE,
-                'salesmans' => $salesmans
+                'title' => 'Início | ' . SITE
             ]);
         }
     }
@@ -100,89 +96,38 @@ class Web
     public function validateLogin($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
-        $salesman = (new Salesman())->find('identidade = :identity AND senha = :password',
+        $user = (new User())->find('cpf = :identity AND senha = :password',
             'identity=' . $data['identity'] . '&password=' . md5($data['psw']))->fetch();
-        if ($salesman) {
-            $attachs = (new Attach())->find('id_usuario = :id', 'id=' . $salesman->id)->fetch(true);
+        if ($user) {
+            $attachs = (new Attach())->find('id_usuario = :id', 'id=' . $user->id)->fetch(true);
             if ($attachs) {
                 foreach ($attachs as $attach) {
-                    $attachName = explode('.', $attach->file_name)[0];
+                    $attachName = explode('.', $attach->nome)[0];
                     if ($attachName == 'userImage') {
-                        $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/salesmans/' . $attach->id_usuario
-                            . '/' . $attach->file_name;
+                        $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/users/' . $attach->id_usuario
+                            . '/' . $attach->nome;
                         $_SESSION['user']['login'] = 1;
-                        $_SESSION['user']['id'] = $salesman->id;
-                        $_SESSION['user']['name'] = $salesman->nome;
-                        $_SESSION['user']['email'] = $salesman->email;
+                        $_SESSION['user']['id'] = $user->id;
+                        $_SESSION['user']['name'] = $user->nome;
+                        $_SESSION['user']['email'] = $user->email;
+
+                        echo 1;
                     }
                 }
             }
-            echo 2;
         } else {
-            $salesman = (new Salesman())->find('identidade = :identity AND senha_temporaria = :password',
-                'identity=' . $data['identity'] . '&password=' . md5($data['psw']))->fetch();
-            if ($salesman) {
-                $attachs = (new Attach())->find('id_usuario = :id', 'id=' . $salesman->id)->fetch(true);
-                if ($attachs) {
-                    foreach ($attachs as $attach) {
-                        $attachName = explode('.', $attach->file_name)[0];
-                        if ($attachName == 'userImage') {
-                            $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/salesmans/' . $attach->id_usuario
-                                . '/' . $attach->file_name;
-                            $_SESSION['user']['login'] = 1;
-                            $_SESSION['user']['id'] = $salesman->id;
-                            $_SESSION['user']['name'] = $salesman->nome;
-                            $_SESSION['user']['email'] = $salesman->email;
-                            $salesman->senha = md5($data['psw']);
-                            $salesman->senha_temporaria = '';
-                            $salesman->save();
-                        }
-                    }
-                }
-                echo 1;
-            } else {
-                $company = (new Company())->find('cnpj = :cnpj AND senha = :password',
-                    'cnpj=' . $data['identity'] . '&password=' . md5($data['psw']))->fetch();
-                if ($company) {
-                    $attachs = (new Attach())->find('id_usuario = :id', 'id=' . $company->id)->fetch(true);
-                    if ($attachs) {
-                        foreach ($attachs as $attach) {
-                            $attachName = explode('.', $attach->file_name)[0];
-                            if ($attachName == 'userImage') {
-                                $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/companys/' . $attach->id_usuario
-                                    . '/' . $attach->file_name;
-                                $_SESSION['user']['login'] = 2;
-                                $_SESSION['user']['id'] = $company->id;
+            $agent = (new Agent())->find('cpf = :identity AND senha = :password', 'identity=' . $data['identity'] . '&password=' . md5($data['psw']))->fetch();
+            if ($agent) {
+                $attach = (new Attach())->find('id_usuario = :id', 'id=' . $agent->id)->fetch(false);
+                if ($attach) {
+                    $_SESSION['user']['login'] = 3;
+                    $_SESSION['user']['id'] = $agent->id;
+                    $_SESSION['user']['name'] = $agent->nome;
+                    $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/agents/' . $attach->id_usuario
+                        . '/' . $attach->nome;
+                    $_SESSION['user']['email'] = $agent->email;
 
-                                $_SESSION['user']['name'] = $company->nome_fantasia;
-                                $_SESSION['user']['email'] = $company->email;
-                            }
-                        }
-                    }
-                    echo 2;
-                } else {
-                    $company = (new Company())->find('cnpj = :cnpj AND senha_temporaria = :password',
-                        'cnpj=' . $data['identity'] . '&password=' . md5($data['psw']))->fetch();
-                    if ($company) {
-                        $attachs = (new Attach())->find('id_usuario = :id', 'id=' . $company->id)->fetch(true);
-                        if ($attachs) {
-                            foreach ($attachs as $attach) {
-                                $attachName = explode('.', $attach->file_name)[0];
-                                if ($attachName == 'userImage') {
-                                    $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/companys/' . $attach->id_usuario
-                                        . '/' . $attach->file_name;
-                                    $_SESSION['user']['login'] = 2;
-                                    $_SESSION['user']['id'] = $company->id;
-                                    $_SESSION['user']['name'] = $company->nome_fantasia;
-                                    $_SESSION['user']['email'] = $company->email;
-                                    $company->senha = md5($data['psw']);
-                                    $company->senha_temporaria = '';
-                                    $company->save();
-                                }
-                            }
-                        }
-                        echo 1;
-                    }
+                    echo 1;
                 }
             }
         }
@@ -203,31 +148,6 @@ class Web
         echo $this->view->render('agentLogin', [
             'title' => 'Acesso - Agente | ' . SITE
         ]);
-    }
-
-    /**
-     * @return void
-     */
-    public function validateAgent($data): void
-    {
-        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
-        $agent = (new Agent())->find('matricula = :registration AND senha = :password', 'registration=' . $data['registration'] . '&password=' . md5($data['password']))->fetch();
-        if ($agent) {
-            $attach = (new Attach())->find('id_usuario = :id', 'id=' . $agent->id)->fetch(false);
-            if ($attach) {
-                $_SESSION['user']['login'] = 3;
-                $_SESSION['user']['id'] = $agent->id;
-                $_SESSION['user']['name'] = $agent->nome;
-                $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/agents/' . $attach->id_usuario
-                    . '/' . $attach->file_name;
-                $_SESSION['user']['email'] = $agent->email;
-                echo 1;
-            } else {
-                echo 0;
-            }
-        } else {
-            echo 0;
-        }
     }
 
     /**
@@ -539,6 +459,59 @@ class Web
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
+        if ($this->checkCpf($data['identity']) == false) {
+            echo 'identity_fail';
+            exit();
+        }
+
+        $user = (new User())->find('cpf = :identity', 'identity='. $data['identity'])->fetch();
+        if ($user) {
+           echo 'already_exist';
+           exit();
+        }
+
+        $cpf = preg_replace( '/[^0-9]/is', '', $data['identity'] );
+        $soap_input =
+            '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:e="e-Agata_18.11">
+               <soapenv:Header/>
+               <soapenv:Body>
+                  <e:PWSRetornoPertences.Execute>
+                     <e:Flagtipopesquisa>C</e:Flagtipopesquisa>
+                     <e:Ctgcpf>'. $cpf .'</e:Ctgcpf>
+                     <e:Ctiinscricao></e:Ctiinscricao>
+                  </e:PWSRetornoPertences.Execute>
+               </soapenv:Body>
+            </soapenv:Envelope>';
+
+        $curl = curl_init();
+
+        curl_setopt($curl, CURLOPT_URL, PERTENCES);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $soap_input);
+        curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+        $soap_response = curl_exec($curl);
+
+        $xml_response = str_ireplace(['SOAP-ENV:', 'SOAP:', '.executeresponse', '.SDTRetornoPertences'], '', $soap_response);
+
+        @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
+        $companys = $xml->Body->PWSRetornoPertences->Sdtretornopertences->SDTRetornoPertencesItem->SDTRetornoPertencesEmpresa->SDTRetornoPertencesEmpresaItem;
+
+        if($companys != '') {
+            $companyAux = 0;
+            foreach ($companys as $company) {
+                if ($company->SRPAutonomo == 'A') {
+                    $companyAux = $company->SRPInscricaoEmpresa;
+                }
+            }
+        }
+
+        if($companys == '' || $companyAux === 0) {
+            echo 'require_registration';
+            exit();
+        }
+
         if ($_FILES) {
             $street = $data['street'] . ', ' . $data['city'] . ', ' . $data['neighborhood'] . ', ' . $data['number'];
 
@@ -623,7 +596,7 @@ class Web
                     $user->destroy();
                     var_dump($email->error()->getMessage());
                 } else {
-                    echo 0;
+                    echo "success";
                 }
             }
         } else {
@@ -662,6 +635,32 @@ class Web
     }
 
     /**
+     * @return void
+     * @var $data
+     */
+    public function requestLicense(): void
+    {
+        $this->checkLogin();
+
+        echo $this->view->render('requestLicense', [
+           'title' => 'Nova licença | ' . SITE
+        ]);
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
+    public function licenseList(): void
+    {
+        $this->checkLogin();
+
+        echo $this->view->render('licenseList', [
+            'title' => 'Minhas licenças | ' . SITE
+        ]);
+    }
+
+        /**
      * @return void
      * @var $data
      */
@@ -1061,6 +1060,7 @@ class Web
         $auxPaid = 0;
         $auxPendent = 0;
         $auxExpired = 0;
+        $paymentCount = 0;
 
         if ($payments) {
             foreach ($payments as $payment) {
@@ -1078,6 +1078,7 @@ class Web
                     $auxExpired++;
                 }
             }
+            $paymentCount = count($payments);
         } else {
             $paymentArray = null;
         }
@@ -1085,7 +1086,7 @@ class Web
         echo $this->view->render('paymentList', [
             'title' => 'Pagamentos | ' . SITE,
             'payments' => $paymentArray,
-            'amount' => count($payments),
+            'amount' => $paymentCount,
             'paid' => $auxPaid,
             'pendent' => $auxPendent,
             'expired' => $auxExpired
@@ -1097,14 +1098,14 @@ class Web
      */
     public function agentList(): void
     {
-        $agents = (new Agent)->find('', '', 'id, matricula, cpf, email, nome, status')->fetch(true);
+        $agents = (new Agent)->find('', '', 'id, matricula, cpf, email, nome, situacao')->fetch(true);
         $apporved = 0;
         $blocked = 0;
         $pendding = 0;
         foreach ($agents as $agent) {
-            if ($agent->status == 1) {
+            if ($agent->situacao == 1) {
                 $apporved++;
-            } else if ($agent->status == 0) {
+            } else if ($agent->situacao == 0) {
                 $pendding++;
             } else {
                 $blocked++;
@@ -1131,10 +1132,10 @@ class Web
 
         $agent = (new Agent())->findById($data['agentId']);
         if ($agent) {
-            if ($agent->status == 1) {
-                $agent->status = 2;
+            if ($agent->situacao == 1) {
+                $agent->situacao = 2;
             } else {
-                $agent->status = 1;
+                $agent->situacao = 1;
             }
 
             $agent->save();
@@ -1293,34 +1294,30 @@ class Web
     {
         $this->checkAgent();
 
-        $salesmans = (new Salesman())
-            ->find('', '', 'id, identidade, rg, nome, end_local, email, fone, situacao')
-            ->fetch(true);
-        $companys = (new Company())
-            ->find('', '', 'id, cnpj, rg, nome_fantasia, email, fone, endereco, cidade, 
-            bairro, numero, cep, situacao')
+        $users = (new User())
+            ->find('', '', 'id, cpf, nome, email, situacao, endereco')
             ->fetch(true);
 
         $auxPaid = 0;
         $auxPending = 0;
         $auxBlocked = 0;
-        foreach ($salesmans as $salesman) {
-            if ($salesman->situacao == 1) {
+        foreach ($users as $user) {
+            if ($user->situacao == 1) {
                 $auxPaid++;
             } else {
                 $auxPending++;
             }
 
-            if ($salesman->suspenso == 1) {
+            if ($user->suspenso == 1) {
                 $auxBlocked++;
             }
         }
 
         echo $this->view->render('salesmanList', [
             'title' => 'Usuários | ' . SITE,
-            'salesmans' => $salesmans,
-            'companys' => $companys,
-            'registered' => count($salesmans),
+            'users' => $users,
+            'companys' => null,
+            'registered' => count($users),
             'paid' => $auxPaid,
             'pending' => $auxPending,
             'blocked' => $auxBlocked

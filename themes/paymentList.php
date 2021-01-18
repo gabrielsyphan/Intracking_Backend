@@ -115,7 +115,7 @@
                     <div class="box-div-info-overflow-x">
                         <?php if($payments == NULL): ?>
                             <div class="p-5 mt-5 text-center">
-                                <img style="width: 40%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
+                                <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
                                 <p class="mt-5">Ops! Não encontramos nenhum pagamento para exibir aqui. 😥</p>
                             </div>
                         <?php else: ?>

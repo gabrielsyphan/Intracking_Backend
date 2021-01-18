@@ -8,7 +8,7 @@
                     <div class="row">
                         <div class="col-xl-8">
                             <h4 class="title-section">
-                                Fiscais
+                                Fiscais cadastrados
                             </h4>
                             <hr>
                             <h2 class="title-section"><?= $agentCount ?></h2>
@@ -103,7 +103,7 @@
                     <div class="box-div-info-overflow-x">
                         <?php if(!$agents): ?>
                             <div class="p-5 mt-5 text-center">
-                                <img style="width: 40%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
+                                <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
                                 <p class="mt-5">Ops! Não encontramos nenhum ambulante ou empresa. 😥</p>
                             </div>
                         <?php else: ?>
@@ -127,7 +127,7 @@
                                             <td><?= $agent->nome ?></td>
                                             <td><?= $agent->email ?></td>
                                             <td>
-                                            <?php switch ($agent->status):
+                                            <?php switch ($agent->situacao):
                                                 case 0: ?>
                                                     <div class="status-button tertiary">Pendente</div>
                                                 </td>

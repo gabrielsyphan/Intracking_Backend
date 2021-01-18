@@ -44,7 +44,7 @@
                         <textarea class="form-input" name="description"
                                   placeholder="Descreva seu problema:" required></textarea>
                     </div>
-                    <button type="submit" class="btn-2 btn-primary">
+                    <button type="submit" class="btn-3 primary-color w-100">
                         Enviar mensagem
                     </button>
                 </form>
