@@ -98,6 +98,7 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $user = (new User())->find('cpf = :identity AND senha = :password',
             'identity=' . $data['identity'] . '&password=' . md5($data['psw']))->fetch();
+        $validate = 0;
         if ($user) {
             $attachs = (new Attach())->find('id_usuario = :id', 'id=' . $user->id)->fetch(true);
             if ($attachs) {
@@ -111,7 +112,7 @@ class Web
                         $_SESSION['user']['name'] = $user->nome;
                         $_SESSION['user']['email'] = $user->email;
 
-                        echo 1;
+                        $validate = 1;
                     }
                 }
             }
@@ -127,14 +128,12 @@ class Web
                         . '/' . $attach->nome;
                     $_SESSION['user']['email'] = $agent->email;
 
-                    echo 1;
+                    $validate = 1;
                 }
             }
         }
 
-        if (!isset($_SESSION['user']['login'])) {
-            echo 0;
-        }
+        echo $validate;
     }
 
 
@@ -651,12 +650,41 @@ class Web
      * @return void
      * @var $data
      */
+    public function salesmanLicense(): void
+    {
+        $this->checkLogin();
+
+        echo $this->view->render('salesmanLicense', [
+            'title' => 'Licença de Ambulante | ' . SITE,
+            'zones' => null
+        ]);
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
+    public function companyLicense(): void
+    {
+        $this->checkLogin();
+
+        echo $this->view->render('companyLicense', [
+            'title' => 'Licença de Empresa | ' . SITE,
+            'zones' => null
+        ]);
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
     public function licenseList(): void
     {
         $this->checkLogin();
 
         echo $this->view->render('licenseList', [
-            'title' => 'Minhas licenças | ' . SITE
+            'title' => 'Minhas licenças | ' . SITE,
+            'licenses' => null
         ]);
     }
 
@@ -802,85 +830,26 @@ class Web
     {
         $this->checkLogin();
 
-        if ($_SESSION['user']['login'] == 2) {
-            $this->router->redirect("web.companyProfile");
-        }
-
         if ($_SESSION['user']['login'] === 1) {
-            $salesman = (new Salesman())->findById($_SESSION['user']['id']);
+            $user = (new User())->findById($_SESSION['user']['id']);
             $payments = (new Payment())->find('id_ambulante = :id', 'id=' . $_SESSION['user']['id'])->fetch(true);
-
-            if ($salesman->regiao != null) {
-                $zone = (new Zone())->findById($salesman->regiao, 'id, nome, ST_AsText(coordenadas) as poligono, limite_ambulantes, quantidade_ambulantes');
-            } else {
-                $zone = null;
-            }
-
-            if ($zone) {
-                $polygon = explode("POLYGON((", $zone->poligono);
-                $polygon = explode("))", $polygon[1]);
-                $polygon = explode(",", $polygon[0]);
-
-                $aux = array();
-                foreach ($polygon as $polig) {
-                    $polig = explode(" ", $polig);
-                    $aux[] = $polig;
-                }
-                $polygon = $aux;
-                $zone->poligono = $polygon;
-            }
-
-            if ($salesman->suspenso == 0 && ($salesman->latitude == null || $salesman->longitude == null)) {
-                $zoneData = array();
-                $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
-
-                if ($zones) {
-                    foreach ($zones as $zone) {
-                        $polygon = explode("POLYGON((", $zone->poligono);
-                        $polygon = explode("))", $polygon[1]);
-                        $polygon = explode(",", $polygon[0]);
-
-                        $aux = array();
-                        foreach ($polygon as $polig) {
-                            $polig = explode(" ", $polig);
-                            $aux[] = $polig;
-                        }
-
-                        $polygon = $aux;
-
-                        $zone->poligono = $polygon;
-                        $zoneData[] = $zone;
-                    }
-                } else {
-                    $zoneData = null;
-                }
-            } else {
-                $zoneData = null;
-            }
-
-            if ($salesman->id_empresa != null) {
-                $company = (new Company())->findById($salesman->id_empresa, 'nome_fantasia');
-            } else {
-                $company = null;
-            }
-
 
             $folder = ROOT . '/themes/assets/uploads';
             $uploads = array();
             $aux = 1;
-            $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 1', 'id=' . $salesman->id)->fetch(true);
+            $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 0', 'id=' . $user->id)->fetch(true);
             if ($attachments) {
                 foreach ($attachments as $attach) {
-                    $attachName = explode('.', $attach->file_name);
+                    $attachName = explode('.', $attach->nome);
                     if ($attachName[0] == 'userImage') {
-                        $userImage = ROOT . '/themes/assets/uploads/salesmans/' . $attach->id_usuario
-                            . '/' . $attach->file_name;
+                        $userImage = ROOT . '/themes/assets/uploads/users/' . $attach->id_usuario
+                            . '/' . $attach->nome;
                     }
 
                     $uploads[] = [
-                        'fileName' => $attach->file_name,
-                        'groupName' => 'salesmans',
-                        'userId' => $salesman->id
+                        'fileName' => $attach->nome,
+                        'groupName' => 'users',
+                        'userId' => $user->id
                     ];
                     $aux++;
                 }
@@ -888,11 +857,8 @@ class Web
 
             echo $this->view->render('profile', [
                 'title' => 'Perfil | ' . SITE,
-                'salesman' => $salesman,
+                'user' => $user,
                 'payments' => $payments,
-                'zone' => $zone,
-                'company' => $company,
-                'zones' => $zoneData,
                 'uploads' => $uploads,
                 'userImage' => $userImage
             ]);
@@ -1330,7 +1296,6 @@ class Web
     public function salesmanMap(): void
     {
         $zoneData = array();
-        $reports = (new Report())->find()->fetch(true);
         $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
 
         if ($zones) {
@@ -1356,24 +1321,15 @@ class Web
                 unset($zone->detalhes, $zone->foto);
                 $zoneData[] = $zone;
             }
+        } else {
+            $zoneData = null;
         }
 
-        $salesmans = (new Salesman())->find('', '', 'id, latitude, longitude, nome, area_equipamento, identidade, situacao')->fetch(true);
-        if (!isset($_SESSION['user']['login']) || (isset($_SESSION['user']['login']) && ($_SESSION['user']['login'] === 1 || $_SESSION['user']['login'] == 2))) {
-            echo $this->view->render('salesmanMap', [
-                'title' => 'Mapa',
-                'salesmans' => null,
-                'reports' => $reports,
-                'zones' => $zoneData
-            ]);
-        } else {
-            echo $this->view->render('salesmanMap', [
-                'title' => 'Mapa',
-                'salesmans' => $salesmans,
-                'reports' => $reports,
-                'zones' => $zoneData
-            ]);
-        }
+        echo $this->view->render('salesmanMap', [
+            'title' => 'Mapa',
+            'salesmans' => null,
+            'zones' => $zoneData
+        ]);
     }
 
     /**

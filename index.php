@@ -75,6 +75,9 @@ $router->get("/downloadFile/{groupName}/{userId}/{fileName}", "Web:downloadFile"
 $router->get("/requestLicense", "Web:requestLicense", "web.requestLicense");
 $router->get("/licenseList", "Web:licenseList", "web.licenseList");
 
+$router->get("/salesmanLicense", "Web:salesmanLicense", "web.salesmanLicense");
+$router->get("/companyLicense", "Web:companyLicense", "web.companyLicense");
+
 /*
  * ERROS
  */

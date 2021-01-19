@@ -33,14 +33,14 @@
 
         mapTiles['Mapa Jawg'] = L.tileLayer('https://{s}.tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token=C1vu4LOmp14JjyXqidSlK8rjeSlLK1W59o1GAfoHVOpuc6YB8FSNyOyHdoz7QIk6', {
             maxNativeZoom: 19,
-            maxZoom: 18,
+            maxZoom: 20,
             minZoom: 10
         });
         ctrTiles["Mapa Jawg"] = mapTiles["Mapa Jawg"];
 
         mapTiles['Mapa OSM'] = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxNativeZoom: 19,
-            maxZoom: 19,
+            maxZoom: 20,
             minZoom: 10
         });
         ctrTiles['Mapa OSM'] = mapTiles['Mapa OSM'];
@@ -75,7 +75,7 @@
 
         map = L.map('salesmanMap', {
             center: [-9.663136558749533, -35.71422457695007],
-            layers: [mapTiles["Mapa OSM"]],
+            layers: [mapTiles["Mapa Jawg"]],
             zoomControl: false,
             maxZoom: 20,
             minZoom: 10,
@@ -127,45 +127,7 @@
                 spiderfyOnMaxZoom: true
             });
 
-            if(e.name === "Denúncias") {
-                <?php
-                if($reports){
-                    $info = "zoneInfo";
-                    $textPopup = "textPopup";
-                    foreach($reports as $report){
-                        echo "L.marker(['". $report->latitude ."','". $report->longitude ."'],{icon:report}).bindPopup('<div style=\"font-weight: bold;\">". $report->descricao ."</div><div class=". $info .">". $report->data_denuncia ."<br>". $report->hora_denuncia ."<br>". $report->local ."</div>').addTo(groupMarker);";
-                    }
-                }
-                ?>
-
-                <?php if($salesmans){ ?>
-            }else if(e.name === "Ambulantes - Em dia"){
-                <?php
-                $info = "zoneInfo";
-                $textPopup = "textPopup";
-                foreach($salesmans as $salesman) {
-                    if ($salesman->situacao == 1) {
-                        echo "L.marker(['". $salesman->latitude ."','". $salesman->longitude ."'],{icon:paid}).bindPopup('<div style=\"font-weight: bold;\">". $salesman->identidade ."</div> <div class=". $info .">Nome: ". $salesman->nome ."<br>Área do equipamento: ". $salesman->area_equipamento ."</div><br><div class=". $textPopup ."><a  href=". url('salesman/'. $salesman->id) ." target=\"_blank\">Visualizar perfil</a></div>').addTo(groupMarker);";
-                    }
-                }
-                ?>
-            }else if(e.name === "Ambulantes - Pendentes"){
-                <?php
-                foreach($salesmans as $salesman){
-                    if($salesman->situacao == 0){
-                        echo "L.marker(['". $salesman->latitude ."','". $salesman->longitude ."'],{icon:pending}).bindPopup('<div style=\"font-weight: bold;\">". $salesman->identidade ."</div> <div class=". $info .">Nome: ". $salesman->nome ."<br>Área do equipamento: ". $salesman->area_equipamento ."</div><br><div class=". $textPopup ."><a  href=". url('salesman/'. $salesman->id) ." target=\"_blank\">Visualizar perfil</a></div>').addTo(groupMarker);";
-                    }
-                }
-                ?>
-            }else if(e.name === "Ambulantes - Vencidos"){
-                <?php
-                foreach($salesmans as $salesman){
-                    if($salesman->situacao == 2){
-                        echo "L.marker(['". $salesman->latitude ."','". $salesman->longitude ."'],{icon:expired}).bindPopup('<div class=". $info .">Nome: ". $salesman->nome ."<br>Área do equipamento: ". $salesman->area_equipamento ."</div><br><div class=". $textPopup ."><a  href=". url('salesman/'. $salesman->id) ." target=\"_blank\">Visualizar perfil</a></div>').addTo(groupMarker);";
-                    }
-                }
-                }?>
-            }else if(e.name === "Zonas"){
+            if(e.name === "Zonas"){
                 <?php if($zones !== NULL): foreach ($zones as $zone) :
                 $aux = $zone->limite_ambulantes - $zone->quantidade_ambulantes;
                 $aux = intval(($zone->quantidade_ambulantes * 100)/$zone->limite_ambulantes);
@@ -228,8 +190,23 @@
                 <?php endforeach;
                 endif;?>
             }
-            mapLayers[e.name].addLayer(groupMarker);
         });
+
+        let ambulante = L.icon({
+            iconUrl:"<?= url("themes/assets/img/location.png"); ?>",
+            shadowUrl:"<?= url("themes/assets/img/marker-shadow.png"); ?>",
+
+            iconSize:[40, 40],
+            shadowSize:[41, 41],
+            iconAnchor:[15, 41],
+            shadowAnchor:[13, 41],
+            popupAnchor:[0, -41]
+        });
+        L.marker([-9.666870, -35.731664],{icon:ambulante})
+            .bindPopup('Ambulante').addTo(map);
+
+        mapLayers[e.name].addLayer(groupMarker);
+
         map.addLayer(mapLayers["Zonas"]);
     });
 </script>

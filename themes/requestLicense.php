@@ -5,10 +5,10 @@
         <div class="row">
             <div class="col-xl-7">
                 <h2 class="black-title-section">Nova licença</h2>
-                <p class="sibtitle-section-p">Selecione o tipo de licença correspondente a função a qual
+                <p class="subtitle-section-p">Selecione o tipo de licença correspondente a função a qual
                     deseja exercer. Você poderá solicitar quantas licenças quiser posteriormente.</p>
 
-                <div class="row m-0 mt-5 p-4 div-request-license">
+                <div class="row m-0 mt-5 p-4 div-request-license" onclick="newLicense(0)">
                     <div class="col-xl-2 text-center mt-4">
                         <img src="<?= url('themes/assets/img/salesman.png') ?>">
                     </div>
@@ -17,7 +17,7 @@
                         <p class="subtitle-section-p">Para pessoas que exercem a profissão de ambulante.</p>
                     </div>
                 </div>
-                <div class="row m-0 mt-3 p-4 div-request-license">
+                <div class="row m-0 mt-3 p-4 div-request-license" onclick="newLicense(1)">
                     <div class="col-xl-2 text-center mt-4">
                         <img src="<?= url('themes/assets/img/building.png') ?>">
                     </div>
@@ -26,7 +26,7 @@
                         <p class="subtitle-section-p">Para empresas com funcionários ambulantes.</p>
                     </div>
                 </div>
-                <div class="row m-0 mt-3 p-4 div-request-license">
+                <div class="row m-0 mt-3 p-4 div-request-license" onclick="newLicense(2)">
                     <div class="col-xl-2 text-center mt-4">
                         <img src="<?= url('themes/assets/img/calendar.png') ?>">
                     </div>
@@ -35,7 +35,7 @@
                         <p class="subtitle-section-p">Para atuar como ambulante em algum evento.</p>
                     </div>
                 </div>
-                <div class="row m-0 mt-3 p-4 div-request-license">
+                <div class="row m-0 mt-3 p-4 div-request-license" onclick="newLicense(3)">
                     <div class="col-xl-2 text-center mt-4">
                         <img src="<?= url('themes/assets/img/sale.png') ?>">
                     </div>
@@ -44,7 +44,7 @@
                         <p class="subtitle-section-p">Para fixação de outdoors na cidade.</p>
                     </div>
                 </div>
-                <div class="row m-0 mt-3 p-4 div-request-license">
+                <div class="row m-0 mt-3 p-4 div-request-license" onclick="newLicense(4)">
                     <div class="col-xl-2 text-center mt-4">
                         <img src="<?= url('themes/assets/img/flag.png') ?>">
                     </div>
@@ -67,3 +67,25 @@
         </div>
     </div>
 </div>
+
+<?php $v->start("scripts"); ?>
+<script>
+    function newLicense(license) {
+        switch (license) {
+            case 0:
+                window.location.href = '<?= $router->route('web.salesmanLicense') ?>';
+                break;
+            case 1:
+                window.location.href = '<?= $router->route('web.companyLicense') ?>';
+                break;
+            default:
+                swal({
+                    icon: "warning",
+                    title: "Ops...",
+                    text: "Esta licença não está disponível no momento.",
+                });
+                break;
+        }
+    }
+</script>
+<?php $v->end(); ?>

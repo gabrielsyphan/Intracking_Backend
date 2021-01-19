@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 18-Jan-2021 às 18:17
+-- Tempo de geração: 19-Jan-2021 às 16:44
 -- Versão do servidor: 10.4.13-MariaDB
 -- versão do PHP: 7.4.8
 
@@ -136,7 +136,7 @@ CREATE TABLE `fiscais` (
 --
 
 INSERT INTO `fiscais` (`id`, `matricula`, `nome`, `email`, `senha`, `cpf`, `tipo_fiscal`, `situacao`) VALUES
-(1, '111111-1', 'Lucas Gabriel Peixoto de Oliveira', 'lucasgabrielpdoliveira@gmail.com', '698d51a19d8a121ce581499d7b701668', '111.657.194-36', 1, 1);
+(1, '111111-1', 'Lucas Gabriel Peixoto de Oliveira', 'lucasgabrielpdoliveira@gmail.com', '698d51a19d8a121ce581499d7b701668', '111.657.194-36', 1, 2);
 
 -- --------------------------------------------------------
 
@@ -274,12 +274,13 @@ INSERT INTO `usuarios` (`id`, `cpf`, `nome`, `endereco`, `telefone`, `email`, `r
 --
 
 CREATE TABLE `zonas` (
-  `idzonas` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `nome` varchar(45) NOT NULL,
   `limite_ambulantes` int(11) NOT NULL,
   `quantidade_ambulantes` int(11) NOT NULL,
   `coordenadas` polygon NOT NULL,
-  `detalhes` varchar(300) NOT NULL
+  `descricao` varchar(300) NOT NULL,
+  `foto` longblob DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -365,6 +366,12 @@ ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Índices para tabela `zonas`
+--
+ALTER TABLE `zonas`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT de tabelas despejadas
 --
 
@@ -445,6 +452,12 @@ ALTER TABLE `tipo_fiscal`
 --
 ALTER TABLE `usuarios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+
+--
+-- AUTO_INCREMENT de tabela `zonas`
+--
+ALTER TABLE `zonas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

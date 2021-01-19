@@ -75,7 +75,7 @@ a, a:hover, a:focus {
 }
 
 #sidebar ul.components {
-    background: #2d98a2;
+    background: #44a8b1;
 }
 
 #sidebar ul a {
@@ -238,7 +238,7 @@ a[data-toggle="collapse"] {
 
 .status-button {
     padding: 5px;
-    width: 100px;
+    width: auto;
     z-index: 9999;
     border-radius: 30px;
     box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
@@ -312,7 +312,7 @@ a[data-toggle="collapse"] {
 
 .btn-3 {
     border: none;
-    width: 115px;
+    width: auto;
     height: 42px;
     font-size: 1.2em;
     border-radius: 5px;
@@ -338,6 +338,7 @@ a[data-toggle="collapse"] {
 .secondary-color {
     color: #33a0aa !important;
     border: 1px solid #33a0aa;
+    background: transparent;
 }
 
 .tertiary-color {
@@ -550,7 +551,7 @@ a[data-toggle="collapse"] {
 
 #mapCreateAccount {
     width: 100%;
-    height: 186px;
+    height: 400px;
     border: 1px solid #ddd;
 }
 
@@ -1242,4 +1243,21 @@ input[type=file].hidden-input-file {
 
 .div-request-license > div > span {
     color: #4bc2ce;
+}
+
+.gray-box {
+    background: #f7f7f7;
+    border-radius: 6px;
+}
+
+.disabled-input {
+    background: #fbfbfb;
+}
+
+.icon-info-circle {
+    color: #4bc2ce;
+}
+
+.col-xl-6 > .row > .col-xl-6 > .form-group {
+    line-height: 60px;
 }
