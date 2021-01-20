@@ -76,6 +76,8 @@ $router->get("/requestLicense", "Web:requestLicense", "web.requestLicense");
 $router->get("/licenseList", "Web:licenseList", "web.licenseList");
 
 $router->get("/salesmanLicense", "Web:salesmanLicense", "web.salesmanLicense");
+$router->post("/validateSalesmanLicense", "Web:validateSalesmanLicense", "web.validateSalesmanLicense");
+
 $router->get("/companyLicense", "Web:companyLicense", "web.companyLicense");
 
 /*

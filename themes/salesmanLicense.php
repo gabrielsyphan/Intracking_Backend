@@ -1,19 +1,20 @@
 <?php $v->layout("_theme.php") ?>
 
 <?php $v->start("css"); ?>
-<link rel="stylesheet" href="<?= url("themes/assets/css/leaflet.css"); ?>" />
+<link rel="stylesheet" href="<?= url("themes/assets/css/leaflet.css"); ?>"/>
 <link rel="stylesheet" href="<?= url("themes/assets/css/layers-control.css"); ?>"/>
-<link rel="stylesheet" href="<?= url("themes/assets/css/util.css"); ?>" />
-<link rel="stylesheet" href="<?= url("themes/assets/css/MarkerCluster.css"); ?>" />
-<link rel="stylesheet" href="<?= url("themes/assets/css/MarkerCluster.Default.css"); ?>" />
+<link rel="stylesheet" href="<?= url("themes/assets/css/util.css"); ?>"/>
+<link rel="stylesheet" href="<?= url("themes/assets/css/MarkerCluster.css"); ?>"/>
+<link rel="stylesheet" href="<?= url("themes/assets/css/MarkerCluster.Default.css"); ?>"/>
 <script src="<?= url("themes/assets/js/leaflet.js"); ?>"></script>
 <link rel="stylesheet" href="<?= url("themes/assets/css/multiples.css"); ?>" type="text/css">
 <?php $v->end(); ?>
 
 <div class="container-fluid mt-5" style="background-color: #fff;">
     <div class="container pt-5 pb-5">
-        <form>
+        <form id="form-license-salesman" method="POST" action="<?= $router->route('web.validateSalesmanLicense'); ?>">
             <fieldset>
+                <div id="inputHidden"></div>
                 <div class="row mb-5">
                     <div class="col-xl-12 pb-3">
                         <h2 class="black-title-section">Licença de Ambulante</h2>
@@ -23,51 +24,59 @@
                     <div class="col-xl-4">
                         <div class="form-group">
                             <label>Como vai vender?:</label>
-                            <input type="text" class="form-input" id="howWillSell" name="howWillSell" placeholder="Ex.: Barraca, carrinho..." required>
+                            <input type="text" class="form-input" id="howWillSell" name="howWillSell"
+                                   placeholder="Ex.: Barraca, carrinho...">
+                            <div class="invalid-feedback"></div>
                         </div>
                     </div>
 
                     <div class="col-xl-4">
                         <div class="form-group">
                             <label>Largura ocupada em metros</label>
-                            <input type="text" class="form-input" id="width" name="width" placeholder="Ex.: 10" required>
+                            <input type="text" class="form-input" id="width" name="width" placeholder="Ex.: 10">
+                            <div class="invalid-feedback"></div>
                         </div>
                     </div>
 
                     <div class="col-xl-4">
                         <div class="form-group">
                             <label>Comprimento ocupado em metros:</label>
-                            <input type="text" class="form-input" id="length" name="length" placeholder="Ex.: 5.23" required>
+                            <input type="text" class="form-input" id="length" name="length" placeholder="Ex.: 5.23">
+                            <div class="invalid-feedback"></div>
                         </div>
                     </div>
 
                     <div class="col-xl-12">
                         <div class="form-group">
                             <label>Produtos e/ou serviços:</label>
-                            <select id="productSelect" class="form-input" name="productSelect[]" multiple="multiple" required>
+                            <select id="productSelect" class="form-input" name="productSelect[]" multiple="multiple">
                                 <option value="0">Gêneros e produtos alimentícios em geral</option>
                                 <option value="1">Bebidas não alcoólicas</option>
                                 <option value="2">Bebidas alcoólicas</option>
                                 <option value="3">Brinquedos e artigos ornamentais</option>
                                 <option value="4">Confecções, calçados e artigos de usopessoal</option>
-                                <option value="5">Louças, ferragens, artefatos de plástico,borracha, couro e utensílios domésticos</option>
+                                <option value="5">Louças, ferragens, artefatos de plástico,borracha, couro e utensílios
+                                    domésticos
+                                </option>
                                 <option value="6">Artesanato, antiguidades e artigos dearte em geral</option>
                                 <option value="7">Outros artigos não especificados nos itens anteriores</option>
                             </select>
+                            <div class="invalid-feedback"></div>
                         </div>
                     </div>
 
                     <div class="col-xl-12">
                         <div class="form-group">
                             <label>Descreva seu produto ou serviço ofertado: <span class="spanAlert">(Somente os não especificados na lista acima)</span></label>
-                            <textarea type="text" class="form-input" id="productDescription" name="productDescription" placeholder="Ex.: Trabalho com a venda de produtos para cabelo."></textarea>
+                            <textarea type="text" class="form-input" id="productDescription" name="productDescription"
+                                      placeholder="Ex.: Trabalho com a venda de produtos para cabelo."></textarea>
                         </div>
                     </div>
 
                     <div class="col-xl-4">
                         <div class="form-group">
                             <label>Dias trabalhados:</label>
-                            <select id="workedDays" class="form-input" multiple="multiple" name="workedDays[]" required>
+                            <select id="workedDays" class="form-input" multiple="multiple" name="workedDays[]">
                                 <option value="0">Domingo</option>
                                 <option value="1">Segunda-Feira</option>
                                 <option value="2">Terça-Feira</option>
@@ -76,36 +85,42 @@
                                 <option value="5">Sexta-Feira</option>
                                 <option value="6">Sabado</option>
                             </select>
+                            <div class="invalid-feedback"></div>
                         </div>
                     </div>
 
                     <div class="col-xl-4">
                         <div class="form-group">
                             <label>Horário para o ínicio das vendas:</label>
-                            <input type="time" class="form-input" id="initHour" name="initHour" placeholder="Digite o nome de sua mãe" required>
+                            <input type="time" class="form-input" id="initHour" name="initHour"
+                                   placeholder="Digite o nome de sua mãe">
+                            <div class="invalid-feedback"></div>
                         </div>
                     </div>
 
                     <div class="col-xl-4">
                         <div class="form-group">
                             <label>Horário para o fim das vendas:</label>
-                            <input type="time" class="form-input" id="endHour" name="endHour" placeholder="Digite o nome de sua mãe" required>
+                            <input type="time" class="form-input" id="endHour" name="endHour"
+                                   placeholder="Digite o nome de sua mãe">
+                            <div class="invalid-feedback"></div>
                         </div>
                     </div>
 
                     <div class="col-xl-6 mt-4">
                         <div class="row">
-                            <div class="col-xl-6">
+                            <div class="col-xl-7">
                                 <div class="form-group">
                                     <label>Insira uma foto do seu equipamento (barraca, carrinho etc):</label>
                                 </div>
                             </div>
 
-                            <div class="col-xl-6 text-left">
+                            <div class="col-xl-5 text-left">
                                 <label class="label-file equipmentImage-file text-center" for="equipmentImage"><span
-                                        class="icon-plus mr-2"></span> Selecionar Arquivo</label>
+                                            class="icon-plus mr-2"></span> Selecionar Arquivo</label>
                                 <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
-                                       id="equipmentImage" name="equipmentImage" accept="image/png, image/jpg, image/jpeg">
+                                       id="equipmentImage" name="equipmentImage"
+                                       accept="image/png, image/jpg, image/jpeg">
                                 <div class="invalid-feedback"></div>
                                 <div class="equipmentImage-file-uploaded file-uploaded-container">
                                     <div class="card-content-upload text-center p-3">
@@ -137,7 +152,7 @@
                         <button type="reset" class="btn-3 secondary-color">
                             Limpar campos
                         </button>
-                        <button class="btn-3 primary" type="button">
+                        <button class="btn-3 primary" type="submit">
                             Cadastrar licença
                         </button>
                     </div>
@@ -152,13 +167,12 @@
 <script src="<?= url("themes/assets/js/Leaflet.LinearMeasurement.js"); ?>"></script>
 <script type="text/javascript" src="<?= url("themes/assets/js/multiples.js"); ?>"></script>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#workedDays').multiselect();
         $('#productSelect').multiselect();
     });
-    let lat = 0;
-    let lng = 0;
-    $(function() {
+
+    $(function () {
         let theMarker = {};
         let map = null;
         let mapTiles = {};
@@ -234,34 +248,35 @@
         let area = [];
         let aux = [];
         <?php if($zones):
-            foreach ($zones as $zone):
-            $aux = intval(($zone->quantidade_ambulantes * 100) / $zone->limite_ambulantes);
-            if ($aux <= 49):
-                $color = "#5ea9a4";
-            elseif ($aux >= 50 && $aux <= 99):
-                $color = "#f5a42c";
-            else:
-                $color = "#ed2e54";
-            endif; ?>
-            area = JSON.parse('<?= json_encode($zone->poligono) ?>');
+        foreach ($zones as $zone):
+        $aux = intval(($zone->quantidade_ambulantes * 100) / $zone->limite_ambulantes);
+        if ($aux <= 49):
+            $color = "#5ea9a4";
+        elseif ($aux >= 50 && $aux <= 99):
+            $color = "#f5a42c";
+        else:
+            $color = "#ed2e54";
+        endif; ?>
+        area = JSON.parse('<?= json_encode($zone->poligono) ?>');
 
-            area.forEach(function (e) {
-                aux.push([e[1], e[0]]);
-            });
+        area.forEach(function (e) {
+            aux.push([e[1], e[0]]);
+        });
 
-            L.polygon(aux, {color: '<?= $color ?>', fillColor: '<?= $color ?>'}).addTo(map);
-            aux = [];
+        L.polygon(aux, {color: '<?= $color ?>', fillColor: '<?= $color ?>'}).addTo(map);
+        aux = [];
         <?php endforeach; endif;?>
 
         map.on('click', (e) => {
-            lat = e.latlng.lat;
-            lng = e.latlng.lng;
+            let inputHidden = "<input id='latitude' type='hidden' name='latitude' value='" + e.latlng.lat + "'><input id='longitude' type='hidden' name='longitude' value='" + e.latlng.lng + "'>";
+            $("#inputHidden").empty();
+            $("#inputHidden").append(inputHidden);
 
             if (theMarker !== undefined) {
                 map.removeLayer(theMarker);
             }
 
-            let data = {'latitude': lat, 'longitude': lng};
+            let data = {'latitude': e.latlng.lat, 'longitude': e.latlng.lng};
             $.post("<?= $router->route("web.checkZone"); ?>", data, function (returnData) {
                 map.setView(new L.LatLng(e.latlng.lat, e.latlng.lng), 14);
                 if (returnData == 1) {
@@ -276,6 +291,64 @@
                 alert("Erro ao processar requisição!");
             });
         });
+    });
+
+    $('form').on('submit', function (e) {
+        e.preventDefault();
+        $("#loader-div").show();
+
+        const _thisForm = $(this);
+        const data = new FormData(this);
+        const fieldsetDisable = _thisForm.find('fieldset');
+        fieldsetDisable.attr('disabled', true);
+
+        if ($('#inputHidden').children().length != 0) {
+            if (formSubmit(this) === true) {
+                $.ajax({
+                    type: _thisForm.attr('method'),
+                    url: _thisForm.attr('action'),
+                    data: data,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                }).done(function (returnData) {
+                    if (returnData == 'success') {
+                        swal({
+                            icon: "success",
+                            title: "Sua licença foi cadastrada!",
+                            text: "Acesse o menu 'Minhas Licenças' para visualiza-la.",
+                        }).then((result) => {
+                            window.location.href = "<?= $router->route('web.licenseList') ?>";
+                        });
+                    } else {
+                        swal({
+                            icon: "error",
+                            title: "Erro!",
+                            text: "Não foi possível cadastrar sua licença. Tente novamente mais tarde.",
+                        });
+                    }
+                    console.log(returnData);
+                }).fail(function (returnData) {
+                    swal({
+                        icon: "error",
+                        title: "Erro!",
+                        text: "Erro ao processar requisição",
+                    });
+                    console.log(returnData);
+                }).always(function () {
+                    fieldsetDisable.removeAttr("disabled");
+                    $("#loader-div").hide();
+                });
+            }
+        } else {
+            swal({
+                icon: "warning",
+                title: "Alerta!",
+                text: "Selecione uma região no mapa.",
+            });
+            fieldsetDisable.removeAttr("disabled");
+            $("#loader-div").hide();
+        }
     });
 </script>
 <?php $v->end(); ?>

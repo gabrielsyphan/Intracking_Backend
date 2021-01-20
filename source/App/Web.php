@@ -2,7 +2,10 @@
 
 namespace Source\App;
 
+use Cassandra\Date;
 use Source\Models\Attach;
+use Source\Models\License;
+use Source\Models\LicenseType;
 use Source\Models\User;
 use Stonks\Router\Router;
 use League\Plates\Engine;
@@ -567,6 +570,8 @@ class Web
                     }
                 }
 
+
+
                 $email = new Email();
                 $email->add(
                     "Confirmação de cadastro",
@@ -664,6 +669,267 @@ class Web
      * @return void
      * @var $data
      */
+    public function validateSalesmanLicense($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $response = 'fail';
+
+        if ($_FILES) {
+            $user = (new User())->findById($_SESSION['user']['id']);
+            $cpf = preg_replace( '/[^0-9]/is', '', $user->cpf );
+            $soap_input =
+                '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:e="e-Agata_18.11">
+               <soapenv:Header/>
+               <soapenv:Body>
+                  <e:PWSRetornoPertences.Execute>
+                     <e:Flagtipopesquisa>C</e:Flagtipopesquisa>
+                     <e:Ctgcpf>'. $cpf .'</e:Ctgcpf>
+                     <e:Ctiinscricao></e:Ctiinscricao>
+                  </e:PWSRetornoPertences.Execute>
+               </soapenv:Body>
+            </soapenv:Envelope>';
+
+            $curl = curl_init();
+
+            curl_setopt($curl, CURLOPT_URL, PERTENCES);
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $soap_input);
+            curl_setopt($curl, CURLOPT_HEADER, false);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+            $soap_response = curl_exec($curl);
+
+            $xml_response = str_ireplace(['SOAP-ENV:', 'SOAP:', '.executeresponse', '.SDTRetornoPertences'], '', $soap_response);
+
+            @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
+            $companys = $xml->Body->PWSRetornoPertences->Sdtretornopertences->SDTRetornoPertencesItem->SDTRetornoPertencesEmpresa->SDTRetornoPertencesEmpresaItem;
+
+            if($companys != '') {
+                $companyAux = 0;
+                foreach ($companys as $company) {
+                    if ($company->SRPAutonomo == 'A') {
+                        $companyAux = $company->SRPInscricaoEmpresa;
+                    }
+                }
+            }
+
+            $license = new License();
+            $license->tipo = 0;
+            $license->status = 0;
+            $license->id_usuario = $_SESSION['user']['id'];
+            $license->data_inicio = date('Y-m-d');
+            $license->data_fim = date('Y-m-d', strtotime("+3 days"));
+            $license->cmc = $companyAux;
+            $license->save();
+
+            if ($license->fail()) {
+                var_dump($license->fail()->getMessage());
+            } else {
+                /**
+                 * Load all images
+                 */
+                foreach ($_FILES as $key => $file) {
+                    $target_file = basename($file['name']);
+
+                    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                    $extensions_arr = array("jpg", "jpeg", "png");
+
+                    if (in_array($imageFileType, $extensions_arr)) {
+                        $folder = THEMES . '/assets/uploads/salesman';
+                        if (!file_exists($folder) || !is_dir($folder)) {
+                            mkdir($folder, 0755);
+                        }
+                        $fileName = $key . '.' . $imageFileType;
+                        $dir = $folder . '/' . $license->id;
+
+                        if (!file_exists($dir) || !is_dir($dir)) {
+                            mkdir($dir, 0755);
+                        }
+
+                        $dir = $dir . '/' . $fileName;
+
+                        move_uploaded_file($file['tmp_name'], $dir);
+
+                        $attach = new Attach();
+                        $attach->id_usuario = $license->id;
+                        $attach->tipo_usuario = 1;
+                        $attach->nome = $fileName;
+                        $attach->save();
+
+                        if ($attach->fail()) {
+                            $license->destroy();
+                            var_dump($attach->fail()->getMessage());
+                            exit();
+                        } else {
+                            $curl = curl_init();
+                            curl_setopt($curl, CURLOPT_RETURNTRANSFER, True);
+                            curl_setopt($curl, CURLOPT_URL, 'https://nominatim.openstreetmap.org/reverse.php?lat='. $data['latitude'] .'&lon='. $data['longitude'] .'&zoom=18&format=jsonv2');
+                            curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:7.0.1) Gecko/20100101 Firefox/7.0.1');
+                            $street = curl_exec($curl);
+                            curl_close($curl);
+                            $street = json_decode($street);
+                            $street = $street->display_name;
+
+                            $area = $data['width'] * $data['length'];
+                            $valueToPayment = array();
+                            $products = "";
+                            $productDescription = null;
+                            $productsData = $data['productSelect'];
+
+                            foreach ($productsData as $product) {
+                                $products = $products . "" . $product;
+                                if ($product == 0 || $product == 1) {
+                                    if ($area <= 1.50) {
+                                        $valueToPayment[] = 40.00;
+                                    } else {
+                                        $valueToPayment[] = 72.00;
+                                    }
+                                } else if ($product == 2 || $product == 3 || $product == 4 || $product == 5) {
+                                    if ($area <= 1.50) {
+                                        $valueToPayment[] = 80.00;
+                                    } else {
+                                        $valueToPayment[] = 144.00;
+                                    }
+                                } else if ($product == 6) {
+                                    if ($area <= 1.50) {
+                                        $valueToPayment[] = 72.00;
+                                    } else {
+                                        $valueToPayment[] = 80.00;
+                                    }
+                                } else if ($product == 7) {
+                                    $productDescription = $data['productDescription'];
+                                    if ($area <= 1.50) {
+                                        $valueToPayment[] = 72.00;
+                                    } else {
+                                        $valueToPayment[] = 80.00;
+                                    }
+                                }
+                            }
+                            rsort($valueToPayment);
+
+                            $workedDays = "";
+                            foreach ($data['workedDays'] as $workedDay) {
+                                $workedDays = $workedDays . "" . $workedDay;
+                            }
+
+                            $salesman = new Salesman();
+                            $salesman->id_licenca = $license->id;
+                            $salesman->local_endereco = $street;
+                            $salesman->latitude = $data['latitude'];
+                            $salesman->longitude = $data['longitude'];
+                            $salesman->produto = $products;
+                            $salesman->atendimento_dias = $workedDays;
+                            $salesman->atendimento_hora_inicio = $data['initHour'];
+                            $salesman->atendimento_hora_fim = $data['endHour'];
+                            $salesman->relato_atividade = $productDescription;
+                            $salesman->area_equipamento = $data['width'] . " x " . $data['length'];
+                            $salesman->tipo_equipamento = $data['howWillSell'];
+                            $salesman->save();
+
+                            if ($salesman->fail()) {
+                                $attach->destroy();
+                                $license->destroy();
+                                var_dump($salesman->fail()->getMessage());
+                                exit();
+                            } else {
+                                $paymentDate = date('Y-m-d', strtotime("+3 days"));
+                                $payment = new Payment();
+                                $payment->id_licenca = $license->id;
+                                $payment->cod_referencia = null;
+                                $payment->cod_pagamento = null;
+                                $payment->valor = $valueToPayment[0];
+                                $payment->tipo = 1;
+                                $payment->pagar_em = $paymentDate;
+                                $payment->save();
+
+                                $extCode = 'ODT'. $payment->id;
+
+//                                $soap_input = '
+//                                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eag="EAgata" xmlns:e="e-Agata_18.11">
+//                                   <soapenv:Header/>
+//                                   <soapenv:Body>
+//                                      <eag:WSTaxaExternas.Execute>
+//                                         <eag:Chave>TAXA_EXTERNA</eag:Chave>
+//                                         <eag:Usulogin>CIDADAO</eag:Usulogin>
+//                                         <eag:Ususenha>123456</eag:Ususenha>
+//                                         <eag:Sdttaxaexterna>
+//                                            <e:SDTTaxaExternas.SDTTaxaExternasItem>
+//                                               <e:TipoMode>INS</e:TipoMode>
+//                                               <e:EXTTipoContr>3</e:EXTTipoContr>
+//                                               <e:EXTCodigo>'. $extCode .'</e:EXTCodigo>
+//                                               <e:EXTDescricao>numero da licenca</e:EXTDescricao>
+//                                               <e:EXTTipoMulta></e:EXTTipoMulta>
+//                                               <e:EXTDescMulta></e:EXTDescMulta>
+//                                               <e:EXTanolct>2020</e:EXTanolct>
+//                                               <e:EXTtpoTaxaExternas>2</e:EXTtpoTaxaExternas>
+//                                               <e:EXTCTBid>1254</e:EXTCTBid>
+//                                               <e:EXTcpfcnpjpropr></e:EXTcpfcnpjpropr>
+//                                               <e:EXTInscricao>'. $companyAux .'</e:EXTInscricao>
+//                                               <e:EXTvlrvvt>'. $valueToPayment[0] .'</e:EXTvlrvvt>
+//                                               <e:EXTvlrvvtdesconto>0.00</e:EXTvlrvvtdesconto>
+//                                               <e:EXTvencimento>'. $paymentDate .'</e:EXTvencimento>
+//                                               <e:EXTSituacao>A</e:EXTSituacao>
+//                                               <e:Nome></e:Nome>
+//                                               <e:Endereco></e:Endereco>
+//                                               <e:Numero></e:Numero>
+//                                               <e:complemento></e:complemento>
+//                                               <e:Municipio></e:Municipio>
+//                                               <e:cep></e:cep>
+//                                               <e:uf>AL</e:uf>
+//                                            </e:SDTTaxaExternas.SDTTaxaExternasItem>
+//                                         </eag:Sdttaxaexterna>
+//                                      </eag:WSTaxaExternas.Execute>
+//                                   </soapenv:Body>
+//                                </soapenv:Envelope>';
+//
+//                                $curl = curl_init();
+//
+//                                curl_setopt($curl, CURLOPT_URL, EAGATA);
+//                                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+//                                curl_setopt($curl, CURLOPT_POSTFIELDS, $soap_input);
+//                                curl_setopt($curl, CURLOPT_HEADER, false);
+//                                curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+//
+//                                $soap_response = curl_exec($curl);
+//
+//                                $xml_response = str_ireplace(['SOAP-ENV:', 'SOAP:', '.executeresponse', '.SDTConsultaParcelamentoItem', '.SDTMensagem_TaxaExternaItem'], '', $soap_response);
+//
+//                                @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
+//                                $code = $xml->Body->WSTaxaExternas->Mensagem->SDTMensagem_TaxaExterna->NossoNumero;
+
+//                                $payment->cod_referencia = $code;
+//                                $payment->cod_pagamento = $extCode;
+
+                                $payment->cod_referencia = 15123;
+                                $payment->cod_pagamento = 'teste';
+                                $payment->save();
+
+                                if ($payment->fail()) {
+                                    $attach->destroy();
+                                    $license->destroy();
+                                    $salesman->destroy();
+                                    var_dump($payment->fail()->getMessage());
+                                    exit();
+                                } else {
+                                    $response = 'success';
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        echo $response;
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
     public function companyLicense(): void
     {
         $this->checkLogin();
@@ -682,10 +948,19 @@ class Web
     {
         $this->checkLogin();
 
-        echo $this->view->render('licenseList', [
-            'title' => 'Minhas licenças | ' . SITE,
-            'licenses' => null
-        ]);
+        if  ($_SESSION['user']['login'] == 3) {
+            $this->salesmanList();
+        } else {
+            $licenses = (new License())->find('id_usuario = :id', 'id='. $_SESSION['user']['id'])
+                ->fetch(true);
+            $license_type = (new LicenseType())->find()->fetch(true);
+
+            echo $this->view->render('licenseList', [
+                'title' => 'Minhas licenças | ' . SITE,
+                'licenses' => $licenses,
+                'types' => $license_type
+            ]);
+        }
     }
 
         /**
@@ -1030,9 +1305,10 @@ class Web
 
         if ($payments) {
             foreach ($payments as $payment) {
-                $salesmanName = (new Salesman())->findById($payment->id_ambulante, 'nome');
-                if ($salesmanName) {
-                    $payment->name = $salesmanName->nome;
+                $license = (new License())->findById($payment->id_licenca);
+                if ($license) {
+                    $user = (new User())->findById($license->id_usuario);
+                    $payment->name = $user->nome;
                     $paymentArray[] = $payment;
                 }
 
@@ -1280,7 +1556,7 @@ class Web
         }
 
         echo $this->view->render('salesmanList', [
-            'title' => 'Usuários | ' . SITE,
+            'title' => 'Licenças | ' . SITE,
             'users' => $users,
             'companys' => null,
             'registered' => count($users),
@@ -1297,6 +1573,7 @@ class Web
     {
         $zoneData = array();
         $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
+        $salesmans = (new Salesman())->find('', '', 'latitude, longitude')->fetch(true);
 
         if ($zones) {
             foreach ($zones as $zone) {
@@ -1327,8 +1604,8 @@ class Web
 
         echo $this->view->render('salesmanMap', [
             'title' => 'Mapa',
-            'salesmans' => null,
-            'zones' => $zoneData
+            'salesmans' => $salesmans,
+            'zones' => $zoneData,
         ]);
     }
 
@@ -1457,7 +1734,7 @@ class Web
             if ($image !== null) {
                 $zone->foto = $image;
             }
-            $zone->detalhes = $description;
+            $zone->descricao = $description;
             $zone->limite_ambulantes = $data['available'];
             $zone->quantidade_ambulantes = $data['occupied'];
             $zone->coordenadas = $polygon;

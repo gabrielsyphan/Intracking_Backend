@@ -63,7 +63,7 @@
 
                                 <div class="col-xl-12 text-right">
                                     <hr>
-                                    <button type="submit" class="btn-3 secondary-color">
+                                    <button type="button" class="btn-3 secondary-color">
                                         Resetar
                                     </button>
                                     <button type="submit" class="btn-3 primary">
@@ -119,8 +119,8 @@
                             title: "Erro!",
                             text: "Não foi possível cadastrar a zona.",
                         });
-                        console.log(returnData);
                     }
+                    console.log(returnData);
                 },
                 error: function(returnData){
                     $("#loader-div").hide();

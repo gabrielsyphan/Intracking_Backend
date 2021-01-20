@@ -8,7 +8,7 @@
                     <div class="row">
                         <div class="col-xl-8">
                             <h4 class="title-section">
-                                Ambulantes cadastrados
+                                Licenças cadastradas
                             </h4>
                             <hr>
                             <h2 class="title-section"><?= $registered ?></h2>
@@ -28,7 +28,7 @@
                     <div class="row">
                         <div class="col-xl-8">
                             <h4 class="title-section">
-                                Ambulantes autorizados
+                                Licenças aprovadas
                             </h4>
                             <hr>
                             <h2 class="title-section"><?= $paid ?></h2>
@@ -48,7 +48,7 @@
                     <div class="row">
                         <div class="col-xl-8">
                             <h4 class="title-section">
-                                Ambulantes pendentes
+                                Licenças pendentes
                             </h4>
                             <hr>
                             <h2 class="title-section"><?= $pending ?></h2>
@@ -68,7 +68,7 @@
                     <div class="row">
                         <div class="col-xl-8">
                             <h4 class="title-section">
-                                Ambulantes bloqueados
+                                Licenças bloqueados
                             </h4>
                             <hr>
                             <h2 class="title-section"><?= $blocked ?></h2>
@@ -87,8 +87,8 @@
             <div class="web-div-box">
                 <div class="box-div-info" style="max-height: 60vh;">
                     <div>
-                        <h4 class="ml-3 title-section">Lista de usuários</h4>
-                        <p class="ml-3 subtitle-section-p">Todos os ambulantes e empresas cadastrados no Orditi</p>
+                        <h4 class="ml-3 title-section">Lista de licenças</h4>
+                        <p class="ml-3 subtitle-section-p">Todas licenças cadastradas no Orditi</p>
 
                         <div class="div-box-span-icon mt-3">
                             <div class="div-table-search">

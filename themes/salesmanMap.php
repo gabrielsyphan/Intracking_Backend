@@ -59,19 +59,19 @@
         mapLayers["Zonas"] = L.layerGroup();
         ctrLayers["Zonas"] = mapLayers["Zonas"];
 
-        <?php if($salesmans !== NULL): ?>
-        mapLayers["Ambulantes - Em dia"] = L.layerGroup();
-        ctrLayers["Ambulantes - Em dia"] = mapLayers["Ambulantes - Em dia"];
-
-        mapLayers["Ambulantes - Pendentes"] = L.layerGroup();
-        ctrLayers["Ambulantes - Pendentes"] = mapLayers["Ambulantes - Pendentes"];
-
-        mapLayers["Ambulantes - Vencidos"] = L.layerGroup();
-        ctrLayers["Ambulantes - Vencidos"] = mapLayers["Ambulantes - Vencidos"];
-
-        mapLayers["Denúncias"] = L.layerGroup();
-        ctrLayers["Denúncias"] = mapLayers["Denúncias"];
-        <?php endif; ?>
+<!--        --><?php //if($salesmans !== NULL): ?>
+//        mapLayers["Ambulantes - Em dia"] = L.layerGroup();
+//        ctrLayers["Ambulantes - Em dia"] = mapLayers["Ambulantes - Em dia"];
+//
+//        mapLayers["Ambulantes - Pendentes"] = L.layerGroup();
+//        ctrLayers["Ambulantes - Pendentes"] = mapLayers["Ambulantes - Pendentes"];
+//
+//        mapLayers["Ambulantes - Vencidos"] = L.layerGroup();
+//        ctrLayers["Ambulantes - Vencidos"] = mapLayers["Ambulantes - Vencidos"];
+//
+//        mapLayers["Denúncias"] = L.layerGroup();
+//        ctrLayers["Denúncias"] = mapLayers["Denúncias"];
+//        <?php //endif; ?>
 
         map = L.map('salesmanMap', {
             center: [-9.663136558749533, -35.71422457695007],
@@ -190,24 +190,16 @@
                 <?php endforeach;
                 endif;?>
             }
+
+            mapLayers[e.name].addLayer(groupMarker);
+
+            map.addLayer(mapLayers["Zonas"]);
         });
 
-        let ambulante = L.icon({
-            iconUrl:"<?= url("themes/assets/img/location.png"); ?>",
-            shadowUrl:"<?= url("themes/assets/img/marker-shadow.png"); ?>",
-
-            iconSize:[40, 40],
-            shadowSize:[41, 41],
-            iconAnchor:[15, 41],
-            shadowAnchor:[13, 41],
-            popupAnchor:[0, -41]
-        });
-        L.marker([-9.666870, -35.731664],{icon:ambulante})
+        <?php if($salesmans): foreach ($salesmans as $salesman): ?>
+        L.marker([<?= $salesman->latitude ?>, <?= $salesman->longitude ?>],{icon:pending})
             .bindPopup('Ambulante').addTo(map);
-
-        mapLayers[e.name].addLayer(groupMarker);
-
-        map.addLayer(mapLayers["Zonas"]);
+        <?php endforeach; endif; ?>
     });
 </script>
 <?php $v->end(); ?>

@@ -52,9 +52,9 @@
                 <?= ($router->isCurrentRoute("web.salesmanProfile") ? 'active': ''); ?>
                 <?= ($router->isCurrentRoute("web.companyInfo") ? 'active': ''); ?>
                 ">
-                    <a href="<?= url("salesmanList"); ?>">
+                    <a href="<?= url("licenseList"); ?>">
                         <span class="icon-user"></span>
-                        Usuários
+                        Licenças
                     </a>
                 </li>
                 <li class="<?= ($router->isCurrentRoute("web.paymentList") ? 'active': ''); ?>">
