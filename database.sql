@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 20-Jan-2021 às 15:03
+-- Tempo de geração: 21-Jan-2021 às 16:23
 -- Versão do servidor: 10.4.13-MariaDB
 -- versão do PHP: 7.4.8
 
@@ -43,13 +43,6 @@ CREATE TABLE `ambulantes` (
   `longitude` varchar(25) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Extraindo dados da tabela `ambulantes`
---
-
-INSERT INTO `ambulantes` (`id`, `id_licenca`, `id_zona`, `local_endereco`, `produto`, `atendimento_dias`, `atendimento_hora_inicio`, `atendimento_hora_fim`, `relato_atividade`, `area_equipamento`, `tipo_equipamento`, `latitude`, `longitude`) VALUES
-(6, 9, NULL, 'Ford Laguna, Avenida Comendador Gustavo Paiva, Mangabeiras, Maceió, Região Geográfica Imediata de Maceió, Região Geográfica Intermediária de Maceió, Alagoas, Região Nordeste, 57031-530, Brasil', 1367, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'cabelo', '10 x 5', 'Barraca', '-9.65205102837863', '-35.720809937047314');
-
 -- --------------------------------------------------------
 
 --
@@ -69,14 +62,15 @@ CREATE TABLE `anexos` (
 
 INSERT INTO `anexos` (`id`, `nome`, `tipo_usuario`, `id_usuario`) VALUES
 (15, 'userImage.png', '3', 1),
-(20, 'userImage.png', '0', 35),
-(21, 'identityImage.png', '0', 35),
-(22, 'equipmentImage.png', '1', 1),
-(25, 'equipmentImage.png', '1', 4),
-(26, 'equipmentImage.png', '1', 5),
-(28, 'equipmentImage.jpeg', '1', 7),
-(29, 'equipmentImage.png', '1', 8),
-(30, 'equipmentImage.jpeg', '1', 9);
+(31, 'userImage.png', '0', 36),
+(32, 'identityImage.png', '0', 36),
+(33, 'proofAddress.png', '0', 36),
+(34, 'userImage.png', '1', 10),
+(35, 'cnpjRegistration.png', '1', 10),
+(36, 'proofAddress.png', '1', 10),
+(37, 'socialContract.png', '1', 10),
+(38, 'businessLicense.png', '1', 10),
+(39, 'otherDocument.png', '1', 10);
 
 -- --------------------------------------------------------
 
@@ -111,8 +105,27 @@ INSERT INTO `boletos` (`id`, `id_licenca`, `cod_referencia`, `cod_pagamento`, `v
 
 CREATE TABLE `empresas` (
   `id` int(11) NOT NULL,
-  `id_licenca` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `endereco` text NOT NULL,
+  `numero` int(11) NOT NULL,
+  `bairro` text NOT NULL,
+  `cidade` text NOT NULL,
+  `cep` text NOT NULL,
+  `produto` text NOT NULL,
+  `relato_atividade` text NOT NULL,
+  `cnpj` text NOT NULL,
+  `cmc` text NOT NULL,
+  `nome_fantasia` text NOT NULL,
+  `outro_produto` text DEFAULT NULL,
+  `como_vende` text NOT NULL,
+  `quantidade_equipamentos` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Extraindo dados da tabela `empresas`
+--
+
+INSERT INTO `empresas` (`id`, `endereco`, `numero`, `bairro`, `cidade`, `cep`, `produto`, `relato_atividade`, `cnpj`, `cmc`, `nome_fantasia`, `outro_produto`, `como_vende`, `quantidade_equipamentos`) VALUES
+(23, 'Rua Doutor Batista Acioly', 294, 'Centro', 'Rio Largo', '57100000', '137', 'aaaaaaaaaaaaaaaaaaaaaaaaa', '11.111.111/1111-11', '1111111111', 'More Media', 'Cabelo', '', 14);
 
 -- --------------------------------------------------------
 
@@ -183,7 +196,7 @@ CREATE TABLE `licencas` (
 --
 
 INSERT INTO `licencas` (`id`, `cmc`, `tipo`, `data_inicio`, `data_fim`, `status`, `id_usuario`) VALUES
-(9, '9900027911', '0', '2021-01-20', '2021-01-23', 0, 35);
+(10, '1111111111', '1', '2021-01-21', '2021-01-24', 1, 36);
 
 -- --------------------------------------------------------
 
@@ -307,16 +320,15 @@ CREATE TABLE `usuarios` (
   `email` varchar(100) NOT NULL,
   `rg` varchar(45) NOT NULL,
   `nome_mae` varchar(150) DEFAULT NULL,
-  `senha` varchar(45) DEFAULT NULL,
-  `situacao` int(11) NOT NULL DEFAULT 0
+  `senha` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Extraindo dados da tabela `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `cpf`, `nome`, `endereco`, `telefone`, `email`, `rg`, `nome_mae`, `senha`, `situacao`) VALUES
-(35, '034.325.347-01', 'Lucas Gabriel Pexito de Oliveira', 'Rua Doutor Batista Acioly, Rio Largo, Centro, 294', '82 98718-0470', 'lucasgabrielpdoliveira@gmail.com', '3651746-1', 'Izabel Cristina Barros Peixoto', '202cb962ac59075b964b07152d234b70', 0);
+INSERT INTO `usuarios` (`id`, `cpf`, `nome`, `endereco`, `telefone`, `email`, `rg`, `nome_mae`, `senha`) VALUES
+(36, '034.325.347-01', 'Lucas Gabriel Peixoto de Oliveira', 'Rua Doutor Batista Acioly, Rio Largo, Centro, 294', '82 98718-0470', 'lucasgabrielpdoliveira@gmail.com', '3651746-1', 'Izabel Cristina Barros Peixoto', '202cb962ac59075b964b07152d234b70');
 
 -- --------------------------------------------------------
 
@@ -472,7 +484,7 @@ ALTER TABLE `ambulantes`
 -- AUTO_INCREMENT de tabela `anexos`
 --
 ALTER TABLE `anexos`
-  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT de tabela `boletos`
@@ -484,7 +496,7 @@ ALTER TABLE `boletos`
 -- AUTO_INCREMENT de tabela `empresas`
 --
 ALTER TABLE `empresas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT de tabela `eventos`
@@ -508,7 +520,7 @@ ALTER TABLE `fiscais`
 -- AUTO_INCREMENT de tabela `licencas`
 --
 ALTER TABLE `licencas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de tabela `notificacoes`
@@ -544,7 +556,7 @@ ALTER TABLE `tipo_licenca`
 -- AUTO_INCREMENT de tabela `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT de tabela `zonas`

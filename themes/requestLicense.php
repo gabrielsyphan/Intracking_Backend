@@ -1,7 +1,7 @@
 <?php $v->layout("_theme.php"); ?>
 
-<div class="container-fluid mt-5" style="background-color: #fff;">
-    <div class="container pt-5 pb-5">
+<div class="container-fluid container-white mt-5">
+    <div class="p-5">
         <div class="row">
             <div class="col-xl-7">
                 <h2 class="black-title-section">Nova licença</h2>

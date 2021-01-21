@@ -3,7 +3,7 @@
 define("ROOT", "https://localhost/orditi");
 define("THEMES", __DIR__."/../themes");
 define("SERVICES", __DIR__."/../themes/services");
-define("EAGATA", "http://www3.smf.maceio.al.gov.br/e-agata/servlet/awstaxaexternas");
+define("EAGATA", "http://www.smf.maceio.al.gov.br:8090/e-agata/servlet/awstaxaexternas");
 define("PERTENCES", "http://www3.smf.maceio.al.gov.br/e-agata/servlet/apwsretornopertences");
 define("SITE", "#Orditi");
 define("EMAIL", "contato@orditi.com");

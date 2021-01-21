@@ -3,7 +3,7 @@
 <div class="container-fluid mt-5 p-0">
     <div class="web-div-box">
         <div class="box-div-info">
-            <div class="container">
+            <div class="p-5">
                 <div class="row mt-5">
                     <div class="col-xl-12">
                         <h2 class="black-title-section">Informações pessoais</h2>
@@ -61,23 +61,14 @@
                             <div class="col-xl-4 mt-5 pt-5 text-center">
                                 <img class="mb-4 mt-4" style="width: 200px; border-radius: 50%;" src="<?= $userImage ?>">
 
-                                <?php switch ($user->situacao):
-                                    case 0: ?>
-                                        <p><span class="icon-info-circle"></span> Pendente</p>
-                                    <?php break; case 1: ?>
-                                        <p>Ativo</p>
-                                    <?php break; case 2: ?>
-                                        <p>Inadimplente</p>
-                                    <?php break; case 3: ?>
-                                        <p>Pendente</p>
-                                    <?php break; endswitch; ?>
+                                <p><span class="icon-info-circle"></span> Usuário</p>
                             </div>
                             <div class="col-xl-12 mt-4 mb-5">
                                 <h3 class="black-title-section">Ações</h3>
                                 <p class="subtitle-section-p">Informações recorrentes</p>
                                 <hr>
                                 <div class="row">
-                                    <div class="col-xl-6">
+                                    <div class="col-xl-6" onclick="openAttachs()">
                                         <div class="row m-0 mt-3 p-4 div-request-license">
                                             <div class="col-xl-2 text-center mt-4">
                                                 <img src="<?= url('themes/assets/img/files.png') ?>">
@@ -108,3 +99,19 @@
         </div>
     </div>
 </div>
+
+<?php $v->start('scripts'); ?>
+<script>
+    function openFile(url) {
+        window.open('<?= url() ?>/themes/assets/uploads/'+ url, '_blank');
+    }
+
+    function openAttachs() {
+        $('#attachsModal').show();
+    }
+
+    function closeAttachs() {
+        $('#attachsModal').hide();
+    }
+</script>
+<?php $v->end(); ?>

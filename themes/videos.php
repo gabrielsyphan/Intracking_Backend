@@ -1,7 +1,7 @@
 <?php $v->layout("_theme.php") ?>
 
-<div class="container-fluid mt-5" style="background-color: #fff;">
-    <div class="container pt-5 pb-5">
+<div class="container-fluid container-white mt-5 border-bottom-gray">
+    <div class="p-5">
         <div class="row">
             <div class="col-xl-7">
                 <h2 class="black-title-section">Precisa de ajuda?</h2>
@@ -9,7 +9,7 @@
             </div>
             <hr class="col-xl-12">
             <div class="col-xl-6 mb-5">
-                <div class="row m-0 mt-5 p-4 div-request-license">
+                <div class="row m-0 mt-5 p-4 div-gray-bg">
                     <div class="col-xl-2 text-center mt-4">
                         <img src="<?= url('themes/assets/img/salesman.png') ?>">
                     </div>
@@ -25,7 +25,7 @@
             </div>
 
             <div class="col-xl-6 mb-5">
-                <div class="row m-0 mt-5 p-4 div-request-license">
+                <div class="row m-0 mt-5 p-4 div-gray-bg">
                     <div class="col-xl-2 text-center mt-4">
                         <img src="<?= url('themes/assets/img/password.png') ?>">
                     </div>
@@ -41,7 +41,7 @@
             </div>
 
             <div class="col-xl-6 mb-5">
-                <div class="row m-0 mt-5 p-4 div-request-license">
+                <div class="row m-0 mt-5 p-4 div-gray-bg">
                     <div class="col-xl-2 text-center mt-4">
                         <img src="<?= url('themes/assets/img/map.png') ?>">
                     </div>

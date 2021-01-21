@@ -90,6 +90,9 @@
                                 </div>
                                 <hr class="ml-5 mr-5 hr-gray">
                                 <div class="pl-5 pr-5 text-right">
+                                    <button type="button" class="btn-3 quartenary-color mb-5" onclick="window.location.href='<?= $router->route('web.home'); ?>'">
+                                        Voltar ao início
+                                    </button>
                                     <button type="button" class="btn-3 tertiary-color mb-5" onclick="nextPage(1, 2)">
                                         Próximo
                                     </button>
@@ -168,10 +171,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xl-6 second-attach">
+                                    <div class="col-xl-6">
                                         <p class="label-left">Foto da identidade (CPF + RG): </p>
                                     </div>
-                                    <div class="col-xl-6 text-center second-attach">
+                                    <div class="col-xl-6 text-center">
                                         <label class="label-file identityImage-file" for="identityImage"><span
                                                     class="icon-plus mr-2"></span> Selecionar Arquivo</label>
                                         <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
@@ -189,6 +192,34 @@
                                                     <p class="identityImage-name"></p>
                                                     <span id="identityImage-span-close"
                                                           class="icon-close ml-3 card-close-file"
+                                                          onclick="changeFile(this)"></span>
+                                                </div>
+                                                <div class="card-content-progress"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6">
+                                        <p class="label-left">Comprovante de residência:</p>
+                                    </div>
+
+                                    <div class="col-xl-6 text-center">
+                                        <label class="label-file proofAddress-file text-center" for="proofAddress"><span
+                                                    class="icon-plus mr-2"></span> Selecionar Arquivo</label>
+                                        <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
+                                               id="proofAddress" name="proofAddress" accept="image/png, image/jpg, image/jpeg">
+                                        <div class="invalid-feedback"></div>
+                                        <div class="proofAddress-file-uploaded file-uploaded-container">
+                                            <div class="card-content-upload text-center p-3">
+                                                <div class="card-content-type-upload">
+                                                    <span class="proofAddress-type"></span>
+                                                </div>
+                                            </div>
+                                            <div class="ml-3 text-left">
+                                                <div class="d-flex">
+                                                    <p class="proofAddress-name"></p>
+                                                    <span id="proofAddress-span-close"
+                                                          class="icon-close ml-3 card-close-file proofAddress"
                                                           onclick="changeFile(this)"></span>
                                                 </div>
                                                 <div class="card-content-progress"></div>

@@ -6,79 +6,80 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
 <?php $v->end(); ?>
 
-<div id="map" class="mt-5"></div>
-<div class="container-fluid" style="background-color: #fff;">
-    <div class="container pt-5 pb-5">
-        <div class="row">
+<div class="container-fluid mt-5" style="background-color: #fff;">
+    <div class="p-5">
+        <form class="row">
             <div class="col-xl-12">
                 <h2 class="black-title-section">Cadastrar nova Zona</h2>
                 <p class="subtitle-section-p">Descreva todos os dados da zona desenhada acima.</p>
                 <hr>
             </div>
-            <div class="col-xl-12">
-                <form id="form" method="POST" class="formStyleWidth" action="">
-                    <div id="inputHidden"></div>
+            <div class="col-xl-6 mt-5">
+                <div class="div-gray-bg border-top-green p-5">
+                    <h4 class="black-title-section">Informações da zona</h4>
+                    <hr>
                     <div class="row">
-                        <div class="col-xl-7">
-                            <div class="row">
-                                <div class="col-xl-12">
-                                    <div class="form-group">
-                                        <label>Nome:</label>
-                                        <input type="text" class="form-input" id="zoneName" name="zoneName"
-                                               title="Nome do local" placeholder="Insira o nome do local" required>
-                                    </div>
-                                </div>
-
-                                <div class="col-xl-12">
-                                    <div class="form-group">
-                                        <label>Descrição: <span class="spanAlert">(Opcional)</span></label>
-                                        <input type="text" class="form-input" id="description" name="description"
-                                               title="Descrição do local" placeholder="Insira a descrição do local">
-                                    </div>
-                                </div>
-
-                                <div class="col-xl-12">
-                                    <div class="form-group">
-                                        <label>Foto do local: <span class="spanAlert">(Opcional)</span></label>
-                                        <input type="file" class="form-input" id="localImage" name="localImage"
-                                               accept="image/png, image/jpg, image/jpeg">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Vagas totais:</label>
-                                        <input type="number" class="form-input" id="available" name="available"
-                                               title="Vagas disponíveis" min="0" placeholder="Insira a quantidade de vagas totais" required>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Vagas já ocupadas:</label>
-                                        <input type="number" class="form-input" id="occupied" name="occupied"
-                                               title="Vagas ocupadas" min="0" placeholder="Insira a quantidade de vagas ocupadas" required>
-                                    </div>
-                                </div>
-
-                                <div class="col-xl-12 text-right">
-                                    <hr>
-                                    <button type="button" class="btn-3 secondary-color">
-                                        Resetar
-                                    </button>
-                                    <button type="submit" class="btn-3 primary">
-                                        Cadastrar
-                                    </button>
-                                </div>
+                        <div class="col-xl-12">
+                            <div class="form-group">
+                                <label>Nome:</label>
+                                <input type="text" class="form-input" id="zoneName" name="zoneName"
+                                       title="Nome do local" placeholder="Insira o nome do local" required>
                             </div>
                         </div>
-                        <div class="col-xl-5 mt-5">
-                            <img src="<?= url('themes/assets/img/map.svg') ?>" class="w-100">
+
+                        <div class="col-xl-12">
+                            <div class="form-group">
+                                <label>Descrição: <span class="spanAlert">(Opcional)</span></label>
+                                <input type="text" class="form-input" id="description" name="description"
+                                       title="Descrição do local" placeholder="Insira a descrição do local">
+                            </div>
+                        </div>
+
+                        <div class="col-xl-12">
+                            <div class="form-group">
+                                <label>Foto do local: <span class="spanAlert">(Opcional)</span></label>
+                                <input style="background: white;" type="file" class="form-input" id="localImage" name="localImage"
+                                       accept="image/png, image/jpg, image/jpeg">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Vagas totais:</label>
+                                <input type="number" class="form-input" id="available" name="available"
+                                       title="Vagas disponíveis" min="0" placeholder="Insira a quantidade de vagas totais" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Vagas já ocupadas:</label>
+                                <input type="number" class="form-input" id="occupied" name="occupied"
+                                       title="Vagas ocupadas" min="0" placeholder="Insira a quantidade de vagas ocupadas" required>
+                            </div>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
+            <div class="col-xl-6 mt-5">
+                <div class="div-gray-bg border-top-green p-5">
+                    <h4 class="black-title-section">Realize o desenho da zona no mapa</h4>
+                    <hr>
+                    <div class="row">
+                        <div id="map"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-12 text-right mt-5 mb-5">
+                <button type="button" class="btn-3 secondary-color">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn-3 primary">
+                    Cadastrar
+                </button>
+                <hr>
+            </div>
+        </form>
     </div>
 </div>
 

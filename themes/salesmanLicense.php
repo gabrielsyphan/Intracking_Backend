@@ -11,7 +11,7 @@
 <?php $v->end(); ?>
 
 <div class="container-fluid mt-5" style="background-color: #fff;">
-    <div class="container pt-5 pb-5">
+    <div class="p-5">
         <form id="form-license-salesman" method="POST" action="<?= $router->route('web.validateSalesmanLicense'); ?>">
             <fieldset>
                 <div id="inputHidden"></div>
@@ -21,132 +21,152 @@
                         <p class="subtitle-section-p">Voltada as pessoas que exercem a profissão de ambulante.</p>
                         <hr>
                     </div>
-                    <div class="col-xl-4">
-                        <div class="form-group">
-                            <label>Como vai vender?:</label>
-                            <input type="text" class="form-input" id="howWillSell" name="howWillSell"
-                                   placeholder="Ex.: Barraca, carrinho...">
-                            <div class="invalid-feedback"></div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-4">
-                        <div class="form-group">
-                            <label>Largura ocupada em metros</label>
-                            <input type="text" class="form-input" id="width" name="width" placeholder="Ex.: 10">
-                            <div class="invalid-feedback"></div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-4">
-                        <div class="form-group">
-                            <label>Comprimento ocupado em metros:</label>
-                            <input type="text" class="form-input" id="length" name="length" placeholder="Ex.: 5.23">
-                            <div class="invalid-feedback"></div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-12">
-                        <div class="form-group">
-                            <label>Produtos e/ou serviços:</label>
-                            <select id="productSelect" class="form-input" name="productSelect[]" multiple="multiple">
-                                <option value="0">Gêneros e produtos alimentícios em geral</option>
-                                <option value="1">Bebidas não alcoólicas</option>
-                                <option value="2">Bebidas alcoólicas</option>
-                                <option value="3">Brinquedos e artigos ornamentais</option>
-                                <option value="4">Confecções, calçados e artigos de usopessoal</option>
-                                <option value="5">Louças, ferragens, artefatos de plástico,borracha, couro e utensílios
-                                    domésticos
-                                </option>
-                                <option value="6">Artesanato, antiguidades e artigos dearte em geral</option>
-                                <option value="7">Outros artigos não especificados nos itens anteriores</option>
-                            </select>
-                            <div class="invalid-feedback"></div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-12">
-                        <div class="form-group">
-                            <label>Descreva seu produto ou serviço ofertado: <span class="spanAlert">(Somente os não especificados na lista acima)</span></label>
-                            <textarea type="text" class="form-input" id="productDescription" name="productDescription"
-                                      placeholder="Ex.: Trabalho com a venda de produtos para cabelo."></textarea>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-4">
-                        <div class="form-group">
-                            <label>Dias trabalhados:</label>
-                            <select id="workedDays" class="form-input" multiple="multiple" name="workedDays[]">
-                                <option value="0">Domingo</option>
-                                <option value="1">Segunda-Feira</option>
-                                <option value="2">Terça-Feira</option>
-                                <option value="3">Quarta-Feira</option>
-                                <option value="4">Quinta-Feira</option>
-                                <option value="5">Sexta-Feira</option>
-                                <option value="6">Sabado</option>
-                            </select>
-                            <div class="invalid-feedback"></div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-4">
-                        <div class="form-group">
-                            <label>Horário para o ínicio das vendas:</label>
-                            <input type="time" class="form-input" id="initHour" name="initHour"
-                                   placeholder="Digite o nome de sua mãe">
-                            <div class="invalid-feedback"></div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-4">
-                        <div class="form-group">
-                            <label>Horário para o fim das vendas:</label>
-                            <input type="time" class="form-input" id="endHour" name="endHour"
-                                   placeholder="Digite o nome de sua mãe">
-                            <div class="invalid-feedback"></div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-6 mt-4">
-                        <div class="row">
-                            <div class="col-xl-7">
-                                <div class="form-group">
-                                    <label>Insira uma foto do seu equipamento (barraca, carrinho etc):</label>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-5 text-left">
-                                <label class="label-file equipmentImage-file text-center" for="equipmentImage"><span
-                                            class="icon-plus mr-2"></span> Selecionar Arquivo</label>
-                                <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
-                                       id="equipmentImage" name="equipmentImage"
-                                       accept="image/png, image/jpg, image/jpeg">
-                                <div class="invalid-feedback"></div>
-                                <div class="equipmentImage-file-uploaded file-uploaded-container">
-                                    <div class="card-content-upload text-center p-3">
-                                        <div class="card-content-type-upload">
-                                            <span class="equipmentImage-type"></span>
-                                        </div>
+                    <div class="col-xl-6 mt-5">
+                        <div class="div-gray-bg border-top-green p-5">
+                            <h4 class="black-title-section">Informações de trabalho</h4>
+                            <hr>
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="form-group">
+                                        <label>Como vai vender?:</label>
+                                        <input type="text" class="form-input" id="howWillSell" name="howWillSell"
+                                               placeholder="Ex.: Barraca, carrinho...">
+                                        <div class="invalid-feedback"></div>
                                     </div>
-                                    <div class="ml-3 text-left">
-                                        <div class="d-flex">
-                                            <p class="equipmentImage-name"></p>
-                                            <span id="equipmentImage-span-close"
-                                                  class="icon-close ml-3 card-close-file equipmentImage"
-                                                  onclick="changeFile(this)"></span>
-                                        </div>
-                                        <div class="card-content-progress"></div>
+                                </div>
+
+                                <div class="col-xl-6">
+                                    <div class="form-group">
+                                        <label>Largura ocupada em metros</label>
+                                        <input type="text" class="form-input" id="width" name="width" placeholder="Ex.: 10">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-6">
+                                    <div class="form-group">
+                                        <label>Comprimento em metros:</label>
+                                        <input type="text" class="form-input" id="length" name="length" placeholder="Ex.: 5.23">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-12">
+                                    <div class="form-group">
+                                        <label>Produtos e/ou serviços:</label>
+                                        <select id="productSelect" class="form-input" name="productSelect[]" multiple="multiple">
+                                            <option value="0">Gêneros e produtos alimentícios em geral</option>
+                                            <option value="1">Bebidas não alcoólicas</option>
+                                            <option value="2">Bebidas alcoólicas</option>
+                                            <option value="3">Brinquedos e artigos ornamentais</option>
+                                            <option value="4">Confecções, calçados e artigos de usopessoal</option>
+                                            <option value="5">Louças, ferragens, artefatos de plástico,borracha, couro e utensílios
+                                                domésticos
+                                            </option>
+                                            <option value="6">Artesanato, antiguidades e artigos dearte em geral</option>
+                                            <option value="7">Outros artigos não especificados nos itens anteriores</option>
+                                        </select>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-12">
+                                    <div class="form-group">
+                                        <label>Descreva outro produto ofertado: <span class="spanAlert">(Se não encontrado na lista acima)</span>:</label>
+                                        <textarea type="text" class="form-input" id="productDescription" name="productDescription"
+                                                  placeholder="Ex.: Trabalho com a venda de produtos para cabelo."></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-xl-6 mt-5">
+                        <div class="div-gray-bg border-top-green p-5">
+                            <h4 class="black-title-section">Horários e anexos</h4>
+                            <hr>
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="form-group">
+                                        <label>Dias trabalhados:</label>
+                                        <select id="workedDays" class="form-input" multiple="multiple" name="workedDays[]">
+                                            <option value="0">Domingo</option>
+                                            <option value="1">Segunda-Feira</option>
+                                            <option value="2">Terça-Feira</option>
+                                            <option value="3">Quarta-Feira</option>
+                                            <option value="4">Quinta-Feira</option>
+                                            <option value="5">Sexta-Feira</option>
+                                            <option value="6">Sabado</option>
+                                        </select>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-12">
+                                    <div class="form-group">
+                                        <label>Horário para o Início das vendas:</label>
+                                        <input type="time" class="form-input" id="initHour" name="initHour"
+                                               placeholder="Digite o nome de sua mãe">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-12">
+                                    <div class="form-group">
+                                        <label>Horário para o fim das vendas:</label>
+                                        <input type="time" class="form-input" id="endHour" name="endHour"
+                                               placeholder="Digite o nome de sua mãe">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-12 mt-4">
+                                    <div class="row">
+                                        <div class="col-xl-7">
+                                            <div class="form-group">
+                                                <label>Insira uma foto do seu equipamento (barraca, carrinho etc):</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-5 text-left">
+                                            <label class="label-file equipmentImage-file text-center" for="equipmentImage"><span
+                                                        class="icon-plus mr-2"></span> Selecionar Arquivo</label>
+                                            <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
+                                                   id="equipmentImage" name="equipmentImage"
+                                                   accept="image/png, image/jpg, image/jpeg">
+                                            <div class="invalid-feedback"></div>
+                                            <div class="equipmentImage-file-uploaded file-uploaded-container">
+                                                <div class="card-content-upload text-center p-3">
+                                                    <div class="card-content-type-upload">
+                                                        <span class="equipmentImage-type"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="ml-3 text-left">
+                                                    <div class="d-flex">
+                                                        <p class="equipmentImage-name"></p>
+                                                        <span id="equipmentImage-span-close"
+                                                              class="icon-close ml-3 card-close-file equipmentImage"
+                                                              onclick="changeFile(this)"></span>
+                                                    </div>
+                                                    <div class="card-content-progress"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-xl-12 mt-5">
-                        <h3 class="black-title-section">Local de trabalho</h3>
-                        <p class="subtitle-section-p">Marque no mapa o local em que deseja trabalhar.</p>
-                        <hr>
-                        <div id="mapCreateAccount"></div>
+                        <div class="div-gray-bg border-top-green p-5">
+                            <h4 class="black-title-section">Local de trabalho</h4>
+                            <p class="subtitle-section-p">Marque no mapa o local em que deseja trabalhar.</p>
+                            <hr>
+                            <div id="mapCreateAccount"></div>
+                        </div>
                     </div>
+
                     <div class="col-xl-12 mt-5 text-right">
                         <hr>
                         <button type="reset" class="btn-3 secondary-color">

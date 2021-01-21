@@ -358,103 +358,6 @@ class Web
 
     /**
      * @return void
-     */
-    public function companyProfile(): void
-    {
-        $this->checkLogin();
-
-        if ($_SESSION['user']['login'] == 1) {
-            $this->router->redirect("web.profile");
-        }
-
-        $company = (new Company())->findById($_SESSION['user']['id']);
-        if ($company !== null) {
-            $payments = (new Payment())->find('id_empresa = :id', 'id=' . $company->id)->fetch(true);
-            $salesmans = (new Salesman())->find('id_empresa = :id', 'id=' . $company->id)->fetch(true);
-            $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
-
-            $paymentArray = array();
-            if ($payments) {
-                foreach ($payments as $payment) {
-                    $salesmanName = (new Salesman())->findById($payment->id_ambulante, 'nome');
-                    if ($salesmanName) {
-                        $payment->name = $salesmanName->nome;
-                        $paymentArray[] = $payment;
-                    }
-                }
-            } else {
-                $paymentArray == null;
-            }
-
-            if ($zones) {
-                foreach ($zones as $zone) {
-                    $centroid = explode("POINT(", $zone->centroide);
-                    $centroid = explode(")", $centroid[1]);
-                    $centroid = explode(" ", $centroid[0]);
-
-                    $polygon = explode("POLYGON((", $zone->poligono);
-                    $polygon = explode("))", $polygon[1]);
-                    $polygon = explode(",", $polygon[0]);
-
-                    $aux = array();
-                    foreach ($polygon as $polig) {
-                        $polig = explode(" ", $polig);
-                        $aux[] = $polig;
-                    }
-
-                    $polygon = $aux;
-
-                    $zone->centroide = $centroid;
-                    $zone->poligono = $polygon;
-                    unset($zone->detalhes, $zone->foto);
-                    $zoneData[] = $zone;
-                }
-            }
-
-            $folder = ROOT . '/themes/assets/uploads';
-            $uploads = array();
-            $aux = 1;
-            $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 2', 'id=' . $company->id)->fetch(true);
-            if ($attachments) {
-                foreach ($attachments as $attach) {
-                    $attachName = explode('.', $attach->file_name);
-                    if ($attachName[0] == 'userImage') {
-                        $userImage = ROOT . '/themes/assets/uploads/companys/' . $attach->id_usuario
-                            . '/' . $attach->file_name;
-                    }
-
-                    $uploads[] = [
-                        'fileName' => $attach->file_name,
-                        'groupName' => 'companys',
-                        'userId' => $company->id
-                    ];
-                    $aux++;
-                }
-            }
-
-            if ($salesmans) {
-                $count = count($salesmans);
-            } else {
-                $count = 0;
-            }
-
-            echo $this->view->render("companyProfile", [
-                'title' => 'Empresa | ' . SITE,
-                'company' => $company,
-                'salesmans' => $salesmans,
-                'salesmansCount' => $count,
-                'zones' => $zoneData,
-                'payments' => $paymentArray,
-                'userImage' => $userImage,
-                'uploads' => $uploads
-            ]);
-        } else {
-            $this->router->redirect('web.salesmanList');
-        }
-    }
-
-    /**
-     * @return void
      * @var $data
      */
     public function validateAccount($data): void
@@ -738,7 +641,7 @@ class Web
                     $extensions_arr = array("jpg", "jpeg", "png");
 
                     if (in_array($imageFileType, $extensions_arr)) {
-                        $folder = THEMES . '/assets/uploads/salesman';
+                        $folder = THEMES . '/assets/uploads/salesmans';
                         if (!file_exists($folder) || !is_dir($folder)) {
                             mkdir($folder, 0755);
                         }
@@ -917,6 +820,147 @@ class Web
                                     $response = 'success';
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        }
+
+        echo $response;
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
+    public function validateCompanyLicense($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $response = 'fail';
+
+        if ($_FILES) {
+            $user = (new User())->findById($_SESSION['user']['id']);
+            $cpf = preg_replace( '/[^0-9]/is', '', $user->cpf);
+
+            $soap_input =
+                '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:e="e-Agata_18.11">
+               <soapenv:Header/>
+               <soapenv:Body>
+                  <e:PWSRetornoPertences.Execute>
+                     <e:Flagtipopesquisa>C</e:Flagtipopesquisa>
+                     <e:Ctgcpf>'. $cpf .'</e:Ctgcpf>
+                     <e:Ctiinscricao></e:Ctiinscricao>
+                  </e:PWSRetornoPertences.Execute>
+               </soapenv:Body>
+            </soapenv:Envelope>';
+
+            $curl = curl_init();
+
+            curl_setopt($curl, CURLOPT_URL, PERTENCES);
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $soap_input);
+            curl_setopt($curl, CURLOPT_HEADER, false);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+            $soap_response = curl_exec($curl);
+
+            $xml_response = str_ireplace(['SOAP-ENV:', 'SOAP:', '.executeresponse', '.SDTRetornoPertences'], '', $soap_response);
+
+            @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
+            $companys = $xml->Body->PWSRetornoPertences->Sdtretornopertences->SDTRetornoPertencesItem->SDTRetornoPertencesEmpresa->SDTRetornoPertencesEmpresaItem;
+
+            $companyAux = 0;
+            if($companys !== ""){
+                foreach ($companys as $company){
+                    if($company->SRPAutonomo == "A"){
+                        if($company->SRPInscricaoEmpresa == $data['cmc']){
+                            $companyAux = 1;
+                        }
+                    }
+                }
+            }
+
+            if($companyAux == 0) {
+                $products = "";
+                foreach ($data['productSelect'] as $product) {
+                    $products = $products . "" . $product;
+                }
+
+                $license = new License();
+                $license->tipo = 1;
+                $license->status = 1;
+                $license->id_usuario = $_SESSION['user']['id'];
+                $license->data_inicio = date('Y-m-d');
+                $license->data_fim = date('Y-m-d', strtotime("+3 days"));
+                $license->cmc = $data['cmc'];
+                $license->save();
+
+                if ($license->fail()) {
+                    var_dump($license->fail()->getMessage());
+                    exit();
+                } else {
+                    /**
+                     * Load all images
+                     */
+                    foreach ($_FILES as $key => $file) {
+                        $target_file = basename($file['name']);
+                        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+                        $extensions_arr = array("jpg", "jpeg", "png");
+
+                        if (in_array($imageFileType, $extensions_arr)) {
+                            $folder = THEMES . '/assets/uploads/companys';
+                            if (!file_exists($folder) || !is_dir($folder)) {
+                                mkdir($folder, 0755);
+                            }
+                            $fileName = $key . '.' . $imageFileType;
+                            $dir = $folder . '/' . $license->id;
+
+                            if (!file_exists($dir) || !is_dir($dir)) {
+                                mkdir($dir, 0755);
+                            }
+
+                            $dir = $dir . '/' . $fileName;
+
+                            move_uploaded_file($file['tmp_name'], $dir);
+
+                            $attach = new Attach();
+                            $attach->id_usuario = $license->id;
+                            $attach->tipo_usuario = 1;
+                            $attach->nome = $fileName;
+                            $attach->save();
+                        }
+                    }
+
+                    if ($attach->fail()) {
+                        $license->destroy();
+                        var_dump($attach->fail()->getMessage());
+                        exit();
+                    } else {
+                        $company = new Company();
+                        $company->cnpj = $data['cnpj'];
+                        $company->cmc = $data['cmc'];
+                        $company->nome_fantasia = $data['fantasyName'];
+                        $company->endereco = $data['street'];
+                        $company->numero = $data['number'];
+                        $company->bairro = $data['neighborhood'];
+                        $company->cidade = $data['city'];
+                        $company->bairro = $data['neighborhood'];
+                        $company->cep = $data['postcode'];
+                        $company->produto = $products;
+                        $company->outro_produto = $data['productDescription'];
+                        $company->relato_atividade = $data['ativityDescription'];
+                        $company->quantidade_equipamentos = $data['equipamentAmount'];
+                        $company->save();
+
+                        if($company->fail()) {
+                            $attach->destroy();
+                            $license->destroy();
+                            var_dump($company->fail()->getMessage());
+                            exit();
+                        } else {
+                            $response = 'success';
                         }
                     }
                 }
@@ -1850,119 +1894,6 @@ class Web
     /**
      * @param array $data
      * @return void
-     */
-    public function salesmanProfile(array $data): void
-    {
-        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
-        $this->checkuser();
-
-        if (is_numeric($data['id'])) {
-            if ($_SESSION['user']['login'] == 2) {
-                $salesman = (new Salesman())->find('id = :dataId AND id_empresa = :company', 'dataId=' . $data['id'] . '&company=' . $_SESSION['user']['id'])->fetch();
-            } else {
-                $salesman = (new Salesman())->findById($data['id']);
-            }
-            if ($salesman !== null) {
-                $notification = (new Notification())->find('ambulante_id = :id', 'id=' . $salesman->id)->fetch(true);
-                $payments = (new Payment())->find('id_ambulante = :id', 'id=' . $salesman->id)->fetch(true);
-                $agents = (new Agent())->find('', '', 'id, nome')->fetch(true);
-
-                if ($salesman->regiao !== null) {
-                    $zone = (new Zone())->findById($salesman->regiao, 'id, nome, ST_AsText(coordenadas) as poligono, limite_ambulantes, quantidade_ambulantes');
-                } else {
-                    $zone = null;
-                }
-
-                if ($salesman->id_empresa !== NULL) {
-                    $company = (new Company())->findById($salesman->id_empresa, 'nome_fantasia');
-                } else {
-                    $company = null;
-                }
-
-                if ($zone) {
-                    $polygon = explode("POLYGON((", $zone->poligono);
-                    $polygon = explode("))", $polygon[1]);
-                    $polygon = explode(",", $polygon[0]);
-
-                    $aux = array();
-                    foreach ($polygon as $polig) {
-                        $polig = explode(" ", $polig);
-                        $aux[] = $polig;
-                    }
-                    $polygon = $aux;
-                    $zone->poligono = $polygon;
-                }
-
-                if ($salesman->suspenso == 0 && ($salesman->latitude == null || $salesman->longitude == null)) {
-                    $zoneData = array();
-                    $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
-
-                    if ($zones) {
-                        foreach ($zones as $zone) {
-                            $polygon = explode("POLYGON((", $zone->poligono);
-                            $polygon = explode("))", $polygon[1]);
-                            $polygon = explode(",", $polygon[0]);
-
-                            $aux = array();
-                            foreach ($polygon as $polig) {
-                                $polig = explode(" ", $polig);
-                                $aux[] = $polig;
-                            }
-
-                            $polygon = $aux;
-
-                            $zone->poligono = $polygon;
-                            $zoneData[] = $zone;
-                        }
-                    } else {
-                        $zoneData = null;
-                    }
-                } else {
-                    $zoneData = null;
-                }
-
-                $folder = ROOT . '/themes/assets/uploads';
-                $uploads = array();
-                $aux = 1;
-                $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 1', 'id=' . $salesman->id)->fetch(true);
-                if ($attachments) {
-                    foreach ($attachments as $attach) {
-                        $attachName = explode('.', $attach->file_name);
-                        if ($attachName[0] == 'userImage') {
-                            $userImage = ROOT . '/themes/assets/uploads/salesmans/' . $attach->id_usuario
-                                . '/' . $attach->file_name;
-                        }
-
-                        $uploads[] = [
-                            'fileName' => $attach->file_name,
-                            'groupName' => 'salesmans',
-                            'userId' => $salesman->id
-                        ];
-                        $aux++;
-                    }
-                }
-
-                echo $this->view->render('profile', [
-                    'title' => 'Ambulante | ' . SITE,
-                    'salesman' => $salesman,
-                    'notifications' => $notification,
-                    'payments' => $payments,
-                    'agents' => $agents,
-                    'zone' => $zone,
-                    'company' => $company,
-                    'zones' => $zoneData,
-                    'uploads' => $uploads,
-                    'userImage' => $userImage
-                ]);
-            } else {
-                $this->router->redirect('web.salesmanList');
-            }
-        }
-    }
-
-    /**
-     * @param array $data
-     * @return void
      * Open file get method
      */
     public function downloadFile(array $data): void
@@ -1970,7 +1901,7 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $this->checkLogin();
 
-        $file = (new Attach())->find('file_name = :fileName', 'fileName=' . $data['fileName'])
+        $file = (new Attach())->find('nome = :fileName', 'fileName=' . $data['fileName'])
             ->fetch(false);
 
         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
@@ -1985,7 +1916,7 @@ class Web
                 THEMES . "/assets/uploads/{$data['groupName']}/{$data['userId']}/{$data['fileName']}"
             );
 
-            header("Content-Disposition: attachment; filename=\"{$file->file_name}\"");
+            header("Content-Disposition: attachment; filename=\"{$file->nome}\"");
             echo($fileToDownload);
         }
     }
@@ -2174,103 +2105,6 @@ class Web
             }
         } else {
             echo 0;
-        }
-    }
-
-    /**
-     * @param array $data
-     * @return void
-     */
-    public function companyInfo(array $data): void
-    {
-        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
-        $this->checkAgent();
-
-        if (is_numeric($data['id'])) {
-            $company = (new Company())->findById($data['id']);
-            if ($company !== null) {
-                $payments = (new Payment())->find('id_empresa = :id', 'id=' . $company->id)->fetch(true);
-                $salesmans = (new Salesman())->find('id_empresa = :id', 'id=' . $company->id)->fetch(true);
-                $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
-
-                $paymentArray = array();
-                if ($payments) {
-                    foreach ($payments as $payment) {
-                        $salesmanName = (new Salesman())->findById($payment->id_ambulante, 'nome');
-                        if ($salesmanName) {
-                            $payment->name = $salesmanName->nome;
-                            $paymentArray[] = $payment;
-                        }
-                    }
-                } else {
-                    $paymentArray == null;
-                }
-
-                if ($zones) {
-                    foreach ($zones as $zone) {
-                        $centroid = explode("POINT(", $zone->centroide);
-                        $centroid = explode(")", $centroid[1]);
-                        $centroid = explode(" ", $centroid[0]);
-
-                        $polygon = explode("POLYGON((", $zone->poligono);
-                        $polygon = explode("))", $polygon[1]);
-                        $polygon = explode(",", $polygon[0]);
-
-                        $aux = array();
-                        foreach ($polygon as $polig) {
-                            $polig = explode(" ", $polig);
-                            $aux[] = $polig;
-                        }
-
-                        $polygon = $aux;
-
-                        $zone->centroide = $centroid;
-                        $zone->poligono = $polygon;
-                        unset($zone->detalhes, $zone->foto);
-                        $zoneData[] = $zone;
-                    }
-                }
-
-                $folder = ROOT . '/themes/assets/uploads';
-                $uploads = array();
-                $aux = 1;
-                $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 2', 'id=' . $company->id)->fetch(true);
-                if ($attachments) {
-                    foreach ($attachments as $attach) {
-                        $attachName = explode('.', $attach->file_name);
-                        if ($attachName[0] == 'userImage') {
-                            $userImage = ROOT . '/themes/assets/uploads/companys/' . $attach->id_usuario
-                                . '/' . $attach->file_name;
-                        }
-
-                        $uploads[] = [
-                            'fileName' => $attach->file_name,
-                            'groupName' => 'companys',
-                            'userId' => $company->id
-                        ];
-                        $aux++;
-                    }
-                }
-
-                if ($salesmans) {
-                    $count = count($salesmans);
-                } else {
-                    $count = 0;
-                }
-
-                echo $this->view->render("companyProfile", [
-                    'title' => 'Empresa | ' . SITE,
-                    'company' => $company,
-                    'salesmans' => $salesmans,
-                    'salesmansCount' => $count,
-                    'zones' => $zoneData,
-                    'payments' => $paymentArray,
-                    'userImage' => $userImage,
-                    'uploads' => $uploads
-                ]);
-            } else {
-                $this->router->redirect('web.salesmanList');
-            }
         }
     }
 

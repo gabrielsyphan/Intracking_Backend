@@ -183,20 +183,11 @@ a[data-toggle="collapse"] {
     #sidebar.active {
         margin-left: 0;
     }
-
-    .div-box-span-icon {
-        position: relative;
-    }
 }
 
 @media (min-width: 1000px) {
     .signOut {
         line-height: 32px;
-    }
-
-    .div-box-span-icon {
-        position: absolute;
-        right: 40px;
     }
 
     .table-col-1 {
@@ -217,10 +208,6 @@ a[data-toggle="collapse"] {
 
     .table-col-5 {
         width: auto;
-    }
-
-    .input-table-search {
-        width: 350px;
     }
 }
 
@@ -319,6 +306,7 @@ a[data-toggle="collapse"] {
     border-radius: 5px;
     text-decoration: none;
     color: #fff !important;
+    padding: 5px 15px;
 }
 
 .item-max-width {
@@ -415,14 +403,10 @@ a[data-toggle="collapse"] {
         overflow-x: auto !important;
         white-space: nowrap;
     }
-
-    .input-table-search {
-        width: 180px;
-    }
 }
 
 #salesmanMap {
-    height: 100vh;
+    height: 150vh;
     width: 100%;
 }
 
@@ -438,7 +422,7 @@ a[data-toggle="collapse"] {
 
 #map {
     width: 100%;
-    height: 500px;
+    height: 420px;
 }
 
 .signUp {
@@ -781,7 +765,7 @@ a[data-toggle="collapse"] {
 
 .web-div-box {
     width: 100%;
-    background-color: white;
+    background-color: #fff;
     border-radius: 10px;
 }
 
@@ -790,6 +774,10 @@ a[data-toggle="collapse"] {
     overflow: hidden;
     /*box-shadow: 0 0px 10px 0px rgba(0, 0, 0, 0.15);*/
     padding: 15px;
+}
+
+.border-bottom-gray {
+    border-bottom: 2px solid #e0e0e0;
 }
 
 .box-div-info-no-padding {
@@ -951,10 +939,17 @@ tbody > tr:hover {
     cursor: pointer;
     top: 10px;
     display: flex;
+    color: #6b6b6b;
+    position: absolute;
+    right: 40px;
+}
+
+td > .btn > span, form > .btn > span {
+    color: #6b6b6b;
 }
 
 .div-box-span-icon:hover {
-    color: #5ea9a4;
+    color: #3a3a3a;
 }
 
 .div-box-right-button {
@@ -1259,6 +1254,27 @@ input[type=file].hidden-input-file {
     color: #4bc2ce;
 }
 
-.col-xl-6 > .row > .col-xl-6 > .form-group {
-    line-height: 60px;
+/*.col-xl-6 > .row > .col-xl-6 > .form-group {*/
+/*    line-height: 60px;*/
+/*}*/
+
+.div-gray-bg {
+    background-color: #f7f7f7;
+}
+
+.border-top-green {
+    border-top: 2px solid #4bc2ce;
+}
+
+.container-white {
+    background: #fff;
+}
+
+#attachsModal {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+    display: none;
 }

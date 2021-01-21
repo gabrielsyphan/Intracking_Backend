@@ -1,7 +1,7 @@
 <?php $v->layout("_theme.php") ?>
 
-<div class="container-fluid mt-5" style="background-color: #fff;">
-    <div class="container pt-5 pb-5">
+<div class="container-fluid container-white border-bottom-gray mt-5">
+    <div class="p-5">
         <div class="row">
             <div class="col-xl-6">
                 <h2 class="black-title-section">Bem-vindo ao Orditi!</h2>
@@ -22,8 +22,8 @@
     </div>
 </div>
 
-<div class="container-fluid mt-5 mb-5" style="background-color: #fff;">
-    <div class="container pt-5 pb-5 mb-5">
+<div class="container-fluid container-white border-bottom-gray mt-5 mb-5">
+    <div class="p-5 mb-5">
         <div class="row">
             <div class="col-xl-6 pt-5">
                 <img class="mt-5 align-middle" style="width: 90%" src="<?= url('themes/assets/img/contact-us.svg') ?>">

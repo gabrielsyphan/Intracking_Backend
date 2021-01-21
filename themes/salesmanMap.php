@@ -6,11 +6,6 @@
 <link rel="stylesheet" href="<?= url("themes/assets/css/MarkerCluster.css"); ?>" />
 <link rel="stylesheet" href="<?= url("themes/assets/css/MarkerCluster.Default.css"); ?>" />
 <script src="<?= url("themes/assets/js/leaflet.js"); ?>"></script>
-<style>
-    html{
-        overflow: hidden;
-    }
-</style>
 <?php $v->end(); ?>
 
 <div class="row">
