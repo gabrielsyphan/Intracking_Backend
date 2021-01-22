@@ -10,6 +10,6 @@ class Zone extends DataLayer
 {
     public function __construct()
     {
-        parent::__construct("zonas", [], 'id', false);
+        parent::__construct("zonas", [], "id", "false");
     }
 }

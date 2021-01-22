@@ -209,6 +209,12 @@ a[data-toggle="collapse"] {
     .table-col-5 {
         width: auto;
     }
+
+    .div-box-span-icon{
+        top: 10px;
+        position: absolute;
+        right: 40px;
+    }
 }
 
 .circle-button {
@@ -769,6 +775,13 @@ a[data-toggle="collapse"] {
     border-radius: 10px;
 }
 
+.web-div{
+    width: 100%;
+    /*height: 80vh;*/
+    background-color: white;
+    padding: 0 15px;
+}
+
 .box-div-info {
     border-radius: 10px;
     overflow: hidden;
@@ -937,16 +950,13 @@ tbody > tr:hover {
 .div-box-span-icon {
     font-size: 20px;
     cursor: pointer;
-    top: 10px;
     display: flex;
     color: #6b6b6b;
-    position: absolute;
-    right: 40px;
 }
 
-td > .btn > span, form > .btn > span {
-    color: #6b6b6b;
-}
+/*td > .btn > span, form > .btn > span {*/
+/*    color: #6b6b6b;*/
+/*}*/
 
 .div-box-span-icon:hover {
     color: #3a3a3a;

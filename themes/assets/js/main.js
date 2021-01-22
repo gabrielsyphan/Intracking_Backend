@@ -434,7 +434,123 @@ function formSubmit(form) {
         }
     });
 
+    if (validate == false) {
+        const fieldsetDisable = _thisForm.find('fieldset');
+        fieldsetDisable.removeAttr("disabled");
+        $("#loader-div").hide();
+    }
+
     return validate;
+}
+
+function checkCpf(e) {
+    let cpf = e;
+
+    let sum;
+    let aux;
+    sum = 0;
+
+    if (cpf == "00000000000") {
+        return false;
+    }
+    for (i = 1; i <= 9; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (11 - i);
+    aux = (sum * 10) % 11;
+
+    if ((aux == 10) || (aux == 11)) {
+        aux = 0;
+    }
+    if (aux != parseInt(cpf.substring(9, 10))) {
+        return false;
+    }
+
+    sum = 0;
+    for (i = 1; i <= 10; i++) {
+        sum = sum + parseInt(cpf.substring(i - 1, i)) * (12 - i);
+        aux = (sum * 10) % 11;
+    }
+
+    if ((aux == 10) || (aux == 11)) {
+        aux = 0;
+    }
+
+    if (aux != parseInt(cpf.substring(10, 11))) {
+        return false;
+    }
+    return true;
+}
+
+function formatedCPF(e) {
+    let cpf = $('#' + e.id).val();
+    cpf = cpf.split('-');
+    cpf = cpf[0] + '' + cpf[1];
+    cpf = cpf.split('.');
+    cpf = cpf[0] + '' + cpf[1] + '' + cpf[2];
+    return cpf;
+}
+
+function nextPage(current, next) {
+    $("#page-" + current).hide();
+    $(".box-" + current).removeClass("active");
+    $("#img-page-" + current).hide();
+    $("#page-" + next).show();
+    $(".box-" + next).addClass("active");
+    $("#img-page-" + next).show();
+
+    if (next == 2) {
+        setTimeout(function () {
+            map.invalidateSize();
+        }, 100);
+    }
+}
+
+function prevPage(current, prev) {
+    $("#page-" + current).hide();
+    $(".box-" + current).removeClass("active");
+    $("#img-page-" + current).hide();
+    $("#page-" + prev).show();
+    $(".box-" + prev).addClass("active");
+    $("#img-page-" + prev).show();
+
+    if (prev == 2) {
+        setTimeout(function () {
+            map.invalidateSize();
+        }, 100);
+    }
+}
+
+function licenseChange(licenseOption) {
+    for (let i = 0; i <= 5; i++) {
+        $(".license-" + i).hide('fast');
+    }
+    $(".license-" + licenseOption).css('display', 'flex');
+}
+
+function uploadImage(e) {
+    const file = $('#' + e.id).prop('files')[0];
+    let fileName = file.name;
+    let ext = fileName.substr(fileName.lastIndexOf('.') + 1);
+    if (ext === 'jpg' || ext === 'jpeg' || ext === 'png' || ext === 'JPG' || ext === 'JPEG' || ext === 'PNG') {
+        if (file.size > 1133695) {
+            swal({
+                icon: "warning",
+                title: "Atenção",
+                text: "Por favor, insira uma imagem com no máximo 1mb de tamanho.",
+            });
+            $('#' + e.id).val('');
+        } else {
+            $('.' + e.id + '-file').hide();
+            $('.' + e.id + '-file-uploaded').css('display', 'flex');
+            $('.' + e.id + '-name').append(fileName);
+            $('.' + e.id + '-type').append(ext);
+        }
+    } else {
+        swal({
+            icon: "error",
+            title: "Erro",
+            text: "O tipo do anexo é inválido. Por favor, insira uma imagem em formato JPEG, JPG ou PNG.",
+        });
+        $('#' + inputName).val('');
+    }
 }
 
 function changeFile(e) {
@@ -446,3 +562,4 @@ function changeFile(e) {
     $('.' + inputId + '-type').empty();
     $('.' + inputId + '-name').empty();
 }
+

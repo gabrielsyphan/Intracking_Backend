@@ -19,7 +19,7 @@
                     </div>
                     <div class="col-xl-12 text-center">
                         <hr>
-                        <a href="#">Acesse o vídeo clicando aqui!</a>
+                        <a href="https://www.youtube.com/embed/8B3gm7WL3CY" target="_blank">Acesse o vídeo clicando aqui!</a>
                     </div>
                 </div>
             </div>
@@ -35,7 +35,7 @@
                     </div>
                     <div class="col-xl-12 text-center">
                         <hr>
-                        <a href="#">Acesse o vídeo clicando aqui!</a>
+                        <a href="https://www.youtube.com/embed/wSDvbEm6nng" target="_blank">Acesse o vídeo clicando aqui!</a>
                     </div>
                 </div>
             </div>
@@ -51,7 +51,7 @@
                     </div>
                     <div class="col-xl-12 text-center">
                         <hr>
-                        <a href="#">Acesse o vídeo clicando aqui!</a>
+                        <a href="https://www.youtube.com/embed/s3pkLVJtueA" target="_blank">Acesse o vídeo clicando aqui!</a>
                     </div>
                 </div>
             </div>

@@ -188,11 +188,11 @@
         });
 
         function openPage(data) {
-            window.open("<?= url('salesman'); ?>/"+ data, '_blank');
+            window.open("<?= $router->route('web.salesman'); ?>/"+ data, '_blank');
         }
         
         function openCompanyPage(data) {
-            window.open("<?= url('company'); ?>/"+ data, '_blank');
+            window.open("<?= $router->route('web.company'); ?>/"+ data, '_blank');
         }
 
         function tableFilter() {

@@ -177,24 +177,15 @@ class Web
                         ->fetch(true);
                     if ($attach) {
                         foreach ($attach as $att) {
-                            $ext = explode('.', $att->file_name);
+                            $ext = explode('.', $att->nome);
                             if ($ext[0] == 'userImage') {
-                                switch ($att->tipo_usuario) {
-                                    case 1:
-                                        $folder = THEMES . '/assets/uploads/salesmans';
-                                        $folder2 = ROOT . '/themes/assets/uploads/salesmans';
-                                        break;
-                                    case 2:
-                                        $folder = THEMES . '/assets/uploads/companys';
-                                        $folder2 = ROOT . '/themes/assets/uploads/companys';
-                                        break;
-                                    case 3:
-                                        $folder = THEMES . '/assets/uploads/agents';
-                                        $folder2 = ROOT . '/themes/assets/uploads/agents';
-                                        break;
-                                    default:
-                                        $folder = null;
-                                        break;
+
+                                if($att->tipo_usuario == 3){
+                                    $folder = THEMES . '/assets/uploads/agents';
+                                    $folder2 = ROOT . '/themes/assets/uploads/agents';
+                                }else{
+                                    $folder = THEMES . '/assets/uploads/users';
+                                    $folder2 = ROOT . '/themes/assets/uploads/users';
                                 }
 
                                 if ($folder) {
@@ -202,22 +193,28 @@ class Web
                                         mkdir($folder, 0755);
                                     }
 
-                                    $filename = $ext[0] . '.' . $imageFileType;
+                                    $fileName = $ext[0] . '.' . $imageFileType;
 
-                                    $dir = $folder . '/' . $att->id_usuario . '/' . $filename;
-                                    $dir2 = $folder2 . '/' . $att->id_usuario . '/' . $filename;
+                                    $dir = $folder . '/' . $att->id_usuario . '/';
+                                    $dir2 = $folder2 . '/' . $att->id_usuario . '/' . $fileName;
 
-                                    if (file_exists($dir)) {
-                                        unlink($dir);
+                                    if (file_exists($dir . $att->nome)) {
+                                        unlink($dir . $att->nome);
                                     }
 
-                                    $att->file_name = $filename;
+                                    $dir = $dir . $fileName;
+
+                                    $att->nome = $fileName;
                                     $att->save();
 
-                                    move_uploaded_file($file['tmp_name'], $dir);
-                                    $_SESSION['user']['image'] = $dir2;
-
-                                    echo 1;
+                                    if($att->fail()){
+                                        $att->fail()->getMessege();
+                                        $att->destroy();
+                                    }else{
+                                        move_uploaded_file($file['tmp_name'], $dir);
+                                        $_SESSION['user']['image'] = $dir2;
+                                        echo 'success';
+                                    }
                                 }
                             }
                         }
@@ -369,20 +366,20 @@ class Web
             exit();
         }
 
-        $user = (new User())->find('cpf = :identity', 'identity='. $data['identity'])->fetch();
+        $user = (new User())->find('cpf = :identity', 'identity=' . $data['identity'])->fetch();
         if ($user) {
-           echo 'already_exist';
-           exit();
+            echo 'already_exist';
+            exit();
         }
 
-        $cpf = preg_replace( '/[^0-9]/is', '', $data['identity'] );
+        $cpf = preg_replace('/[^0-9]/is', '', $data['identity']);
         $soap_input =
             '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:e="e-Agata_18.11">
                <soapenv:Header/>
                <soapenv:Body>
                   <e:PWSRetornoPertences.Execute>
                      <e:Flagtipopesquisa>C</e:Flagtipopesquisa>
-                     <e:Ctgcpf>'. $cpf .'</e:Ctgcpf>
+                     <e:Ctgcpf>' . $cpf . '</e:Ctgcpf>
                      <e:Ctiinscricao></e:Ctiinscricao>
                   </e:PWSRetornoPertences.Execute>
                </soapenv:Body>
@@ -403,7 +400,7 @@ class Web
         @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
         $companys = $xml->Body->PWSRetornoPertences->Sdtretornopertences->SDTRetornoPertencesItem->SDTRetornoPertencesEmpresa->SDTRetornoPertencesEmpresaItem;
 
-        if($companys != '') {
+        if ($companys != '') {
             $companyAux = 0;
             foreach ($companys as $company) {
                 if ($company->SRPAutonomo == 'A') {
@@ -412,7 +409,7 @@ class Web
             }
         }
 
-        if($companys == '' || $companyAux === 0) {
+        if ($companys == '' || $companyAux === 0) {
             echo 'require_registration';
             exit();
         }
@@ -444,14 +441,14 @@ class Web
                     $extensions_arr = array("jpg", "jpeg", "png");
 
                     if (in_array($imageFileType, $extensions_arr)) {
-                        $folder =  THEMES . '/assets/uploads/users';
-                        if(!file_exists($folder) || !is_dir($folder)){
+                        $folder = THEMES . '/assets/uploads/users';
+                        if (!file_exists($folder) || !is_dir($folder)) {
                             mkdir($folder, 0755);
                         }
                         $fileName = $key . '.' . $imageFileType;
                         $dir = $folder . '/' . $user->id;
 
-                        if(!file_exists($dir) || !is_dir($dir)){
+                        if (!file_exists($dir) || !is_dir($dir)) {
                             mkdir($dir, 0755);
                         }
 
@@ -472,7 +469,6 @@ class Web
                         }
                     }
                 }
-
 
 
                 $email = new Email();
@@ -519,25 +515,43 @@ class Web
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
+        $validate = false;
         $user = (new User())->find('MD5(id) = :id AND senha IS NULL', 'id=' . $data['userId'])->fetch();
+
+        if (!$user) {
+            $user = (new Agent())->find('MD5(id) = :id AND senha IS NULL', 'id=' . $data['userId'])->fetch();
+        }
+
         if ($user) {
+            $validate = true;
+
             $attach = (new Attach())->find('id_usuario = :id', 'id=' . $user->id)->fetch(true);
+
             if ($attach) {
                 foreach ($attach as $att) {
                     if (explode('.', $att->nome)[0] == 'userImage') {
-                        $userImage = ROOT . '/themes/assets/uploads/users/' . $user->id
-                            . '/' . $att->nome;
+                        if ($att->tipo_usuario == 3) {
+                            $userImage = ROOT . '/themes/assets/uploads/agents/' . $user->id
+                                . '/' . $att->nome;
+                        } else {
+                            $userImage = ROOT . '/themes/assets/uploads/users/' . $user->id
+                                . '/' . $att->nome;
+                        }
                     }
                 }
-                echo $this->view->render('confirmPassword', [
-                    'title' => 'Confirmar senha | ' . SITE,
-                    'userId' => $data['userId'],
-                    'userName' => $user->nome,
-                    'userImage' => $userImage
-                ]);
             }
-        } else {
+        }
+
+        if ($validate == false) {
             $this->router->redirect('web.home');
+        } else {
+            echo $this->view->render('confirmPassword', [
+                'title' => 'Confirmar senha | ' . SITE,
+                'userId' => $data['userId'],
+                'userName' => $user->nome,
+                'userImage' => $userImage
+            ]);
+
         }
     }
 
@@ -550,7 +564,7 @@ class Web
         $this->checkLogin();
 
         echo $this->view->render('requestLicense', [
-           'title' => 'Nova licença | ' . SITE
+            'title' => 'Nova licença | ' . SITE
         ]);
     }
 
@@ -581,14 +595,14 @@ class Web
 
         if ($_FILES) {
             $user = (new User())->findById($_SESSION['user']['id']);
-            $cpf = preg_replace( '/[^0-9]/is', '', $user->cpf );
+            $cpf = preg_replace('/[^0-9]/is', '', $user->cpf);
             $soap_input =
                 '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:e="e-Agata_18.11">
                <soapenv:Header/>
                <soapenv:Body>
                   <e:PWSRetornoPertences.Execute>
                      <e:Flagtipopesquisa>C</e:Flagtipopesquisa>
-                     <e:Ctgcpf>'. $cpf .'</e:Ctgcpf>
+                     <e:Ctgcpf>' . $cpf . '</e:Ctgcpf>
                      <e:Ctiinscricao></e:Ctiinscricao>
                   </e:PWSRetornoPertences.Execute>
                </soapenv:Body>
@@ -609,7 +623,7 @@ class Web
             @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
             $companys = $xml->Body->PWSRetornoPertences->Sdtretornopertences->SDTRetornoPertencesItem->SDTRetornoPertencesEmpresa->SDTRetornoPertencesEmpresaItem;
 
-            if($companys != '') {
+            if ($companys != '') {
                 $companyAux = 0;
                 foreach ($companys as $company) {
                     if ($company->SRPAutonomo == 'A') {
@@ -669,7 +683,7 @@ class Web
                         } else {
                             $curl = curl_init();
                             curl_setopt($curl, CURLOPT_RETURNTRANSFER, True);
-                            curl_setopt($curl, CURLOPT_URL, 'https://nominatim.openstreetmap.org/reverse.php?lat='. $data['latitude'] .'&lon='. $data['longitude'] .'&zoom=18&format=jsonv2');
+                            curl_setopt($curl, CURLOPT_URL, 'https://nominatim.openstreetmap.org/reverse.php?lat=' . $data['latitude'] . '&lon=' . $data['longitude'] . '&zoom=18&format=jsonv2');
                             curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:7.0.1) Gecko/20100101 Firefox/7.0.1');
                             $street = curl_exec($curl);
                             curl_close($curl);
@@ -748,7 +762,7 @@ class Web
                                 $payment->pagar_em = $paymentDate;
                                 $payment->save();
 
-                                $extCode = 'ODT'. $payment->id;
+                                $extCode = 'ODT' . $payment->id;
 
 //                                $soap_input = '
 //                                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eag="EAgata" xmlns:e="e-Agata_18.11">
@@ -992,10 +1006,10 @@ class Web
     {
         $this->checkLogin();
 
-        if  ($_SESSION['user']['login'] == 3) {
+        if ($_SESSION['user']['login'] == 3) {
             $this->salesmanList();
         } else {
-            $licenses = (new License())->find('id_usuario = :id', 'id='. $_SESSION['user']['id'])
+            $licenses = (new License())->find('id_usuario = :id', 'id=' . $_SESSION['user']['id'])
                 ->fetch(true);
             $license_type = (new LicenseType())->find()->fetch(true);
 
@@ -1007,7 +1021,7 @@ class Web
         }
     }
 
-        /**
+    /**
      * @return void
      * @var $data
      */
@@ -1017,31 +1031,23 @@ class Web
 
         if ($data['password'] === $data['rePassword']) {
             $user = (new User())->find('MD5(id) = :id AND senha IS NULL', 'id=' . $data['userId'])->fetch();
+            if (!$user) {
+                $user = (new Agent())->find('MD5(id) = :id AND senha IS NULL', 'id=' . $data['userId'])->fetch();
+            }
             if ($user) {
                 $user->senha = md5($data['password']);
                 $user->save();
                 if ($user->fail()) {
                     $user->fail()->getMessage();
                 } else {
-                    echo 1;
+                    echo 'pswSuccess';
                 }
             } else {
                 $this->router->redirect('web.home');
             }
         } else {
-            echo 0;
+            echo 'pswFail';
         }
-    }
-
-    /**
-     * @return void
-     * @var $data
-     */
-    public function confirmPassword($data): void
-    {
-        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
-
-        var_dump($data);
     }
 
     /**
@@ -1086,57 +1092,54 @@ class Web
     public function pswRecovery($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
-        $salesman = (new Salesman())->find('identidade = :identity', 'identity=' . $data['identity'])->fetch();
-        if ($salesman !== NULL) {
-            if ($salesman->identidade === $data['identity']) {
-                /**
-                 * Generate a new recovery password
-                 */
-                $editSalesman = (new Salesman)->findById($salesman->id);
-                $tempPsw = md5($salesman->senha);
-                $tempPsw = substr($tempPsw, 1, 5);
-                $editSalesman->senha_temporaria = md5($tempPsw);
-                $editSalesman->save();
+        $user = (new User())->find('cpf = :identity', 'identity=' . $data['identity'])->fetch();
 
-                /**
-                 * Send email with new temporary recovery password
-                 */
-                $name = explode(" ", $salesman->nome);
-                $name = $name[0] . " " . $name[1];
-                $email = new Email();
-                $email->add(
-                    "Recuperação de senha Orditi",
-                    "<p style='font-family: \"Dosis\", sans-serif;'>Olá " . $name . ", sua senha de recuperação no Orditi é <span style='color: #157881;'>" . $tempPsw . "</span></p>
-                    <div> <img style='width: 20%' src='https://www.maceio.orditi.com/i/themes/assets/img/nav-logo.png'> </div>",
-                    $salesman->nome,
-                    $salesman->email
-                )->send();
-            }
+        if (!$user) {
+            $user = (new Agent())->find('cpf = :identity', 'identity=' . $data['identity'])->fetch();
         }
 
-        $company = (new Company())->find('cnpj = :identity', 'identity=' . $data['identity'])->fetch();
-        if ($company !== NULL) {
-            if ($company->cnpj === $data['identity']) {
-                /**
-                 * Generate a new recovery password
-                 */
-                $editCompany = (new Company())->findById($company->id);
-                $tempPsw = md5($company->senha);
-                $tempPsw = substr($tempPsw, 1, 5);
-                $editCompany->senha_temporaria = md5(123);
-                $editCompany->save();
+        if ($user->cpf === $data['identity']) {
 
-                /**
-                 * Send email with new temporary recovery password
-                 */
-                $email = new Email();
-                $email->add(
-                    "Recuperação de senha Orditi",
-                    "<p style='font-family: \"Dosis\", sans-serif;'>Olá " . $company->nome_fantasia . ", sua senha de recuperação no Orditi é <span style='color: #157881;'>" . $tempPsw . "</span></p>
-                    <div> <img style='width: 20%' src='https://www.maceio.orditi.com/i/themes/assets/img/nav-logo.png'> </div>",
-                    $company->nome_fantasia,
-                    $company->email
-                )->send();
+            $user->senha = NULL;
+            $user->save();
+
+            if ($user->fail()) {
+                var_dump($user->fail()->getMessege());
+                exit;
+            }
+
+            /**
+             * Send email with new temporary recovery password
+             */
+            $email = new Email();
+            $email->add(
+                "Recuperação de senha",
+                "<p>Olá " . $user->nome . "! Para recuperar sua senha no Orditi, clique no botão abaixo.</p>
+                        <a href='" . ROOT . "/confirmAccount/" . md5($user->id) . "' 
+            style='
+                    border: none;
+                    width: 115px;
+                    height: 42px;
+                    font-size: 1.2em;
+                    border-radius: 5px;
+                    text-decoration: none;
+                    color: #fff;
+                    background-color: #4bc2ce;
+                    box-shadow: none;
+                    padding: 12px;
+                    top: 10px;
+                    position: relative;
+            '>Confirmar</a>
+            <div> <img style='width: 10%; margin-top: 30px' src='https://www.maceio.orditi.com/themes/assets/img/nav-logo.png'> </div>",
+                $user->nome,
+                $user->email
+            )->send();
+
+            if ($email->error()) {
+                var_dump($email->error()->getMessage());
+                exit;
+            } else {
+                echo 'pswSuccess';
             }
         }
     }
@@ -1587,23 +1590,27 @@ class Web
         $auxPaid = 0;
         $auxPending = 0;
         $auxBlocked = 0;
-        foreach ($users as $user) {
-            if ($user->situacao == 1) {
-                $auxPaid++;
-            } else {
-                $auxPending++;
-            }
+        $countUsers = 0;
+        if ($users) {
+            foreach ($users as $user) {
+                if ($user->situacao == 1) {
+                    $auxPaid++;
+                } else {
+                    $auxPending++;
+                }
 
-            if ($user->suspenso == 1) {
-                $auxBlocked++;
+                if ($user->suspenso == 1) {
+                    $auxBlocked++;
+                }
             }
+            $countUsers = count($users);
         }
 
         echo $this->view->render('salesmanList', [
             'title' => 'Licenças | ' . SITE,
             'users' => $users,
             'companys' => null,
-            'registered' => count($users),
+            'registered' => $countUsers,
             'paid' => $auxPaid,
             'pending' => $auxPending,
             'blocked' => $auxBlocked
@@ -1680,59 +1687,140 @@ class Web
     /**
      * @return void
      */
+    /**
+     * @return void
+     */
     public function validateNewAgent($data): void
     {
+        /**
+         * Filter all form data
+         */
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
-        $image = null;
-        if (is_uploaded_file($_FILES['localImage']['tmp_name'])) {
-            $target_file = basename($_FILES['localImage']['name']);
+        $agent = (new Agent())->find('matricula = :matricula', 'matricula=' . $data['registration'])->fetch();
+        $folder = THEMES . '/assets/uploads';
+        $aux = 0;
 
-            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        if (!$agent) {
+            $psw = substr(md5(date('Y-m-d H:i:s')), 1, 5);
 
-            $extensions_arr = array("jpg", "jpeg", "png");
+            $empty = array_keys($data, "");
 
-            if (in_array($imageFileType, $extensions_arr)) {
-                $image_base64 = base64_encode(file_get_contents($_FILES['localImage']['tmp_name']));
-                $image = 'data:image/' . $imageFileType . ';base64,' . $image_base64;
+            $validateEmail = ($data["email"] === $data["confirm_email"]);
+
+            if ($empty) {
+                echo json_encode(["required" => $empty]);
+                exit;
             }
-        }
 
-        $psw = substr(md5(date('Y-m-d H:i:s')), 1, 5);
+            if (!filter_var($data["email"], FILTER_VALIDATE_EMAIL)) {
+                echo json_encode(["formatInvalid" => [
+                    "email" => "Formato de email inválido!"
+                ]]);
+                exit;
+            }
 
-        $agent = new Agent();
-        $agent->matricula = $data['registration'];
-        $agent->cpf = $data['identity'];
-        $agent->email = $data['email'];
-        $agent->nome = $data['name'];
-        $agent->senha = md5($psw);
-        $agent->tipo = 1;
-        $agent->foto = $image;
-        $agent->save();
+            if (!$validateEmail) {
+                echo json_encode(["validateResponse" => "registrationError"]);
+                exit;
+            }
 
-        if ($agent->fail()) {
-            var_dump($agent->fail()->getMessage());
-        } else {
-            $email = new Email();
-            $email->add(
-                "Cadastro Orditi",
-                "<p style='font-family: \"Dosis\", sans-serif;'>Olá " . $data['name'] . ", você teve sua conta cadastrada no </span><span style='color: #ed2e54;'> ORDITI</span></p>
-                        <p style='font-family: \"Dosis\", sans-serif;'>Estamos felizes em te-lo conosco.</p>
-                        <br>
-                        <p style='font-family: \"Dosis\", sans-serif;'>
-                            Para acessar sua conta basta <a href='https://www.maceio.orditi.com/i'>clicar aqui</a> e
-                            informar seu CPF e a seguinte senha: " . $psw . "
-                        </p>
-                        <div> <img style='width: 20%' src='https://www.maceio.orditi.com/i/themes/assets/img/nav-logo.png'> </div>",
-                $data['name'],
-                $data['email']
-            )->send();
+            $agent = new Agent();
+            $agent->matricula = $data['registration'];
+            $agent->cpf = $data['identity'];
+            $agent->email = $data['email'];
+            $agent->nome = $data['name'];
+            $agent->senha = md5($psw);
+            $agent->tipo_fiscal = 3;
+            $agent->situacao = 1;
+            $agent->save();
 
-            if ($email->error()) {
-                var_dump($email->error()->getMessage());
+            $dir = $folder . '/agents/' . $agent->id;
+
+            if ($_FILES) {
+                foreach ($_FILES as $key => $file) {
+                    $target_file = basename($file['name']);
+
+                    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                    $extensions_arr = array("jpg", "jpeg", "png");
+
+                    if (in_array($imageFileType, $extensions_arr)) {
+                        if (!file_exists($folder) || !is_dir($folder)) {
+                            mkdir($folder, 0755);
+                        }
+                        $fileName = $key . '.' . $imageFileType;
+
+                        if (!file_exists($dir) || !is_dir($dir)) {
+                            mkdir($dir, 0755);
+                        }
+
+                        $dir = $dir . '/' . $fileName;
+
+                        if (move_uploaded_file($file['tmp_name'], $dir)) {
+                            $aux = 1;
+                        }
+                    }
+                }
             } else {
-                echo 1;
+                if (!file_exists($dir) || !is_dir($dir)) {
+                    mkdir($dir, 0755);
+                }
+
+                $fileName = 'userImage.png';
+                $dir = $dir . '/' . $fileName;
+                $picture = THEMES . '/assets/img/picture.png';
+
+                if (copy($picture, $dir)) {
+                    $aux = 1;
+                }
             }
+
+            if ($aux == 0) {
+                exit;
+            }
+
+            if ($agent->fail()) {
+                var_dump($agent->fail()->getMessage());
+                unlink($dir);
+            } else {
+                $attach = new Attach();
+                $attach->id_usuario = $agent->id;
+                $attach->tipo_usuario = 3;
+                $attach->nome = $fileName;
+                $attach->save();
+
+                if ($attach->fail()) {
+                    $agent->destroy();
+                    var_dump($attach->fail()->getMessage());
+                } else {
+                    $email = new Email();
+                    $email->add(
+                        "Cadastro Orditi",
+                        "<p style='font-family: \"Dosis\", sans-serif;'>Olá " . $data['name'] . ", sua conta foi cadastrada no </span><span style='color: #ed2e54;'> ORDITI</span></p>
+                                <p style='font-family: \"Dosis\", sans-serif;'>Estamos felizes em tê-lo conosco.</p>
+                                <br>
+                                <a href='' class='btn-3'>Confirmar cadastro</a>
+                                
+                                <p style='font-family: \"Dosis\", sans-serif;'>
+                                    Para acessar sua conta basta <a href='https://www.maceio.orditi.com/i'>clicar aqui</a> e
+                                    informar seu CPF e a seguinte senha: " . $psw . "
+                                </p>
+                                <div> <img style='width: 20%' src='https://www.maceio.orditi.com/i/themes/assets/img/nav-logo.png'> </div>",
+                        $data['name'],
+                        $data['email']
+                    )->send();
+                }
+
+                if ($email->error()) {
+                    echo 'identity_fail';
+                    $agent->destroy();
+                } else {
+                    echo 'success';
+                }
+            }
+        } else {
+            echo 'already_exist';
         }
     }
 
@@ -1773,6 +1861,7 @@ class Web
             $polygon = 'POLYGON((' . $str . '))';
 
             $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
             $zone = new Zone();
             $zone->nome = $data['zoneName'];
             if ($image !== null) {

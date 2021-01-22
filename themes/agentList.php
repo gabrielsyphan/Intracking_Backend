@@ -115,7 +115,7 @@
                                 <thead>
                                 <tr>
                                     <th scope="col" class="table-col-4">Matrícula <span class="icon-arrow_downward"></span></th>
-                                    <th scope="col" class="table-col-2 ">CPF <span class="icon-arrow_downward"></span></th>
+                                    <th scope="col" class="table-col-2">CPF <span style="cursor:pointer;" onclick="alterFilter(1)" class="icon-arrow_downward"></span></th>
                                     <th scope="col" class="table-col-1">Nome <span class="icon-arrow_upward"></span></th>
                                     <th scope="col" class="table-col-1">Email <span class="icon-arrow_downward"></span></th>
                                     <th scope="col" class="table-col-4">Status <span class="icon-arrow_downward"></span></th>
@@ -137,7 +137,7 @@
                                                 </td>
                                                 <td>
                                                     <a class="btn secondary-color status-button-change"
-                                                       href="<?= url('changeAgentStatus/'. $agent->id) ?>">
+                                                       href="<?= $router->route('web.changeAgentStatus/'. $agent->id) ?>">
                                                         <span class="icon-check"></span>
                                                         Permitir
                                                     </a>
@@ -147,7 +147,7 @@
                                                     </td>
                                                     <td>
                                                         <a class="btn quartenary-color status-button-change"
-                                                        href="<?= url('changeAgentStatus/' . $agent->id) ?>">
+                                                        href="<?= $router->route('web.changeAgentStatus/' . $agent->id) ?>">
                                                             <span class="icon-delete_forever"></span>
                                                             Bloquear
                                                         </a>
@@ -157,7 +157,7 @@
                                                     </td>
                                                     <td>
                                                         <a class="btn secondary-color status-button-change"
-                                                           href="<?= url('changeAgentStatus/'. $agent->id) ?>">
+                                                           href="<?= $router->route('web.changeAgentStatus/'. $agent->id) ?>">
                                                             <span class="icon-check"></span>
                                                             Permitir
                                                         </a>
@@ -185,9 +185,15 @@
 <script src="<?= url("themes/assets/vendor/bootstrap/js/popper.js"); ?>"></script>
 <script src="<?= url("themes/assets/vendor/bootstrap/js/bootstrap.min.js"); ?>"></script>
 <script>
+    let filterValue = 2;
+
+    function alterFilter(e) {
+        filterValue = e;
+    }
+
     function tableFilter() {
         let input, filter, table, tr, td, i, txtValue;
-        let selectedOption = 2;
+        let selectedOption = filterValue;
 
         input = document.getElementById("text");
         filter = input.value.toUpperCase();

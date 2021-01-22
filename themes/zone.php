@@ -112,7 +112,7 @@
 <script src="<?= url("themes/assets/js/Leaflet.LinearMeasurement.js"); ?>"></script>
 <script>
     function openPage(data) {
-        window.open("<?= url('salesman'); ?>/"+ data, '_blank');
+        window.open("<?= $router->route('web.salesman'); ?>/"+ data, '_blank');
     }
 
     $(function() {
