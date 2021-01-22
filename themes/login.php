@@ -16,7 +16,7 @@
                         <div class="p-5">
                             <div class="form-group">
                                 <h5>Insira os dados da conta que deseja recuperar:</h5>
-                                <input type="text" id="identity" name="identity" class="form-input"
+                                <input type="text" id="userIdentity" name="identity" class="form-input"
                                        placeholder="Inserir CPF">
                                 <div class="invalidate-feedback"></div>
                             </div>
@@ -86,6 +86,7 @@
 <?php $v->start("scripts"); ?>
 <script>
     $("#identity").mask("999.999.999-99");
+    $("#userIdentity").mask("999.999.999-99");
 
     $('form').on('submit', function (e) {
         e.preventDefault();

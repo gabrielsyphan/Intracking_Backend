@@ -84,7 +84,7 @@
                     title: "Ops...",
                     text: "Esta licença não está disponível no momento.",
                 });
-                break;
+            break;
         }
     }
 </script>

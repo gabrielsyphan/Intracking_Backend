@@ -27,9 +27,7 @@
                 <div class="loader-spin"></div>
             </div>
 
-            <?php if ($router->isCurrentRoute("web.profile")) {
-                require 'profileModals.php';
-            }?>
+<!--            --><?php //if ($router->isCurrentRoute("web.profile")) { require 'profileModals.php'; }?>
 
             <?php if(isset($_SESSION['user']['login'])): ?>
                 <div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLongTitle"

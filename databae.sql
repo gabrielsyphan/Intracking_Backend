@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 21-Jan-2021 às 16:23
+-- Tempo de geração: 22-Jan-2021 às 16:55
 -- Versão do servidor: 10.4.13-MariaDB
 -- versão do PHP: 7.4.8
 
@@ -43,6 +43,13 @@ CREATE TABLE `ambulantes` (
   `longitude` varchar(25) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Extraindo dados da tabela `ambulantes`
+--
+
+INSERT INTO `ambulantes` (`id`, `id_licenca`, `id_zona`, `local_endereco`, `produto`, `atendimento_dias`, `atendimento_hora_inicio`, `atendimento_hora_fim`, `relato_atividade`, `area_equipamento`, `tipo_equipamento`, `latitude`, `longitude`) VALUES
+(12, 16, NULL, 'Avenida Celeste Bezerra, Levada, Maceió, Região Geográfica Imediata de Maceió, Região Geográfica Intermediária de Maceió, Alagoas, Região Nordeste, 57017-040, Brasil', 37, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'aaaaaaa', '10 x 5', 'Barraca', '-9.65819407125508', '-35.746684154570005');
+
 -- --------------------------------------------------------
 
 --
@@ -70,7 +77,13 @@ INSERT INTO `anexos` (`id`, `nome`, `tipo_usuario`, `id_usuario`) VALUES
 (36, 'proofAddress.png', '1', 10),
 (37, 'socialContract.png', '1', 10),
 (38, 'businessLicense.png', '1', 10),
-(39, 'otherDocument.png', '1', 10);
+(39, 'otherDocument.png', '1', 10),
+(40, 'equipmentImage.jpg', '1', 11),
+(41, 'equipmentImage.jpg', '1', 12),
+(42, 'equipmentImage.jpg', '1', 13),
+(43, 'equipmentImage.jpg', '1', 14),
+(44, 'equipmentImage.jpg', '1', 15),
+(45, 'equipmentImage.jpg', '1', 16);
 
 -- --------------------------------------------------------
 
@@ -81,6 +94,7 @@ INSERT INTO `anexos` (`id`, `nome`, `tipo_usuario`, `id_usuario`) VALUES
 CREATE TABLE `boletos` (
   `id` int(11) NOT NULL,
   `id_licenca` int(11) DEFAULT NULL,
+  `id_usuario` int(11) NOT NULL,
   `cod_referencia` text DEFAULT NULL,
   `cod_pagamento` text DEFAULT NULL,
   `valor` int(11) NOT NULL,
@@ -94,8 +108,8 @@ CREATE TABLE `boletos` (
 -- Extraindo dados da tabela `boletos`
 --
 
-INSERT INTO `boletos` (`id`, `id_licenca`, `cod_referencia`, `cod_pagamento`, `valor`, `status`, `tipo`, `pagar_em`, `pago_em`) VALUES
-(142, 9, '15123', 'teste', 144, 3, 1, '2021-01-23 03:00:00', '2021-01-20 12:20:07');
+INSERT INTO `boletos` (`id`, `id_licenca`, `id_usuario`, `cod_referencia`, `cod_pagamento`, `valor`, `status`, `tipo`, `pagar_em`, `pago_em`) VALUES
+(148, 16, 36, '15123', 'teste', 144, 3, 1, '2021-01-25 03:00:00', '2021-01-22 14:11:19');
 
 -- --------------------------------------------------------
 
@@ -196,7 +210,8 @@ CREATE TABLE `licencas` (
 --
 
 INSERT INTO `licencas` (`id`, `cmc`, `tipo`, `data_inicio`, `data_fim`, `status`, `id_usuario`) VALUES
-(10, '1111111111', '1', '2021-01-21', '2021-01-24', 1, 36);
+(10, '1111111111', '1', '2021-01-21', '2021-01-24', 1, 36),
+(16, '9900027911', '0', '2021-01-22', '2021-01-25', 0, 36);
 
 -- --------------------------------------------------------
 
@@ -478,19 +493,19 @@ ALTER TABLE `zonas`
 -- AUTO_INCREMENT de tabela `ambulantes`
 --
 ALTER TABLE `ambulantes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de tabela `anexos`
 --
 ALTER TABLE `anexos`
-  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT de tabela `boletos`
 --
 ALTER TABLE `boletos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=143;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=149;
 
 --
 -- AUTO_INCREMENT de tabela `empresas`
@@ -520,7 +535,7 @@ ALTER TABLE `fiscais`
 -- AUTO_INCREMENT de tabela `licencas`
 --
 ALTER TABLE `licencas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de tabela `notificacoes`

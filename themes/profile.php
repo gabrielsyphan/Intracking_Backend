@@ -1,5 +1,119 @@
 <?php $v->layout("_theme.php") ?>
 
+<div id="modal-1" class="div-modal">
+    <div class="container pt-5">
+        <div class="row mt-5 p-5 justify-content-center">
+            <div class="col-xl-10 p-5 container-white">
+                <h3 class="black-title-section">Meus anexos</h3>
+                <p class="subtitle-section-p">Arquivos enviados por você durante seu cadastro.</p>
+                <hr>
+                <div class="div-box-span-icon mt-5">
+                    <span class="icon-close" onclick="closeModal(1)"></span>
+                </div>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody id="table-data">
+                    <?php if($uploads && count($uploads) > 0):
+                        $aux = 1;
+                        foreach($uploads as $upload): ?>
+                            <tr>
+                                <th scope="row"><?= $aux ?></th>
+                                <td><?= $upload['fileName'] ?></td>
+                                <td style="display: flex">
+                                    <form action="<?= url('downloadFile/'. $upload['groupName'] .'/'. $upload['userId']
+                                        .'/'. $upload['fileName']) ?>">
+                                        <button class="btn" type="submit">
+                                            <span class="icon-download"></span>
+                                        </button>
+                                    </form>
+                                    <button class="btn" type="submit" onclick="openFile('<?= $upload['groupName'] .'/'.
+                                    $upload['userId'] .'/'. $upload['fileName'] ?>')">
+                                        <span class="icon-image"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <?php $aux++; endforeach; endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-2" class="div-modal">
+    <div class="container pt-5">
+        <div class="row mt-5 p-5 justify-content-center">
+            <div class="col-xl-10 p-5 container-white">
+                <h3 class="black-title-section">Meus pagamentos</h3>
+                <p class="subtitle-section-p">Todos os pagamentos referente às suas licenças.</p>
+                <hr>
+                <div class="div-box-span-icon mt-5">
+                    <span class="icon-close" onclick="closeModal(2)"></span>
+                </div>
+                <div class="box-div-info-overflow-x background-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">Status</th>
+                            <th scope="col">Valor</th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Validade</th>
+                            <th scope="col">Ação</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php if($payments !== NULL):
+                            foreach ($payments as $payment):
+                                if($payment->id_empresa == null):
+                                    if($payment->status == 3 || $payment->status == 0):
+                                        $status = "Pendente";
+                                    elseif ($payment->status == 1):
+                                        $status = "Pago";
+                                    else:
+                                        $status = "Vencido";
+                                    endif;
+                                    if($payment->tipo == 0):
+                                        $type = "Multa";
+                                    else:
+                                        $type = "Pagamento";
+                                    endif; ?>
+                                    <tr class="row100 tableLink">
+                                        <?php if ($payment->status == 2): ?>
+                                            <td class="statusExpired"><?= $status ?></td>
+                                        <?php elseif($payment->status == 0 || $payment->status == 3): ?>
+                                            <td class="statusPendent"><?= $status ?></td>
+                                        <?php else: ?>
+                                            <td class="statusPaid"><?= $status ?></td>
+                                        <?php endif;?>
+                                        <td>R$ <?= $payment->valor  ?>,00</td>
+                                        <td><?= $type ?></td>
+                                        <td><?= date('d-m-Y', strtotime($payment->pagar_em)); ?></td>
+                                        <td>
+                                            <?php if ($payment->status == 2): ?>
+                                                <a class="btn-3 secondary" href="http://www.smf.maceio.al.gov.br:8090/e-agata/servlet/hwmemitedamqrcode?<?= $payment->cod_referencia ?>" target="_blank">Pagar boleto</a>
+                                            <?php elseif($payment->status == 0 || $payment->status == 3): ?>
+                                                <a class="btn-3 tertiary" href="http://www.smf.maceio.al.gov.br:8090/e-agata/servlet/hwmemitedamqrcode?<?= $payment->cod_referencia ?>" target="_blank">Pagar boleto</a>
+                                            <?php else: ?>
+                                                Não há ações
+                                            <?php endif;?>
+                                        </td>
+                                    </tr>
+                                <?php endif; endforeach; endif;?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class="container-fluid mt-5 p-0">
     <div class="web-div-box">
         <div class="box-div-info">
@@ -68,25 +182,25 @@
                                 <p class="subtitle-section-p">Informações recorrentes</p>
                                 <hr>
                                 <div class="row">
-                                    <div class="col-xl-6" onclick="openAttachs()">
+                                    <div class="col-xl-6" onclick="openModal(1)">
                                         <div class="row m-0 mt-3 p-4 div-request-license">
                                             <div class="col-xl-2 text-center mt-4">
                                                 <img src="<?= url('themes/assets/img/files.png') ?>">
                                             </div>
                                             <div class="col-xl-10">
-                                                <h4>Anexos enviados</h4>
-                                                <p class="subtitle-section-p">Para vendedores que atuam em um local fixo.</p>
+                                                <h4>Meus anexos</h4>
+                                                <p class="subtitle-section-p">Arquivos enviados por você durante seu cadastro.</p>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xl-6">
+                                    <div class="col-xl-6" onclick="openModal(2)">
                                         <div class="row m-0 mt-3 p-4 div-request-license">
                                             <div class="col-xl-2 text-center mt-4">
                                                 <img src="<?= url('themes/assets/img/cash-payment.png') ?>">
                                             </div>
                                             <div class="col-xl-10">
-                                                <h4>Meus pagamentos</h4>
-                                                <p class="subtitle-section-p">Para vendedores que atuam em um local fixo.</p>
+                                                <h4>Meus boletos</h4>
+                                                <p class="subtitle-section-p">Todos os pagamentos referente às suas licenças.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -106,12 +220,12 @@
         window.open('<?= url() ?>/themes/assets/uploads/'+ url, '_blank');
     }
 
-    function openAttachs() {
-        $('#attachsModal').show();
+    function openModal(e) {
+        $('#modal-'+ e).show();
     }
 
-    function closeAttachs() {
-        $('#attachsModal').hide();
+    function closeModal(e) {
+        $('#modal-'+ e).hide();
     }
 </script>
 <?php $v->end(); ?>

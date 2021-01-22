@@ -14,7 +14,7 @@
         <li class="<?= ($router->isCurrentRoute("web.home") ? 'active' : ''); ?>">
             <a href="<?= url('') ?>"><span class="icon-home"></span>Início</a>
         </li>
-        <?php if ($_SESSION['user']['login'] === 1): ?>
+        <?php if ($_SESSION['user']['login'] === 0): ?>
             <hr>
             <p class="p-0 pl-3">Licenças</p>
             <li class="<?= ($router->isCurrentRoute("web.licenseList") ? 'active' : ''); ?>">
@@ -33,13 +33,6 @@
             <p class="p-0 pl-3">Geral</p>
             <li class="<?= ($router->isCurrentRoute("web.profile") ? 'active' : ''); ?>">
                 <a href="<?= url("profile"); ?>">
-                    <span class="icon-user"></span>
-                    Perfil
-                </a>
-            </li>
-        <?php elseif ($_SESSION['user']['login'] === 2): ?>
-            <li class="<?= ($router->isCurrentRoute("web.companyProfile") ? 'active' : ''); ?>">
-                <a href="<?= url("companyProfile"); ?>">
                     <span class="icon-user"></span>
                     Perfil
                 </a>
@@ -143,7 +136,7 @@
 
 <?= $v->start("script-side-bar"); ?>
 <script>
-    $('form').on('submit', function (e) {
+    $('#form-new-user-image').on('submit', function (e) {
         e.preventDefault();
         $("#loader-div").show();
 
@@ -170,19 +163,14 @@
                     }).then((result) => {
                         window.location.href = "<?= $router->route('web.home') ?>";
                     });
-                } else if (returnData == 'error') {
+                } else{
                     swal({
                         icon: "error",
                         title: "Erro",
                         text: "Não foi possível trocar sua foto.",
                     });
-                } else {
-                    swal({
-                        icon: "error",
-                        title: "Erro!",
-                        text: "Não foi possível realizar o cadastro. Por favor, tente novamente mais tarde.",
-                    });
                 }
+                console.log(returnData);
             }).fail(function () {
                 swal({
                     icon: "error",

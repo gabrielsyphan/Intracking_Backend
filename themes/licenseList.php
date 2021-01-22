@@ -38,24 +38,32 @@
                             <tbody id="table-data">
                             <?php
                             $aux = 0;
-                            foreach ($licenses as $license): ?>
-                                <tr>
+                            foreach ($licenses as $license):
+                                switch ($license->status):
+                                    case 0:
+                                        $divStatus = 'tertiary';
+                                        $textStatus = 'Pendente';
+                                        $trClass = 'border-left-yellow';
+                                        break;
+                                    case 1:
+                                        $divStatus = 'primary';
+                                        $textStatus = 'Ativo';
+                                        $trClass = 'border-left-green';
+                                        break;
+                                    default:
+                                        $divStatus = 'secondary';
+                                        $textStatus = 'Bloqueado';
+                                        $trClass = 'border-left-red';
+                                        break;
+                                 endswitch; ?>
+                                <tr class="<?= $trClass ?>">
                                     <td><strong><?= $aux ?></strong></td>
                                     <td><?= $types[$license->tipo]->nome ?></td>
                                     <td><?= $license->data_inicio ?></td>
                                     <td><?= $license->data_fim ?></td>
                                     <td>
-                                    <?php switch ($license->status):
-                                    case 0: ?>
-                                        <div class="status-button tertiary">Pendente</div>
-                                        </td>
-                                    <?php break; case 1: ?>
-                                        <div class="status-button primary">Ativo</div>
-                                        </td>
-                                    <?php break; default: ?>
-                                        <div class="status-button secondary">Bloqueado</div>
-                                        </td>
-                                    <?php break; endswitch; ?>
+                                        <div class="status-button <?= $divStatus ?>"><?= $textStatus?></div>
+                                    </td>
                                 </tr>
                             <?php $aux++; endforeach; ?>
                             </tbody>

@@ -110,7 +110,7 @@ class Web
                     if ($attachName == 'userImage') {
                         $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/users/' . $attach->id_usuario
                             . '/' . $attach->nome;
-                        $_SESSION['user']['login'] = 1;
+                        $_SESSION['user']['login'] = 0;
                         $_SESSION['user']['id'] = $user->id;
                         $_SESSION['user']['name'] = $user->nome;
                         $_SESSION['user']['email'] = $user->email;
@@ -161,6 +161,7 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
         if ($_FILES) {
+            $response = 'fail';
             /**
              * Load all images
              */
@@ -213,7 +214,7 @@ class Web
                                     }else{
                                         move_uploaded_file($file['tmp_name'], $dir);
                                         $_SESSION['user']['image'] = $dir2;
-                                        echo 'success';
+                                        $response = 'success';
                                     }
                                 }
                             }
@@ -222,6 +223,7 @@ class Web
                 }
             }
         }
+        echo $response;
     }
 
     /**
@@ -758,6 +760,7 @@ class Web
                                 $payment->cod_referencia = null;
                                 $payment->cod_pagamento = null;
                                 $payment->valor = $valueToPayment[0];
+                                $payment->id_usuario = $_SESSION['user']['id'];
                                 $payment->tipo = 1;
                                 $payment->pagar_em = $paymentDate;
                                 $payment->save();
@@ -1078,7 +1081,7 @@ class Web
      */
     public function logout(): void
     {
-        if (!empty($_SESSION['user']['login'])) {
+        if (!empty($_SESSION['user'])) {
             unset($_SESSION['user']);
         }
 
@@ -1152,9 +1155,9 @@ class Web
     {
         $this->checkLogin();
 
-        if ($_SESSION['user']['login'] === 1) {
+        if ($_SESSION['user']['login'] === 0) {
             $user = (new User())->findById($_SESSION['user']['id']);
-            $payments = (new Payment())->find('id_ambulante = :id', 'id=' . $_SESSION['user']['id'])->fetch(true);
+            $payments = (new Payment())->find('id_usuario = :id', 'id=' . $_SESSION['user']['id'])->fetch(true);
 
             $folder = ROOT . '/themes/assets/uploads';
             $uploads = array();
@@ -1251,6 +1254,7 @@ class Web
                     $payment->pagar_em = date('Y-m-d H:i:s', strtotime("+3 days"));
                     $payment->tipo = 0;
                     $payment->status = 0;
+                    $payment->id_usuario = $_SESSION['user']['id'];
                     $payment->cod_referencia = null;
                     $payment->cod_pagamento = null;
                     $payment->save();
@@ -1428,9 +1432,12 @@ class Web
             }
 
             $agent->save();
-            $this->router->redirect('web.agentList');
+            if($agent->fail()) {
+                var_dump($agent->fail()->getMessage());
+            } else {
+                $this->router->redirect('web.agentList');
+            }
         }
-
     }
 
     /**

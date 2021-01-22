@@ -137,7 +137,7 @@
                                                 </td>
                                                 <td>
                                                     <a class="btn secondary-color status-button-change"
-                                                       href="<?= $router->route('web.changeAgentStatus/'. $agent->id) ?>">
+                                                       href="<?= url('changeAgentStatus/'. $agent->id) ?>">
                                                         <span class="icon-check"></span>
                                                         Permitir
                                                     </a>
@@ -147,7 +147,7 @@
                                                     </td>
                                                     <td>
                                                         <a class="btn quartenary-color status-button-change"
-                                                        href="<?= $router->route('web.changeAgentStatus/' . $agent->id) ?>">
+                                                        href="<?= url('changeAgentStatus/' . $agent->id) ?>">
                                                             <span class="icon-delete_forever"></span>
                                                             Bloquear
                                                         </a>
@@ -157,7 +157,7 @@
                                                     </td>
                                                     <td>
                                                         <a class="btn secondary-color status-button-change"
-                                                           href="<?= $router->route('web.changeAgentStatus/'. $agent->id) ?>">
+                                                           href="<?= url('changeAgentStatus/'. $agent->id) ?>">
                                                             <span class="icon-check"></span>
                                                             Permitir
                                                         </a>

@@ -337,7 +337,7 @@
                             icon: "success",
                             title: "Sua licença foi cadastrada!",
                             text: "Acesse o menu 'Minhas Licenças' para visualiza-la.",
-                        }).then((result) => {
+                        }).then(() => {
                             window.location.href = "<?= $router->route('web.licenseList') ?>";
                         });
                     } else {

@@ -1280,11 +1280,25 @@ input[type=file].hidden-input-file {
     background: #fff;
 }
 
-#attachsModal {
+.div-modal {
     position: fixed;
     width: 100%;
     height: 100vh;
     background: rgba(0, 0, 0, 0.5);
     z-index: 99;
     display: none;
+    top: 0;
+    left: 0;
+}
+
+.border-left-green {
+    border-left: 3px solid #4bc2ce;
+}
+
+border-left-red {
+    border-left: 3px solid #f05977;
+}
+
+.border-left-yellow {
+    border-left: 3px solid #ffbc00;
 }
