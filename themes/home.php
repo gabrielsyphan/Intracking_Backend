@@ -5,13 +5,13 @@
         <div class="row">
             <div class="col-xl-6">
                 <h2 class="black-title-section">Bem-vindo ao Orditi!</h2>
-                <p class="sibtitle-section-p">Este é um sistema de ordenamento intinerante que busca solucionar os problemas de organização e
+                <p class="subtitle-section-p">Este é um sistema de ordenamento intinerante que busca solucionar os problemas de organização e
                     distribuição dos ambulantes de sua cidade.</p>
 
-                <p class="sibtitle-section-p">Esperamos que aproveite ao máximo o nosso sistema e não hesite em nos comunicar caso se depare
+                <p class="subtitle-section-p">Esperamos que aproveite ao máximo o nosso sistema e não hesite em nos comunicar caso se depare
                     com algum problema.</p>
 
-                <p class="sibtitle-section-p" style="font-size: 12px">
+                <p class="subtitle-section-p" style="font-size: 12px">
                     Feito com <span style="color:red;">❤</span>  por Orditi ©
                 </p>
             </div>
@@ -30,7 +30,7 @@
             </div>
             <div class="col-xl-6">
                 <h3 class="black-title-section">Contate-nos</h3>
-                <p class="sibtitle-section-p">Nos envie um email para tirar dúvidas, sugestões ou resolver
+                <p class="subtitle-section-p">Nos envie um email para tirar dúvidas, sugestões ou resolver
                     algum problema encontrado no sistema.</p>
                 <hr>
                 <form id="form-contact">

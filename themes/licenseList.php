@@ -10,7 +10,8 @@
 
                     <div class="div-box-span-icon mt-3">
                         <div class="div-table-search">
-                            <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text" placeholder="Filtrar início...">
+                            <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
+                                   placeholder="Filtrar tipo...">
                             <div class="circle-button primary search">
                                 <span class="icon-search"></span>
                             </div>
@@ -19,7 +20,7 @@
                 </div>
                 <hr class="mb-0">
                 <div class="box-div-info-overflow-x">
-                    <?php if(!$licenses): ?>
+                    <?php if (!$licenses): ?>
                         <div class="p-5 mt-5 text-center">
                             <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
                             <p class="mt-5">Ops! Não encontramos nenhuma licença. 😥</p>
@@ -29,10 +30,12 @@
                             <thead>
                             <tr>
                                 <th scope="col" class="table-col-4"># <span class="icon-arrow_downward"></span></th>
-                                <th scope="col" class="table-col-2 ">Tipo <span class="icon-arrow_downward"></span></th>
-                                <th scope="col" class="table-col-1">Início <span class="icon-arrow_upward"></span></th>
+                                <th scope="col" class="table-col-2 ">Tipo <span class="icon-arrow_upward"></span></th>
+                                <th scope="col" class="table-col-1">Início <span class="icon-arrow_downward"></span>
+                                </th>
                                 <th scope="col" class="table-col-1">Fim <span class="icon-arrow_downward"></span></th>
-                                <th scope="col" class="table-col-4">Status <span class="icon-arrow_downward"></span></th>
+                                <th scope="col" class="table-col-4">Status <span class="icon-arrow_downward"></span>
+                                </th>
                             </tr>
                             </thead>
                             <tbody id="table-data">
@@ -55,17 +58,18 @@
                                         $textStatus = 'Bloqueado';
                                         $trClass = 'border-left-red';
                                         break;
-                                 endswitch; ?>
-                                <tr class="<?= $trClass ?>">
+                                endswitch; ?>
+                                <tr class="<?= $trClass ?>"
+                                    onclick="licenseInfo(<?= $license->tipo ?>, '<?= md5($license->id) ?>')">
                                     <td><strong><?= $aux ?></strong></td>
                                     <td><?= $types[$license->tipo]->nome ?></td>
                                     <td><?= $license->data_inicio ?></td>
                                     <td><?= $license->data_fim ?></td>
                                     <td>
-                                        <div class="status-button <?= $divStatus ?>"><?= $textStatus?></div>
+                                        <div class="status-button <?= $divStatus ?>"><?= $textStatus ?></div>
                                     </td>
                                 </tr>
-                            <?php $aux++; endforeach; ?>
+                                <?php $aux++; endforeach; ?>
                             </tbody>
                         </table>
                         <div class="text-center p-4 empty-table">
@@ -112,6 +116,10 @@
                 $('.empty-table').hide()
             }
         }
+    }
+
+    function licenseInfo(licenseType, licenseId) {
+        window.location.href = '<?= url('licenseInfo') ?>/' + licenseType + '/' + licenseId;
     }
 </script>
 <?php $v->end(); ?>

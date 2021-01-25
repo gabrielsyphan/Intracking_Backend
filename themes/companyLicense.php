@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="<?= url("themes/assets/css/multiples.css"); ?>" type="text/css">
 <?php $v->end(); ?>
 
-<div class="container-fluid mt-5" style="background-color: #fff;">
+<div class="container-fluid container-white mt-5">
     <div class="p-5">
         <form id="form-license-company" method="POST" action="<?= $router->route('web.validateCompanyLicense') ?>">
             <fieldset>

@@ -126,7 +126,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Enviar</button>
+                        <button type="submit" class="btn-3 primary-color">Enviar</button>
                     </div>
                 </fieldset>
             </form>

@@ -223,7 +223,7 @@
 
         map = L.map('mapCreateAccount', {
             center: [-9.6435441, -35.7257695],
-            layers: [mapTiles["Mapa OSM"]],
+            layers: [mapTiles["Mapa Jawg"]],
             zoomControl: true,
             maxZoom: 20,
             minZoom: 10,
@@ -278,7 +278,6 @@
             $color = "#ed2e54";
         endif; ?>
         area = JSON.parse('<?= json_encode($zone->poligono) ?>');
-
         area.forEach(function (e) {
             aux.push([e[1], e[0]]);
         });
@@ -298,14 +297,18 @@
 
             let data = {'latitude': e.latlng.lat, 'longitude': e.latlng.lng};
             $.post("<?= $router->route("web.checkZone"); ?>", data, function (returnData) {
-                map.setView(new L.LatLng(e.latlng.lat, e.latlng.lng), 14);
+                map.setView(new L.LatLng(e.latlng.lat, e.latlng.lng));
                 if (returnData == 1) {
                     theMarker = L.marker([e.latlng.lat, e.latlng.lng], {icon: paid}).bindPopup('Local selecionado').addTo(map);
                 } else if (returnData == 2) {
                     theMarker = L.marker([e.latlng.lat, e.latlng.lng], {icon: pending}).bindPopup('Local selecionado').addTo(map);
                 } else {
                     theMarker = L.marker([e.latlng.lat, e.latlng.lng], {icon: expired}).bindPopup('Local selecionado').addTo(map);
-                    alert("Essa área já está com seu limite máximo de ambulante.");
+                    swal({
+                        icon: "warning",
+                        title: "Ops..!",
+                        text: "Esta área já está em seu limite máximo de ambulantes.",
+                    });
                 }
             }, "html").fail(function () {
                 alert("Erro ao processar requisição!");

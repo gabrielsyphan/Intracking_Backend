@@ -68,6 +68,7 @@ $router->get("/downloadFile/{groupName}/{userId}/{fileName}", "Web:downloadFile"
 
 $router->get("/requestLicense", "Web:requestLicense", "web.requestLicense");
 $router->get("/licenseList", "Web:licenseList", "web.licenseList");
+$router->get("/licenseInfo/{licenseType}/{licenseId}", "Web:licenseInfo", "web.licenseInfo");
 
 $router->get("/salesmanLicense", "Web:salesmanLicense", "web.salesmanLicense");
 $router->post("/validateSalesmanLicense", "Web:validateSalesmanLicense", "web.validateSalesmanLicense");

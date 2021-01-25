@@ -181,10 +181,10 @@ class Web
                             $ext = explode('.', $att->nome);
                             if ($ext[0] == 'userImage') {
 
-                                if($att->tipo_usuario == 3){
+                                if ($att->tipo_usuario == 3) {
                                     $folder = THEMES . '/assets/uploads/agents';
                                     $folder2 = ROOT . '/themes/assets/uploads/agents';
-                                }else{
+                                } else {
                                     $folder = THEMES . '/assets/uploads/users';
                                     $folder2 = ROOT . '/themes/assets/uploads/users';
                                 }
@@ -208,10 +208,10 @@ class Web
                                     $att->nome = $fileName;
                                     $att->save();
 
-                                    if($att->fail()){
+                                    if ($att->fail()) {
                                         $att->fail()->getMessege();
                                         $att->destroy();
-                                    }else{
+                                    } else {
                                         move_uploaded_file($file['tmp_name'], $dir);
                                         $_SESSION['user']['image'] = $dir2;
                                         $response = 'success';
@@ -578,10 +578,72 @@ class Web
     {
         $this->checkLogin();
 
+        $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
+
+        if ($zones) {
+            foreach ($zones as $zone) {
+                $polygon = explode("POLYGON((", $zone->poligono);
+                $polygon = explode("))", $polygon[1]);
+                $polygon = explode(",", $polygon[0]);
+
+                $aux = array();
+                foreach ($polygon as $polig) {
+                    $polig = explode(" ", $polig);
+                    $aux[] = $polig;
+                }
+
+                $polygon = $aux;
+
+                $zone->poligono = $polygon;
+                $zoneData[] = $zone;
+            }
+        }
+
         echo $this->view->render('salesmanLicense', [
             'title' => 'Licença de Ambulante | ' . SITE,
-            'zones' => null
+            'zones' => $zones
         ]);
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
+    public function licenseInfo($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $validate = false;
+
+        $license = (new License())->find('MD5(id) = :id', 'id='. $data['licenseId'])->fetch();
+        if ($license) {
+            switch ($data['licenseType']) {
+                case 0:
+                    $licenseInfo = (new Salesman())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
+                    $templateName = 'salesmanLicenseInfo';
+                    break;
+                case 1:
+                    $licenseInfo = (new Company())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
+                    $templateName = 'companyLicenseInfo';
+                    break;
+            }
+
+            if ($licenseInfo) {
+                $validate = true;
+
+                echo $this->view->render($templateName, [
+                    'title' => 'Minha Licença | ' . SITE,
+                    'license' => $licenseInfo,
+                    'licenseValidate' => $license,
+                    'licenseStatus' => $license->status
+                ]);
+            }
+        }
+
+        if ($validate == false) {
+            $this->router->redirect('web.home');
+        }
     }
 
     /**
@@ -859,7 +921,7 @@ class Web
 
         if ($_FILES) {
             $user = (new User())->findById($_SESSION['user']['id']);
-            $cpf = preg_replace( '/[^0-9]/is', '', $user->cpf);
+            $cpf = preg_replace('/[^0-9]/is', '', $user->cpf);
 
             $soap_input =
                 '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:e="e-Agata_18.11">
@@ -867,7 +929,7 @@ class Web
                <soapenv:Body>
                   <e:PWSRetornoPertences.Execute>
                      <e:Flagtipopesquisa>C</e:Flagtipopesquisa>
-                     <e:Ctgcpf>'. $cpf .'</e:Ctgcpf>
+                     <e:Ctgcpf>' . $cpf . '</e:Ctgcpf>
                      <e:Ctiinscricao></e:Ctiinscricao>
                   </e:PWSRetornoPertences.Execute>
                </soapenv:Body>
@@ -889,17 +951,17 @@ class Web
             $companys = $xml->Body->PWSRetornoPertences->Sdtretornopertences->SDTRetornoPertencesItem->SDTRetornoPertencesEmpresa->SDTRetornoPertencesEmpresaItem;
 
             $companyAux = 0;
-            if($companys !== ""){
-                foreach ($companys as $company){
-                    if($company->SRPAutonomo == "A"){
-                        if($company->SRPInscricaoEmpresa == $data['cmc']){
+            if ($companys !== "") {
+                foreach ($companys as $company) {
+                    if ($company->SRPAutonomo == "A") {
+                        if ($company->SRPInscricaoEmpresa == $data['cmc']) {
                             $companyAux = 1;
                         }
                     }
                 }
             }
 
-            if($companyAux == 0) {
+            if ($companyAux == 0) {
                 $products = "";
                 foreach ($data['productSelect'] as $product) {
                     $products = $products . "" . $product;
@@ -956,6 +1018,7 @@ class Web
                         exit();
                     } else {
                         $company = new Company();
+                        $company->id_licenca = $license->id;
                         $company->cnpj = $data['cnpj'];
                         $company->cmc = $data['cmc'];
                         $company->nome_fantasia = $data['fantasyName'];
@@ -971,7 +1034,7 @@ class Web
                         $company->quantidade_equipamentos = $data['equipamentAmount'];
                         $company->save();
 
-                        if($company->fail()) {
+                        if ($company->fail()) {
                             $attach->destroy();
                             $license->destroy();
                             var_dump($company->fail()->getMessage());
@@ -1009,15 +1072,47 @@ class Web
     {
         $this->checkLogin();
 
+        $license_type = (new LicenseType())->find()->fetch(true);
         if ($_SESSION['user']['login'] == 3) {
-            $this->salesmanList();
+            $users = (new User())
+                ->find('', '', 'id, cpf, nome, email, endereco')
+                ->fetch(true);
+
+            $auxPaid = 0;
+            $auxPending = 0;
+            $auxBlocked = 0;
+            $countUsers = 0;
+            if ($users) {
+                foreach ($users as $user) {
+                    if ($user->situacao == 1) {
+                        $auxPaid++;
+                    } else {
+                        $auxPending++;
+                    }
+
+                    if ($user->suspenso == 1) {
+                        $auxBlocked++;
+                    }
+                }
+                $countUsers = count($users);
+            }
+
+            echo $this->view->render('salesmanList', [
+                'title' => 'Licenças | ' . SITE,
+                'users' => $users,
+                'companys' => null,
+                'registered' => $countUsers,
+                'paid' => $auxPaid,
+                'pending' => $auxPending,
+                'blocked' => $auxBlocked
+            ]);
         } else {
             $licenses = (new License())->find('id_usuario = :id', 'id=' . $_SESSION['user']['id'])
                 ->fetch(true);
-            $license_type = (new LicenseType())->find()->fetch(true);
+            $title = 'Minhas licenças';
 
             echo $this->view->render('licenseList', [
-                'title' => 'Minhas licenças | ' . SITE,
+                'title' => $title . ' | ' . SITE,
                 'licenses' => $licenses,
                 'types' => $license_type
             ]);
@@ -1432,7 +1527,7 @@ class Web
             }
 
             $agent->save();
-            if($agent->fail()) {
+            if ($agent->fail()) {
                 var_dump($agent->fail()->getMessage());
             } else {
                 $this->router->redirect('web.agentList');
@@ -1581,47 +1676,6 @@ class Web
         // Envia o conteúdo do arquivo
 
         echo $html;
-    }
-
-    /**
-     * @return void
-     */
-    public function salesmanList(): void
-    {
-        $this->checkAgent();
-
-        $users = (new User())
-            ->find('', '', 'id, cpf, nome, email, situacao, endereco')
-            ->fetch(true);
-
-        $auxPaid = 0;
-        $auxPending = 0;
-        $auxBlocked = 0;
-        $countUsers = 0;
-        if ($users) {
-            foreach ($users as $user) {
-                if ($user->situacao == 1) {
-                    $auxPaid++;
-                } else {
-                    $auxPending++;
-                }
-
-                if ($user->suspenso == 1) {
-                    $auxBlocked++;
-                }
-            }
-            $countUsers = count($users);
-        }
-
-        echo $this->view->render('salesmanList', [
-            'title' => 'Licenças | ' . SITE,
-            'users' => $users,
-            'companys' => null,
-            'registered' => $countUsers,
-            'paid' => $auxPaid,
-            'pending' => $auxPending,
-            'blocked' => $auxBlocked
-        ]);
     }
 
     /**

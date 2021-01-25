@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 22-Jan-2021 às 16:55
+-- Tempo de geração: 25-Jan-2021 às 17:36
 -- Versão do servidor: 10.4.13-MariaDB
 -- versão do PHP: 7.4.8
 
@@ -33,9 +33,9 @@ CREATE TABLE `ambulantes` (
   `id_zona` int(11) DEFAULT NULL,
   `local_endereco` varchar(400) NOT NULL,
   `produto` int(11) NOT NULL,
-  `atendimento_dias` datetime NOT NULL,
-  `atendimento_hora_inicio` datetime NOT NULL,
-  `atendimento_hora_fim` datetime NOT NULL,
+  `atendimento_dias` int(10) NOT NULL,
+  `atendimento_hora_inicio` varchar(15) NOT NULL,
+  `atendimento_hora_fim` varchar(15) NOT NULL,
   `relato_atividade` varchar(150) DEFAULT NULL,
   `area_equipamento` varchar(20) NOT NULL,
   `tipo_equipamento` varchar(25) NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE `ambulantes` (
 --
 
 INSERT INTO `ambulantes` (`id`, `id_licenca`, `id_zona`, `local_endereco`, `produto`, `atendimento_dias`, `atendimento_hora_inicio`, `atendimento_hora_fim`, `relato_atividade`, `area_equipamento`, `tipo_equipamento`, `latitude`, `longitude`) VALUES
-(12, 16, NULL, 'Avenida Celeste Bezerra, Levada, Maceió, Região Geográfica Imediata de Maceió, Região Geográfica Intermediária de Maceió, Alagoas, Região Nordeste, 57017-040, Brasil', 37, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'aaaaaaa', '10 x 5', 'Barraca', '-9.65819407125508', '-35.746684154570005');
+(14, 18, NULL, 'Edifício, Ciclovia Doutor Aurino Malta de Oliveira, Jatiúca, Maceió, Região Geográfica Imediata de Maceió, Região Geográfica Intermediária de Maceió, Alagoas, Região Nordeste, 57036-850, Brasil', 146, 1346, '8:00', '18:00', NULL, '10 x 5', 'Barraca', '-9.650375634778543', '-35.701116206376916');
 
 -- --------------------------------------------------------
 
@@ -83,7 +83,21 @@ INSERT INTO `anexos` (`id`, `nome`, `tipo_usuario`, `id_usuario`) VALUES
 (42, 'equipmentImage.jpg', '1', 13),
 (43, 'equipmentImage.jpg', '1', 14),
 (44, 'equipmentImage.jpg', '1', 15),
-(45, 'equipmentImage.jpg', '1', 16);
+(45, 'equipmentImage.jpg', '1', 16),
+(46, 'userImage.jpg', '0', 37),
+(47, 'identityImage.jpg', '0', 37),
+(48, 'proofAddress.jpg', '0', 37),
+(49, 'userImage.png', '0', 38),
+(50, 'identityImage.jpg', '0', 38),
+(51, 'proofAddress.png', '0', 38),
+(52, 'equipmentImage.jpg', '1', 17),
+(53, 'equipmentImage.jpg', '1', 18),
+(54, 'userImage.jpg', '1', 19),
+(55, 'cnpjRegistration.jpg', '1', 19),
+(56, 'proofAddress.jpg', '1', 19),
+(57, 'socialContract.jpg', '1', 19),
+(58, 'businessLicense.jpg', '1', 19),
+(59, 'otherDocument.jpg', '1', 19);
 
 -- --------------------------------------------------------
 
@@ -109,7 +123,7 @@ CREATE TABLE `boletos` (
 --
 
 INSERT INTO `boletos` (`id`, `id_licenca`, `id_usuario`, `cod_referencia`, `cod_pagamento`, `valor`, `status`, `tipo`, `pagar_em`, `pago_em`) VALUES
-(148, 16, 36, '15123', 'teste', 144, 3, 1, '2021-01-25 03:00:00', '2021-01-22 14:11:19');
+(150, 18, 38, '15123', 'teste', 144, 3, 1, '2021-01-28 03:00:00', '2021-01-25 14:29:09');
 
 -- --------------------------------------------------------
 
@@ -119,6 +133,7 @@ INSERT INTO `boletos` (`id`, `id_licenca`, `id_usuario`, `cod_referencia`, `cod_
 
 CREATE TABLE `empresas` (
   `id` int(11) NOT NULL,
+  `id_licenca` int(11) NOT NULL,
   `endereco` text NOT NULL,
   `numero` int(11) NOT NULL,
   `bairro` text NOT NULL,
@@ -130,7 +145,6 @@ CREATE TABLE `empresas` (
   `cmc` text NOT NULL,
   `nome_fantasia` text NOT NULL,
   `outro_produto` text DEFAULT NULL,
-  `como_vende` text NOT NULL,
   `quantidade_equipamentos` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -138,8 +152,8 @@ CREATE TABLE `empresas` (
 -- Extraindo dados da tabela `empresas`
 --
 
-INSERT INTO `empresas` (`id`, `endereco`, `numero`, `bairro`, `cidade`, `cep`, `produto`, `relato_atividade`, `cnpj`, `cmc`, `nome_fantasia`, `outro_produto`, `como_vende`, `quantidade_equipamentos`) VALUES
-(23, 'Rua Doutor Batista Acioly', 294, 'Centro', 'Rio Largo', '57100000', '137', 'aaaaaaaaaaaaaaaaaaaaaaaaa', '11.111.111/1111-11', '1111111111', 'More Media', 'Cabelo', '', 14);
+INSERT INTO `empresas` (`id`, `id_licenca`, `endereco`, `numero`, `bairro`, `cidade`, `cep`, `produto`, `relato_atividade`, `cnpj`, `cmc`, `nome_fantasia`, `outro_produto`, `quantidade_equipamentos`) VALUES
+(29, 19, 'Rua Doutor Batista Acioly', 294, 'Centro', 'Rio Largo', '57100000', '0246', 'Trabalho vendendo produtos para cabelo na parte da praia', '11.111.111/1111-11', '1111111111', 'More Media', '', 14);
 
 -- --------------------------------------------------------
 
@@ -187,7 +201,7 @@ CREATE TABLE `fiscais` (
 --
 
 INSERT INTO `fiscais` (`id`, `matricula`, `nome`, `email`, `senha`, `cpf`, `tipo_fiscal`, `situacao`) VALUES
-(1, '111111-1', 'Lucas Gabriel Peixoto de Oliveira', 'lucasgabrielpdoliveira@gmail.com', '698d51a19d8a121ce581499d7b701668', '111.657.194-36', 1, 2);
+(1, '111111-1', 'Lucas Gabriel Peixoto de Oliveira', 'lucasgabrielpdoliveira@gmail.com', '698d51a19d8a121ce581499d7b701668', '111.657.194-36', 0, 1);
 
 -- --------------------------------------------------------
 
@@ -210,8 +224,8 @@ CREATE TABLE `licencas` (
 --
 
 INSERT INTO `licencas` (`id`, `cmc`, `tipo`, `data_inicio`, `data_fim`, `status`, `id_usuario`) VALUES
-(10, '1111111111', '1', '2021-01-21', '2021-01-24', 1, 36),
-(16, '9900027911', '0', '2021-01-22', '2021-01-25', 0, 36);
+(18, '9900027911', '0', '2021-01-25', '2021-01-28', 0, 38),
+(19, '1111111111', '1', '2021-01-25', '2021-01-28', 1, 38);
 
 -- --------------------------------------------------------
 
@@ -343,7 +357,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `cpf`, `nome`, `endereco`, `telefone`, `email`, `rg`, `nome_mae`, `senha`) VALUES
-(36, '034.325.347-01', 'Lucas Gabriel Peixoto de Oliveira', 'Rua Doutor Batista Acioly, Rio Largo, Centro, 294', '82 98718-0470', 'lucasgabrielpdoliveira@gmail.com', '3651746-1', 'Izabel Cristina Barros Peixoto', '202cb962ac59075b964b07152d234b70');
+(38, '034.325.347-01', 'Lucas Gabriel Peixoto de Oliveira', 'Rua Doutor Batista Acioly, Rio Largo, Centro, 294', '82 98718-0470', 'lucasgabrielpdoliveira@gmail.com', '3651746-1', 'Izabel Cristina Barros Peixoto', '202cb962ac59075b964b07152d234b70');
 
 -- --------------------------------------------------------
 
@@ -493,25 +507,25 @@ ALTER TABLE `zonas`
 -- AUTO_INCREMENT de tabela `ambulantes`
 --
 ALTER TABLE `ambulantes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de tabela `anexos`
 --
 ALTER TABLE `anexos`
-  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT de tabela `boletos`
 --
 ALTER TABLE `boletos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=149;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
 
 --
 -- AUTO_INCREMENT de tabela `empresas`
 --
 ALTER TABLE `empresas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de tabela `eventos`
@@ -529,13 +543,13 @@ ALTER TABLE `eventual`
 -- AUTO_INCREMENT de tabela `fiscais`
 --
 ALTER TABLE `fiscais`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de tabela `licencas`
 --
 ALTER TABLE `licencas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de tabela `notificacoes`
@@ -571,7 +585,7 @@ ALTER TABLE `tipo_licenca`
 -- AUTO_INCREMENT de tabela `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT de tabela `zonas`

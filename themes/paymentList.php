@@ -131,7 +131,7 @@
                                     <th scope="col" class="table-col-2">Vencimento</th>
                                     <th scope="col" class="table-col-1">Cod Referência</th>
                                     <th scope="col" class="table-col-2">Tipo</th>
-                                    <th scope="col">Ambulante</th>
+                                    <th scope="col">Usuário</th>
                                 </tr>
                                 </thead>
                                 <tbody id="table-data">

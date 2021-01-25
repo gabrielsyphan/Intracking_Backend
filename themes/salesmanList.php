@@ -143,7 +143,7 @@
                             foreach ($users as $user): ?>
                                 <tr onclick="openPage('<?= $user->id ?>')">
                                     <td><?= $user->cpf ?></td>
-                                    <td><?= $user->nome ?></td>
+                                    <td><?= explode(' ', $user->nome)[0] ?> <?= explode(' ', $user->nome)[1] ?></td>
                                     <td><?= $user->email ?></td>
                                     <td>
                                         <?php switch ($user->situacao):

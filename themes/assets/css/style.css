@@ -476,7 +476,7 @@ a[data-toggle="collapse"] {
 
 .statusPendent {
     color: #f5a42c !important;
-    font-weight: bolder;
+    font-weight: 100;
 }
 
 .statusPaid {
@@ -1274,6 +1274,18 @@ input[type=file].hidden-input-file {
 
 .border-top-green {
     border-top: 2px solid #4bc2ce;
+}
+
+.border-left-green {
+    border-left: 2px solid #4bc2ce;
+}
+
+.border-left-yellow {
+    border-left: 2px solid #ffbc00;
+}
+
+.border-left-red {
+    border-left: 2px solid #f05977;
 }
 
 .container-white {
