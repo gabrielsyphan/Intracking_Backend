@@ -136,7 +136,11 @@
                                 <tr>
                                     <th>Tipo</th>
                                     <th>Cpf</th>
+<<<<<<< Updated upstream
                                     <th>Responsável</th>
+=======
+                                    <th>Proprietário</th>
+>>>>>>> Stashed changes
                                     <th>Início</th>
                                     <th>Fim</th>
                                     <th>Status</th>
@@ -163,7 +167,11 @@
                                     endswitch; ?>
                                     <tr class="<?= $trClass ?>"
                                         onclick="licenseInfo(<?= $license->tipo ?>, '<?= md5($license->id) ?>')">
+<<<<<<< Updated upstream
                                         <td><?= $types[$license->tipo]->nome ?></td>
+=======
+                                        <td><?= $types[$license->tipo-1]->nome ?></td>
+>>>>>>> Stashed changes
                                         <td><?= $users[$license->id_usuario]->cpf ?></td>
                                         <td><?= $users[$license->id_usuario]->nome ?></td>
                                         <td><?= $license->data_inicio ?></td>

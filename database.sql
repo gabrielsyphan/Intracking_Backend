@@ -3,7 +3,11 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
+<<<<<<< Updated upstream
 -- Tempo de geração: 27-Jan-2021 às 14:04
+=======
+-- Tempo de geração: 27-Jan-2021 às 17:41
+>>>>>>> Stashed changes
 -- Versão do servidor: 10.4.13-MariaDB
 -- versão do PHP: 7.4.8
 
@@ -48,7 +52,7 @@ CREATE TABLE `ambulantes` (
 --
 
 INSERT INTO `ambulantes` (`id`, `id_licenca`, `id_zona`, `local_endereco`, `produto`, `atendimento_dias`, `atendimento_hora_inicio`, `atendimento_hora_fim`, `relato_atividade`, `area_equipamento`, `tipo_equipamento`, `latitude`, `longitude`) VALUES
-(14, 18, NULL, 'Edifício, Ciclovia Doutor Aurino Malta de Oliveira, Jatiúca, Maceió, Região Geográfica Imediata de Maceió, Região Geográfica Intermediária de Maceió, Alagoas, Região Nordeste, 57036-850, Brasil', 146, 1346, '8:00', '18:00', NULL, '10 x 5', 'Barraca', '-9.650375634778543', '-35.701116206376916');
+(15, 20, NULL, 'Maceió Atlantic, 4065, Avenida Álvaro Otacílio, Jatiúca, Maceió, Região Geográfica Imediata de Maceió, Região Geográfica Intermediária de Maceió, Alagoas, Região Nordeste, 57036-850, Brasil', 3, 145, '00:00', '18:00', NULL, '10 x 20', 'Barraca', '-9.649952554008275', '-35.700772944996935');
 
 -- --------------------------------------------------------
 
@@ -69,35 +73,16 @@ CREATE TABLE `anexos` (
 
 INSERT INTO `anexos` (`id`, `nome`, `tipo_usuario`, `id_usuario`) VALUES
 (15, 'userImage.png', '3', 1),
-(31, 'userImage.png', '0', 36),
-(32, 'identityImage.png', '0', 36),
-(33, 'proofAddress.png', '0', 36),
-(34, 'userImage.png', '1', 10),
-(35, 'cnpjRegistration.png', '1', 10),
-(36, 'proofAddress.png', '1', 10),
-(37, 'socialContract.png', '1', 10),
-(38, 'businessLicense.png', '1', 10),
-(39, 'otherDocument.png', '1', 10),
-(40, 'equipmentImage.jpg', '1', 11),
-(41, 'equipmentImage.jpg', '1', 12),
-(42, 'equipmentImage.jpg', '1', 13),
-(43, 'equipmentImage.jpg', '1', 14),
-(44, 'equipmentImage.jpg', '1', 15),
-(45, 'equipmentImage.jpg', '1', 16),
-(46, 'userImage.jpg', '0', 37),
-(47, 'identityImage.jpg', '0', 37),
-(48, 'proofAddress.jpg', '0', 37),
-(49, 'userImage.png', '0', 38),
-(50, 'identityImage.jpg', '0', 38),
-(51, 'proofAddress.png', '0', 38),
-(52, 'equipmentImage.jpg', '1', 17),
-(53, 'equipmentImage.jpg', '1', 18),
-(54, 'userImage.jpg', '1', 19),
-(55, 'cnpjRegistration.jpg', '1', 19),
-(56, 'proofAddress.jpg', '1', 19),
-(57, 'socialContract.jpg', '1', 19),
-(58, 'businessLicense.jpg', '1', 19),
-(59, 'otherDocument.jpg', '1', 19);
+(31, 'userImage.png', '0', 38),
+(32, 'identityImage.jpg', '0', 38),
+(33, 'proofAddress.png', '0', 38),
+(60, 'equipmentImage.png', '1', 20),
+(61, 'userImage.png', '2', 21),
+(62, 'cnpjRegistration.png', '2', 21),
+(63, 'proofAddress.png', '2', 21),
+(64, 'socialContract.png', '2', 21),
+(65, 'businessLicense.png', '2', 21),
+(66, 'otherDocument.png', '2', 21);
 
 -- --------------------------------------------------------
 
@@ -123,7 +108,7 @@ CREATE TABLE `boletos` (
 --
 
 INSERT INTO `boletos` (`id`, `id_licenca`, `id_usuario`, `cod_referencia`, `cod_pagamento`, `valor`, `status`, `tipo`, `pagar_em`, `pago_em`) VALUES
-(150, 18, 38, '15123', 'teste', 144, 3, 1, '2021-01-28 03:00:00', '2021-01-25 14:29:09');
+(151, 20, 38, '15123', 'teste', 144, 3, 1, '2021-01-30 03:00:00', '2021-01-27 13:35:51');
 
 -- --------------------------------------------------------
 
@@ -153,7 +138,7 @@ CREATE TABLE `empresas` (
 --
 
 INSERT INTO `empresas` (`id`, `id_licenca`, `endereco`, `numero`, `bairro`, `cidade`, `cep`, `produto`, `relato_atividade`, `cnpj`, `cmc`, `nome_fantasia`, `outro_produto`, `quantidade_equipamentos`) VALUES
-(29, 19, 'Rua Doutor Batista Acioly', 294, 'Centro', 'Rio Largo', '57100000', '0246', 'Trabalho vendendo produtos para cabelo na parte da praia', '11.111.111/1111-11', '1111111111', 'More Media', '', 14);
+(30, 21, 'Rua Doutor Batista Acioly', 294, 'Centro', 'Rio Largo', '57100000', '157', 'aaaaaaaaaaaa', '11.111.111/1111-11', '1111111111', 'More Media', 'Cabelo', 14);
 
 -- --------------------------------------------------------
 
@@ -224,8 +209,8 @@ CREATE TABLE `licencas` (
 --
 
 INSERT INTO `licencas` (`id`, `cmc`, `tipo`, `data_inicio`, `data_fim`, `status`, `id_usuario`) VALUES
-(18, '9900027911', '0', '2021-01-25', '2021-01-28', 0, 38),
-(19, '1111111111', '1', '2021-01-25', '2021-01-28', 1, 38);
+(20, '9900027911', '1', '2021-01-27', '2021-01-30', 0, 38),
+(21, '1111111111', '2', '2021-01-27', '2021-01-30', 1, 38);
 
 -- --------------------------------------------------------
 
@@ -295,11 +280,11 @@ CREATE TABLE `tipo_licenca` (
 --
 
 INSERT INTO `tipo_licenca` (`id`, `nome`) VALUES
-(0, 'Ambulante'),
-(1, 'Empresa'),
-(2, 'Eventual'),
-(3, 'Publicidade'),
-(4, 'Uso de solo');
+(1, 'Ambulante'),
+(2, 'Empresa'),
+(3, 'Eventual'),
+(4, 'Publicidade'),
+(5, 'Uso de solo');
 
 -- --------------------------------------------------------
 
@@ -507,25 +492,25 @@ ALTER TABLE `zonas`
 -- AUTO_INCREMENT de tabela `ambulantes`
 --
 ALTER TABLE `ambulantes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de tabela `anexos`
 --
 ALTER TABLE `anexos`
-  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- AUTO_INCREMENT de tabela `boletos`
 --
 ALTER TABLE `boletos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=152;
 
 --
 -- AUTO_INCREMENT de tabela `empresas`
 --
 ALTER TABLE `empresas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT de tabela `eventos`
@@ -549,7 +534,7 @@ ALTER TABLE `fiscais`
 -- AUTO_INCREMENT de tabela `licencas`
 --
 ALTER TABLE `licencas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de tabela `notificacoes`

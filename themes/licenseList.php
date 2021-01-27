@@ -62,7 +62,7 @@
                                 <tr class="<?= $trClass ?>"
                                     onclick="licenseInfo(<?= $license->tipo ?>, '<?= md5($license->id) ?>')">
                                     <td><strong><?= $aux ?></strong></td>
-                                    <td><?= $types[$license->tipo]->nome ?></td>
+                                    <td><?= $types[$license->tipo-1]->nome ?></td>
                                     <td><?= $license->data_inicio ?></td>
                                     <td><?= $license->data_fim ?></td>
                                     <td>

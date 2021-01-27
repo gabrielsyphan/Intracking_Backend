@@ -1317,7 +1317,7 @@ input[type=file].hidden-input-file {
     width: 100%;
     height: 100vh;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 99;
+    z-index: 9999;
     display: none;
     top: 0;
     left: 0;

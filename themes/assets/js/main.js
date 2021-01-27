@@ -563,3 +563,14 @@ function changeFile(e) {
     $('.' + inputId + '-name').empty();
 }
 
+function openModal(e) {
+    $('#modal-' + e).show();
+}
+
+function closeModal(e) {
+    $('#modal-' + e).hide();
+}
+
+function openFile(url) {
+    window.open('https://localhost/orditi/themes/assets/uploads/' + url, '_blank');
+}

@@ -220,19 +220,3 @@
         </div>
     </div>
 </div>
-
-<?php $v->start('scripts'); ?>
-<script>
-    function openFile(url) {
-        window.open('<?= url() ?>/themes/assets/uploads/' + url, '_blank');
-    }
-
-    function openModal(e) {
-        $('#modal-' + e).show();
-    }
-
-    function closeModal(e) {
-        $('#modal-' + e).hide();
-    }
-</script>
-<?php $v->end(); ?>

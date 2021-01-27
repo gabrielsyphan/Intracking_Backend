@@ -102,6 +102,7 @@ class Web
         $user = (new User())->find('cpf = :identity AND senha = :password',
             'identity=' . $data['identity'] . '&password=' . md5($data['psw']))->fetch();
         $validate = 0;
+
         if ($user) {
             $attachs = (new Attach())->find('id_usuario = :id', 'id=' . $user->id)->fetch(true);
             if ($attachs) {
@@ -616,8 +617,9 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $validate = false;
 
-        $license = (new License())->find('MD5(id) = :id', 'id='. $data['licenseId'])->fetch();
+        $license = (new License())->find('MD5(id) = :id', 'id=' . $data['licenseId'])->fetch();
         if ($license) {
+<<<<<<< Updated upstream
             $user = (new User())->findById($license->id_usuario, 'nome');
             if ($user) {
                 switch ($data['licenseType']) {
@@ -628,10 +630,26 @@ class Web
                     case 1:
                         $licenseInfo = (new Company())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
                         $templateName = 'companyLicenseInfo';
+=======
+            $payments = (new Payment())->find('id_licenca = :id', 'id=' . $license->id)->fetch(true);
+            $user = (new User())->findById($license->id_usuario, 'nome');
+            if ($user) {
+                switch ($data['licenseType']) {
+                    case 1:
+                        $licenseInfo = (new Salesman())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
+                        $templateName = 'salesmanLicenseInfo';
+                        $groupName = 'salesmans';
+                        break;
+                    case 2:
+                        $licenseInfo = (new Company())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
+                        $templateName = 'companyLicenseInfo';
+                        $groupName = 'companys';
+>>>>>>> Stashed changes
                         break;
                 }
 
                 if ($licenseInfo) {
+<<<<<<< Updated upstream
                     $validate = true;
 
                     echo $this->view->render($templateName, [
@@ -641,6 +659,32 @@ class Web
                         'licenseStatus' => $license->status,
                         'user' => $user->nome
                     ]);
+=======
+                    $uploads = array();
+                    $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = :type', 'id=' . $license->id . '&type=' . $data['licenseType'])->fetch(true);
+
+                    if ($attachments) {
+                        foreach ($attachments as $attach) {
+                            $uploads[] = [
+                                'fileName' => $attach->nome,
+                                'groupName' => $groupName,
+                                'userId' => $license->id
+                            ];
+                        }
+
+                        $validate = true;
+
+                        echo $this->view->render($templateName, [
+                            'title' => 'Minha Licença | ' . SITE,
+                            'license' => $licenseInfo,
+                            'licenseValidate' => $license,
+                            'licenseStatus' => $license->status,
+                            'user' => $user->nome,
+                            'uploads' => $uploads,
+                            'payments' => $payments
+                        ]);
+                    }
+>>>>>>> Stashed changes
                 }
             }
         }
@@ -701,7 +745,7 @@ class Web
             }
 
             $license = new License();
-            $license->tipo = 0;
+            $license->tipo = 1;
             $license->status = 0;
             $license->id_usuario = $_SESSION['user']['id'];
             $license->data_inicio = date('Y-m-d');
@@ -972,7 +1016,7 @@ class Web
                 }
 
                 $license = new License();
-                $license->tipo = 1;
+                $license->tipo = 2;
                 $license->status = 1;
                 $license->id_usuario = $_SESSION['user']['id'];
                 $license->data_inicio = date('Y-m-d');
@@ -1010,7 +1054,7 @@ class Web
 
                             $attach = new Attach();
                             $attach->id_usuario = $license->id;
-                            $attach->tipo_usuario = 1;
+                            $attach->tipo_usuario = 2;
                             $attach->nome = $fileName;
                             $attach->save();
                         }
@@ -1092,7 +1136,11 @@ class Web
                         $auxPaid++;
                     } else if ($license->status == 3) {
                         $auxBlocked++;
+<<<<<<< Updated upstream
                     }else {
+=======
+                    } else {
+>>>>>>> Stashed changes
                         $auxPending++;
                     }
 
@@ -1261,7 +1309,6 @@ class Web
 
             $folder = ROOT . '/themes/assets/uploads';
             $uploads = array();
-            $aux = 1;
             $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 0', 'id=' . $user->id)->fetch(true);
             if ($attachments) {
                 foreach ($attachments as $attach) {
@@ -1276,7 +1323,6 @@ class Web
                         'groupName' => 'users',
                         'userId' => $user->id
                     ];
-                    $aux++;
                 }
             }
 
@@ -1287,7 +1333,7 @@ class Web
                 'uploads' => $uploads,
                 'userImage' => $userImage
             ]);
-        } else if ($_SESSION['user']['login'] === 3) {
+        } else {
             $this->router->redirect('web.salesmanList');
         }
     }
@@ -1690,7 +1736,15 @@ class Web
     {
         $zoneData = array();
         $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
-        $salesmans = (new Salesman())->find('', '', 'latitude, longitude')->fetch(true);
+        $salesmans = (new Salesman())->find('', '', 'id_licenca, latitude, longitude')->fetch(true);
+        if ($salesmans) {
+            foreach ($salesmans as $salesman) {
+                $license = (new License())->findById($salesman->id_licenca, 'status');
+                if ($license) {
+                    $salesman->status = $license->status;
+                }
+            }
+        }
 
         if ($zones) {
             foreach ($zones as $zone) {
@@ -1963,13 +2017,13 @@ class Web
             $salesmans = (new Salesman())->find('id_zona = :zoneId', 'zoneId=' . $data['id'], 'id_licenca')->fetch(true);
             $users = array();
 
-            if($salesmans){
-               foreach ($salesmans as $salesman){
+            if ($salesmans) {
+                foreach ($salesmans as $salesman) {
                     $license = (new License())->findById($salesman->id_licenca);
-                    if($license){
+                    if ($license) {
                         $users[] = (new User)->findById($license->id_usuario);
                     }
-               }
+                }
             }
 
             if ($zone !== null) {
