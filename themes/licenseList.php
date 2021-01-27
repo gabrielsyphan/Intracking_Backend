@@ -91,7 +91,7 @@
 <script>
     function tableFilter() {
         let input, filter, table, tr, td, i, txtValue;
-        let selectedOption = 2;
+        let selectedOption = 1;
 
         input = document.getElementById("text");
         filter = input.value.toUpperCase();

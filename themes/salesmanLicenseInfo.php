@@ -76,23 +76,19 @@
 
                 <div class="row">
                     <div class="col-xl-3 subtitle-section-p">
-                        Tipo de equipamento:
+                        Responsável:
                     </div>
                     <div class="col-xl-9 subtitle-section-p text-right">
-                        <?= $license->tipo_equipamento ?>
+                        <?= $user ?>
                     </div>
                 </div>
 
                 <div class="row mt-5">
                     <div class="col-xl-3 subtitle-section-p">
-                        Relato da atividade:
+                        Tipo de equipamento:
                     </div>
                     <div class="col-xl-9 subtitle-section-p text-right">
-                        <?php if ($license->relato_atividade):
-                            echo $license->relato_atividade;
-                        else:
-                            echo 'Não informado';
-                        endif; ?>
+                        <?= $license->tipo_equipamento ?>
                     </div>
                 </div>
 
@@ -111,6 +107,19 @@
                     </div>
                     <div class="col-xl-9 subtitle-section-p text-right">
                         <?= $licenseValidate->data_fim ?>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-xl-3 subtitle-section-p">
+                        Relato da atividade:
+                    </div>
+                    <div class="col-xl-9 subtitle-section-p text-right">
+                        <?php if ($license->relato_atividade):
+                            echo $license->relato_atividade;
+                        else:
+                            echo 'Não informado';
+                        endif; ?>
                     </div>
                 </div>
 

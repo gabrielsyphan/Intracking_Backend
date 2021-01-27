@@ -618,26 +618,30 @@ class Web
 
         $license = (new License())->find('MD5(id) = :id', 'id='. $data['licenseId'])->fetch();
         if ($license) {
-            switch ($data['licenseType']) {
-                case 0:
-                    $licenseInfo = (new Salesman())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
-                    $templateName = 'salesmanLicenseInfo';
-                    break;
-                case 1:
-                    $licenseInfo = (new Company())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
-                    $templateName = 'companyLicenseInfo';
-                    break;
-            }
+            $user = (new User())->findById($license->id_usuario, 'nome');
+            if ($user) {
+                switch ($data['licenseType']) {
+                    case 0:
+                        $licenseInfo = (new Salesman())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
+                        $templateName = 'salesmanLicenseInfo';
+                        break;
+                    case 1:
+                        $licenseInfo = (new Company())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
+                        $templateName = 'companyLicenseInfo';
+                        break;
+                }
 
-            if ($licenseInfo) {
-                $validate = true;
+                if ($licenseInfo) {
+                    $validate = true;
 
-                echo $this->view->render($templateName, [
-                    'title' => 'Minha Licença | ' . SITE,
-                    'license' => $licenseInfo,
-                    'licenseValidate' => $license,
-                    'licenseStatus' => $license->status
-                ]);
+                    echo $this->view->render($templateName, [
+                        'title' => 'Minha Licença | ' . SITE,
+                        'license' => $licenseInfo,
+                        'licenseValidate' => $license,
+                        'licenseStatus' => $license->status,
+                        'user' => $user->nome
+                    ]);
+                }
             }
         }
 
@@ -1073,46 +1077,47 @@ class Web
         $this->checkLogin();
 
         $license_type = (new LicenseType())->find()->fetch(true);
+        $users = array();
         if ($_SESSION['user']['login'] == 3) {
-            $users = (new User())
-                ->find('', '', 'id, cpf, nome, email, endereco')
-                ->fetch(true);
+            $licenses = (new License())->find()->fetch(true);
 
             $auxPaid = 0;
             $auxPending = 0;
             $auxBlocked = 0;
-            $countUsers = 0;
-            if ($users) {
-                foreach ($users as $user) {
-                    if ($user->situacao == 1) {
+            $countLicense = 0;
+
+            if ($licenses) {
+                foreach ($licenses as $license) {
+                    if ($license->status == 1) {
                         $auxPaid++;
-                    } else {
+                    } else if ($license->status == 3) {
+                        $auxBlocked++;
+                    }else {
                         $auxPending++;
                     }
 
-                    if ($user->suspenso == 1) {
-                        $auxBlocked++;
-                    }
+                    $user = (new User())->findById($license->id_usuario, 'id, nome, cpf');
+                    $users[$user->id] = $user;
                 }
-                $countUsers = count($users);
+                $countLicense = count($licenses);
             }
 
             echo $this->view->render('salesmanList', [
                 'title' => 'Licenças | ' . SITE,
-                'users' => $users,
-                'companys' => null,
-                'registered' => $countUsers,
+                'licenses' => $licenses,
+                'registered' => $countLicense,
                 'paid' => $auxPaid,
                 'pending' => $auxPending,
-                'blocked' => $auxBlocked
+                'blocked' => $auxBlocked,
+                'types' => $license_type,
+                'users' => $users
             ]);
         } else {
             $licenses = (new License())->find('id_usuario = :id', 'id=' . $_SESSION['user']['id'])
                 ->fetch(true);
-            $title = 'Minhas licenças';
 
             echo $this->view->render('licenseList', [
-                'title' => $title . ' | ' . SITE,
+                'title' => 'Minhas licenças | ' . SITE,
                 'licenses' => $licenses,
                 'types' => $license_type
             ]);
@@ -1559,8 +1564,8 @@ class Web
             $html .= '<tr>';
             $html .= '<td><b>Status</b></td>';
             $html .= '<td><b>Valor</b></td>';
-            $html .= '<td><b>Vencimento</b></td>';
             $html .= '<td><b>Pagamento</b></td>';
+            $html .= '<td><b>Vencimento</b></td>';
             $html .= '<td><b>Ambulante</b></td>';
             $html .= '</tr>';
 
@@ -1568,7 +1573,7 @@ class Web
             $payments = (new Payment())->find->fetch(true);
             if ($payments) {
                 foreach ($payments as $payment) {
-                    $salesman = (new Salesman())->findById($payment->id_ambulante, 'nome');
+                    $user = (new User())->findById($payment->id_usuario, 'nome');
                     if ($payment->status == 3 || $payment->status == 0) {
                         $status = "Pendente";
                     } elseif ($payment->status == 1) {
@@ -1580,9 +1585,9 @@ class Web
                     $html .= '<tr>';
                     $html .= '<td>' . $status . '</td>';
                     $html .= '<td>R$ ' . $payment->valor . ',00</td>';
-                    $html .= '<td>' . date('d-m-Y', strtotime($payment->pagar_em)) . '</td>';
                     $html .= '<td>' . date('d-m-Y', strtotime($payment->pago_em)) . '</td>';
-                    $html .= '<td>' . $salesman->nome . '</td>';
+                    $html .= '<td>' . date('d-m-Y', strtotime($payment->pagar_em)) . '</td>';
+                    $html .= '<td>' . $user->nome . '</td>';
                     $html .= '</tr>';
                 }
             }
@@ -1955,7 +1960,18 @@ class Web
 
         if (is_numeric($data['id'])) {
             $zone = (new Zone())->find('id = :zoneId', 'zoneId=' . $data['id'], 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes, foto, detalhes')->fetch();
-            $salesmans = (new Salesman())->find('regiao = :zoneId', 'zoneId=' . $data['id'], 'id, identidade, nome, situacao, fone, email')->fetch(true);
+            $salesmans = (new Salesman())->find('id_zona = :zoneId', 'zoneId=' . $data['id'], 'id_licenca')->fetch(true);
+            $users = array();
+
+            if($salesmans){
+               foreach ($salesmans as $salesman){
+                    $license = (new License())->findById($salesman->id_licenca);
+                    if($license){
+                        $users[] = (new User)->findById($license->id_usuario);
+                    }
+               }
+            }
+
             if ($zone !== null) {
                 $centroid = explode("POINT(", $zone->centroide);
                 $centroid = explode(")", $centroid[1]);
@@ -1975,7 +1991,7 @@ class Web
                 $zone->poligono = $polygon;
 
                 if (!$zone->foto) {
-                    $image_base64 = base64_encode(file_get_contents(THEMES . '/assets/img/zone.jpg'));
+                    $image_base64 = base64_encode(file_get_contents(THEMES . '/assets/img/zone.svg'));
                     $zone->foto = 'data:image/jpg;base64,' . $image_base64;
                 }
 
@@ -1989,7 +2005,7 @@ class Web
                     echo $this->view->render('zone', [
                         'title' => 'Zona | ' . SITE,
                         'zone' => $zone,
-                        'salesmans' => $salesmans
+                        'salesmans' => $users
                     ]);
                 }
             } else {

@@ -15,7 +15,7 @@
                         </div>
                         <div class="col-xl-4">
                             <div class="text-center mt-4">
-                                <span class="title-section icon-users card-icon registered-icon"></span>
+                                <span class="title-section icon-drivers-license card-icon registered-icon"></span>
                             </div>
                         </div>
                     </div>
@@ -96,7 +96,8 @@
 
                         <div class="div-box-span-icon mt-3">
                             <div class="div-table-search">
-                                <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text" placeholder="Filtrar pelo nome...">
+                                <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
+                                       placeholder="Filtrar pelo nome...">
                                 <div class="circle-button primary search">
                                     <span class="icon-search"></span>
                                 </div>
@@ -104,7 +105,8 @@
 
                             <div class="dropleft">
                                 <div class="ml-3 circle-button secondary" id="dropdownMenuButton"
-                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Exportar tabela">
+                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                     title="Exportar tabela">
                                     <span class="icon-download"></span>
                                 </div>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -122,51 +124,62 @@
                     </div>
                     <hr style="margin-bottom: 0">
                     <div class="box-div-info-overflow-x">
-                        <?php if($users == NULL): ?>
+                        <?php if (!$licenses): ?>
                             <div class="p-5 mt-5 text-center">
                                 <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
-                                <p class="mt-5 subtitle-section-p">Ops! Não encontramos nenhum ambulante ou empresa. 😥</p>
+                                <p class="mt-5 subtitle-section-p">Ops! Não encontramos nenhum ambulante ou empresa.
+                                    😥</p>
                             </div>
                         <?php else: ?>
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th scope="col" class="table-col-1">CPF/CNPJ</th>
-                                <th scope="col" class="table-col-2">Nome</th>
-                                <th scope="col" class="table-col-3">Email</th>
-                                <th scope="col" class="table-col-4">Situação</th>
-                                <th scope="col" class="table-col-5">Localização</th>
-                            </tr>
-                            </thead>
-                            <tbody id="table-data">
-                            <?php if($users !== NULL):
-                            foreach ($users as $user): ?>
-                                <tr onclick="openPage('<?= $user->id ?>')">
-                                    <td><?= $user->cpf ?></td>
-                                    <td><?= explode(' ', $user->nome)[0] ?> <?= explode(' ', $user->nome)[1] ?></td>
-                                    <td><?= $user->email ?></td>
-                                    <td>
-                                        <?php switch ($user->situacao):
-                                        case 0: ?>
-                                            <div class="status-button tertiary">Pendente</div>
-                                        <?php break; case 1: ?>
-                                            <div class="status-button primary">Ativo</div>
-                                        <?php break; case 2: ?>
-                                            <div class="status-button secondary">Inadimplente</div>
-                                        <?php break; case 3: ?>
-                                            <div class="status-button tertiary">Pendente</div>
-                                        <?php break; endswitch; ?>
-                                    </td>
-                                    <td><?= $user->endereco ?></td>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Cpf</th>
+                                    <th>Responsável</th>
+                                    <th>Início</th>
+                                    <th>Fim</th>
+                                    <th>Status</th>
                                 </tr>
-                                <?php endforeach; endif; ?>
-                            </tbody>
-                        </table>
-                        <div class="text-center p-4 empty-table">
-                            <img style="width: 20%" src="<?= url('themes/assets/img/empty.svg') ?>">
-                            <h4 class="black-title-section">Ops.......!</h4>
-                            <p class="subtitle-section-p">Nenhum dado foi encontrado</p>
-                        </div>
+                                </thead>
+                                <tbody id="table-data">
+                                <?php foreach ($licenses as $license):
+                                    switch ($license->status):
+                                        case 0:
+                                            $divStatus = 'tertiary';
+                                            $textStatus = 'Pendente';
+                                            $trClass = 'border-left-yellow';
+                                            break;
+                                        case 1:
+                                            $divStatus = 'primary';
+                                            $textStatus = 'Ativo';
+                                            $trClass = 'border-left-green';
+                                            break;
+                                        default:
+                                            $divStatus = 'secondary';
+                                            $textStatus = 'Bloqueado';
+                                            $trClass = 'border-left-red';
+                                            break;
+                                    endswitch; ?>
+                                    <tr class="<?= $trClass ?>"
+                                        onclick="licenseInfo(<?= $license->tipo ?>, '<?= md5($license->id) ?>')">
+                                        <td><?= $types[$license->tipo]->nome ?></td>
+                                        <td><?= $users[$license->id_usuario]->cpf ?></td>
+                                        <td><?= $users[$license->id_usuario]->nome ?></td>
+                                        <td><?= $license->data_inicio ?></td>
+                                        <td><?= $license->data_fim ?></td>
+                                        <td>
+                                            <div class="status-button <?= $divStatus ?>"><?= $textStatus ?></div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                            <div class="text-center p-4 empty-table">
+                                <img style="width: 20%" src="<?= url('themes/assets/img/empty.svg') ?>">
+                                <h4 class="black-title-section">Ops.......!</h4>
+                                <p class="subtitle-section-p">Nenhum dado foi encontrado</p>
+                            </div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -176,52 +189,48 @@
 </div>
 
 <?php $v->start("scripts"); ?>
-    <script src="<?= url("themes/assets/vendor/bootstrap/js/popper.js"); ?>"></script>
-    <script src="<?= url("themes/assets/vendor/bootstrap/js/bootstrap.min.js"); ?>"></script>
-    <script>
-        $('.js-pscroll').each(function(){
-            var ps = new PerfectScrollbar(this);
+<script src="<?= url("themes/assets/vendor/bootstrap/js/popper.js"); ?>"></script>
+<script src="<?= url("themes/assets/vendor/bootstrap/js/bootstrap.min.js"); ?>"></script>
+<script>
+    $('.js-pscroll').each(function () {
+        var ps = new PerfectScrollbar(this);
 
-            $(window).on('resize', function(){
-                ps.update();
-            })
-        });
+        $(window).on('resize', function () {
+            ps.update();
+        })
+    });
 
-        function openPage(data) {
-            window.open("<?= $router->route('web.salesman'); ?>/"+ data, '_blank');
-        }
-        
-        function openCompanyPage(data) {
-            window.open("<?= $router->route('web.company'); ?>/"+ data, '_blank');
-        }
+    function licenseInfo(licenseType, licenseId) {
+        window.location.href = '<?= url('licenseInfo') ?>/' + licenseType + '/' + licenseId;
+    }
 
-        function tableFilter() {
-            let input, filter, table, tr, td, i, txtValue;
-            let selectedOption = 1;
+    function tableFilter() {
+        let input, filter, table, tr, td, i, txtValue;
+        let selectedOption = 2;
 
-            input = document.getElementById("text");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("table-data");
-            tr = table.getElementsByTagName("tr");
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[selectedOption];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                    console.log(txtValue);
+        input = document.getElementById("text");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("table-data");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[selectedOption];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
                 }
-            }
-            if ($('tr:visible').length === 1) {
-                $('.empty-table').show();
-            } else {
-                if ($('.empty-table').show()) {
-                    $('.empty-table').hide()
-                }
+                console.log(txtValue);
             }
         }
-    </script>
+        if ($('tr:visible').length === 1) {
+            $('.empty-table').show();
+        } else {
+            if ($('.empty-table').show()) {
+                $('.empty-table').hide()
+            }
+        }
+    }
+</script>
 <?php $v->end(); ?>

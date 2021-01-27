@@ -109,7 +109,7 @@ a, a:hover, a:focus {
 }
 
 #sidebar ul li.active {
-    border-left: 3px solid #f05977;
+    border-left: 4px solid #f05977;
 }
 
 .sidebar-image {
@@ -173,6 +173,10 @@ li a span {
 
 a[data-toggle="collapse"] {
     position: relative;
+}
+
+#sidebar-inter {
+    height: 100vh;
 }
 
 @media (max-width: 768px) {
@@ -267,6 +271,11 @@ a[data-toggle="collapse"] {
 .subtitle-section-p {
     font-weight: 100;
     color: #777;
+}
+
+.subtitle-section-p-black{
+    font-weight: 100;
+    color: #000;
 }
 
 .sibtitle-section-p > strong {
@@ -534,9 +543,15 @@ a[data-toggle="collapse"] {
     display: none;
 }
 
-#mapZone {
+.mapZone {
     width: 100%;
-    height: 300px;
+    height: 120vh;
+    border: 1px solid #ddd;
+}
+
+.mapInfo {
+    width: 100%;
+    height: 50vh;
     border: 1px solid #ddd;
 }
 
@@ -812,7 +827,7 @@ a[data-toggle="collapse"] {
 
 .box-div-info-green {
     color: white;
-    background: #5ea9a4;
+    background: #4bc2ce;
     /*background: #5ea9a4 url(../img/barraca.png) right no-repeat;*/
 }
 
@@ -828,6 +843,11 @@ a[data-toggle="collapse"] {
 .box-div-info-blue {
     background: #17a2b8;
     color: white;
+}
+
+.box-div-shadow {
+    box-shadow: 1px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
 }
 
 .progress-bar-info {

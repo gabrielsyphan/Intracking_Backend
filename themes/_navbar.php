@@ -46,7 +46,7 @@
     <?= ($router->isCurrentRoute("web.companyInfo") ? 'active' : ''); ?>
     ">
                 <a href="<?= url("licenseList"); ?>">
-                    <span class="icon-user"></span>
+                    <span class="icon-drivers-license"></span>
                     Licenças
                 </a>
             </li>
@@ -58,7 +58,7 @@
             </li>
             <li class="<?= ($router->isCurrentRoute("web.agentList") ? 'active' : ''); ?>">
                 <a href="<?= url("agentList"); ?>">
-                    <span class="icon-user-secret"></span>
+                    <span class="icon-users"></span>
                     Fiscais
                 </a>
             </li>

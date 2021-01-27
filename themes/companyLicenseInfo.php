@@ -9,7 +9,17 @@
             <div class="div-gray-bg border-top-green p-5">
                 <h4 class="black-title-section">Informações da licença</h4>
                 <hr>
+
                 <div class="row">
+                    <div class="col-xl-3 subtitle-section-p">
+                        Responsável:
+                    </div>
+                    <div class="col-xl-9 subtitle-section-p text-right">
+                        <?= $user ?>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
                     <div class="col-xl-3 subtitle-section-p">
                         Nome de fantasia
                     </div>

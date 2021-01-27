@@ -96,7 +96,8 @@
 
                         <div class="div-box-span-icon mt-3">
                             <div class="div-table-search">
-                                <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text" placeholder="Filtrar pelo nome...">
+                                <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
+                                       placeholder="Filtrar pelo nome...">
                                 <div class="circle-button primary search">
                                     <span class="icon-search"></span>
                                 </div>
@@ -105,66 +106,85 @@
                     </div>
                     <hr class="mb-0">
                     <div class="box-div-info-overflow-x">
-                        <?php if(!$agents): ?>
+                        <?php if (!$agents): ?>
                             <div class="p-5 mt-5 text-center">
                                 <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
-                                <p class="mt-5 subtitle-section-p">Ops! Não encontramos nenhum ambulante ou empresa. 😥</p>
+                                <p class="mt-5 subtitle-section-p">Ops! Não encontramos nenhum ambulante ou empresa.
+                                    😥</p>
                             </div>
                         <?php else: ?>
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
-                                    <th scope="col" class="table-col-4">Matrícula <span class="icon-arrow_downward"></span></th>
-                                    <th scope="col" class="table-col-2">CPF <span style="cursor:pointer;" onclick="alterFilter(1)" class="icon-arrow_downward"></span></th>
-                                    <th scope="col" class="table-col-1">Nome <span class="icon-arrow_upward"></span></th>
-                                    <th scope="col" class="table-col-1">Email <span class="icon-arrow_downward"></span></th>
-                                    <th scope="col" class="table-col-4">Status <span class="icon-arrow_downward"></span></th>
-                                    <th scope="col" class="table-col-4">Ações <span class="icon-arrow_downward"></span></th>
+                                    <th scope="col" class="table-col-4">Matrícula <span
+                                                class="icon-arrow_downward"></span></th>
+                                    <th scope="col" class="table-col-2">CPF <span class="icon-arrow_downward"></span>
+                                    </th>
+                                    <th scope="col" class="table-col-1">Nome <span class="icon-arrow_upward"></span>
+                                    </th>
+                                    <th scope="col" class="table-col-1">Email <span class="icon-arrow_downward"></span>
+                                    </th>
+                                    <th scope="col" class="table-col-4">Status <span class="icon-arrow_downward"></span>
+                                    </th>
+                                    <th scope="col" class="table-col-4">Ações <span class="icon-arrow_downward"></span>
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody id="table-data">
-                                <?php
-                                    foreach ($agents as $agent): ?>
-                                        <tr>
-                                            <td><?= $agent->matricula ?></td>
-                                            <td><?= $agent->cpf ?></td>
-                                            <td><?= $agent->nome ?></td>
-                                            <td><?= $agent->email ?></td>
-                                            <td>
+                                <?php foreach ($agents as $agent):
+                                    switch ($agent->situacao):
+                                        case 0:
+                                            $trClass = 'border-left-yellow';
+                                            break;
+                                        case 1:
+                                            $trClass = 'border-left-green';
+                                            break;
+                                        default:
+                                            $trClass = 'border-left-red';
+                                            break;
+                                    endswitch; ?>
+                                    <tr class="<?= $trClass ?>">
+                                        <td><?= $agent->matricula ?></td>
+                                        <td><?= $agent->cpf ?></td>
+                                        <td><?= $agent->nome ?></td>
+                                        <td><?= $agent->email ?></td>
+                                        <td>
                                             <?php switch ($agent->situacao):
-                                                case 0: ?>
-                                                    <div class="status-button tertiary">Pendente</div>
-                                                </td>
-                                                <td>
-                                                    <a class="btn secondary-color status-button-change"
-                                                       href="<?= url('changeAgentStatus/'. $agent->id) ?>">
-                                                        <span class="icon-check"></span>
-                                                        Permitir
-                                                    </a>
-                                                </td>
-                                                <?php break; case 1: ?>
-                                                        <div class="status-button primary">Ativo</div>
-                                                    </td>
-                                                    <td>
-                                                        <a class="btn quartenary-color status-button-change"
-                                                        href="<?= url('changeAgentStatus/' . $agent->id) ?>">
-                                                            <span class="icon-delete_forever"></span>
-                                                            Bloquear
-                                                        </a>
-                                                    </td>
-                                                <?php break; default: ?>
-                                                    <div class="status-button secondary">Bloqueado</div>
-                                                    </td>
-                                                    <td>
-                                                        <a class="btn secondary-color status-button-change"
-                                                           href="<?= url('changeAgentStatus/'. $agent->id) ?>">
-                                                            <span class="icon-check"></span>
-                                                            Permitir
-                                                        </a>
-                                                    </td>
-                                                <?php break; endswitch; ?>
-                                        </tr>
-                                    <?php endforeach; ?>
+                                            case 0: ?>
+                                            <div class="status-button tertiary">Pendente</div>
+                                        </td>
+                                        <td>
+                                            <a class="btn secondary-color status-button-change"
+                                               href="<?= $router->route('web.changeAgentStatus/' . $agent->id) ?>">
+                                                <span class="icon-check"></span>
+                                                Permitir
+                                            </a>
+                                        </td>
+                                        <?php break;
+                                        case 1: ?>
+                                            <div class="status-button primary">Ativo</div>
+                                            </td>
+                                            <td>
+                                                <a class="btn quartenary-color status-button-change"
+                                                   href="<?= ($agent->id == $_SESSION['user']['id'] ? '#' : url('changeAgentStatus/' . $agent->id)) ?>" <?= ($agent->id == $_SESSION['user']['id'] ? 'disabled onclick="sameUser()"' : ''); ?>>
+                                                    <span class="icon-delete_forever"></span>
+                                                    Bloquear
+                                                </a>
+                                            </td>
+                                            <?php break;
+                                        default: ?>
+                                            <div class="status-button secondary">Bloqueado</div>
+                                            </td>
+                                            <td>
+                                                <a class="btn secondary-color status-button-change"
+                                                   href="<?= url('changeAgentStatus/' . $agent->id) ?>">
+                                                    <span class="icon-check"></span>
+                                                    Permitir
+                                                </a>
+                                            </td>
+                                            <?php break; endswitch; ?>
+                                    </tr>
+                                <?php endforeach; ?>
                                 </tbody>
                             </table>
                             <div class="text-center p-4 empty-table">
@@ -189,6 +209,14 @@
 
     function alterFilter(e) {
         filterValue = e;
+    }
+
+    function sameUser() {
+        swal({
+            icon: "warning",
+            title: "Ops..!",
+            text: "Você não pode bloquear a sí mesmo."
+        });
     }
 
     function tableFilter() {
