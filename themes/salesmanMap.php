@@ -54,7 +54,7 @@
         mapLayers["Zonas"] = L.layerGroup();
         ctrLayers["Zonas"] = mapLayers["Zonas"];
 
-        <?php if($salesmans !== NULL): ?>
+        <?php if($expireds || $paids || $pendings): ?>
         mapLayers["Ambulantes - Em dia"] = L.layerGroup();
         ctrLayers["Ambulantes - Em dia"] = mapLayers["Ambulantes - Em dia"];
 
@@ -156,27 +156,27 @@
             });
 
             if (e.name == "Ambulantes - Em dia") {
-                <?php if($salesmans):
-                foreach ($salesmans as $salesman):
-                    if($salesman->status == 0 || $salesman->status == 3): ?>
-                        L.marker([<?= $salesman->latitude ?>, <?= $salesman->longitude ?>], {icon: pending})
-                         .bindPopup('Ambulante').addTo(groupMarker);
+                <?php if($paids):
+                foreach ($paids as $paid):
+                if ($paid->status == 1): ?>
+                L.marker([<?= $paid->latitude ?>, <?= $paid->longitude ?>], {icon: paid})
+                    .bindPopup('Ambulante').addTo(groupMarker);
                 <?php endif; endforeach; endif; ?>
             } else if (e.name == "Ambulantes - Pendentes") {
-                <?php if($salesmans):
-                foreach ($salesmans as $salesman):
-                    if ($salesman->status == 1): ?>
-                        L.marker([<?= $salesman->latitude ?>, <?= $salesman->longitude ?>], {icon: paid})
-                            .bindPopup('Ambulante').addTo(groupMarker);
+                <?php if($pendings):
+                foreach ($pendings as $pending):
+                if($pending->status == 0 || $pending->status == 3): ?>
+                L.marker([<?= $pending->latitude ?>, <?= $pending->longitude ?>], {icon: pending})
+                    .bindPopup('Ambulante').addTo(groupMarker);
                 <?php endif; endforeach; endif; ?>
             } else if (e.name == "Ambulantes - Vencidos") {
-                <?php if($salesmans):
-                foreach ($salesmans as $salesman):
-                    if ($salesman->status == 2): ?>
-                        L.marker([<?= $salesman->latitude ?>, <?= $salesman->longitude ?>], {icon: expired})
-                            .bindPopup('Ambulante').addTo(groupMarker);
+                <?php if($expireds):
+                foreach ($expireds as $expired):
+                if ($expired->status == 2): ?>
+                L.marker([<?= $expired->latitude ?>, <?= $expired->longitude ?>], {icon: expired})
+                    .bindPopup('Ambulante').addTo(groupMarker);
                 <?php endif; endforeach; endif; ?>
-            } else if (e.name == "Área das zonas"){
+            } else if (e.name == "Área das zonas") {
                 let area = [];
                 let aux = [];
                 <?php if($zones != NULL):

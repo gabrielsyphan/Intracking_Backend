@@ -1,15 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.0.3
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
-<<<<<<< Updated upstream
--- Tempo de geração: 27-Jan-2021 às 14:04
-=======
--- Tempo de geração: 27-Jan-2021 às 17:41
->>>>>>> Stashed changes
--- Versão do servidor: 10.4.13-MariaDB
--- versão do PHP: 7.4.8
+-- Tempo de geração: 28-Jan-2021 às 16:05
+-- Versão do servidor: 10.4.14-MariaDB
+-- versão do PHP: 7.4.11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -52,7 +48,7 @@ CREATE TABLE `ambulantes` (
 --
 
 INSERT INTO `ambulantes` (`id`, `id_licenca`, `id_zona`, `local_endereco`, `produto`, `atendimento_dias`, `atendimento_hora_inicio`, `atendimento_hora_fim`, `relato_atividade`, `area_equipamento`, `tipo_equipamento`, `latitude`, `longitude`) VALUES
-(15, 20, NULL, 'Maceió Atlantic, 4065, Avenida Álvaro Otacílio, Jatiúca, Maceió, Região Geográfica Imediata de Maceió, Região Geográfica Intermediária de Maceió, Alagoas, Região Nordeste, 57036-850, Brasil', 3, 145, '00:00', '18:00', NULL, '10 x 20', 'Barraca', '-9.649952554008275', '-35.700772944996935');
+(19, 28, 90, 'Maceió Atlantic, 4065, Avenida Álvaro Otacílio, Jatiúca, Maceió, Região Geográfica Imediata de Maceió, Região Geográfica Intermediária de Maceió, Alagoas, Região Nordeste, 57036-850, Brasil', 34, 135, '10:04', '04:20', NULL, '10 x 5', 'Barraca', '-9.649705797533134', '-35.70080280303956');
 
 -- --------------------------------------------------------
 
@@ -82,7 +78,15 @@ INSERT INTO `anexos` (`id`, `nome`, `tipo_usuario`, `id_usuario`) VALUES
 (63, 'proofAddress.png', '2', 21),
 (64, 'socialContract.png', '2', 21),
 (65, 'businessLicense.png', '2', 21),
-(66, 'otherDocument.png', '2', 21);
+(66, 'otherDocument.png', '2', 21),
+(68, 'equipmentImage.jpeg', '1', 23),
+(69, 'equipmentImage.jpeg', '1', 24),
+(71, 'equipmentImage.jpeg', '1', 26),
+(72, 'equipmentImage.jpeg', '1', 27),
+(73, 'userImage.jpeg', '0', 39),
+(74, 'identityImage.jpeg', '0', 39),
+(75, 'proofAddress.jpeg', '0', 39),
+(76, 'equipmentImage.jpeg', '1', 28);
 
 -- --------------------------------------------------------
 
@@ -108,7 +112,7 @@ CREATE TABLE `boletos` (
 --
 
 INSERT INTO `boletos` (`id`, `id_licenca`, `id_usuario`, `cod_referencia`, `cod_pagamento`, `valor`, `status`, `tipo`, `pagar_em`, `pago_em`) VALUES
-(151, 20, 38, '15123', 'teste', 144, 3, 1, '2021-01-30 03:00:00', '2021-01-27 13:35:51');
+(3, 28, 38, '15123', 'teste', 144, 3, 1, '2021-01-31 02:00:00', '2021-01-28 11:51:06');
 
 -- --------------------------------------------------------
 
@@ -209,8 +213,8 @@ CREATE TABLE `licencas` (
 --
 
 INSERT INTO `licencas` (`id`, `cmc`, `tipo`, `data_inicio`, `data_fim`, `status`, `id_usuario`) VALUES
-(20, '9900027911', '1', '2021-01-27', '2021-01-30', 0, 38),
-(21, '1111111111', '2', '2021-01-27', '2021-01-30', 1, 38);
+(21, '1111111111', '2', '2021-01-27', '2021-01-30', 1, 38),
+(28, '9900027911', '1', '2021-01-28', '2021-01-31', 0, 38);
 
 -- --------------------------------------------------------
 
@@ -352,8 +356,8 @@ INSERT INTO `usuarios` (`id`, `cpf`, `nome`, `endereco`, `telefone`, `email`, `r
 
 CREATE TABLE `zonas` (
   `id` int(11) NOT NULL,
-  `coordenadas` polygon DEFAULT NULL,
-  `detalhes` text CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `coordenadas` polygon NOT NULL,
+  `descricao` text CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `nome` text CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `foto` longblob DEFAULT NULL,
   `limite_ambulantes` int(11) DEFAULT NULL,
@@ -364,7 +368,7 @@ CREATE TABLE `zonas` (
 -- Extraindo dados da tabela `zonas`
 --
 
-INSERT INTO `zonas` (`id`, `coordenadas`, `detalhes`, `nome`, `foto`, `limite_ambulantes`, `quantidade_ambulantes`) VALUES
+INSERT INTO `zonas` (`id`, `coordenadas`, `descricao`, `nome`, `foto`, `limite_ambulantes`, `quantidade_ambulantes`) VALUES
 (62, 0x000000000103000000010000000c0000000a0020e456de41c01af6622c504e23c0efff9f0858de41c07b0dbcae534e23c0000080cd58de41c0146d9ab15c4e23c02200b01658de41c0109262b5644e23c0c1ffdf0557de41c0bee37516684e23c0e7ff2fa954de41c097c4456e694e23c0390090b452de41c0c23cd772644e23c0cdff3f1452de41c0ba72516c5f4e23c00200d00b52de41c0cb61412f594e23c0e5ffcf4653de41c0f9c78fb0514e23c01a00f07e55de41c0bf5c4db34e4e23c00a0020e456de41c01af6622c504e23c0, 'Area cadastrada', 'Praça Radialista Edval Vieira de Oliveira', '', 1, 1),
 (63, 0x000000000103000000010000000b000000deff1f3b00de41c0978182b09e5223c0320070effbdd41c000c1f8b7ae5223c02300e062fadd41c0712290d5b25223c03200b0fdf8dd41c0db6fbeebb25223c0d5ffdfbff7dd41c0a46bf731af5223c01c00c03bf6dd41c0bca899bb9e5223c0f2ffbffdf7dd41c06c86dfda7c5223c0c6ff1f4ffbdd41c01845bb213c5223c0080070b1fddd41c0e1748f173b5223c0c6ff8fcf0ade41c0a5375bf8685223c0deff1f3b00de41c0978182b09e5223c0, 'Area cadastrada', 'Praça José Bagio Filho', '', 2, 1),
 (64, 0x0000000001030000000100000009000000f3ff9f04a9dc41c07e2810ab5a4123c0e5ff1fa2a9dc41c0cfd07fc2654123c02200808ea8dc41c032ee21bd6b4123c0cbff5fbea7dc41c038678ac56e4123c024004086a5dc41c0def33a69724123c01e00a0ba89dc41c0f5429c89734123c01100c0c888dc41c0457e5c81194123c0c0ffbfe09ddc41c0227d0827404123c0f3ff9f04a9dc41c07e2810ab5a4123c0, 'Area cadastrada', 'Praça Nossa Senhora de Fátima', '', 3, 2),
@@ -388,7 +392,7 @@ INSERT INTO `zonas` (`id`, `coordenadas`, `detalhes`, `nome`, `foto`, `limite_am
 (82, 0x0000000001030000000100000006000000400000aff7dd41c0b6fb80cc0d5423c0d9ffffe001de41c0b662e54e355423c02d00005dfedd41c02fb67954475423c0d7ffff13fcdd41c02fb67954475423c02000001df3dd41c040c58ac0265423c0400000aff7dd41c0b6fb80cc0d5423c0, 'Area cadastrada', 'Mirante Dom Ranulpho', '', 1, 1),
 (83, 0x00000000010300000001000000080000000d00007cd0dd41c0d6644eb1765323c01c0000c2d5dd41c038051ff1855323c0caffff4bd3dd41c025ed0ace935323c01e0000c8cfdd41c0bbc580bc9a5323c0c8ffff7ecddd41c0bbc580bc9a5323c0f2ffffbccbdd41c025ed0ace935323c0e5ffff43ccdd41c0f638cc198a5323c00d00007cd0dd41c0d6644eb1765323c0, 'Area cadastrada', 'Mirante São Gonçalo (Rosalvo Ribeiro)', '', 3, 1),
 (89, 0x00000000010300000001000000090000002a00006456d941c0e2da0d39b65123c02f0000ee26d941c0bc5a8bb5055323c0d2ffff3d13d941c009facf56905323c01f00001a0ad941c0395f84f9a05323c023000026fed841c0353407918d5323c0c8ffff9119d941c0fade9707d15223c0fbffff032fd941c0e10346ac2a5223c0dbfffff947d941c09a7e28d6b45123c02a00006456d941c0e2da0d39b65123c0, 'Proximo ao banco do Brasil', 'Faixa de areia ponta verde', NULL, 10, 4),
-(90, 0x0000000001030000000100000005000000c4ffffc1cad941c099a078a3794c23c0c4ffffc1cad941c0c7a17351654d23c0d8ffff0389d941c0825ba48b624d23c0450000faa1d941c0311fa3a3ff4b23c0c4ffffc1cad941c099a078a3794c23c0, 'Zona cadastrada', 'Praia da jatiuca', NULL, 10, 1);
+(90, 0x0000000001030000000100000005000000c4ffffc1cad941c099a078a3794c23c0c4ffffc1cad941c0c7a17351654d23c0d8ffff0389d941c0825ba48b624d23c0450000faa1d941c0311fa3a3ff4b23c0c4ffffc1cad941c099a078a3794c23c0, 'Zona cadastrada', 'Praia da jatiuca', NULL, 10, 2);
 
 --
 -- Índices para tabelas despejadas
@@ -492,91 +496,37 @@ ALTER TABLE `zonas`
 -- AUTO_INCREMENT de tabela `ambulantes`
 --
 ALTER TABLE `ambulantes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de tabela `anexos`
 --
 ALTER TABLE `anexos`
-  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
 -- AUTO_INCREMENT de tabela `boletos`
 --
 ALTER TABLE `boletos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=152;
-
---
--- AUTO_INCREMENT de tabela `empresas`
---
-ALTER TABLE `empresas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
-
---
--- AUTO_INCREMENT de tabela `eventos`
---
-ALTER TABLE `eventos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `eventual`
---
-ALTER TABLE `eventual`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `fiscais`
---
-ALTER TABLE `fiscais`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `licencas`
 --
 ALTER TABLE `licencas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
-
---
--- AUTO_INCREMENT de tabela `notificacoes`
---
-ALTER TABLE `notificacoes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `status_boletos`
---
-ALTER TABLE `status_boletos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `status_licencas`
---
-ALTER TABLE `status_licencas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `tipo_fiscal`
---
-ALTER TABLE `tipo_fiscal`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `tipo_licenca`
---
-ALTER TABLE `tipo_licenca`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT de tabela `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT de tabela `zonas`
 --
 ALTER TABLE `zonas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=118;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

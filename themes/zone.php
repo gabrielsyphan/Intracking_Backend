@@ -20,7 +20,7 @@
             <div class="m-5 text-center">
                 <h3 class="black-title-section font-weight-normal"><?= $zone->nome; ?></h3>
 
-                <p class="subtitle-section-p-black pl-2 pr-2"><?= $zone->detalhes ?></p>
+                <p class="subtitle-section-p-black pl-2 pr-2"><?= $zone->descricao ?></p>
             </div>
 
             <div class="pl-5 pr-5">

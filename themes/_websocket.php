@@ -65,6 +65,10 @@
 
             localStorage.setItem('messages', JSON.stringify(messages));
 
+            if($('.chat-messages .div-image').length > 0){
+                $('.chat-messages').empty();
+            }
+
             if (msg.user == socket.nickname) {
                 $('.chat-messages').append($('<div class="chat-bubble me">').text(userName + ': ')
                     .append($('<span class="span-message-wrap">').text(msg.msg)));

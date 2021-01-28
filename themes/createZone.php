@@ -8,71 +8,79 @@
 
 <div class="container-fluid container-white mt-5">
     <div class="p-5">
-        <form class="row">
-            <div class="col-xl-12">
-                <h2 class="black-title-section">Cadastrar nova Zona</h2>
-                <p class="subtitle-section-p">Descreva todos os dados da zona desenhada acima.</p>
-            </div>
-            <div class="col-xl-6 mt-5">
-                <div class="div-gray-bg border-top-green p-5">
-                    <h4 class="black-title-section">Informações da zona</h4>
-                    <hr>
-                    <div class="row">
-                        <div class="col-xl-12">
-                            <div class="form-group">
-                                <label>Nome:</label>
-                                <input type="text" class="form-input" id="zoneName" name="zoneName" title="Nome do local" placeholder="Insira o nome do local" required>
+        <form id="form-create-zone" action="<?= $router->route('web.validateZone') ?>" method="POST">
+            <fieldset class="row">
+                <div id="inputHidden"></div>
+                <div class="col-xl-12">
+                    <h2 class="black-title-section">Cadastrar nova Zona</h2>
+                    <p class="subtitle-section-p">Descreva todos os dados da zona desenhada acima.</p>
+                </div>
+                <div class="col-xl-6 mt-5">
+                    <div class="div-gray-bg border-top-green p-5">
+                        <h4 class="black-title-section">Informações da zona</h4>
+                        <hr>
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <div class="form-group">
+                                    <label>Nome:</label>
+                                    <input type="text" class="form-input" id="zoneName" name="zoneName" title="Nome do local" placeholder="Insira o nome do local">
+                                    <div class="invalidate-feedback"></div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="col-xl-12">
-                            <div class="form-group">
-                                <label>Descrição: <span class="spanAlert">(Opcional)</span></label>
-                                <input type="text" class="form-input" id="description" name="description" title="Descrição do local" placeholder="Insira a descrição do local">
+                            <div class="col-xl-12">
+                                <div class="form-group">
+                                    <label>Descrição: <span class="spanAlert">(Opcional)</span></label>
+                                    <input type="text" class="form-input" id="description" name="description" title="Descrição do local" placeholder="Insira a descrição do local">
+                                    <div class="invalidate-feedback"></div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="col-xl-12">
-                            <div class="form-group">
-                                <label>Foto do local: <span class="spanAlert">(Opcional)</span></label>
-                                <input style="background: white;" type="file" class="form-input" id="localImage" name="localImage" accept="image/png, image/jpg, image/jpeg">
+                            <div class="col-xl-12">
+                                <div class="form-group">
+                                    <label>Foto do local: <span class="spanAlert">(Opcional)</span></label>
+                                    <input style="background: white;" type="file" class="form-input" id="zoneImage" name="zoneImage" accept="image/png, image/jpg, image/jpeg">
+                                    <div class="invalidate-feedback"></div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Vagas totais:</label>
-                                <input type="number" class="form-input" id="available" name="available" title="Vagas disponíveis" min="0" placeholder="Insira a quantidade de vagas totais" required>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Vagas totais:</label>
+                                    <input type="number" class="form-input" id="available" name="available" title="Vagas disponíveis" min="0" placeholder="Insira a quantidade de vagas totais">
+                                    <div class="invalidate-feedback"></div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Vagas já ocupadas:</label>
-                                <input type="number" class="form-input" id="occupied" name="occupied" title="Vagas ocupadas" min="0" placeholder="Insira a quantidade de vagas ocupadas" required>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Vagas já ocupadas:</label>
+                                    <input type="number" class="form-input" id="occupied" name="occupied" title="Vagas ocupadas" min="0" placeholder="Insira a quantidade de vagas ocupadas">
+                                    <div class="invalidate-feedback"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-xl-6 mt-5">
-                <div class="div-gray-bg border-top-green p-5">
-                    <h4 class="black-title-section">Realize o desenho da zona no mapa</h4>
-                    <hr>
-                    <div class="row">
-                        <div id="map"></div>
+                <div class="col-xl-6 mt-5">
+                    <div class="div-gray-bg border-top-green p-5">
+                        <h4 class="black-title-section">Realize o desenho da zona no mapa</h4>
+                        <hr>
+                        <div class="row">
+                            <div id="map"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-xl-12 text-right mt-5 mb-5">
-                <button type="button" class="btn-3 secondary-color">
-                    Cancelar
-                </button>
-                <button type="submit" class="btn-3 primary">
-                    Cadastrar
-                </button>
-                <hr>
-            </div>
+                <div class="col-xl-12 text-right mt-5 mb-5">
+                    <button type="button" class="btn-3 secondary-color">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn-3 primary">
+                        Cadastrar
+                    </button>
+                    <hr>
+                </div>
+            </fieldset>
         </form>
     </div>
 </div>
@@ -83,21 +91,25 @@
 
     $("#identity").mask('000.000.000-00');
 
-    $('#form').on('submit', (function(e) {
+    $('form').on('submit', function(e) {
         e.preventDefault();
         $("#loader-div").show();
 
+        const _thisForm = $(this);
+        const data = new FormData(this);
+        const fieldsetDisable = _thisForm.find('fieldset');
+        fieldsetDisable.attr('disabled', true);
+
         if ($('#inputHidden').children().length != 0) {
-            let data = new FormData(this);
-            $.ajax({
-                type: 'POST',
-                url: "<?= $router->route("web.validateZone"); ?>",
-                data: data,
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function(returnData) {
-                    $("#loader-div").hide();
+            if (formSubmit(this) === true) {
+                $.ajax({
+                    type: _thisForm.attr('method'),
+                    url: _thisForm.attr('action'),
+                    data: data,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                }).done(function (returnData) {
                     if (returnData == 1) {
                         swal({
                             icon: "success",
@@ -111,7 +123,6 @@
                             $("#available").val('');
                         });
                         $("#form").trigger("reset");
-                        changeFile();
                     } else {
                         swal({
                             icon: "error",
@@ -120,25 +131,20 @@
                         });
                     }
                     console.log(returnData);
-                },
-                error: function(returnData) {
-                    $("#loader-div").hide();
+                }).fail(function () {
                     swal({
                         icon: "error",
                         title: "Erro!",
-                        text: "Não foi possível cadastrar a zona.",
+                        text: "Erro ao processar requisição",
                     });
-                }
-            });
-        } else {
-            $("#loader-div").hide();
-            swal({
-                icon: "warning",
-                title: "Alerta!",
-                text: "Você precisa desenhar uma zona no mapa."
-            });
+                    console.log(returnData);
+                }).always(function () {
+                    $("#loader-div").hide();
+                    fieldsetDisable.removeAttr("disabled");
+                });
+            }
         }
-    }));
+    });
 
     $('#localImage').change(function(e) {
         var fileName = e.target.files[0].name;

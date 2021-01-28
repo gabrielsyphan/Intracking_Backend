@@ -110,13 +110,8 @@
                                     <span class="icon-download"></span>
                                 </div>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="<?= url('exportData/2') ?>">
-                                        <span class="icon-users mr-3"></span>
-                                        Planilha de ambulantes
-                                    </a>
-                                    <a class="dropdown-item" href="<?= url('exportData/3') ?>">
-                                        <span class="icon-building mr-3"></span>
-                                        Planilha de empresas
+                                    <a class="dropdown-item" href="<?= url('exportData/1') ?>">
+                                        Exportar tabela em xls
                                     </a>
                                 </div>
                             </div>
@@ -136,11 +131,7 @@
                                 <tr>
                                     <th>Tipo</th>
                                     <th>Cpf</th>
-<<<<<<< Updated upstream
-                                    <th>Responsável</th>
-=======
                                     <th>Proprietário</th>
->>>>>>> Stashed changes
                                     <th>Início</th>
                                     <th>Fim</th>
                                     <th>Status</th>
@@ -167,11 +158,7 @@
                                     endswitch; ?>
                                     <tr class="<?= $trClass ?>"
                                         onclick="licenseInfo(<?= $license->tipo ?>, '<?= md5($license->id) ?>')">
-<<<<<<< Updated upstream
-                                        <td><?= $types[$license->tipo]->nome ?></td>
-=======
                                         <td><?= $types[$license->tipo-1]->nome ?></td>
->>>>>>> Stashed changes
                                         <td><?= $users[$license->id_usuario]->cpf ?></td>
                                         <td><?= $users[$license->id_usuario]->nome ?></td>
                                         <td><?= $license->data_inicio ?></td>

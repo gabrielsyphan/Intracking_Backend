@@ -136,11 +136,7 @@
 
                 <div class="row">
                     <div class="col-xl-3 subtitle-section-p">
-<<<<<<< Updated upstream
-                        Responsável:
-=======
                         Proprietário:
->>>>>>> Stashed changes
                     </div>
                     <div class="col-xl-9 subtitle-section-p text-right">
                         <?= $user ?>

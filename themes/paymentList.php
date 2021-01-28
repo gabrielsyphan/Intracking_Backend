@@ -110,8 +110,8 @@
                                     <span class="icon-download"></span>
                                 </div>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="<?= url('exportData/1') ?>">
-                                        Exportar pagamentos
+                                    <a class="dropdown-item" href="<?= url('exportData/2') ?>">
+                                        Exportar tabela em xls
                                     </a>
                                 </div>
                             </div>
@@ -134,7 +134,7 @@
                                         <th scope="col" class="table-col-1">Cod Referência</th>
                                         <th scope="col" class="table-col-2">Tipo</th>
                                         <th scope="col" class="table-col-2">Status</th>
-                                        <th scope="col">Usuário</th>
+                                        <th scope="col">Proprietário</th>
                                     </tr>
                                     </thead>
                                     <tbody id="table-data">

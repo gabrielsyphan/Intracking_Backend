@@ -619,18 +619,6 @@ class Web
 
         $license = (new License())->find('MD5(id) = :id', 'id=' . $data['licenseId'])->fetch();
         if ($license) {
-<<<<<<< Updated upstream
-            $user = (new User())->findById($license->id_usuario, 'nome');
-            if ($user) {
-                switch ($data['licenseType']) {
-                    case 0:
-                        $licenseInfo = (new Salesman())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
-                        $templateName = 'salesmanLicenseInfo';
-                        break;
-                    case 1:
-                        $licenseInfo = (new Company())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
-                        $templateName = 'companyLicenseInfo';
-=======
             $payments = (new Payment())->find('id_licenca = :id', 'id=' . $license->id)->fetch(true);
             $user = (new User())->findById($license->id_usuario, 'nome');
             if ($user) {
@@ -644,22 +632,10 @@ class Web
                         $licenseInfo = (new Company())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
                         $templateName = 'companyLicenseInfo';
                         $groupName = 'companys';
->>>>>>> Stashed changes
                         break;
                 }
 
                 if ($licenseInfo) {
-<<<<<<< Updated upstream
-                    $validate = true;
-
-                    echo $this->view->render($templateName, [
-                        'title' => 'Minha Licença | ' . SITE,
-                        'license' => $licenseInfo,
-                        'licenseValidate' => $license,
-                        'licenseStatus' => $license->status,
-                        'user' => $user->nome
-                    ]);
-=======
                     $uploads = array();
                     $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = :type', 'id=' . $license->id . '&type=' . $data['licenseType'])->fetch(true);
 
@@ -684,7 +660,6 @@ class Web
                             'payments' => $payments
                         ]);
                     }
->>>>>>> Stashed changes
                 }
             }
         }
@@ -744,138 +719,167 @@ class Web
                 }
             }
 
-            $license = new License();
-            $license->tipo = 1;
-            $license->status = 0;
-            $license->id_usuario = $_SESSION['user']['id'];
-            $license->data_inicio = date('Y-m-d');
-            $license->data_fim = date('Y-m-d', strtotime("+3 days"));
-            $license->cmc = $companyAux;
-            $license->save();
+            if ($companyAux == 0) {
+                exit();
+            }
 
-            if ($license->fail()) {
-                var_dump($license->fail()->getMessage());
-            } else {
-                /**
-                 * Load all images
-                 */
-                foreach ($_FILES as $key => $file) {
-                    $target_file = basename($file['name']);
+            $point = 'POINT(' . $data['longitude'] . " " . $data['latitude'] . ')';
+            $zone = (new Zone())->find('ST_CONTAINS(ST_GEOMFROMTEXT(ST_AsText(coordenadas)), ST_GEOMFROMTEXT("' . $point . '"))=1', '', 'id, limite_ambulantes, quantidade_ambulantes')->fetch();
+            $zoneId = null;
 
-                    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+            if ($zone) {
+                if ($zone->quantidade_ambulantes < $zone->limite_ambulantes) {
+                    $zone->quantidade_ambulantes++;
+                    $zone->save();
 
-                    $extensions_arr = array("jpg", "jpeg", "png");
+                    $zoneId = $zone->id;
+                }
+            }
 
-                    if (in_array($imageFileType, $extensions_arr)) {
-                        $folder = THEMES . '/assets/uploads/salesmans';
-                        if (!file_exists($folder) || !is_dir($folder)) {
-                            mkdir($folder, 0755);
-                        }
-                        $fileName = $key . '.' . $imageFileType;
-                        $dir = $folder . '/' . $license->id;
+            if ($zoneId === null) {
+                $salesmans = (new Salesman)->find('latitude = :lat AND longitude = :lng', 'lat=' . $data['latitude'] . '&lng=' . $data['longitude'], 'latitude, longitude')->fetch(true);
+                if ($salesmans) {
+                    $response = 'somebodySameLocation';
+                    $zoneId = null;
+                    $zone->quantidade_ambulantes--;
+                    $zone->save();
+                }
+            }
 
-                        if (!file_exists($dir) || !is_dir($dir)) {
-                            mkdir($dir, 0755);
-                        }
+            if ($zoneId) {
+                $license = new License();
+                $license->tipo = 1;
+                $license->status = 0;
+                $license->id_usuario = $_SESSION['user']['id'];
+                $license->data_inicio = date('Y-m-d');
+                $license->data_fim = date('Y-m-d', strtotime("+3 days"));
+                $license->cmc = $companyAux;
+                $license->save();
 
-                        $dir = $dir . '/' . $fileName;
+                if ($license->fail()) {
+                    var_dump($license->fail()->getMessage());
+                } else {
+                    /**
+                     * Load all images
+                     */
+                    foreach ($_FILES as $key => $file) {
+                        $target_file = basename($file['name']);
 
-                        move_uploaded_file($file['tmp_name'], $dir);
+                        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-                        $attach = new Attach();
-                        $attach->id_usuario = $license->id;
-                        $attach->tipo_usuario = 1;
-                        $attach->nome = $fileName;
-                        $attach->save();
+                        $extensions_arr = array("jpg", "jpeg", "png");
 
-                        if ($attach->fail()) {
-                            $license->destroy();
-                            var_dump($attach->fail()->getMessage());
-                            exit();
-                        } else {
-                            $curl = curl_init();
-                            curl_setopt($curl, CURLOPT_RETURNTRANSFER, True);
-                            curl_setopt($curl, CURLOPT_URL, 'https://nominatim.openstreetmap.org/reverse.php?lat=' . $data['latitude'] . '&lon=' . $data['longitude'] . '&zoom=18&format=jsonv2');
-                            curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:7.0.1) Gecko/20100101 Firefox/7.0.1');
-                            $street = curl_exec($curl);
-                            curl_close($curl);
-                            $street = json_decode($street);
-                            $street = $street->display_name;
-
-                            $area = $data['width'] * $data['length'];
-                            $valueToPayment = array();
-                            $products = "";
-                            $productDescription = null;
-                            $productsData = $data['productSelect'];
-
-                            foreach ($productsData as $product) {
-                                $products = $products . "" . $product;
-                                if ($product == 0 || $product == 1) {
-                                    if ($area <= 1.50) {
-                                        $valueToPayment[] = 40.00;
-                                    } else {
-                                        $valueToPayment[] = 72.00;
-                                    }
-                                } else if ($product == 2 || $product == 3 || $product == 4 || $product == 5) {
-                                    if ($area <= 1.50) {
-                                        $valueToPayment[] = 80.00;
-                                    } else {
-                                        $valueToPayment[] = 144.00;
-                                    }
-                                } else if ($product == 6) {
-                                    if ($area <= 1.50) {
-                                        $valueToPayment[] = 72.00;
-                                    } else {
-                                        $valueToPayment[] = 80.00;
-                                    }
-                                } else if ($product == 7) {
-                                    $productDescription = $data['productDescription'];
-                                    if ($area <= 1.50) {
-                                        $valueToPayment[] = 72.00;
-                                    } else {
-                                        $valueToPayment[] = 80.00;
-                                    }
-                                }
+                        if (in_array($imageFileType, $extensions_arr)) {
+                            $folder = THEMES . '/assets/uploads/salesmans';
+                            if (!file_exists($folder) || !is_dir($folder)) {
+                                mkdir($folder, 0755);
                             }
-                            rsort($valueToPayment);
+                            $fileName = $key . '.' . $imageFileType;
+                            $dir = $folder . '/' . $license->id;
 
-                            $workedDays = "";
-                            foreach ($data['workedDays'] as $workedDay) {
-                                $workedDays = $workedDays . "" . $workedDay;
+                            if (!file_exists($dir) || !is_dir($dir)) {
+                                mkdir($dir, 0755);
                             }
 
-                            $salesman = new Salesman();
-                            $salesman->id_licenca = $license->id;
-                            $salesman->local_endereco = $street;
-                            $salesman->latitude = $data['latitude'];
-                            $salesman->longitude = $data['longitude'];
-                            $salesman->produto = $products;
-                            $salesman->atendimento_dias = $workedDays;
-                            $salesman->atendimento_hora_inicio = $data['initHour'];
-                            $salesman->atendimento_hora_fim = $data['endHour'];
-                            $salesman->relato_atividade = $productDescription;
-                            $salesman->area_equipamento = $data['width'] . " x " . $data['length'];
-                            $salesman->tipo_equipamento = $data['howWillSell'];
-                            $salesman->save();
+                            $dir = $dir . '/' . $fileName;
 
-                            if ($salesman->fail()) {
-                                $attach->destroy();
+                            move_uploaded_file($file['tmp_name'], $dir);
+
+                            $attach = new Attach();
+                            $attach->id_usuario = $license->id;
+                            $attach->tipo_usuario = 1;
+                            $attach->nome = $fileName;
+                            $attach->save();
+
+                            if ($attach->fail()) {
                                 $license->destroy();
-                                var_dump($salesman->fail()->getMessage());
+                                var_dump($attach->fail()->getMessage());
                                 exit();
                             } else {
-                                $paymentDate = date('Y-m-d', strtotime("+3 days"));
-                                $payment = new Payment();
-                                $payment->id_licenca = $license->id;
-                                $payment->cod_referencia = null;
-                                $payment->cod_pagamento = null;
-                                $payment->valor = $valueToPayment[0];
-                                $payment->id_usuario = $_SESSION['user']['id'];
-                                $payment->tipo = 1;
-                                $payment->pagar_em = $paymentDate;
-                                $payment->save();
+                                $curl = curl_init();
+                                curl_setopt($curl, CURLOPT_RETURNTRANSFER, True);
+                                curl_setopt($curl, CURLOPT_URL, 'https://nominatim.openstreetmap.org/reverse.php?lat=' . $data['latitude'] . '&lon=' . $data['longitude'] . '&zoom=18&format=jsonv2');
+                                curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:7.0.1) Gecko/20100101 Firefox/7.0.1');
+                                $street = curl_exec($curl);
+                                curl_close($curl);
+                                $street = json_decode($street);
+                                $street = $street->display_name;
 
-                                $extCode = 'ODT' . $payment->id;
+                                $area = $data['width'] * $data['length'];
+                                $valueToPayment = array();
+                                $products = "";
+                                $productDescription = null;
+                                $productsData = $data['productSelect'];
+
+                                foreach ($productsData as $product) {
+                                    $products = $products . "" . $product;
+                                    if ($product == 0 || $product == 1) {
+                                        if ($area <= 1.50) {
+                                            $valueToPayment[] = 40.00;
+                                        } else {
+                                            $valueToPayment[] = 72.00;
+                                        }
+                                    } else if ($product == 2 || $product == 3 || $product == 4 || $product == 5) {
+                                        if ($area <= 1.50) {
+                                            $valueToPayment[] = 80.00;
+                                        } else {
+                                            $valueToPayment[] = 144.00;
+                                        }
+                                    } else if ($product == 6) {
+                                        if ($area <= 1.50) {
+                                            $valueToPayment[] = 72.00;
+                                        } else {
+                                            $valueToPayment[] = 80.00;
+                                        }
+                                    } else if ($product == 7) {
+                                        $productDescription = $data['productDescription'];
+                                        if ($area <= 1.50) {
+                                            $valueToPayment[] = 72.00;
+                                        } else {
+                                            $valueToPayment[] = 80.00;
+                                        }
+                                    }
+                                }
+                                rsort($valueToPayment);
+
+                                $workedDays = "";
+                                foreach ($data['workedDays'] as $workedDay) {
+                                    $workedDays = $workedDays . "" . $workedDay;
+                                }
+
+                                $salesman = new Salesman();
+                                $salesman->id_zona = $zoneId;
+                                $salesman->id_licenca = $license->id;
+                                $salesman->local_endereco = $street;
+                                $salesman->latitude = $data['latitude'];
+                                $salesman->longitude = $data['longitude'];
+                                $salesman->produto = $products;
+                                $salesman->atendimento_dias = $workedDays;
+                                $salesman->atendimento_hora_inicio = $data['initHour'];
+                                $salesman->atendimento_hora_fim = $data['endHour'];
+                                $salesman->relato_atividade = $productDescription;
+                                $salesman->area_equipamento = $data['width'] . " x " . $data['length'];
+                                $salesman->tipo_equipamento = $data['howWillSell'];
+                                $salesman->save();
+
+                                if ($salesman->fail()) {
+                                    $attach->destroy();
+                                    $license->destroy();
+                                    var_dump($salesman->fail()->getMessage());
+                                    exit();
+                                } else {
+                                    $paymentDate = date('Y-m-d', strtotime("+3 days"));
+                                    $payment = new Payment();
+                                    $payment->id_licenca = $license->id;
+                                    $payment->cod_referencia = null;
+                                    $payment->cod_pagamento = null;
+                                    $payment->valor = $valueToPayment[0];
+                                    $payment->id_usuario = $_SESSION['user']['id'];
+                                    $payment->tipo = 1;
+                                    $payment->pagar_em = $paymentDate;
+                                    $payment->save();
+
+                                    $extCode = 'ODT' . $payment->id;
 
 //                                $soap_input = '
 //                                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eag="EAgata" xmlns:e="e-Agata_18.11">
@@ -933,18 +937,19 @@ class Web
 //                                $payment->cod_referencia = $code;
 //                                $payment->cod_pagamento = $extCode;
 
-                                $payment->cod_referencia = 15123;
-                                $payment->cod_pagamento = 'teste';
-                                $payment->save();
+                                    $payment->cod_referencia = 15123;
+                                    $payment->cod_pagamento = 'teste';
+                                    $payment->save();
 
-                                if ($payment->fail()) {
-                                    $attach->destroy();
-                                    $license->destroy();
-                                    $salesman->destroy();
-                                    var_dump($payment->fail()->getMessage());
-                                    exit();
-                                } else {
-                                    $response = 'success';
+                                    if ($payment->fail()) {
+                                        $attach->destroy();
+                                        $license->destroy();
+                                        $salesman->destroy();
+                                        var_dump($payment->fail()->getMessage());
+                                        exit();
+                                    } else {
+                                        $response = 'success';
+                                    }
                                 }
                             }
                         }
@@ -1136,11 +1141,7 @@ class Web
                         $auxPaid++;
                     } else if ($license->status == 3) {
                         $auxBlocked++;
-<<<<<<< Updated upstream
-                    }else {
-=======
                     } else {
->>>>>>> Stashed changes
                         $auxPending++;
                     }
 
@@ -1594,128 +1595,114 @@ class Web
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $this->checkAgent();
+        $tableHead = '';
+        $tableBody = '';
 
         if ($data['fileType'] == 1) {
-            // File Name
-            $file_name = 'pagamentos.xls';
+            $tableName = 'licencas';
 
-            // File Head
-            $html = '';
-            $html .= '<table>';
-            $html .= '<tr>';
-            $html .= '<td colspan="5">Planilha de pagamentos - ORDITI</td>';
-            $html .= '</tr>';
+            $tableHead .= '<tr>';
+            $tableHead .= '<td><b>Tipo</b></td>';
+            $tableHead .= '<td><b>Cpf</b></td>';
+            $tableHead .= '<td><b>Proprietário</b></td>';
+            $tableHead .= '<td><b>Início</b></td>';
+            $tableHead .= '<td><b>Fim</b></td>';
+            $tableHead .= '<td><b>Status</b></td>';
+            $tableHead .= '</tr>';
 
-            // File Fields
-            $html .= '<tr>';
-            $html .= '<td><b>Status</b></td>';
-            $html .= '<td><b>Valor</b></td>';
-            $html .= '<td><b>Pagamento</b></td>';
-            $html .= '<td><b>Vencimento</b></td>';
-            $html .= '<td><b>Ambulante</b></td>';
-            $html .= '</tr>';
+            $licenses = (new License())->find()->fetch(true);
+            if ($licenses) {
+                $license_type = (new LicenseType())->find()->fetch(true);
+                if ($license_type) {
+                    foreach ($licenses as $license) {
+                        $user = (new User())->findById($license->id_usuario, 'id, nome, cpf');
 
-            // File Body
-            $payments = (new Payment())->find->fetch(true);
-            if ($payments) {
-                foreach ($payments as $payment) {
-                    $user = (new User())->findById($payment->id_usuario, 'nome');
-                    if ($payment->status == 3 || $payment->status == 0) {
-                        $status = "Pendente";
-                    } elseif ($payment->status == 1) {
-                        $status = "Pago";
-                    } else {
-                        $status = "Vencido";
+                        switch ($license->status):
+                            case 0:
+                                $textStatus = 'Pendente';
+                                break;
+                            case 1:
+                                $textStatus = 'Ativo';
+                                break;
+                            default:
+                                $textStatus = 'Bloqueado';
+                                break;
+                        endswitch;
+
+                        $tableBody .= '<tr>';
+                        $tableBody .= '<td>' . $license_type[$license->tipo-1]->nome . '</td>';
+                        $tableBody .= '<td>' . $user->cpf . '</td>';
+                        $tableBody .= '<td>' . $user->nome . '</td>';
+                        $tableBody .= '<td>' . $license->data_inicio . '</td>';
+                        $tableBody .= '<td>' . $license->data_fim . '</td>';
+                        $tableBody .= '<td>' . $textStatus . '</td>';
+                        $tableBody .= '</tr>';
                     }
-
-                    $html .= '<tr>';
-                    $html .= '<td>' . $status . '</td>';
-                    $html .= '<td>R$ ' . $payment->valor . ',00</td>';
-                    $html .= '<td>' . date('d-m-Y', strtotime($payment->pago_em)) . '</td>';
-                    $html .= '<td>' . date('d-m-Y', strtotime($payment->pagar_em)) . '</td>';
-                    $html .= '<td>' . $user->nome . '</td>';
-                    $html .= '</tr>';
                 }
             }
         } else if ($data['fileType'] == 2) {
-            // File Name
-            $file_name = 'ambulantes.xls';
+            $tableName = 'pagamentos';
 
-            // File Head
-            $html = '';
-            $html .= '<table>';
-            $html .= '<tr>';
-            $html .= '<td colspan="5">Planilha de ambulantes - ORDITI</td>';
-            $html .= '</tr>';
+            $tableHead .= '<tr>';
+            $tableHead .= '<td><b>Valor</b></td>';
+            $tableHead .= '<td><b>Vencimento</b></td>';
+            $tableHead .= '<td><b>Cod Referência</b></td>';
+            $tableHead .= '<td><b>Tipo</b></td>';
+            $tableHead .= '<td><b>Status</b></td>';
+            $tableHead .= '<td><b>Proprietário</b></td>';
+            $tableHead .= '</tr>';
 
-            // File Fields
-            $html .= '<tr>';
-            $html .= '<td><b>Cpf</b></td>';
-            $html .= '<td><b>Nome</b></td>';
-            $html .= '<td><b>Situação</b></td>';
-            $html .= '<td><b>Empresa</b></td>';
-            $html .= '<td><b>Localização</b></td>';
-            $html .= '</tr>';
-
-            $salesmans = (new Salesman())->find()->fetch(true);
-            if ($salesmans) {
-                foreach ($salesmans as $salesman) {
-                    if ($salesman->stituacao == 0 || $salesman->stituacao == 3) {
-                        $status = 'Pendente';
-                    } else if ($salesman->stituacao == 1) {
-                        $status = 'Ativo';
-                    } else {
-                        $status = 'Inadimplente';
+            $payments = (new Payment())->find()->fetch(true);
+            if ($payments) {
+                foreach ($payments as $payment) {
+                    $license = (new License())->findById($payment->id_licenca);
+                    if ($license) {
+                        $user = (new User())->findById($license->id_usuario);
+                        $payment->name = $user->nome;
                     }
 
-                    if ($salesman->id_empresa != null) {
-                        $company = (new Company())->findById($salesman->id_empresa, 'nome_fantasia');
-                        $company = $company->nome_fantasia;
-                    } else {
-                        $company = 'Não possui';
+                    switch ($payment->status) {
+                        case 1:
+                            $textStatus = 'Ativo';
+                            break;
+                        case 2:
+                            $textStatus = 'Bloqueado';
+                            break;
+                        default:
+                            $textStatus = 'Pendente';
+                            break;
                     }
 
-                    $html .= '<tr>';
-                    $html .= '<td>' . $salesman->identidade . '</td>';
-                    $html .= '<td>' . $salesman->nome . '</td>';
-                    $html .= '<td>' . $status . '</td>';
-                    $html .= '<td>' . $company . '</td>';
-                    $html .= '<td>' . $salesman->end_local . '</td>';
-                    $html .= '</tr>';
-                }
-            }
-        } else if ($data['fileType'] == 3) {
-            $companys = (new Company())->find()->fetch(true);
-            if ($companys) {
-                // File Name
-                $file_name = 'empresas.xls';
+                    switch ($payment->tipo) {
+                        case 1:
+                            $paymentType = 'Recorrente';
+                            break;
+                        default:
+                            $paymentType = 'Vencido';
+                            break;
+                    }
 
-                // File Head
-                $html = '';
-                $html .= '<table>';
-                $html .= '<tr>';
-                $html .= '<td colspan="5">Planilha de empresas - ORDITI</td>';
-                $html .= '</tr>';
-
-                // File Fields
-                $html .= '<tr>';
-                $html .= '<td><b>Cnpj</b></td>';
-                $html .= '<td><b>Nome</b></td>';
-                $html .= '<td><b>Ambulantes</b></td>';
-                $html .= '<td><b>Equipamentos</b></td>';
-                $html .= '<td><b>Localização</b></td>';
-                $html .= '</tr>';
-                foreach ($companys as $company) {
-                    $html .= '<tr>';
-                    $html .= '<td>' . $company->cnpj . '</td>';
-                    $html .= '<td>' . $company->nome_fantasia . '</td>';
-                    $html .= '<td>' . $company->contador_ambulantes . '</td>';
-                    $html .= '<td>' . $company->quantidade_equipamentos . '</td>';
-                    $html .= '<td>' . $company->endereco . ', ' . $company->numero . ', ' . $company->bairro . ', ' . $company->cidade . ', ' . $company->cep . '</td>';
-                    $html .= '</tr>';
+                    $tableBody .= '<tr>';
+                    $tableBody .= '<td>' . $payment->valor . '</td>';
+                    $tableBody .= '<td>' . date('d-m-Y', strtotime($payment->pagar_em)) . '</td>';
+                    $tableBody .= '<td>' . $payment->cod_referencia . '</td>';
+                    $tableBody .= '<td>' . $paymentType . '</td>';
+                    $tableBody .= '<td>' . $textStatus . '</td>';
+                    $tableBody .= '<td>' . $payment->name . '</td>';
+                    $tableBody .= '</tr>';
                 }
             }
         }
+
+        $file_name = $tableName . '.xls';
+
+        $html = '';
+        $html .= '<table>';
+        $html .= '<tr>';
+        $html .= '<td colspan="5">Planilha de '. $tableName .' - ORDITI</td>';
+        $html .= '</tr>';
+        $html .= $tableHead;
+        $html .= $tableBody;
 
         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
         header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
@@ -1724,7 +1711,6 @@ class Web
         header("Content-type: application/x-msexcel");
         header("Content-Disposition: attachment; filename=\"{$file_name}\"");
         header("Content-Description: PHP Generated Data");
-        // Envia o conteúdo do arquivo
 
         echo $html;
     }
@@ -1736,12 +1722,27 @@ class Web
     {
         $zoneData = array();
         $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
-        $salesmans = (new Salesman())->find('', '', 'id_licenca, latitude, longitude')->fetch(true);
-        if ($salesmans) {
-            foreach ($salesmans as $salesman) {
-                $license = (new License())->findById($salesman->id_licenca, 'status');
-                if ($license) {
-                    $salesman->status = $license->status;
+
+        $pending = array();
+        $expired = array();
+        $paid = array();
+
+        if ($_SESSION['user']['login'] == 3) {
+            $salesmans = (new Salesman())->find('', '', 'id_licenca, latitude, longitude')->fetch(true);
+            if ($salesmans) {
+                foreach ($salesmans as $salesman) {
+                    $license = (new License())->findById($salesman->id_licenca, 'status');
+                    if ($license) {
+                        $salesman->status = $license->status;
+
+                        if ($license->status == 1) {
+                            $paid[] = $salesman;
+                        } else if ($license->status == 2) {
+                            $expired[] = $salesman;
+                        } else {
+                            $pending[] = $salesman;
+                        }
+                    }
                 }
             }
         }
@@ -1775,8 +1776,10 @@ class Web
 
         echo $this->view->render('salesmanMap', [
             'title' => 'Mapa',
-            'salesmans' => $salesmans,
             'zones' => $zoneData,
+            'pendings' => $pending,
+            'paids' => $paid,
+            'expireds' => $expired
         ]);
     }
 
@@ -1950,15 +1953,15 @@ class Web
     public function validateZone($data)
     {
         $image = null;
-        if (is_uploaded_file($_FILES['localImage']['tmp_name'])) {
-            $target_file = basename($_FILES['localImage']['name']);
+        if (is_uploaded_file($_FILES['zoneImage']['tmp_name'])) {
+            $target_file = basename($_FILES['zoneImage']['name']);
 
             $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
             $extensions_arr = array("jpg", "jpeg", "png");
 
             if (in_array($imageFileType, $extensions_arr)) {
-                $image_base64 = base64_encode(file_get_contents($_FILES['localImage']['tmp_name']));
+                $image_base64 = base64_encode(file_get_contents($_FILES['zoneImage']['tmp_name']));
                 $image = 'data:image/' . $imageFileType . ';base64,' . $image_base64;
             }
         }
@@ -1974,8 +1977,10 @@ class Web
             $array_point = array();
 
             foreach ($coodinates as $coodinate) {
-                $array_point[] = $coodinate->lat . " " . $coodinate->lng;
+                $array_point[] = $coodinate->lng . " " . $coodinate->lat;
             }
+
+            $array_point[] = $coodinates[0]->lng . " " . $coodinates[0]->lat;
 
             $str = implode(',', $array_point);
             $polygon = 'POLYGON((' . $str . '))';
@@ -2013,7 +2018,7 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
         if (is_numeric($data['id'])) {
-            $zone = (new Zone())->find('id = :zoneId', 'zoneId=' . $data['id'], 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes, foto, detalhes')->fetch();
+            $zone = (new Zone())->find('id = :zoneId', 'zoneId=' . $data['id'], 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes, foto, descricao')->fetch();
             $salesmans = (new Salesman())->find('id_zona = :zoneId', 'zoneId=' . $data['id'], 'id_licenca')->fetch(true);
             $users = array();
 
