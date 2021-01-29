@@ -3,7 +3,7 @@
 <div id="modal-1" class="div-modal">
     <div class="container pt-5">
         <div class="row mt-5 p-5 justify-content-center">
-            <div class="col-xl-10 p-5 container-white">
+            <div class="col-10 p-5 container-white">
                 <h3 class="black-title-section">Anexos</h3>
                 <p class="subtitle-section-p">Arquivos enviados durante o cadastro da licença.</p>
                 <hr>
@@ -50,7 +50,7 @@
 <div id="modal-2" class="div-modal">
     <div class="container pt-5">
         <div class="row mt-5 p-5 justify-content-center">
-            <div class="col-xl-10 p-5 container-white">
+            <div class="col-10 p-5 container-white">
                 <h3 class="black-title-section">Meus pagamentos</h3>
                 <p class="subtitle-section-p">Todos os pagamentos referente às suas licenças.</p>
                 <hr>
@@ -126,7 +126,7 @@
 
 <div class="container-fluid container-white mt-5 p-5">
     <div class="row">
-        <div class="col-xl-12">
+        <div class="col-12">
             <h3 class="black-title-section">Minha licença</h3>
             <p class="subtitle-section-p">Informações da licença de empresa</p>
             <hr>
@@ -135,55 +135,55 @@
                 <hr>
 
                 <div class="row">
-                    <div class="col-xl-3 subtitle-section-p">
+                    <div class="col-3 subtitle-section-p">
                         Proprietário:
                     </div>
-                    <div class="col-xl-9 subtitle-section-p text-right">
+                    <div class="col-9 subtitle-section-p text-right">
                         <?= $user ?>
                     </div>
                 </div>
 
                 <div class="row mt-5">
-                    <div class="col-xl-3 subtitle-section-p">
+                    <div class="col-3 subtitle-section-p">
                         Nome de fantasia
                     </div>
-                    <div class="col-xl-9 subtitle-section-p text-right">
+                    <div class="col-9 subtitle-section-p text-right">
                         <?= $license->nome_fantasia ?>
                     </div>
                 </div>
 
                 <div class="row mt-5">
-                    <div class="col-xl-3 subtitle-section-p">
+                    <div class="col-3 subtitle-section-p">
                         CNPJ:
                     </div>
-                    <div class="col-xl-9 subtitle-section-p text-right">
+                    <div class="col-9 subtitle-section-p text-right">
                         <?= $license->cnpj ?>
                     </div>
                 </div>
 
                 <div class="row mt-5">
-                    <div class="col-xl-3 subtitle-section-p">
+                    <div class="col-3 subtitle-section-p">
                         CMC:
                     </div>
-                    <div class="col-xl-9 subtitle-section-p text-right">
+                    <div class="col-9 subtitle-section-p text-right">
                         <?= $license->cmc ?>
                     </div>
                 </div>
 
                 <div class="row mt-5">
-                    <div class="col-xl-3 subtitle-section-p">
+                    <div class="col-3 subtitle-section-p">
                         Quantitativo equipamento:
                     </div>
-                    <div class="col-xl-9 subtitle-section-p text-right">
+                    <div class="col-9 subtitle-section-p text-right">
                         <?= $license->quantidade_equipamentos ?>
                     </div>
                 </div>
 
                 <div class="row mt-5">
-                    <div class="col-xl-3 subtitle-section-p">
+                    <div class="col-3 subtitle-section-p">
                         Endereço:
                     </div>
-                    <div class="col-xl-9 subtitle-section-p text-right">
+                    <div class="col-9 subtitle-section-p text-right">
                         <?= $license->endereco ?>, <?= $license->numero ?>, <?= $license->bairro ?>,
                         <?= $license->cidade ?>, <?= $license->cep ?>
                     </div>
@@ -212,23 +212,23 @@
                 <?php endif; endforeach; ?>
             </div>
             <div class="row mt-3">
-                <div class="col-xl-6" onclick="openModal(1)">
+                <div class="col-sm-6" onclick="openModal(1)">
                     <div class="row m-0 mt-3 p-4 border-left-yellow div-request-license">
-                        <div class="col-xl-2 text-center mt-4">
+                        <div class="col-2 text-center mt-4">
                             <img src="<?= url('themes/assets/img/files.png') ?>">
                         </div>
-                        <div class="col-xl-10">
+                        <div class="col-10">
                             <h4 class="black-title-section">Anexos</h4>
                             <p class="subtitle-section-p">Arquivos enviados.</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-6" onclick="openModal(2)">
+                <div class="col-sm-6" onclick="openModal(2)">
                     <div class="row m-0 mt-3 p-4 border-left-green div-request-license">
-                        <div class="col-xl-2 text-center mt-4">
+                        <div class="col-2 text-center mt-4">
                             <img src="<?= url('themes/assets/img/cash-payment.png') ?>">
                         </div>
-                        <div class="col-xl-10">
+                        <div class="col-10">
                             <h4 class="black-title-section">Boleto</h4>
                             <p class="subtitle-section-p">Acessar boleto.</p>
                         </div>

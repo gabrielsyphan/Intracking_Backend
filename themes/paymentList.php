@@ -6,14 +6,14 @@
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
-                        <div class="col-xl-8">
+                        <div class="col-8">
                             <h4 class="title-section">
                                 Pagamentos cadastrados
                             </h4>
                             <hr>
                             <h2 class="title-section"><?= $amount ?></h2>
                         </div>
-                        <div class="col-xl-4">
+                        <div class="col-4">
                             <div class="text-center mt-4">
                                 <span class="title-section icon-credit-card card-icon registered-icon"></span>
                             </div>
@@ -26,14 +26,14 @@
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
-                        <div class="col-xl-8">
+                        <div class="col-8">
                             <h4 class="title-section">
                                 Pagamentos confirmados
                             </h4>
                             <hr>
                             <h2 class="title-section"><?= $paid ?></h2>
                         </div>
-                        <div class="col-xl-4">
+                        <div class="col-4">
                             <div class="text-center mt-4">
                                 <span class="title-section icon-verified_user card-icon paid-icon"></span>
                             </div>
@@ -46,14 +46,14 @@
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
-                        <div class="col-xl-8">
+                        <div class="col-8">
                             <h4 class="title-section">
                                 Pagamentos pendentes
                             </h4>
                             <hr>
                             <h2 class="title-section"><?= $pendent ?></h2>
                         </div>
-                        <div class="col-xl-4">
+                        <div class="col-4">
                             <div class="text-center mt-4">
                                 <span class="title-section icon-warning card-icon pending-icon"></span>
                             </div>
@@ -66,14 +66,14 @@
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
-                        <div class="col-xl-8">
+                        <div class="col-8">
                             <h4 class="title-section">
                                 Pagamentos <br> vencidos
                             </h4>
                             <hr>
                             <h2 class="title-section"><?= $expired ?></h2>
                         </div>
-                        <div class="col-xl-4">
+                        <div class="col-4">
                             <div class="text-center mt-4">
                                 <span class="title-section icon-block card-icon expired-icon"></span>
                             </div>

@@ -8,13 +8,17 @@
 <div id="modal-1" class="div-modal">
     <div class="container pt-5">
         <div class="row mt-5 p-5 justify-content-center">
-            <div class="col-xl-10 p-5 container-white">
-                <h3 class="black-title-section">Meus anexos</h3>
+            <div class="col-xl-10 p-5 container-white modal-overflow">
+                <div class="row">
+                    <div class="col-8">
+                        <h3 class="black-title-section">Meus anexos</h3>
+                    </div>
+                    <div class="col-4 text-right mt-3">
+                        <span class="icon-close" onclick="closeModal(1)"></span>
+                    </div>
+                </div>
                 <p class="subtitle-section-p">Arquivos enviados por você durante seu cadastro.</p>
                 <hr>
-                <div class="div-box-span-icon mt-5">
-                    <span class="icon-close" onclick="closeModal(1)"></span>
-                </div>
                 <table class="table table-striped">
                     <thead>
                     <tr>
@@ -55,13 +59,17 @@
 <div id="modal-2" class="div-modal">
     <div class="container pt-5">
         <div class="row mt-5 p-5 justify-content-center">
-            <div class="col-xl-10 p-5 container-white">
-                <h3 class="black-title-section">Meus pagamentos</h3>
+            <div class="col-xl-10 p-5 container-white modal-overflow">
+                <div class="row">
+                    <div class="col-8">
+                        <h3 class="black-title-section">Meus pagamentos</h3>
+                    </div>
+                    <div class="col-4 text-right mt-3">
+                        <span class="icon-close" onclick="closeModal(2)"></span>
+                    </div>
+                </div>
                 <p class="subtitle-section-p">Todos os pagamentos referente às suas licenças.</p>
                 <hr>
-                <div class="div-box-span-icon mt-5">
-                    <span class="icon-close" onclick="closeModal(2)"></span>
-                </div>
                 <div class="box-div-info-overflow-x background-body">
                     <table class="table table-striped">
                         <thead>
@@ -123,6 +131,98 @@
     </div>
 </div>
 
+<div id="modal-3" class="div-modal">
+    <div class="container pt-5">
+        <div class="row mt-5 p-5 justify-content-center">
+            <div class="col-xl-12 p-5 container-white modal-overflow">
+                <div class="row">
+                    <div class="col-8">
+                        <h3 class="black-title-section">Notificações</h3>
+                    </div>
+                    <div class="col-4 text-right mt-3">
+                        <span class="icon-close" onclick="closeModal(3)"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-6">
+                        <p class="subtitle-section-p">
+                            Histórico de notificações do ambulante.
+                        </p>
+                    </div>
+                    <div class="col-xl-6 text-right">
+                        <a id="newNotification" href="#" data-toggle="collapse" data-target="#demo">Novo chamado</a>
+                    </div>
+                    <div id="demo" class="col-xl-12 collapse">
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <div class="form-group">
+                                    <h5>Título:</h5>
+                                    <input type="text" class="form-input" id="title" name="title" title="Insira um título para a notificação" placeholder="Ex.: Local irregular" required>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <h5>Data da notificação:</h5>
+                                    <input type="date" class="form-input" id="date" name="date" title="Data da notificação" required>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <h5>Hora da notificação:</h5>
+                                    <input type="time" class="form-input" id="time" name="time" title="Hora da notificação" required>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <h5>Multa <span class="spanAlert">(Opcional)</span>:</h5>
+                                    <input type="number" class="form-input" id="penality" name="penality" title="Valor da multa" placeholder="Insira a o valor da multa" min="0">
+                                </div>
+                            </div>
+
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <h5>Fiscal:</h5>
+                                    <select id="agentSelect" class="form-input" name="agentSelect"  required>
+                                        <option style="display: none;" class="opt0" value="0">Selecione o fiscal responsável pela notificação</option>
+                                        <?php foreach ($agents as $agent): ?>
+                                            <option value="<?= $agent->id ?>"><?= $agent->nome ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-12">
+                                <div class="form-group">
+                                    <h5>Descrição:</h5>
+                                    <textarea class="form-input notification-textarea" id="description" name="description" rows="3" placeholder="Ex.: Indivíduo notificado por estar atuando em local diferente do cadastrado no sistema" required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-12 text-right">
+                                <button style="width: auto" type="submit" class="btn-3 primary">
+                                    Cadastrar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row m-0 mt-3 p-4 border-left-yellow div-request-license" onclick="openModal(1)">
+                    <div class="col-xl-12">
+                        <h4 class="black-title-section">Local errado</h4>
+                        <p class="subtitle-section-p">Ambulante estava vendendo seus produtos na rua X quando na verdade
+                            ele deveria estar na rua Y. Informei a ele do erro e mandei-o de volta para casa.</p>
+                        <h5 class="black-title-section text-right">Lucas Gabriel Peixoto de Oliveira</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container-fluid container-white mt-5 p-5">
     <div class="row">
         <div class="col-xl-12">
@@ -131,7 +231,7 @@
             <hr>
         </div>
         <div class="col-xl-3">
-            <div class="div-gray-bg border-top-green p-5">
+            <div class="div-gray-bg border-top-green p-5 mb-5">
                 <h4 class="black-title-section">Dias trabalhados</h4>
                 <hr>
                 <?php foreach (str_split($license->atendimento_dias) as $days):
@@ -157,88 +257,84 @@
                     - <?= $license->atendimento_hora_fim ?></p>
             </div>
 
-            <div class="row m-0 mt-3 p-4 border-left-green div-request-license" onclick="openModal(2)">
-                <div class="col-xl-2 text-center mt-4">
+            <div class="row m-0 mt-3 p-4 border-left-green div-request-license mb-5" onclick="openModal(2)">
+                <div class="col-2 text-center mt-4">
                     <img src="<?= url('themes/assets/img/cash-payment.png') ?>">
                 </div>
-                <div class="col-xl-10">
+                <div class="col-10">
                     <h4 class="black-title-section">Boleto</h4>
                     <p class="subtitle-section-p">Acessar boleto.</p>
                 </div>
             </div>
 
-            <div class="row m-0 mt-3 p-4 border-left-yellow div-request-license" onclick="openModal(1)">
-                <div class="col-xl-2 text-center mt-4">
+            <div class="row m-0 mt-3 p-4 border-left-yellow div-request-license mb-5" onclick="openModal(1)">
+                <div class="col-2 text-center mt-4">
                     <img src="<?= url('themes/assets/img/files.png') ?>">
                 </div>
-                <div class="col-xl-10">
+                <div class="col-10">
                     <h4 class="black-title-section">Anexos</h4>
                     <p class="subtitle-section-p">Arquivos enviados.</p>
                 </div>
             </div>
 
             <?php if ($_SESSION['user']['login'] === 3): ?>
-                <div class="row m-0 mt-3 p-4 border-left-red div-request-license">
-                    <div class="col-xl-2 text-center mt-4">
+                <div class="row m-0 mt-3 p-4 border-left-red div-request-license mb-5" onclick="openModal(3)">
+                    <div class="col-2 text-center mt-4">
                         <img src="<?= url('themes/assets/img/alert.png') ?>">
                     </div>
-                    <div class="col-xl-10">
+                    <div class="col-10">
                         <h4 class="black-title-section">Notificações</h4>
                         <p class="subtitle-section-p">Histórico de notif...</p>
                     </div>
                 </div>
             <?php endif; ?>
         </div>
-        <div class="col-xl-9">
+        <div class="col-xl-9 mb-5">
             <div class="div-gray-bg border-top-green p-5">
                 <h4 class="black-title-section">Informações da licença</h4>
                 <hr>
 
                 <div class="row">
-                    <div class="col-xl-3 subtitle-section-p">
-<<<<<<< Updated upstream
-                        Responsável:
-=======
+                    <div class="col-3 subtitle-section-p">
                         Proprietário:
->>>>>>> Stashed changes
                     </div>
-                    <div class="col-xl-9 subtitle-section-p text-right">
+                    <div class="col-9 subtitle-section-p text-right">
                         <?= $user ?>
                     </div>
                 </div>
 
                 <div class="row mt-5">
-                    <div class="col-xl-3 subtitle-section-p">
+                    <div class="col-3 subtitle-section-p">
                         Tipo de equipamento:
                     </div>
-                    <div class="col-xl-9 subtitle-section-p text-right">
+                    <div class="col-9 subtitle-section-p text-right">
                         <?= $license->tipo_equipamento ?>
                     </div>
                 </div>
 
                 <div class="row mt-5">
-                    <div class="col-xl-3 subtitle-section-p">
+                    <div class="col-3 subtitle-section-p">
                         Início da licença:
                     </div>
-                    <div class="col-xl-9 subtitle-section-p text-right">
+                    <div class="col-9 subtitle-section-p text-right">
                         <?= $licenseValidate->data_inicio ?>
                     </div>
                 </div>
 
                 <div class="row mt-5">
-                    <div class="col-xl-3 subtitle-section-p">
+                    <div class="col-3 subtitle-section-p">
                         Fim da licença:
                     </div>
-                    <div class="col-xl-9 subtitle-section-p text-right">
+                    <div class="col-9 subtitle-section-p text-right">
                         <?= $licenseValidate->data_fim ?>
                     </div>
                 </div>
 
                 <div class="row mt-5">
-                    <div class="col-xl-3 subtitle-section-p">
+                    <div class="col-3 subtitle-section-p">
                         Relato da atividade:
                     </div>
-                    <div class="col-xl-9 subtitle-section-p text-right">
+                    <div class="col-9 subtitle-section-p text-right">
                         <?php if ($license->relato_atividade):
                             echo $license->relato_atividade;
                         else:
@@ -248,10 +344,10 @@
                 </div>
 
                 <div class="row mt-5">
-                    <div class="col-xl-3 subtitle-section-p">
+                    <div class="col-3 subtitle-section-p">
                         Endereço:
                     </div>
-                    <div class="col-xl-9 subtitle-section-p text-right">
+                    <div class="col-9 subtitle-section-p text-right">
                         <?= $license->local_endereco ?>
                     </div>
                 </div>

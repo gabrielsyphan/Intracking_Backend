@@ -41,7 +41,7 @@
             <hr>
             <p class="p-0 pl-3">Listas</p>
             <li class="
-    <?= ($router->isCurrentRoute("web.salesmanList") ? 'active' : ''); ?>
+    <?= ($router->isCurrentRoute("web.licenseList") ? 'active' : ''); ?>
     <?= ($router->isCurrentRoute("web.salesmanProfile") ? 'active' : ''); ?>
     <?= ($router->isCurrentRoute("web.companyInfo") ? 'active' : ''); ?>
     ">
