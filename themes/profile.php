@@ -3,45 +3,47 @@
 <div id="modal-1" class="div-modal">
     <div class="container pt-5">
         <div class="row mt-5 p-5 justify-content-center">
-            <div class="col-xl-10 p-5 container-white">
-                <h3 class="black-title-section">Meus anexos</h3>
+            <div class="col-xl-10 p-5 container-white mh-80">
+                <div class="row">
+                    <div class="col-8">
+                        <h3 class="black-title-section">Meus anexos</h3>
+                    </div>
+                    <div class="col-4 text-right mt-3">
+                        <span class="icon-close" onclick="closeModal(1)"></span>
+                    </div>
+                </div>
                 <p class="subtitle-section-p">Arquivos enviados por você durante seu cadastro.</p>
                 <hr>
-                <div class="div-box-span-icon mt-5">
-                    <span class="icon-close" onclick="closeModal(1)"></span>
+                <div class="row m-0 p-4">
+                    <div class="col-xl-12 mb-3 pl-5 pr-5">
+                        <?php if ($uploads && count($uploads) > 0): $aux = 1;
+                            foreach ($uploads as $upload): ?>
+                                <div class="row div-gray-bg mb-5 p-5">
+                                    <div class="col-xl-3 p-0 text-center">
+                                        <img style="width: 150px;"
+                                             src="<?= url('/themes/assets/uploads/') ?><?= $upload['groupName'] . '/' .
+                                             $upload['userId'] . '/' . $upload['fileName'] ?>">
+                                    </div>
+                                    <div class="col-xl-9 text-sm-center text-md-left">
+                                        <h5 class="mt-5 mt-md-3"><?= explode(".", $upload['fileName'])[0] ?></h5>
+                                        <p class="subtitle-section-p">Para editar ou visualizar a imagem, acione os
+                                            botões abaixo.</p>
+                                        <div class="text-right mt-5 pt-3 d-flex">
+                                            <form class="mr-2"
+                                                  action="<?= url('downloadFile/' . $upload['groupName'] . '/' . $upload['userId']
+                                                      . '/' . $upload['fileName']) ?>">
+                                                <button class="btn-3 primary">Baixar</button>
+                                            </form>
+                                            <button class="btn-3 secondary-color"
+                                                    onclick="openFile('<?= $upload['groupName'] . '/' .
+                                                    $upload['userId'] . '/' . $upload['fileName'] ?>')">Visualizar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php $aux++; endforeach; endif; ?>
+                    </div>
                 </div>
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nome</th>
-                        <th scope="col">Ações</th>
-                    </tr>
-                    </thead>
-                    <tbody id="table-data">
-                    <?php if ($uploads && count($uploads) > 0):
-                        $aux = 1;
-                        foreach ($uploads as $upload): ?>
-                            <tr>
-                                <th scope="row"><?= $aux ?></th>
-                                <td><?= $upload['fileName'] ?></td>
-                                <td style="display: flex">
-                                    <form action="<?= url('downloadFile/' . $upload['groupName'] . '/' . $upload['userId']
-                                        . '/' . $upload['fileName']) ?>">
-                                        <button class="btn" type="submit">
-                                            <span class="icon-download"></span>
-                                        </button>
-                                    </form>
-                                    <button class="btn" type="submit"
-                                            onclick="openFile('<?= $upload['groupName'] . '/' .
-                                            $upload['userId'] . '/' . $upload['fileName'] ?>')">
-                                        <span class="icon-image"></span>
-                                    </button>
-                                </td>
-                            </tr>
-                            <?php $aux++; endforeach; endif; ?>
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
@@ -69,7 +71,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <?php if ($payments !== NULL):
+                        <?php if ($payments):
                             foreach ($payments as $payment):
                                 if ($payment->id_empresa == null):
                                     if ($payment->status == 3 || $payment->status == 0):
@@ -191,10 +193,10 @@
                         <div class="row">
                             <div class="col-xl-6" onclick="openModal(1)">
                                 <div class="row m-0 mt-3 p-4 div-request-license border-left-yellow">
-                                    <div class="col-xl-2 text-center mt-4">
+                                    <div class="col-2 mt-5 mt-md-3 text-center mt-4">
                                         <img src="<?= url('themes/assets/img/files.png') ?>">
                                     </div>
-                                    <div class="col-xl-10">
+                                    <div class="col-10">
                                         <h4>Meus anexos</h4>
                                         <p class="subtitle-section-p">Arquivos enviados por você durante seu
                                             cadastro.</p>
@@ -203,10 +205,10 @@
                             </div>
                             <div class="col-xl-6" onclick="openModal(2)">
                                 <div class="row m-0 mt-3 p-4 div-request-license border-left-green">
-                                    <div class="col-xl-2 text-center mt-4">
+                                    <div class="col-2 mt-5 mt-md-3 text-center mt-4">
                                         <img src="<?= url('themes/assets/img/cash-payment.png') ?>">
                                     </div>
-                                    <div class="col-xl-10">
+                                    <div class="col-10">
                                         <h4>Meus boletos</h4>
                                         <p class="subtitle-section-p">Todos os pagamentos referente às suas
                                             licenças.</p>

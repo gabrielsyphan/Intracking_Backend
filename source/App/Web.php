@@ -618,15 +618,30 @@ class Web
         $validate = false;
 
         $license = (new License())->find('MD5(id) = :id', 'id=' . $data['licenseId'])->fetch();
+        $agents = (new Agent())->find('', '', 'id, nome')->fetch(true);
+        $notifications = false;
+        $notificatonAgents = array();
         if ($license) {
             $payments = (new Payment())->find('id_licenca = :id', 'id=' . $license->id)->fetch(true);
-            $user = (new User())->findById($license->id_usuario, 'nome');
+            $user = (new User())->findById($license->id_usuario, 'id, nome');
             if ($user) {
                 switch ($data['licenseType']) {
                     case 1:
                         $licenseInfo = (new Salesman())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
                         $templateName = 'salesmanLicenseInfo';
                         $groupName = 'salesmans';
+
+                        $notifications = (new Notification())->find('id_licenca = :id', 'id=' . $license->id)->fetch(true);
+                        if ($notifications) {
+                            foreach ($notifications as $notification) {
+                                $agent = (new Agent())->findById($notification->id_fiscal);
+                                if ($notification->id_boleto) {
+                                    $notificationPayment = (new Payment())->findById($notification->id_boleto, 'cod_referencia');
+                                    $notification->cod_referencia = $notificationPayment->cod_referencia;
+                                }
+                                $notification->agentName = $agent->nome;
+                            }
+                        }
                         break;
                     case 2:
                         $licenseInfo = (new Company())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
@@ -656,8 +671,11 @@ class Web
                             'licenseValidate' => $license,
                             'licenseStatus' => $license->status,
                             'user' => $user->nome,
+                            'userId' => $user->id,
                             'uploads' => $uploads,
-                            'payments' => $payments
+                            'payments' => $payments,
+                            'agents' => $agents,
+                            'notifications' => $notifications
                         ]);
                     }
                 }
@@ -1346,135 +1364,111 @@ class Web
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
-        $agent = (new Agent())->findById($data['id2']);
-        if ($agent == NULL) {
-            echo 0;
-        } else {
-            $salesman = (new Salesman())->findById($data['id1']);
-            if ($salesman == NULL) {
-                echo 0;
-            } else {
+        $agent = (new Agent())->findById($data['agentSelect']);
+        if ($agent) {
+            $salesman = (new Salesman())->findById($data['licenseId']);
+            if ($salesman) {
                 $notification = new Notification();
-                $notification->ambulante_id = $data['id1'];
+                $notification->id_licenca = $salesman->id_licenca;
                 $notification->data_notificacao = $data['date'];
                 $notification->hora_notificacao = $data['time'];
                 $notification->titulo = $data['title'];
-                $notification->descricao = $data['description'];
-                $notification->fiscal_id = $data['id2'];
-                $notification->fiscal_nome = $agent->nome;
+                $notification->descricao = $data['noticationDescription'];
+                $notification->id_fiscal = $agent->id;
                 $notification->save();
 
-                if (isset($data['blockAccess']) && $data['blockAccess'] == 1) {
-                    if ($salesman->regiao != null) {
-                        $zone = (new Zone())->findById($salesman->regiao);
-                        if ($zone) {
-                            $zone->quantidade_ambulantes = $zone->quantidade_ambulantes - 1;
-                            $zone->save();
-                        }
-                    }
-
-                    $salesman->suspenso = 1;
-                    $salesman->situacao = 0;
-                    $salesman->regiao = null;
-                    $salesman->latitude = null;
-                    $salesman->longitude = null;
-                    $salesman->save();
-
-                    $email = new Email();
-                    $email->add(
-                        "Notificação",
-                        "<p style='font-family: \"Dosis\", sans-serif;'>Olá " . $salesman->nome . ", você acaba de ter sua conta <span style='color: #ed2e54;'>SUSPENSA</span> do <span style='color: #ed2e54;'> ORDITI</span></p>
-                        <p style='font-family: \"Dosis\", sans-serif;'>Título da suspensão: <span style='color: #ed2e54;'>" . $data['title'] . "</span></p>
-                        <p style='font-family: \"Dosis\", sans-serif;'>Descrição: <span style='color: #ed2e54;'>" . $data['description'] . "</span></p>
-                        <div> <img style='width: 20%' src='https://www.maceio.orditi.com/i/themes/assets/img/nav-logo.png'> </div>",
-                        $salesman->nome,
-                        $salesman->email
-                    )->send();
+                if ($notification->fail()) {
+                    var_dump($notification->fail()->getMessage());
+                    exit();
                 }
 
                 if (!($data['penality'] == '' || $data['penality'] == ' ' || $data['penality'] == 0 || $data['penality'] == 00)) {
-                    $paymentDate = date('Y-m-d', strtotime("+3 days"));
+                    $license = (new License())->findById($salesman->id_licenca);
+                    if (!$license) {
+                        exit();
+                    }
 
+                    $paymentDate = date('Y-m-d', strtotime("+3 days"));
                     $payment = new Payment();
-                    $payment->id_ambulante = $data['id1'];
-                    $payment->valor = $data['penality'];
-                    $payment->pagar_em = date('Y-m-d H:i:s', strtotime("+3 days"));
-                    $payment->tipo = 0;
-                    $payment->status = 0;
-                    $payment->id_usuario = $_SESSION['user']['id'];
+                    $payment->id_licenca = $license->id;
                     $payment->cod_referencia = null;
                     $payment->cod_pagamento = null;
+                    $payment->valor = $data['penality'];
+                    $payment->id_usuario = $license->id_usuario;
+                    $payment->tipo = 1;
+                    $payment->pagar_em = $paymentDate;
                     $payment->save();
 
                     $extCode = 'ODT' . $payment->id;
 
-                    $soap_input = '
-                            <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eag="EAgata" xmlns:e="e-Agata_18.11">
-                               <soapenv:Header/>
-                               <soapenv:Body>
-                                  <eag:WSTaxaExternas.Execute>
-                                     <eag:Chave>TAXA_EXTERNA</eag:Chave>
-                                     <eag:Usulogin>CIDADAO</eag:Usulogin>
-                                     <eag:Ususenha>123456</eag:Ususenha>
-                                     <eag:Sdttaxaexterna>
-                                        <e:SDTTaxaExternas.SDTTaxaExternasItem>
-                                           <e:TipoMode>INS</e:TipoMode>
-                                           <e:EXTTipoContr>3</e:EXTTipoContr>
-                                           <e:EXTCodigo>' . $extCode . '</e:EXTCodigo>
-                                           <e:EXTDescricao>numero da licenca</e:EXTDescricao>
-                                           <e:EXTTipoMulta></e:EXTTipoMulta>
-                                           <e:EXTDescMulta></e:EXTDescMulta>
-                                           <e:EXTanolct>2020</e:EXTanolct>
-                                           <e:EXTtpoTaxaExternas>2</e:EXTtpoTaxaExternas>
-                                           <e:EXTCTBid>1254</e:EXTCTBid>
-                                           <e:EXTcpfcnpjpropr></e:EXTcpfcnpjpropr>
-                                           <e:EXTInscricao>' . $salesman->cmc . '</e:EXTInscricao>
-                                           <e:EXTvlrvvt>' . $data['penality'] . '</e:EXTvlrvvt>
-                                           <e:EXTvlrvvtdesconto>0.00</e:EXTvlrvvtdesconto>
-                                           <e:EXTvencimento>' . $paymentDate . '</e:EXTvencimento>
-                                           <e:EXTSituacao>A</e:EXTSituacao>
-                                           <e:Nome></e:Nome>
-                                           <e:Endereco></e:Endereco>
-                                           <e:Numero></e:Numero>
-                                           <e:complemento></e:complemento>
-                                           <e:Municipio></e:Municipio>
-                                           <e:cep></e:cep>
-                                           <e:uf>AL</e:uf>
-                                        </e:SDTTaxaExternas.SDTTaxaExternasItem>
-                                     </eag:Sdttaxaexterna>
-                                  </eag:WSTaxaExternas.Execute>
-                               </soapenv:Body>
-                            </soapenv:Envelope>';
+//                                $soap_input = '
+//                                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eag="EAgata" xmlns:e="e-Agata_18.11">
+//                                   <soapenv:Header/>
+//                                   <soapenv:Body>
+//                                      <eag:WSTaxaExternas.Execute>
+//                                         <eag:Chave>TAXA_EXTERNA</eag:Chave>
+//                                         <eag:Usulogin>CIDADAO</eag:Usulogin>
+//                                         <eag:Ususenha>123456</eag:Ususenha>
+//                                         <eag:Sdttaxaexterna>
+//                                            <e:SDTTaxaExternas.SDTTaxaExternasItem>
+//                                               <e:TipoMode>INS</e:TipoMode>
+//                                               <e:EXTTipoContr>3</e:EXTTipoContr>
+//                                               <e:EXTCodigo>'. $extCode .'</e:EXTCodigo>
+//                                               <e:EXTDescricao>numero da licenca</e:EXTDescricao>
+//                                               <e:EXTTipoMulta></e:EXTTipoMulta>
+//                                               <e:EXTDescMulta></e:EXTDescMulta>
+//                                               <e:EXTanolct>2020</e:EXTanolct>
+//                                               <e:EXTtpoTaxaExternas>2</e:EXTtpoTaxaExternas>
+//                                               <e:EXTCTBid>1254</e:EXTCTBid>
+//                                               <e:EXTcpfcnpjpropr></e:EXTcpfcnpjpropr>
+//                                               <e:EXTInscricao>'. $companyAux .'</e:EXTInscricao>
+//                                               <e:EXTvlrvvt>'. $valueToPayment[0] .'</e:EXTvlrvvt>
+//                                               <e:EXTvlrvvtdesconto>0.00</e:EXTvlrvvtdesconto>
+//                                               <e:EXTvencimento>'. $paymentDate .'</e:EXTvencimento>
+//                                               <e:EXTSituacao>A</e:EXTSituacao>
+//                                               <e:Nome></e:Nome>
+//                                               <e:Endereco></e:Endereco>
+//                                               <e:Numero></e:Numero>
+//                                               <e:complemento></e:complemento>
+//                                               <e:Municipio></e:Municipio>
+//                                               <e:cep></e:cep>
+//                                               <e:uf>AL</e:uf>
+//                                            </e:SDTTaxaExternas.SDTTaxaExternasItem>
+//                                         </eag:Sdttaxaexterna>
+//                                      </eag:WSTaxaExternas.Execute>
+//                                   </soapenv:Body>
+//                                </soapenv:Envelope>';
+//
+//                                $curl = curl_init();
+//
+//                                curl_setopt($curl, CURLOPT_URL, EAGATA);
+//                                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+//                                curl_setopt($curl, CURLOPT_POSTFIELDS, $soap_input);
+//                                curl_setopt($curl, CURLOPT_HEADER, false);
+//                                curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+//
+//                                $soap_response = curl_exec($curl);
+//
+//                                $xml_response = str_ireplace(['SOAP-ENV:', 'SOAP:', '.executeresponse', '.SDTConsultaParcelamentoItem', '.SDTMensagem_TaxaExternaItem'], '', $soap_response);
+//
+//                                @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
+//                                $code = $xml->Body->WSTaxaExternas->Mensagem->SDTMensagem_TaxaExterna->NossoNumero;
 
-                    $curl = curl_init();
+//                                $payment->cod_referencia = $code;
+//                                $payment->cod_pagamento = $extCode;
 
-                    curl_setopt($curl, CURLOPT_URL, EAGATA);
-                    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, $soap_input);
-                    curl_setopt($curl, CURLOPT_HEADER, false);
-                    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-
-                    $soap_response = curl_exec($curl);
-
-                    $xml_response = str_ireplace(['SOAP-ENV:', 'SOAP:', '.executeresponse', '.SDTConsultaParcelamentoItem', '.SDTMensagem_TaxaExternaItem'], '', $soap_response);
-
-                    @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
-                    $code = $xml->Body->WSTaxaExternas->Mensagem->SDTMensagem_TaxaExterna->NossoNumero;
-
-                    $payment->cod_pagamento = $extCode;
-                    $payment->cod_referencia = $code;
+                    $payment->cod_referencia = 15123;
+                    $payment->cod_pagamento = 'teste';
                     $payment->save();
 
-                    $email = new Email();
-                    $email->add(
-                        "Multa",
-                        "<p style='font-family: \"Dosis\", sans-serif;'>Olá " . $salesman->nome . ", você acaba de receber uma <span style='color: #ed2e54;'>MULTA</span> no valor de  <span style='color: #157881;'>R$" . $data['penality'] . "</span> que deverá ser paga até o dia <span style='color: #ed2e54;'>" . date('d-m-Y', strtotime($paymentDate)) . "</span></p>
-                    <p style='font-family: \"Dosis\", sans-serif;'>Título da multa: <span style='color: #ed2e54;'>" . $data['title'] . "</span></p>
-                    <p style='font-family: \"Dosis\", sans-serif;'>Descrição: <span style='color: #ed2e54;'>" . $data['description'] . "</span></p>
-                    <div> <img style='width: 20%' src='https://www.maceio.orditi.com/i/themes/assets/img/nav-logo.png'> </div>",
-                        $salesman->nome,
-                        $salesman->email
-                    )->send();
+                    if ($payment->fail()) {
+                        $notification->destroy();
+                        var_dump($payment->fail()->getMessage());
+                        exit();
+                    }
+
+                    $notification->id_boleto = $payment->id;
+                    $notification->save();
                 }
 
                 if ($notification->fail()) {
@@ -1630,7 +1624,7 @@ class Web
                         endswitch;
 
                         $tableBody .= '<tr>';
-                        $tableBody .= '<td>' . $license_type[$license->tipo-1]->nome . '</td>';
+                        $tableBody .= '<td>' . $license_type[$license->tipo - 1]->nome . '</td>';
                         $tableBody .= '<td>' . $user->cpf . '</td>';
                         $tableBody .= '<td>' . $user->nome . '</td>';
                         $tableBody .= '<td>' . $license->data_inicio . '</td>';
@@ -1699,7 +1693,7 @@ class Web
         $html = '';
         $html .= '<table>';
         $html .= '<tr>';
-        $html .= '<td colspan="5">Planilha de '. $tableName .' - ORDITI</td>';
+        $html .= '<td colspan="5">Planilha de ' . $tableName . ' - ORDITI</td>';
         $html .= '</tr>';
         $html .= $tableHead;
         $html .= $tableBody;

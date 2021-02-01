@@ -42,14 +42,9 @@ p {
     color: #443b3b;
 }
 
-a, a:hover, a:focus {
+a, a:hover {
     text-decoration: none;
     transition: all 0.3s;
-    color: #33a0aa;
-}
-
-#newNotification {
-    color: #33a0aa !important;
 }
 
 .swal-button--confirm {
@@ -107,7 +102,7 @@ a, a:hover, a:focus {
     background: #33a0aa;
 }
 
-#sidebar ul li.active, a[aria-expanded="true"] {
+#sidebar ul li.active {
     color: #fff;
     font-weight: 600;
 }
@@ -1263,6 +1258,10 @@ input[type=file].hidden-input-file {
     cursor: pointer;
 }
 
+.div-request-license:first-letter {
+    text-transform: capitalize;
+}
+
 .div-request-license > h4 {
     font-size: 18px;
 }
@@ -1277,7 +1276,6 @@ input[type=file].hidden-input-file {
 
 .gray-box {
     background: #f7f7f7;
-    border-radius: 6px;
 }
 
 .disabled-input {
@@ -1300,6 +1298,14 @@ input[type=file].hidden-input-file {
     border-top: 2px solid #4bc2ce;
 }
 
+.border-top-red {
+    border-top: 2px solid #f05977;
+}
+
+.border-top-yellow {
+    border-top: 2px solid #ffbc00;
+}
+
 .border-left-green {
     border-left: 2px solid #4bc2ce;
 }
@@ -1310,6 +1316,10 @@ input[type=file].hidden-input-file {
 
 .border-left-red {
     border-left: 2px solid #f05977;
+}
+
+.border-bottom-red {
+    border-bottom: 2px solid #f05977;
 }
 
 .container-white {
@@ -1342,4 +1352,21 @@ border-left-red {
 
 .border-left-yellow {
     border-left: 3px solid #ffbc00;
+}
+
+.invalidate-feedback, .text-red {
+    color: #f05977 !important;
+}
+
+.text-yellow {
+    color: #ffbc00 !important;
+}
+
+.text-green {
+    color: #4bc2ce !important;
+}
+
+.mh-80 {
+    overflow: auto;
+    max-height: 80vh;
 }

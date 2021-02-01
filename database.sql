@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 28-Jan-2021 às 16:05
+-- Tempo de geração: 01-Fev-2021 às 13:54
 -- Versão do servidor: 10.4.14-MariaDB
 -- versão do PHP: 7.4.11
 
@@ -103,8 +103,8 @@ CREATE TABLE `boletos` (
   `valor` int(11) NOT NULL,
   `status` int(11) NOT NULL DEFAULT 3,
   `tipo` int(11) NOT NULL,
-  `pagar_em` timestamp NOT NULL DEFAULT current_timestamp(),
-  `pago_em` timestamp NOT NULL DEFAULT current_timestamp()
+  `pagar_em` varchar(20) NOT NULL DEFAULT current_timestamp(),
+  `pago_em` varchar(20) NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -112,7 +112,10 @@ CREATE TABLE `boletos` (
 --
 
 INSERT INTO `boletos` (`id`, `id_licenca`, `id_usuario`, `cod_referencia`, `cod_pagamento`, `valor`, `status`, `tipo`, `pagar_em`, `pago_em`) VALUES
-(3, 28, 38, '15123', 'teste', 144, 3, 1, '2021-01-31 02:00:00', '2021-01-28 11:51:06');
+(3, 28, 38, '15123', 'teste', 144, 3, 1, '2021-01-31', '2021-01-28 09:51:06'),
+(6, 28, 38, '15123', 'teste', 152, 3, 1, '2021-02-04', '2021-02-01 10:12:31'),
+(7, 28, 38, '15123', 'teste', 152, 3, 1, '2021-02-04', '2021-02-01 10:12:38'),
+(8, 28, 38, '9510231', 'teste', 152, 3, 1, '2021-02-04', '2021-02-01 10:13:04');
 
 -- --------------------------------------------------------
 
@@ -224,13 +227,28 @@ INSERT INTO `licencas` (`id`, `cmc`, `tipo`, `data_inicio`, `data_fim`, `status`
 
 CREATE TABLE `notificacoes` (
   `id` int(11) NOT NULL,
-  `data` datetime NOT NULL,
-  `hora` datetime NOT NULL,
+  `data_notificacao` varchar(20) NOT NULL,
+  `hora_notificacao` varchar(20) NOT NULL,
+  `titulo` varchar(100) NOT NULL,
   `descricao` varchar(300) NOT NULL,
-  `boletos_idboletos` int(11) DEFAULT NULL,
-  `fiscais_id` int(11) NOT NULL,
-  `usuarios_id` int(11) NOT NULL
+  `id_boleto` int(11) DEFAULT NULL,
+  `id_fiscal` int(11) NOT NULL,
+  `id_licenca` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Extraindo dados da tabela `notificacoes`
+--
+
+INSERT INTO `notificacoes` (`id`, `data_notificacao`, `hora_notificacao`, `titulo`, `descricao`, `id_boleto`, `id_fiscal`, `id_licenca`) VALUES
+(12, '2145-03-16', '15:23', 'aaaa', 'aaaaaaaaaaasdsdada', NULL, 1, 28),
+(14, '2021-04-10', '18:00', 'individuo em local irregular', 'Indivíduo foi encontrado em um local diferente do cadastrado no sistema.', NULL, 1, 28),
+(15, '2021-02-01', '10:00', 'Testando', 'aaaaaaaaaaaa', NULL, 1, 28),
+(17, '2020-04-18', '23:04', 'aaaa', 'uloçjklçjk', NULL, 1, 28),
+(18, '2020-04-18', '23:04', 'aaaa', 'uloçjklçjk', NULL, 1, 28),
+(19, '2020-04-18', '23:04', 'aaaa', 'uloçjklçjk', 6, 1, 28),
+(20, '2020-04-18', '23:04', 'aaaa', 'uloçjklçjk', 7, 1, 28),
+(21, '2020-04-18', '23:04', 'aaaa', 'uloçjklçjk', 8, 1, 28);
 
 -- --------------------------------------------------------
 
@@ -240,9 +258,18 @@ CREATE TABLE `notificacoes` (
 
 CREATE TABLE `status_boletos` (
   `id` int(11) NOT NULL,
-  `numero` int(11) NOT NULL,
   `nome` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Extraindo dados da tabela `status_boletos`
+--
+
+INSERT INTO `status_boletos` (`id`, `nome`) VALUES
+(0, 'Pendente'),
+(1, 'Pago'),
+(2, 'Vencido'),
+(3, 'Pendente');
 
 -- --------------------------------------------------------
 
@@ -252,9 +279,17 @@ CREATE TABLE `status_boletos` (
 
 CREATE TABLE `status_licencas` (
   `id` int(11) NOT NULL,
-  `numero` int(11) NOT NULL,
   `nome` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Extraindo dados da tabela `status_licencas`
+--
+
+INSERT INTO `status_licencas` (`id`, `nome`) VALUES
+(0, 'Pendente'),
+(1, 'Ativa'),
+(2, 'Suspensa');
 
 -- --------------------------------------------------------
 
@@ -477,6 +512,12 @@ ALTER TABLE `tipo_licenca`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Índices para tabela `tipo_usuario`
+--
+ALTER TABLE `tipo_usuario`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Índices para tabela `usuarios`
 --
 ALTER TABLE `usuarios`
@@ -508,13 +549,31 @@ ALTER TABLE `anexos`
 -- AUTO_INCREMENT de tabela `boletos`
 --
 ALTER TABLE `boletos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de tabela `licencas`
 --
 ALTER TABLE `licencas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+
+--
+-- AUTO_INCREMENT de tabela `notificacoes`
+--
+ALTER TABLE `notificacoes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT de tabela `status_boletos`
+--
+ALTER TABLE `status_boletos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de tabela `status_licencas`
+--
+ALTER TABLE `status_licencas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `usuarios`

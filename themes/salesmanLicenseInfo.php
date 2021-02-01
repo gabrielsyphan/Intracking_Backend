@@ -8,7 +8,7 @@
 <div id="modal-1" class="div-modal">
     <div class="container pt-5">
         <div class="row mt-5 p-5 justify-content-center">
-            <div class="col-xl-10 p-5 container-white modal-overflow">
+            <div class="col-xl-10 p-5 container-white modal-overflow mh-80">
                 <div class="row">
                     <div class="col-8">
                         <h3 class="black-title-section">Meus anexos</h3>
@@ -19,38 +19,36 @@
                 </div>
                 <p class="subtitle-section-p">Arquivos enviados por você durante seu cadastro.</p>
                 <hr>
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nome</th>
-                        <th scope="col">Ações</th>
-                    </tr>
-                    </thead>
-                    <tbody id="table-data">
-                    <?php if ($uploads && count($uploads) > 0):
-                        $aux = 1;
-                        foreach ($uploads as $upload): ?>
-                            <tr>
-                                <th scope="row"><?= $aux ?></th>
-                                <td><?= $upload['fileName'] ?></td>
-                                <td style="display: flex">
-                                    <form action="<?= url('downloadFile/' . $upload['groupName'] . '/' . $upload['userId']
-                                        . '/' . $upload['fileName']) ?>">
-                                        <button class="btn" type="submit">
-                                            <span class="icon-download"></span>
-                                        </button>
-                                    </form>
-                                    <button class="btn" type="submit"
-                                            onclick="openFile('<?= $upload['groupName'] . '/' .
-                                            $upload['userId'] . '/' . $upload['fileName'] ?>')">
-                                        <span class="icon-image"></span>
-                                    </button>
-                                </td>
-                            </tr>
-                            <?php $aux++; endforeach; endif; ?>
-                    </tbody>
-                </table>
+                <div class="row m-0 p-4">
+                    <div class="col-xl-12 mb-3 pl-5 pr-5">
+                        <?php if ($uploads && count($uploads) > 0): $aux = 1;
+                            foreach ($uploads as $upload): ?>
+                                <div class="row div-gray-bg mb-5 p-5">
+                                    <div class="col-xl-3 p-0 text-center">
+                                        <img style="width: 150px;"
+                                             src="<?= url('/themes/assets/uploads/') ?><?= $upload['groupName'] . '/' .
+                                             $upload['userId'] . '/' . $upload['fileName'] ?>">
+                                    </div>
+                                    <div class="col-xl-9 text-sm-center text-md-left">
+                                        <h5 class="mt-5 mt-md-3"><?= explode(".", $upload['fileName'])[0] ?></h5>
+                                        <p class="subtitle-section-p">Para editar ou visualizar a imagem, acione os
+                                            botões abaixo.</p>
+                                        <div class="text-right mt-5 pt-3 d-flex">
+                                            <form class="mr-2"
+                                                  action="<?= url('downloadFile/' . $upload['groupName'] . '/' . $upload['userId']
+                                                      . '/' . $upload['fileName']) ?>">
+                                                <button class="btn-3 primary">Baixar</button>
+                                            </form>
+                                            <button class="btn-3 secondary-color"
+                                                    onclick="openFile('<?= $upload['groupName'] . '/' .
+                                                    $upload['userId'] . '/' . $upload['fileName'] ?>')">Visualizar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php $aux++; endforeach; endif; ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -111,11 +109,11 @@
                                         <td>
                                             <?php if ($payment->status == 2): ?>
                                                 <a class="btn-3 secondary"
-                                                   href="http://www.smf.maceio.al.gov.br:8090/e-agata/servlet/hwmemitedamqrcode?<?= $payment->cod_referencia ?>"
+                                                   href="<?= BOLETOS . $payment->cod_referencia ?>"
                                                    target="_blank">Pagar</a>
                                             <?php elseif ($payment->status == 0 || $payment->status == 3): ?>
                                                 <a class="btn-3 tertiary"
-                                                   href="http://www.smf.maceio.al.gov.br:8090/e-agata/servlet/hwmemitedamqrcode?<?= $payment->cod_referencia ?>"
+                                                   href="<?= BOLETOS . $payment->cod_referencia ?>"
                                                    target="_blank">Pagar</a>
                                             <?php else: ?>
                                                 Não há ações
@@ -135,7 +133,7 @@
     <div class="container pt-5">
         <div class="row mt-5 p-5 justify-content-center">
             <div class="col-xl-12 p-5 container-white modal-overflow">
-                <div class="row">
+                <div class="row pl-4 pr-4">
                     <div class="col-8">
                         <h3 class="black-title-section">Notificações</h3>
                     </div>
@@ -143,80 +141,122 @@
                         <span class="icon-close" onclick="closeModal(3)"></span>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row pl-4 pr-4">
                     <div class="col-xl-6">
                         <p class="subtitle-section-p">
                             Histórico de notificações do ambulante.
                         </p>
                     </div>
                     <div class="col-xl-6 text-right">
-                        <a id="newNotification" href="#" data-toggle="collapse" data-target="#demo">Novo chamado</a>
+                        <a class="text-red" href="#" data-toggle="collapse" data-target="#demo">Nova notificação</a>
                     </div>
-                    <div id="demo" class="col-xl-12 collapse">
-                        <div class="row">
-                            <div class="col-xl-12">
-                                <div class="form-group">
-                                    <h5>Título:</h5>
-                                    <input type="text" class="form-input" id="title" name="title" title="Insira um título para a notificação" placeholder="Ex.: Local irregular" required>
-                                </div>
-                            </div>
+                    <div id="demo" class="col-xl-12 collapse p-5">
+                        <form id="form-create-notification" action="<?= $router->route("web.createNotification"); ?>"
+                              method="POST">
+                            <fieldset>
+                                <div class="row gray-box p-5 border-left-red">
+                                    <div class="col-xl-12">
+                                        <h4 class="black-title-section">Cadastrar nova notificação</h4>
+                                        <hr>
+                                    </div>
 
-                            <div class="col-xl-6">
-                                <div class="form-group">
-                                    <h5>Data da notificação:</h5>
-                                    <input type="date" class="form-input" id="date" name="date" title="Data da notificação" required>
-                                </div>
-                            </div>
+                                    <div class="col-xl-12">
+                                        <div class="form-group">
+                                            <label>Título:</label>
+                                            <input type="text" class="form-input" id="title" name="title"
+                                                   title="Insira um título para a notificação"
+                                                   placeholder="Ex.: Local irregular">
+                                            <div class="invalidate-feedback"></div>
+                                        </div>
+                                    </div>
 
-                            <div class="col-xl-6">
-                                <div class="form-group">
-                                    <h5>Hora da notificação:</h5>
-                                    <input type="time" class="form-input" id="time" name="time" title="Hora da notificação" required>
-                                </div>
-                            </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label>Data da notificação:</label>
+                                            <input type="date" class="form-input" id="date" name="date"
+                                                   title="Data da notificação">
+                                            <div class="invalidate-feedback"></div>
+                                        </div>
+                                    </div>
 
-                            <div class="col-xl-6">
-                                <div class="form-group">
-                                    <h5>Multa <span class="spanAlert">(Opcional)</span>:</h5>
-                                    <input type="number" class="form-input" id="penality" name="penality" title="Valor da multa" placeholder="Insira a o valor da multa" min="0">
-                                </div>
-                            </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label>Hora da notificação:</label>
+                                            <input type="time" class="form-input" id="time" name="time"
+                                                   title="Hora da notificação">
+                                            <div class="invalidate-feedback"></div>
+                                        </div>
+                                    </div>
 
-                            <div class="col-xl-6">
-                                <div class="form-group">
-                                    <h5>Fiscal:</h5>
-                                    <select id="agentSelect" class="form-input" name="agentSelect"  required>
-                                        <option style="display: none;" class="opt0" value="0">Selecione o fiscal responsável pela notificação</option>
-                                        <?php foreach ($agents as $agent): ?>
-                                            <option value="<?= $agent->id ?>"><?= $agent->nome ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                            </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label>Multa <span class="spanAlert">(Opcional)</span>:</label>
+                                            <input type="number" class="form-input" id="penality" name="penality"
+                                                   title="Valor da multa" placeholder="Insira a o valor da multa"
+                                                   min="0">
+                                        </div>
+                                    </div>
 
-                            <div class="col-xl-12">
-                                <div class="form-group">
-                                    <h5>Descrição:</h5>
-                                    <textarea class="form-input notification-textarea" id="description" name="description" rows="3" placeholder="Ex.: Indivíduo notificado por estar atuando em local diferente do cadastrado no sistema" required></textarea>
-                                </div>
-                            </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label>Fiscal:</label>
+                                            <select id="agentSelect" class="form-input" name="agentSelect">
+                                                <option style="display: none;" class="opt0" value="0">Selecione o fiscal
+                                                    responsável pela notificação
+                                                </option>
+                                                <?php foreach ($agents as $agent): ?>
+                                                    <option value="<?= $agent->id ?>"
+                                                            selected><?= $agent->nome ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
 
-                            <div class="col-xl-12 text-right">
-                                <button style="width: auto" type="submit" class="btn-3 primary">
-                                    Cadastrar
-                                </button>
-                            </div>
-                        </div>
+                                    <input type="hidden" name="licenseId" value="<?= $license->id; ?>">
+                                    <input type="hidden" name="userId" value="<?= $user_id; ?>">
+
+                                    <div class="col-xl-12">
+                                        <div class="form-group">
+                                            <label>Descrição:</label>
+                                            <input type="text" class="form-input" id="noticationDescription"
+                                                   name="noticationDescription"
+                                                   placeholder="Ex.: Indivíduo notificado por estar atuando em local diferente do cadastrado no sistema">
+                                            <div class="invalidate-feedback"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-12 text-right">
+                                        <button type="submit" class="btn-3 secondary">
+                                            Cadastrar
+                                        </button>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
                     </div>
                 </div>
-                <hr>
-                <div class="row m-0 mt-3 p-4 border-left-yellow div-request-license" onclick="openModal(1)">
-                    <div class="col-xl-12">
-                        <h4 class="black-title-section">Local errado</h4>
-                        <p class="subtitle-section-p">Ambulante estava vendendo seus produtos na rua X quando na verdade
-                            ele deveria estar na rua Y. Informei a ele do erro e mandei-o de volta para casa.</p>
-                        <h5 class="black-title-section text-right">Lucas Gabriel Peixoto de Oliveira</h5>
-                    </div>
+                <hr class="ml-4 mr-4">
+                <div class="row m-0 mt-3 p-4">
+                    <?php if ($notifications):
+                        foreach ($notifications as $notification): ?>
+                            <div class="col-xl-12 mb-3 div-gray-bg border-left-red p-5">
+                                <h4 class="black-title-section"><?= $notification->titulo ?></h4>
+                                <p class="subtitle-section-p"><?= $notification->descricao ?></p>
+                                <p class="subtitle-section-p">
+                                    Realizado em <?= date("d/m/y", strtotime($notification->data_notificacao)); ?>
+                                    as <?= $notification->hora_notificacao ?>
+                                </p>
+                                <?php if ($notification->id_boleto): ?>
+                                    <a href="<?= BOLETOS . $notification->cod_referencia ?>" target="blank"
+                                       class="text-red">
+                                        Visualizar boleto
+                                    </a>
+                                <?php endif; ?>
+                                <div class="text-right">
+                                    <label class="black-title-section"><?= $notification->agentName ?></label>
+                                </div>
+                            </div>
+                        <?php endforeach; endif; ?>
                 </div>
             </div>
         </div>
@@ -466,6 +506,54 @@
         <?php else: ?>
         L.marker(['<?= $license->latitude; ?>', '<?= $license->longitude; ?>'], {icon: expired}).bindPopup('Local cadastrado').addTo(map);
         <?php endif; ?>
+    });
+
+    $('#form-create-notification').on('submit', function (e) {
+        e.preventDefault();
+        $("#loader-div").show();
+
+        const _thisForm = $(this);
+        const data = new FormData(this);
+        const fieldsetDisable = _thisForm.find('fieldset');
+        fieldsetDisable.attr('disabled', true);
+
+        if (formSubmit(this) === true) {
+            $.ajax({
+                type: _thisForm.attr('method'),
+                url: _thisForm.attr('action'),
+                data: data,
+                cache: false,
+                contentType: false,
+                processData: false,
+            }).done(function (returnData) {
+                if (returnData == 1) {
+                    swal({
+                        icon: "success",
+                        title: "Sucesso!",
+                        text: "A notificação foi cadastrada.",
+                    }).then((value) => {
+                        location.reload();
+                    });
+                } else {
+                    swal({
+                        icon: "error",
+                        title: "Erro!",
+                        text: "Não foi possível cadastrar a notificação. Tente novamente mais tarde.",
+                    });
+                }
+                console.log(returnData);
+            }).fail(function (returnData) {
+                swal({
+                    icon: "error",
+                    title: "Erro!",
+                    text: "Erro ao processar requisição",
+                });
+                console.log(returnData);
+            }).always(function () {
+                $("#loader-div").hide();
+                fieldsetDisable.removeAttr("disabled");
+            });
+        }
     });
 
     function debugMap() {

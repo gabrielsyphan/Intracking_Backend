@@ -130,7 +130,7 @@
                     });
                 }
                 console.log(returnData);
-            }).fail(function () {
+            }).fail(function (returnData) {
                 swal({
                     icon: "error",
                     title: "Erro!",

@@ -147,12 +147,12 @@
                                             break;
                                         case 1:
                                             $divStatus = 'primary';
-                                            $textStatus = 'Ativo';
+                                            $textStatus = 'Ativa';
                                             $trClass = 'border-left-green';
                                             break;
                                         default:
                                             $divStatus = 'secondary';
-                                            $textStatus = 'Bloqueado';
+                                            $textStatus = 'Suspensa';
                                             $trClass = 'border-left-red';
                                             break;
                                     endswitch; ?>

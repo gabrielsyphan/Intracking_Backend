@@ -415,12 +415,11 @@ function uploadImage(e) {
 }
 
 function formSubmit(form) {
-
     const _thisForm = $('#' + form.id);
     _thisForm.find(".is-invalid").removeClass("is-invalid").next().text("");
     let validate = true;
 
-    _thisForm.find(':input').not(':button, [name="productDescription"], [name="description"], [name="zoneImage"]').each(function () {
+    _thisForm.find(':input').not(':button, [name="productDescription"], [name="description"], [name="zoneImage"], [name="penality"], [type="hidden"]').each(function () {
         if (!$(this).val()) {
             $(this).addClass('is-invalid').next().text('Campo obrigatório!');
             validate = false;
