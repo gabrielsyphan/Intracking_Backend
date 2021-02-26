@@ -41,7 +41,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <?php $aux++; endforeach; endif; ?>
+                            <?php $aux++; endforeach; endif; ?>
                     </div>
                 </div>
             </div>
@@ -182,7 +182,7 @@
                         </fieldset>
                     </div>
                     <div class="col-xl-4 mt-5 pt-5 text-center">
-                        <img class="mb-4 mt-4" style="width: 200px; border-radius: 50%;" src="<?= $userImage ?>">
+                        <img class="mb-4 mt-4" style="width: 200px; height: 200px; border-radius: 50%;" src="<?= $userImage ?>">
 
                         <p><span class="icon-info-circle"></span> Usuário</p>
                     </div>

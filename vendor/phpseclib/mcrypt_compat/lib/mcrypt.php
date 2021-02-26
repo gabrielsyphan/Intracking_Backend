@@ -31,15 +31,15 @@
  * @link      http://phpseclib.sourceforge.net
  */
 
-use phpseclib\Crypt\Rijndael;
-use phpseclib\Crypt\Twofish;
-use phpseclib\Crypt\Blowfish;
-use phpseclib\Crypt\TripleDES;
-use phpseclib\Crypt\DES;
-use phpseclib\Crypt\RC2;
-use phpseclib\Crypt\RC4;
-use phpseclib\Crypt\Random;
-use phpseclib\Crypt\Base;
+use phpseclib3\Crypt\Rijndael;
+use phpseclib3\Crypt\Twofish;
+use phpseclib3\Crypt\Blowfish;
+use phpseclib3\Crypt\TripleDES;
+use phpseclib3\Crypt\DES;
+use phpseclib3\Crypt\RC2;
+use phpseclib3\Crypt\RC4;
+use phpseclib3\Crypt\Random;
+use phpseclib3\Crypt\Common\SymmetricKey as Base;
 
 if (!defined('MCRYPT_MODE_ECB')) {
     /**#@+
@@ -269,13 +269,13 @@ if (!function_exists('phpseclib_mcrypt_list_algorithms')) {
     function phpseclib_mcrypt_module_open($algorithm, $algorithm_directory, $mode, $mode_directory)
     {
         $modeMap = array(
-            'ctr' => Base::MODE_CTR,
-            'ecb' => Base::MODE_ECB,
-            'cbc' => Base::MODE_CBC,
-            'cfb' => Base::MODE_CFB8,
-            'ncfb'=> Base::MODE_CFB,
-            'nofb'=> Base::MODE_OFB,
-            'stream' => Base::MODE_STREAM
+            'ctr' => 'ctr',
+            'ecb' => 'ecb',
+            'cbc' => 'cbc',
+            'cfb' => 'cfb8',
+            'ncfb'=> 'cfb',
+            'nofb'=> 'ofb',
+            'stream' => 'stream'
         );
         switch (true) {
             case !isset($modeMap[$mode]):
@@ -566,16 +566,13 @@ if (!function_exists('phpseclib_mcrypt_list_algorithms')) {
      */
     function phpseclib_mcrypt_enc_get_modes_name(Base $td)
     {
-        $modeMap = array(
-            Base::MODE_CTR => 'CTR',
-            Base::MODE_ECB => 'ECB',
-            Base::MODE_CBC => 'CBC',
-            Base::MODE_CFB => 'nCFB',
-            Base::MODE_OFB => 'nOFB',
-            Base::MODE_STREAM => 'STREAM'
-        );
-
-        return isset($modeMap[$td->mode]) ? $modeMap[$td->mode] : false;
+        if (!isset($td->mcrypt_mode)) {
+            return false;
+        }
+        $mode = strtoupper($td->mcrypt_mode);
+        return $mode[0] == 'N' ?
+            'n' . substr($mode, 1) :
+            $mode;
     }
 
     /**
@@ -589,7 +586,7 @@ if (!function_exists('phpseclib_mcrypt_list_algorithms')) {
      */
     function phpseclib_mcrypt_enc_is_block_algorithm_mode(Base $td)
     {
-        return $td->mode != Base::MODE_STREAM;
+        return $td->mcrypt_mode != 'stream';
     }
 
     /**
@@ -617,7 +614,7 @@ if (!function_exists('phpseclib_mcrypt_list_algorithms')) {
      */
     function phpseclib_mcrypt_enc_is_block_mode(Base $td)
     {
-        return $td->mode == Base::MODE_ECB || $td->mode == Base::MODE_CBC;
+        return $td->mcrypt_mode == 'ecb' || $td->mcrypt_mode == 'cbc';
     }
 
     /**

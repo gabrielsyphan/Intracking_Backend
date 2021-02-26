@@ -59,17 +59,17 @@
                 </div>
                 <div class="box-div-info-overflow-x background-body">
                     <?php if ($payments): ?>
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>Status</th>
-                            <th>Valor</th>
-                            <th>Tipo</th>
-                            <th>Validade</th>
-                            <th>Ação</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Valor</th>
+                                <th>Tipo</th>
+                                <th>Validade</th>
+                                <th>Ação</th>
+                            </tr>
+                            </thead>
+                            <tbody>
                             <?php foreach ($payments as $payment):
                                 if ($payment->id_empresa == null):
                                     if ($payment->status == 3 || $payment->status == 0):
@@ -110,8 +110,8 @@
                                         </td>
                                     </tr>
                                 <?php endif; endforeach; ?>
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
                     <?php else: ?>
                         <div class="p-5 mt-5 text-center">
                             <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
@@ -119,6 +119,63 @@
                         </div>
                     <?php endif; ?>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-3" class="div-modal">
+    <div class="container pt-5">
+        <div class="row mt-5 p-5 justify-content-center">
+            <div class="col-10 p-5 container-white">
+                <h3 class="black-title-section">Ambulantes</h3>
+                <p class="subtitle-section-p">Todos os ambulantes cadastrados da licença.</p>
+                <hr>
+                <div class="div-box-span-icon mt-5">
+                    <span class="icon-close" onclick="closeModal(3)"></span>
+                </div>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">CPF</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Situação</th>
+                    </tr>
+                    </thead>
+                    <tbody id="table-data">
+                    <?php if ($salesmans):
+                        $aux = 1;
+                        foreach ($salesmans as $salesman):
+                            switch ($salesman->status):
+                                case 0:
+                                    $divStatus = 'tertiary';
+                                    $textStatus = 'Pendente';
+                                    $trClass = 'border-left-yellow';
+                                    break;
+                                case 1:
+                                    $divStatus = 'primary';
+                                    $textStatus = 'Ativo';
+                                    $trClass = 'border-left-green';
+                                    break;
+                                default:
+                                    $divStatus = 'secondary';
+                                    $textStatus = 'Bloqueado';
+                                    $trClass = 'border-left-red';
+                                    break;
+                            endswitch;
+                            ?>
+                            <tr>
+                                <th scope="row"><?= $aux ?></th>
+                                <td><?= $salesman->cpf ?></td>
+                                <td><?= $salesman->nome ?></td>
+                                <td>
+                                    <div class="status-button <?= $divStatus ?>"><?= $textStatus ?></div>
+                                </td>
+                            </tr>
+                            <?php $aux++; endforeach; endif; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -209,7 +266,7 @@
                         <p class="subtitle-section-p">Artesanato, antiguidades e artigos de arte em geral</p>
                     <?php elseif ($product == 7): ?>
                         <p class="subtitle-section-p"><?= $license->relato_atividade ?></p>
-                <?php endif; endforeach; ?>
+                    <?php endif; endforeach; ?>
             </div>
             <div class="row mt-3">
                 <div class="col-sm-6" onclick="openModal(1)">
@@ -234,7 +291,91 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-sm-6" onclick="openModal(3)">
+                    <div class="row m-0 mt-3 p-4 border-left-yellow div-request-license">
+                        <div class="col-2 text-center mt-4">
+                            <img src="<?= url('themes/assets/img/map.png') ?>">
+                        </div>
+                        <div class="col-10">
+                            <h4 class="black-title-section">Ambulantes</h4>
+                            <p class="subtitle-section-p">Visualizar ambulantes vinculados.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row m-0 mt-3 pt-4 pl-4 pr-4 pb-0 border-left-green div-request-license">
+                        <div class="col-2 text-center mt-4">
+                            <img src="<?= url('themes/assets/img/map.png') ?>">
+                        </div>
+                        <div class="col-10">
+                            <h4 class="black-title-section">Gerar link de adesão</h4>
+                            <div class="h-50">
+                                <input name="generator" id="generator" class="form-input w-50 h-25">
+                                <button class="btn-3 primary h-75" type="button" onclick="generator()">Gerar</button>
+                                <button class="btn-3 secondary-color h-75" type="button" onclick="" id="copy"
+                                        data-clipboard-target="#generator">Copiar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+<?php $v->start("scripts"); ?>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+<script>
+    function generator() {
+        let date = new Date()
+
+        async function sha256(date) {
+
+            // encode as UTF-8
+            const msgBuffer = new TextEncoder('utf-8').encode(date);
+
+            // hash the date
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+
+            // convert ArrayBuffer to Array
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+            // convert bytes to hex string
+            const hashHex = hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join('');
+            return hashHex;
+        }
+
+        sha256(date).then(hash => {
+            $("#generator").val('<?= url('licenseUser') ?>/' + hash);
+            let data = {'id': "<?= md5($license->id); ?>", 'link': hash};
+
+            $.ajax({
+                type: 'POST',
+                url: "<?= $router->route('web.validateLicenseUser');?>",
+                data: data,
+            }).done(function (returnData) {
+                if (returnData = 1) {
+                    swal("Link gerado com sucesso!", "Compartilhe com seus colaboradores.");
+                }
+            }).fail(function (returnData) {
+                console.log(returnData);
+            }).always(function (returnData) {
+                console.log(returnData);
+            })
+        });
+    }
+
+    const clipboard = new ClipboardJS('#copy')
+
+    clipboard.on('success', function (e) {
+    });
+
+    clipboard.on('error', function (e) {
+        swal({
+            icon: "error",
+            title: "Erro!",
+            text: "Não foi possível copiar o link.",
+        });
+    });
+</script>
+<?php $v->end(); ?>

@@ -9,14 +9,13 @@
         </p>
     </div>
 
-    <ul class="list-unstyled components">
-        <hr>
+    <ul class="list-unstyled components mt-5">
+        
         <li class="<?= ($router->isCurrentRoute("web.home") ? 'active' : ''); ?>">
             <a href="<?= url('') ?>"><span class="icon-home"></span>Início</a>
         </li>
         <?php if ($_SESSION['user']['login'] === 0): ?>
-            <hr>
-            <p class="p-0 pl-3">Licenças</p>
+
             <li class="<?= ($router->isCurrentRoute("web.licenseList") ? 'active' : ''); ?>">
                 <a href="<?= url("licenseList"); ?>">
                     <span class="icon-drivers-license"></span>
@@ -29,8 +28,7 @@
                     Solicitar licença
                 </a>
             </li>
-            <hr>
-            <p class="p-0 pl-3">Geral</p>
+
             <li class="<?= ($router->isCurrentRoute("web.profile") ? 'active' : ''); ?>">
                 <a href="<?= url("profile"); ?>">
                     <span class="icon-user"></span>
@@ -38,8 +36,7 @@
                 </a>
             </li>
         <?php else: ?>
-            <hr>
-            <p class="p-0 pl-3">Listas</p>
+
             <li class="
     <?= ($router->isCurrentRoute("web.licenseList") ? 'active' : ''); ?>
     <?= ($router->isCurrentRoute("web.salesmanProfile") ? 'active' : ''); ?>
@@ -62,8 +59,7 @@
                     Fiscais
                 </a>
             </li>
-            <hr>
-            <p class="p-0 pl-3">Cadastros</p>
+
             <li class="<?= ($router->isCurrentRoute("web.createZone") ? 'active' : ''); ?>">
                 <a href="<?= url("createZone"); ?>">
                     <span class="icon-map-signs"></span>
@@ -76,8 +72,7 @@
                     Cadastrar fiscal
                 </a>
             </li>
-
-            <hr>
+            
         <?php endif; ?>
         <li class="<?= ($router->isCurrentRoute("web.salesmanMap") ? 'active' : ''); ?>">
             <a href="<?= url("salesmanMap"); ?>">
@@ -97,7 +92,7 @@
                 Sair
             </a>
         </li>
-        <hr>
+        
     </ul>
 </nav>
 

@@ -40,7 +40,7 @@
                             </thead>
                             <tbody id="table-data">
                             <?php
-                            $aux = 0;
+                            $aux = 1;
                             foreach ($licenses as $license):
                                 switch ($license->status):
                                     case 0:

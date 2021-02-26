@@ -89,6 +89,7 @@ a, a:hover {
 
 #sidebar ul li {
     padding: 5px;
+    margin-top: 13px;
 }
 
 #sidebar ul li a {
@@ -109,6 +110,7 @@ a, a:hover {
 
 #sidebar ul li.active {
     border-left: 4px solid #f05977;
+    background: #4fb6bf;
 }
 
 .sidebar-image {
@@ -174,11 +176,15 @@ a[data-toggle="collapse"] {
     position: relative;
 }
 
-#sidebar-inter {
-    height: 100vh;
+.image-request-license {
+    display: none;
 }
 
-@media (max-width: 768px) {
+#sidebar-inter {
+    border-right: 1px solid #ececec;
+}
+
+@media (max-width: 900px) {
     #sidebar {
         margin-left: -250px;
     }
@@ -217,6 +223,18 @@ a[data-toggle="collapse"] {
         top: 10px;
         position: absolute;
         right: 40px;
+    }
+}
+
+@media (min-width:1200px) {
+    .image-request-license {
+        display: block !important;
+    }
+}
+
+@media (min-width:600px){
+    #sidebar-inter{
+        height: 100vh !important;
     }
 }
 
@@ -686,8 +704,19 @@ a[data-toggle="collapse"] {
     font-weight: 600;
 }
 
+.zonePhoto{
+    display: flex;
+    font-size: 100px;
+    font-width: bold;
+    width: 100%;
+    height: 200px;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
 .leaflet-container a {
-    color: #5EA9A4 !important;
+    color: #4bc2ce !important;
 }
 
 .padding-header {
@@ -1242,7 +1271,8 @@ input[type=file].hidden-input-file {
 }
 
 .image-card-bubble {
-    width: 40%;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     box-shadow: 0 0px 10px 0px rgba(0, 0, 0, 0.12);
     border: 1px solid #c1c1c1;
@@ -1294,6 +1324,18 @@ input[type=file].hidden-input-file {
     background-color: #f7f7f7;
 }
 
+.background-green{
+    background: #4bc2ce;
+}
+
+.background-yellow{
+    background: #ffbc00;
+}
+
+.background-red{
+    background: #f05977;
+}
+
 .border-top-green {
     border-top: 2px solid #4bc2ce;
 }
@@ -1307,7 +1349,7 @@ input[type=file].hidden-input-file {
 }
 
 .border-left-green {
-    border-left: 2px solid #4bc2ce;
+    border-left: 2px solid ;
 }
 
 .border-left-yellow {
@@ -1315,7 +1357,11 @@ input[type=file].hidden-input-file {
 }
 
 .border-left-red {
-    border-left: 2px solid #f05977;
+    border-left: 3px solid #f05977;
+}
+
+.border-left-green-light {
+    border-left: 3px solid #00efd1;
 }
 
 .border-bottom-red {

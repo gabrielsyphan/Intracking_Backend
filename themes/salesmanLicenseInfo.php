@@ -317,6 +317,39 @@
                 </div>
             </div>
 
+            <div class="row m-0 mt-3 p-4 border-left-green-light div-request-license mb-5" onclick="openOrder()">
+                <div class="col-2 text-center mt-4">
+                    <img src="<?= url('themes/assets/img/order.png') ?>">
+                </div>
+                <div class="col-10">
+                    <h4 class="black-title-section">Alvará</h4>
+                    <p class="subtitle-section-p">Acessar alvará.</p>
+                </div>
+            </div>
+
+            <?php if ($companyConfirm == true): ?>
+                <?php if ($licenseStatus == 4): ?>
+                    <div class="row m-0 mt-3 p-4 border-left-red div-request-license mb-5">
+                        <div class="col-2 text-center mt-4">
+                            <img src="<?= url('themes/assets/img/map.png') ?>">
+                        </div>
+                        <div class="col-10">
+                            <h4 class="black-title-section">Situação</h4>
+
+                            <p class="subtitle-section-p">Aceite ou recuse o cadastro do Ambulante em sua empresa.</p>
+                            <button id="accept" class="btn-3 primary" data-ajax-click data-method="POST"
+                                    data-action="<?= $router->route('web.licenseStatus') ?>"
+                                    data-form-data="id=<?= $licenseValidate->id ?>&status=0">Aceitar
+                            </button>
+                            <button class="btn-3 secondary-color" data-ajax-click data-method="POST"
+                                    data-action="<?= $router->route('web.licenseStatus') ?>"
+                                    data-form-data="id=<?= $licenseValidate->id ?>&status=3">Recusar
+                            </button>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
+
             <?php if ($_SESSION['user']['login'] === 3): ?>
                 <div class="row m-0 mt-3 p-4 border-left-red div-request-license mb-5" onclick="openModal(3)">
                     <div class="col-2 text-center mt-4">
@@ -508,6 +541,47 @@
         <?php endif; ?>
     });
 
+    $('[data-ajax-click]').on('click', function (e) {
+        location.reload();
+        const method = $(this).data('method');
+        const url = $(this).data('action');
+        let data = $(this).data('form-data');
+
+        const formData = new FormData();
+
+        if (data) {
+            let decodeFormData = decodeURI(data);
+
+            if (decodeFormData.indexOf('&') == -1) {
+                let [name, value] = decodeFormData.split('=');
+                console.log(name, value);
+                formData.append(name, value);
+            } else {
+                data = decodeFormData.split('&');
+
+                for (let item of data) {
+                    let [name, value] = item.split('=');
+                    console.log(name, value);
+                    formData.append(name, value);
+                }
+            }
+        }
+
+        $.ajax({
+            url: url,
+            type: method,
+            data: formData,
+            processData: false,
+            contentType: false
+        }).done(function (returnData) {
+            console.log("Sucesso");
+        }).fail(function () {
+            console.log("Fail");
+        }).always(function () {
+            console.log("Sempre");
+        });
+    });
+
     $('#form-create-notification').on('submit', function (e) {
         e.preventDefault();
         $("#loader-div").show();
@@ -560,6 +634,10 @@
         setTimeout(function () {
             map.invalidateSize();
         }, 500);
+    }
+
+    function openOrder() {
+        window.location.href = "<?= url('order') ?>/<?= md5($license->id) ?>";
     }
 </script>
 <?php $v->end(); ?>

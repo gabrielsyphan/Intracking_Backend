@@ -29,7 +29,7 @@
                                         <div class="form-group">
                                             <label>CPF:</label>
                                             <input type="text" class="form-input" id="identity"
-                                                   onfocusout="checkCpf(this)" name="identity"
+                                                   onfocusout="validateCpf(this)" name="identity"
                                                    title="CPF do fiscal" placeholder="Seu CPF">
                                             <div class="invalid-feedback"></div>
                                         </div>
@@ -71,24 +71,24 @@
                                     </div>
                                     <div class="col-xl-6">
                                         <div class="form-group">
-                                            <label for="localImage"
-                                                   class="label-file text-center item-max-width localImage-file"><span
+                                            <label for="agentImage"
+                                                   class="label-file text-center item-max-width agentImage-file"><span
                                                         class="icon-plus mr-2"></span> Selecionar
                                                 Arquivo</label>
-                                            <input type="file" class="hidden-input-file" id="localImage"
-                                                   name="localImage"
+                                            <input type="file" class="hidden-input-file" id="agentImage"
+                                                   name="agentImage"
                                                    accept="image/png, image/jpg, image/jpeg"
                                                    onchange="uploadImage(this)">
-                                            <div class="localImage-file-uploaded file-uploaded-container">
+                                            <div class="agentImage-file-uploaded file-uploaded-container">
                                                 <div class="card-content-upload text-center p-3">
                                                     <div class="card-content-type-upload">
-                                                        <span class="localImage-type"></span>
+                                                        <span class="agentImage-type"></span>
                                                     </div>
                                                 </div>
                                                 <div class="ml-3 text-left">
                                                     <div class="d-flex">
-                                                        <p class="localImage-name"></p>
-                                                        <span id="localImage-span-close" class="icon-close ml-3 card-close-file"
+                                                        <p class="agentImage-name"></p>
+                                                        <span id="agentImage-span-close" class="icon-close ml-3 card-close-file"
                                                               onclick="changeFile(this)"></span>
                                                     </div>
                                                     <div class="card-content-progress"></div>
@@ -128,11 +128,9 @@
 
 <?php $v->start('scripts'); ?>
     <script>
-        $("#registration").mask('000000-0');
-
         $("#identity").mask('000.000.000-00');
 
-        $('form').on('submit', function (e) {
+        $('#form').on('submit', function (e) {
             e.preventDefault();
             $("#loader-div").show();
 
@@ -146,7 +144,7 @@
                     type: _thisForm.attr('method'),
                     url: _thisForm.attr('action'),
                     data: data,
-                    cache:false,
+                    cache: false,
                     contentType: false,
                     processData: false,
                 }).done(function (returnData) {
@@ -172,37 +170,31 @@
                             title: "Erro",
                             text: "CPF inválido. Por favor, insira um CPF válido.",
                         });
-                    } else if (returnData == 'require_registration'){
+                    } else if (returnData == 'require_registration') {
                         swal({
                             icon: "warning",
                             title: "Atenção",
                             text: "Não será possível realizar o cadastro. Por favor, dirija-se a secretaria de economia e realize seu cadastro mercantil de pessoa física ou jurídica para então dar prosseguimento com o do Orditi.",
                         });
-                    }else {
+                    } else {
                         swal({
                             icon: "error",
                             title: "Erro!",
                             text: "Não foi possível realizar o cadastro. Por favor, tente novamente mais tarde.",
                         });
                     }
-                }).fail(function () {
+                    console.log(returnData);
+                }).fail(function (e) {
                     swal({
                         icon: "error",
                         title: "Erro!",
                         text: "Erro ao processar requisição",
                     });
+                    console.log(e);
                 }).always(function () {
                     $("#loader-div").hide();
                     fieldsetDisable.removeAttr("disabled");
                 });
-            } else {
-                swal({
-                    icon: "warning",
-                    title: "Ops!",
-                    text: "Preencha todos os campos",
-                });
-                fieldsetDisable.removeAttr("disabled");
-                $("#loader-div").hide();
             }
         });
 
@@ -211,32 +203,14 @@
             let cpf = formatedCPF(e);
 
             if (checkCpf(cpf) == false) {
-                $("#loader-div").hide();
                 swal({
                     icon: "error",
                     title: "Erro",
                     text: "O CPF digitado não é válido. Por favor, insira um CPF válido e tente novamente.",
                 });
-            } else {
-                let data = {'cpf': cpf};
-                $.post("<?= $router->route("web.checkAccount"); ?>", data, function (e) {
-                    $("#loader-div").hide();
-                    if (e == 0) {
-                        swal({
-                            icon: "warning",
-                            title: "Atenção",
-                            text: "Não será possível realizar o cadastro. Por favor, dirija-se a secretaria de economia e realize seu cadastro mercantil de pessoa física ou jurídica para então dar prosseguimento com o do Orditi.",
-                        });
-                    }
-                }, "html").fail(function () {
-                    $("#loader-div").hide();
-                    swal({
-                        icon: "~warning",
-                        title: "Atenção",
-                        text: "Erro ao processar requisição.",
-                    });
-                });
             }
+
+            $("#loader-div").hide();
         }
     </script>
 <?php $v->end(); ?>

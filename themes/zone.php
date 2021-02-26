@@ -9,14 +9,34 @@
 <script src="<?= url("themes/assets/js/leaflet.js"); ?>"></script>
 <?php $v->end(); ?>
 
+<?php
+$aux = $zone->limite_ambulantes - $zone->quantidade_ambulantes;
+$aux = intval(($zone->quantidade_ambulantes * 100) / $zone->limite_ambulantes);
+if ($aux <= 49):
+    $color = "#4bc2ce";
+    $backgroundClass = "background-green";
+elseif ($aux >= 50 && $aux <= 99):
+    $color = "#ffbc00";
+    $backgroundClass = "background-yellow";
+
+else:
+    $color = "#f05977";
+    $backgroundClass = "background-red";
+
+endif; ?>
+
 <div class="container-fluid mt-5 container-white">
     <div class="row">
         <div class="col-xl-3 p-0" id="sidebar-inter">
-            <div class="">
-                <div class="">
-                    <img class="w-100" src="<?= url('themes/assets/img/praca_teste.jpg'); ?>">
+            <?php if ($zone->foto): ?>
+                <img class="w-100"
+                     src="<?= $zone->foto; ?>">
+            <?php else: ?>
+                <div class="zonePhoto <?= $backgroundClass ?>">
+                    <?= substr($zone->nome, 0, 1); ?>
                 </div>
-            </div>
+            <?php endif; ?>
+
             <div class="m-5 text-center">
                 <h3 class="black-title-section font-weight-normal"><?= $zone->nome; ?></h3>
 
@@ -25,13 +45,13 @@
 
             <div class="pl-5 pr-5">
                 <div class="row div-gray-bg p-3">
-                    <div class="col-xl-8">
+                    <div class="col-8">
                         <h5 class="title-section">
                             <img class="mr-2" src="<?= url('themes/assets/img/mapMarker.png') ?>">
                             Vagas Totais
                         </h5>
                     </div>
-                    <div class="col-xl-4">
+                    <div class="col-4">
                         <h4 class="text-center">
                             <?= $zone->limite_ambulantes; ?>
                         </h4>
@@ -40,13 +60,13 @@
             </div>
             <div class="pl-5 pr-5 mt-3">
                 <div class="row div-gray-bg p-3">
-                    <div class="col-xl-8">
+                    <div class="col-8">
                         <h5 class="title-section">
                             <img class="mr-2" src="<?= url('themes/assets/img/open.png') ?>">
                             Disponíveis
                         </h5>
                     </div>
-                    <div class="col-xl-4">
+                    <div class="col-4">
                         <h4 class="text-center">
                             <?= ($zone->limite_ambulantes - $zone->quantidade_ambulantes); ?>
                         </h4>
@@ -56,20 +76,20 @@
 
             <div class="pl-5 pr-5 mt-3">
                 <div class="row div-gray-bg p-3">
-                    <div class="col-xl-8">
+                    <div class="col-8">
                         <h5 class="title-section ">
                             <img class="mr-2" src="<?= url('themes/assets/img/flag.png') ?>">
                             Ocupadas
                         </h5>
                     </div>
-                    <div class="col-xl-4">
+                    <div class="col-4">
                         <h4 class="text-center">
                             <?= $zone->quantidade_ambulantes; ?>
                         </h4>
                     </div>
                 </div>
             </div>
-            
+
             <hr>
         </div>
         <div class="col-xl-9 p-0">
@@ -77,31 +97,62 @@
                 <div id="mapZone" class="<?= $salesmans ? 'mapInfo' : 'mapZone'; ?>"></div>
             </div>
             <?php if ($salesmans): ?>
-                <div class="col-xl-12 p-5">
+                <div class="col-xl-12">
                     <div class="web-div-box">
-                        <div class="box-div-info">
-                            <h4 class="black-title-section font-weight-normal">Ambulantes Cadastrados na Zona</h4>
+                        <div class="box-div-info ml-3">
+                            <h4 class="black-title-section font-weight-normal">Lista de Ambulantes</h4>
+                            <p class="subtitle-section-p">Todos os ambulantes cadastrados na Zona</p>
                             <hr style="margin-bottom: 0">
                             <div class="box-div-info-overflow-x">
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
-                                        <th scope="col">CPF</th>
-                                        <th scope="col">Nome</th>
-                                        <th scope="col">Fone</th>
-                                        <th scope="col">Email</th>
+                                        <th scope="col" class="table-col-5">CPF <span
+                                                    class="icon-arrow_downward"></span></th>
+                                        <th scope="col" class="table-col-5">Nome <span class="icon-arrow_upward"></span>
+                                        </th>
+                                        <th scope="col" class="table-col-5">Telefone <span
+                                                    class="icon-arrow_downward"></span></th>
+                                        <th scope="col" class="table-col-5">Email <span
+                                                    class="icon-arrow_downward"></span></th>
+                                        <th scope="col" class="table-col-4">Status <span
+                                                    class="icon-arrow_downward"></span></th>
                                     </tr>
                                     </thead>
                                     <tbody id="table-data">
-                                    <?php if ($salesmans !== NULL):
-                                        foreach ($salesmans as $salesman): ?>
-                                            <tr onclick="openPage('<?= $salesman->id ?>')">
-                                                <td><?= $salesman->cpf ?></td>
-                                                <td><?= $salesman->nome ?></td>
-                                                <td><?= $salesman->telefone ?></td>
-                                                <td><?= $salesman->email ?></td>
-                                            </tr>
-                                        <?php endforeach; endif; ?>
+                                    <?php foreach ($salesmans as $salesman):
+                                        switch ($salesman->situacao):
+                                            case 0:
+                                                $trClass = 'border-left-yellow';
+                                                break;
+                                            case 1:
+                                                $trClass = 'border-left-green';
+                                                break;
+                                            default:
+                                                $trClass = 'border-left-red';
+                                                break;
+                                        endswitch; ?>
+                                        <tr class="<?= $trClass ?>">
+                                            <td><?= $salesman->cpf ?></td>
+                                            <td><?= $salesman->nome ?></td>
+                                            <td><?= $salesman->telefone ?></td>
+                                            <td><?= $salesman->email ?></td>
+                                            <td>
+                                                <?php switch ($salesman->situacao):
+                                                case 0: ?>
+                                                <div class="status-button tertiary">Pendente</div>
+                                            </td>
+                                            <?php break;
+                                            case 1: ?>
+                                                <div class="status-button primary">Ativo</div>
+                                                </td>
+                                                <?php break;
+                                            default: ?>
+                                                <div class="status-button secondary">Bloqueado</div>
+                                                </td>
+                                                <?php break; endswitch; ?>
+                                        </tr>
+                                    <?php endforeach; ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -118,7 +169,7 @@
 <script src="<?= url("themes/assets/js/Leaflet.LinearMeasurement.js"); ?>"></script>
 <script>
     function openPage(data) {
-        window.open("<?= $router->route('web.salesman'); ?>/"+ data, '_blank');
+        window.open("<?= $router->route('web.salesman'); ?>/" + data, '_blank');
     }
 
     $(function () {
@@ -221,17 +272,6 @@
                 area.forEach(function (e) {
                     aux.push([e[1], e[0]]);
                 });
-
-                <?php
-                $aux = $zone->limite_ambulantes - $zone->quantidade_ambulantes;
-                $aux = intval(($zone->quantidade_ambulantes * 100) / $zone->limite_ambulantes);
-                if ($aux <= 49):
-                    $color = "#5ea9a4";
-                elseif ($aux >= 50 && $aux <= 99):
-                    $color = "#f5a42c";
-                else:
-                    $color = "#ed2e54";
-                endif; ?>
                 L.polygon(aux, {
                     color: '<?= $color; ?>',
                     fillColor: '<?= $color; ?>'

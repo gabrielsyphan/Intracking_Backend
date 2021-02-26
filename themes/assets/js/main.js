@@ -419,7 +419,8 @@ function formSubmit(form) {
     _thisForm.find(".is-invalid").removeClass("is-invalid").next().text("");
     let validate = true;
 
-    _thisForm.find(':input').not(':button, [name="productDescription"], [name="description"], [name="zoneImage"], [name="penality"], [type="hidden"]').each(function () {
+    _thisForm.find(':input').not(':button, [name="productDescription"], [name="description"], [name="zoneImage"], ' +
+        '[name="penality"], [type="hidden"], [id="agentImage"]').each(function () {
         if (!$(this).val()) {
             $(this).addClass('is-invalid').next().text('Campo obrigatório!');
             validate = false;
@@ -571,5 +572,5 @@ function closeModal(e) {
 }
 
 function openFile(url) {
-    window.open('https://localhost/orditi/themes/assets/uploads/' + url, '_blank');
+    window.open('https://localhost/OrditiWeb/themes/assets/uploads/' + url, '_blank');
 }

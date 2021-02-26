@@ -14,6 +14,7 @@
     <div class="p-5">
         <form id="form-license-salesman" method="POST" action="<?= $router->route('web.validateSalesmanLicense'); ?>">
             <fieldset>
+                <input type="hidden" name="companyId" value="<?= ($company)? $company->id : null ?>">
                 <div id="inputHidden"></div>
                 <div class="row mb-5">
                     <div class="col-xl-12 pb-3">
@@ -26,57 +27,126 @@
                             <h4 class="black-title-section">Informações de trabalho</h4>
                             <hr>
                             <div class="row">
-                                <div class="col-xl-12">
-                                    <div class="form-group">
-                                        <label>Como vai vender?:</label>
-                                        <input type="text" class="form-input" id="howWillSell" name="howWillSell"
-                                               placeholder="Ex.: Barraca, carrinho...">
-                                        <div class="invalid-feedback"></div>
+                                <?php if(!$company): ?>
+                                    <div class="col-xl-12">
+                                        <div class="form-group">
+                                            <label>Como vai vender?:</label>
+                                            <input type="text" class="form-input" id="howWillSell" name="howWillSell"
+                                                   placeholder="Ex.: Barraca, carrinho...">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-xl-6">
-                                    <div class="form-group">
-                                        <label>Largura ocupada em metros</label>
-                                        <input type="text" class="form-input" id="width" name="width" placeholder="Ex.: 10">
-                                        <div class="invalid-feedback"></div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label>Largura ocupada em metros</label>
+                                            <input type="text" class="form-input" id="width" name="width" placeholder="Ex.: 10">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-xl-6">
-                                    <div class="form-group">
-                                        <label>Comprimento em metros:</label>
-                                        <input type="text" class="form-input" id="length" name="length" placeholder="Ex.: 5.23">
-                                        <div class="invalid-feedback"></div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label>Comprimento em metros:</label>
+                                            <input type="text" class="form-input" id="length" name="length" placeholder="Ex.: 5.23">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-xl-12">
-                                    <div class="form-group">
-                                        <label>Produtos e/ou serviços:</label>
-                                        <select id="productSelect" class="form-input" name="productSelect[]" multiple="multiple">
-                                            <option value="0">Gêneros e produtos alimentícios em geral</option>
-                                            <option value="1">Bebidas não alcoólicas</option>
-                                            <option value="2">Bebidas alcoólicas</option>
-                                            <option value="3">Brinquedos e artigos ornamentais</option>
-                                            <option value="4">Confecções, calçados e artigos de usopessoal</option>
-                                            <option value="5">Louças, ferragens, artefatos de plástico,borracha, couro e utensílios
-                                                domésticos
-                                            </option>
-                                            <option value="6">Artesanato, antiguidades e artigos dearte em geral</option>
-                                            <option value="7">Outros artigos não especificados nos itens anteriores</option>
-                                        </select>
-                                        <div class="invalid-feedback"></div>
+                                    <div class="col-xl-12">
+                                        <div class="form-group">
+                                            <label>Produtos e/ou serviços:</label>
+                                            <select id="productSelect" class="form-input" name="productSelect[]" multiple="multiple">
+                                                <option value="0">Gêneros e produtos alimentícios em geral</option>
+                                                <option value="1">Bebidas não alcoólicas</option>
+                                                <option value="2">Bebidas alcoólicas</option>
+                                                <option value="3">Brinquedos e artigos ornamentais</option>
+                                                <option value="4">Confecções, calçados e artigos de usopessoal</option>
+                                                <option value="5">Louças, ferragens, artefatos de plástico,borracha, couro e utensílios
+                                                    domésticos
+                                                </option>
+                                                <option value="6">Artesanato, antiguidades e artigos dearte em geral</option>
+                                                <option value="7">Outros artigos não especificados nos itens anteriores</option>
+                                            </select>
+                                            <div class="invalid-feedback"></div>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-xl-12">
-                                    <div class="form-group">
-                                        <label>Descreva outro produto ofertado: <span class="spanAlert">(Se não encontrado na lista acima)</span>:</label>
-                                        <textarea type="text" class="form-input" id="productDescription" name="productDescription"
-                                                  placeholder="Ex.: Trabalho com a venda de produtos para cabelo."></textarea>
+                                    <div class="col-xl-12">
+                                        <div class="form-group">
+                                            <label>Descreva outro produto ofertado: <span class="spanAlert">(Se não encontrado na lista acima)</span>:</label>
+                                            <textarea type="text" class="form-input" id="productDescription" name="productDescription"
+                                                      placeholder="Ex.: Trabalho com a venda de produtos para cabelo."></textarea>
+                                        </div>
                                     </div>
-                                </div>
+                                <?php else: ?>
+                                    <div class="col-xl-12">
+                                        <div class="form-group">
+                                            <label>Empresa responsável</label>
+                                            <input class="form-input" value="<?= $company->nome_fantasia; ?>" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-12">
+                                        <div class="form-group">
+                                            <label>Como vai vender?:</label>
+                                            <input type="text" class="form-input" id="howWillSell" name="howWillSell"
+                                                   placeholder="Ex.: Barraca, carrinho...">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label>Largura ocupada em metros</label>
+                                            <input type="text" class="form-input" id="width" name="width" placeholder="Ex.: 10">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label>Comprimento em metros:</label>
+                                            <input type="text" class="form-input" id="length" name="length" placeholder="Ex.: 5.23">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-12">
+                                        <div class="form-group">
+                                            <label>Produtos e/ou serviços:</label>
+                                            <select id="productSelect" class="form-input"  name="productSelect[]" multiple="multiple">
+                                            <?php foreach (str_split($company->produto) as $product): ?>
+                                                <?php switch ($product):
+                                                    case 0: ?>
+                                                        <option class="subtitle-section-p" value="<?=$product;?>">Gêneros e produtos alimentícios em geral</option>
+                                                    <?php break;
+                                                    case 1: ?>
+                                                    <option class="subtitle-section-p" value="<?=$product;?>">Bebidas alcoólicas</option>
+                                                        <?php break;
+                                                    case 2: ?>
+                                                    <option class="subtitle-section-p" value="<?=$product;?>">Bebidas não alcoólicas<option>
+                                                        <?php break;
+                                                    case 3: ?>
+                                                    <option class="subtitle-section-p" value="<?=$product;?>">Brinquedos e artigos ornamentais</option>
+                                                        <?php break;
+                                                    case 4: ?>
+                                                    <option class="subtitle-section-p" value="<?=$product;?>">Confecções, calçados e artigos de uso pessoal</option>
+                                                        <?php break;
+                                                    case 5: ?>
+                                                    <option class="subtitle-section-p" value="<?=$product;?>">Louças, ferragens, artefatos de plástico,borracha,
+                                                        couro e utensílios domésticos</option>
+                                                        <?php break;
+                                                    case 6: ?>
+                                                    <option class="subtitle-section-p" value="<?=$product;?>">Artesanato, antiguidades e artigos de arte em geral</option>
+                                                        <?php break;
+                                                    default: ?>
+                                                    <option class="subtitle-section-p" value="<?=$product;?>"><?= $company->outro_produto;?></option>
+                                                <?php endswitch; ?>
+                                            <?php endforeach;?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                <?php endif;?>
                             </div>
                         </div>
                     </div>
@@ -310,7 +380,7 @@
                         text: "Esta área já está em seu limite máximo de ambulantes.",
                     });
                 }
-            }, "html").fail(function () {
+            }, "html") .fail(function () {
                 alert("Erro ao processar requisição!");
             });
         });

@@ -2,10 +2,10 @@
 
 namespace Source\App;
 
-use Cassandra\Date;
 use Source\Models\Attach;
 use Source\Models\License;
 use Source\Models\LicenseType;
+use Source\Models\Neighborhood;
 use Source\Models\User;
 use Stonks\Router\Router;
 use League\Plates\Engine;
@@ -17,7 +17,6 @@ use Source\Models\Email;
 use Source\Models\Notification;
 use Source\Models\PagSeguro;
 use Source\Models\Payment;
-use Source\Models\Report;
 use Source\Models\Salesman;
 use Source\Models\Zone;
 
@@ -126,6 +125,7 @@ class Web
                 $attach = (new Attach())->find('id_usuario = :id', 'id=' . $agent->id)->fetch(false);
                 if ($attach) {
                     $_SESSION['user']['login'] = 3;
+                    $_SESSION['user']['tipo'] = $agent->tipo_fiscal;
                     $_SESSION['user']['id'] = $agent->id;
                     $_SESSION['user']['name'] = $agent->nome;
                     $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/agents/' . $attach->id_usuario
@@ -473,27 +473,19 @@ class Web
                     }
                 }
 
-
                 $email = new Email();
+
+                $message = file_get_contents(THEMES . "/assets/emails/confirmRegisterEmail.php");
+
+                $url = ROOT . "/confirmAccount/" . md5($user->id);
+
+                $template = array("%title", "%textBody", "%button", "%link", "%name");
+                $dataReplace = array("Confirmação de Cadastro", "Para confirmar seu cadastro", "Confirmar", $url, $user->nome);
+                $message = str_replace($template, $dataReplace, $message);
+
                 $email->add(
                     "Confirmação de cadastro",
-                    "<p>Olá " . $user->nome . "! Para confirmar seu cadastro no Orditi, clique no botão abaixo.</p>
-                        <a href='" . ROOT . "/confirmAccount/" . md5($user->id) . "' 
-            style='
-                    border: none;
-                    width: 115px;
-                    height: 42px;
-                    font-size: 1.2em;
-                    border-radius: 5px;
-                    text-decoration: none;
-                    color: #fff;
-                    background-color: #4bc2ce;
-                    box-shadow: none;
-                    padding: 12px;
-                    top: 10px;
-                    position: relative;
-            '>Confirmar</a>
-            <div> <img style='width: 10%; margin-top: 30px' src='https://www.maceio.orditi.com/themes/assets/img/nav-logo.png'> </div>",
+                    $message,
                     $user->nome,
                     $user->email
                 )->send();
@@ -527,9 +519,7 @@ class Web
 
         if ($user) {
             $validate = true;
-
             $attach = (new Attach())->find('id_usuario = :id', 'id=' . $user->id)->fetch(true);
-
             if ($attach) {
                 foreach ($attach as $att) {
                     if (explode('.', $att->nome)[0] == 'userImage') {
@@ -575,11 +565,16 @@ class Web
      * @return void
      * @var $data
      */
-    public function salesmanLicense(): void
+    public function salesmanLicense($companyId = null): void
     {
         $this->checkLogin();
 
         $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
+        $company = null;
+
+        if ($companyId) {
+            $company = (new Company())->findById($companyId);
+        }
 
         if ($zones) {
             foreach ($zones as $zone) {
@@ -602,7 +597,8 @@ class Web
 
         echo $this->view->render('salesmanLicense', [
             'title' => 'Licença de Ambulante | ' . SITE,
-            'zones' => $zones
+            'zones' => $zones,
+            'company' => $company,
         ]);
     }
 
@@ -616,6 +612,7 @@ class Web
 
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $validate = false;
+        $aux = false;
 
         $license = (new License())->find('MD5(id) = :id', 'id=' . $data['licenseId'])->fetch();
         $agents = (new Agent())->find('', '', 'id, nome')->fetch(true);
@@ -630,6 +627,19 @@ class Web
                         $licenseInfo = (new Salesman())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
                         $templateName = 'salesmanLicenseInfo';
                         $groupName = 'salesmans';
+
+                        $companyLicenses = (new License())->find('id_usuario = :id AND tipo = 2', 'id=' . $_SESSION['user']['id'], 'id')->fetch(true);
+                        if ($companyLicenses) {
+                            foreach ($companyLicenses as $companyLicense) {
+                                if ($licenseInfo->id_empresa == $companyLicense->id){
+                                    $aux = true;
+                                }
+                            }
+                        }
+
+                        if ($aux == false && $_SESSION['user']['login'] != 3 && $license->id_usuario != $_SESSION['user']['id']) {
+                            $this->router->redirect('web.home');
+                        }
 
                         $notifications = (new Notification())->find('id_licenca = :id', 'id=' . $license->id)->fetch(true);
                         if ($notifications) {
@@ -653,6 +663,21 @@ class Web
                 if ($licenseInfo) {
                     $uploads = array();
                     $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = :type', 'id=' . $license->id . '&type=' . $data['licenseType'])->fetch(true);
+                    $salesmans = (new Salesman())->find('id_empresa= :id', 'id=' . $license->id)->fetch(true);
+                    $arrayAux = array();
+
+                    if($salesmans){
+                        foreach ($salesmans as $salesman) {
+                            $salesmanLicense = (new License())->findById($salesman->id_licenca);
+                            if ($salesmanLicense) {
+                                $salesmanUser = (new User())->findById($salesmanLicense->id_usuario);
+                                if ($salesmanUser) {
+                                    $salesmanUser->status = $salesmanLicense->status;
+                                    $arrayAux[] = $salesmanUser;
+                                }
+                            }
+                        }
+                    }
 
                     if ($attachments) {
                         foreach ($attachments as $attach) {
@@ -675,7 +700,9 @@ class Web
                             'uploads' => $uploads,
                             'payments' => $payments,
                             'agents' => $agents,
-                            'notifications' => $notifications
+                            'notifications' => $notifications,
+                            'companyConfirm' => $aux,
+                            'salesmans' => $arrayAux
                         ]);
                     }
                 }
@@ -684,6 +711,20 @@ class Web
 
         if ($validate == false) {
             $this->router->redirect('web.home');
+        }
+    }
+
+    public function licenseStatus($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $register = (new License())->findById($data['id']);
+
+        if($register){
+            $register->status = $data['status'];
+            $register->save();
         }
     }
 
@@ -754,6 +795,13 @@ class Web
                 }
             }
 
+            $neighborhood = (new Neighborhood())->find('ST_CONTAINS(ST_GEOMFROMTEXT(ST_AsText(coordenadas)), ST_GEOMFROMTEXT("' . $point . '"))=1', '', 'id, coordenadas')->fetch(false);
+            $neighborhoodId = "";
+
+            if ($neighborhood) {
+                $neighborhoodId = $neighborhood->id;
+            }
+
             if ($zoneId === null) {
                 $salesmans = (new Salesman)->find('latitude = :lat AND longitude = :lng', 'lat=' . $data['latitude'] . '&lng=' . $data['longitude'], 'latitude, longitude')->fetch(true);
                 if ($salesmans) {
@@ -767,7 +815,16 @@ class Web
             if ($zoneId) {
                 $license = new License();
                 $license->tipo = 1;
-                $license->status = 0;
+
+                if ($data['companyId']) {
+                    $company = (new Company)->findById($data['companyId']);
+                    if ($company) {
+                        $license->status = 3;
+                    }
+                } else {
+                    $license->status = 0;
+                }
+
                 $license->id_usuario = $_SESSION['user']['id'];
                 $license->data_inicio = date('Y-m-d');
                 $license->data_fim = date('Y-m-d', strtotime("+3 days"));
@@ -822,7 +879,6 @@ class Web
                                 curl_close($curl);
                                 $street = json_decode($street);
                                 $street = $street->display_name;
-
                                 $area = $data['width'] * $data['length'];
                                 $valueToPayment = array();
                                 $products = "";
@@ -867,7 +923,16 @@ class Web
 
                                 $salesman = new Salesman();
                                 $salesman->id_zona = $zoneId;
+                                $salesman->id_bairro = $neighborhoodId;
                                 $salesman->id_licenca = $license->id;
+
+                                if ($data['companyId']) {
+                                    $company = (new Company)->findById($data['companyId']);
+                                    if ($company) {
+                                        $salesman->id_empresa = $company->id_licenca;
+                                    }
+                                }
+
                                 $salesman->local_endereco = $street;
                                 $salesman->latitude = $data['latitude'];
                                 $salesman->longitude = $data['longitude'];
@@ -879,6 +944,25 @@ class Web
                                 $salesman->area_equipamento = $data['width'] . " x " . $data['length'];
                                 $salesman->tipo_equipamento = $data['howWillSell'];
                                 $salesman->save();
+
+                                /**
+                                 * Send email with new temporary recovery password
+                                 */
+                                $email = new Email();
+
+                                $message = file_get_contents(THEMES . "/assets/emails/confirmSalesman.php");
+
+                                $url = ROOT . "/licenseInfo/1/" . md5($license->id);
+                                $template = array("%title", "%textBody", "%button", "%link", "%companyName", "%name");
+                                $dataReplace = array("Confirmação de vínculo", "Para confirmar vínculo de", "Visualizar", $url, $company->nome_fantasia, $user->nome);
+                                $message = str_replace($template, $dataReplace, $message);
+
+                                $email->add(
+                                    "Confirmar vínculo",
+                                    $message,
+                                    $user->nome,
+                                    $user->email
+                                )->send();
 
                                 if ($salesman->fail()) {
                                     $attach->destroy();
@@ -977,6 +1061,35 @@ class Web
         }
 
         echo $response;
+    }
+
+    public function licenseUser($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $company = (new Company())->find('acesso = :url', 'url=' . $data['url'])->fetch();
+        if ($company) {
+            $this->salesmanLicense($company->id);
+        } else {
+            $this->home();
+        }
+    }
+
+    public function validateLicenseUser($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $validate = false;
+        $company = (new Company())->find('MD5(id) = :id', 'id=' . $data['id'])->fetch();
+
+        if ($company) {
+            $company->acesso = $data['link'];
+            $company->save();
+
+            if (!$company->fail()) {
+                $validate = true;
+            }
+        }
+
+        echo $validate;
     }
 
     /**
@@ -1157,7 +1270,7 @@ class Web
                 foreach ($licenses as $license) {
                     if ($license->status == 1) {
                         $auxPaid++;
-                    } else if ($license->status == 3) {
+                    } else if ($license->status == 2) {
                         $auxBlocked++;
                     } else {
                         $auxPending++;
@@ -1282,25 +1395,17 @@ class Web
              * Send email with new temporary recovery password
              */
             $email = new Email();
+
+            $message = file_get_contents(THEMES . "/assets/emails/confirmRegisterEmail.php");
+
+            $url = ROOT . "/confirmAccount/" . md5($user->id);
+            $template = array("%title", "%textBody", "%button", "%link", "%name");
+            $dataReplace = array("Recuperação de senha", "Para recuperar sua senha", "Recuperar", $url, $user->nome);
+            $message = str_replace($template, $dataReplace, $message);
+
             $email->add(
                 "Recuperação de senha",
-                "<p>Olá " . $user->nome . "! Para recuperar sua senha no Orditi, clique no botão abaixo.</p>
-                        <a href='" . ROOT . "/confirmAccount/" . md5($user->id) . "' 
-            style='
-                    border: none;
-                    width: 115px;
-                    height: 42px;
-                    font-size: 1.2em;
-                    border-radius: 5px;
-                    text-decoration: none;
-                    color: #fff;
-                    background-color: #4bc2ce;
-                    box-shadow: none;
-                    padding: 12px;
-                    top: 10px;
-                    position: relative;
-            '>Confirmar</a>
-            <div> <img style='width: 10%; margin-top: 30px' src='https://www.maceio.orditi.com/themes/assets/img/nav-logo.png'> </div>",
+                $message,
                 $user->nome,
                 $user->email
             )->send();
@@ -1377,29 +1482,61 @@ class Web
                 $notification->id_fiscal = $agent->id;
                 $notification->save();
 
-                if ($notification->fail()) {
-                    var_dump($notification->fail()->getMessage());
-                    exit();
-                }
+                if (isset($data['blockAccess']) && $data['blockAccess'] == 1) {
+                    if ($salesman->regiao != null) {
+                        $zone = (new Zone())->findById($salesman->regiao);
+                        if ($zone) {
+                            $zone->quantidade_ambulantes = $zone->quantidade_ambulantes - 1;
+                            $zone->save();
+                        }
+                    }
 
-                if (!($data['penality'] == '' || $data['penality'] == ' ' || $data['penality'] == 0 || $data['penality'] == 00)) {
-                    $license = (new License())->findById($salesman->id_licenca);
-                    if (!$license) {
+                    $salesman->suspenso = 1;
+                    $salesman->situacao = 0;
+                    $salesman->regiao = null;
+                    $salesman->latitude = null;
+                    $salesman->longitude = null;
+                    $salesman->save();
+
+                    // $email = new Email();
+
+                    // $message = file_get_contents(THEMES . "/assets/emails/notificationEmail.php");
+
+                    // $url = ROOT;
+                    // $template = array("%title", "%textBody", "%status", "%titleStatus", "%button", "%link", "%name", "%dataTitle", "%dataDescription");
+                    // $dataReplace = array("Notificação", "Sua conta encontra-se", "SUSPENSA", "suspensão", "Acesse", $url, $salesman->nome, $data['title'], $data['description']);
+                    // $message = str_replace($template, $dataReplace, $message);
+
+                    // $email->add(
+                    //     "Notificação",
+                    //     $message,
+                    //     $salesman->nome,
+                    //     $salesman->email
+                    // )->send();
+
+                    if ($notification->fail()) {
+                        var_dump($notification->fail()->getMessage());
                         exit();
                     }
 
-                    $paymentDate = date('Y-m-d', strtotime("+3 days"));
-                    $payment = new Payment();
-                    $payment->id_licenca = $license->id;
-                    $payment->cod_referencia = null;
-                    $payment->cod_pagamento = null;
-                    $payment->valor = $data['penality'];
-                    $payment->id_usuario = $license->id_usuario;
-                    $payment->tipo = 1;
-                    $payment->pagar_em = $paymentDate;
-                    $payment->save();
+                    if (!($data['penality'] == '' || $data['penality'] == ' ' || $data['penality'] == 0 || $data['penality'] == 00)) {
+                        $license = (new License())->findById($salesman->id_licenca);
+                        if (!$license) {
+                            exit();
+                        }
 
-                    $extCode = 'ODT' . $payment->id;
+                        $paymentDate = date('Y-m-d', strtotime("+3 days"));
+                        $payment = new Payment();
+                        $payment->id_licenca = $license->id;
+                        $payment->cod_referencia = null;
+                        $payment->cod_pagamento = null;
+                        $payment->valor = $data['penality'];
+                        $payment->id_usuario = $license->id_usuario;
+                        $payment->tipo = 1;
+                        $payment->pagar_em = $paymentDate;
+                        $payment->save();
+
+                        $extCode = 'ODT' . $payment->id;
 
 //                                $soap_input = '
 //                                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eag="EAgata" xmlns:e="e-Agata_18.11">
@@ -1457,24 +1594,41 @@ class Web
 //                                $payment->cod_referencia = $code;
 //                                $payment->cod_pagamento = $extCode;
 
-                    $payment->cod_referencia = 15123;
-                    $payment->cod_pagamento = 'teste';
-                    $payment->save();
+                        $payment->cod_referencia = 15123;
+                        $payment->cod_pagamento = 'teste';
+                        $payment->save();
 
-                    if ($payment->fail()) {
-                        $notification->destroy();
-                        var_dump($payment->fail()->getMessage());
-                        exit();
+                        $email = new Email();
+
+                        $message = file_get_contents(THEMES . "/assets/emails/notificationEmail.php");
+
+                        $url = ROOT;
+                        $template = array("%title", "%textBody", "%status", "%titleStatus", "%button", "%link", "%name", "%dataTitle", "%dataDescription");
+                        $dataReplace = array("Notificação", "Sua conta apresenta uma", "MULTA", "multa", "Acesse", $url, $salesman->nome, $data['title'], $data['description']);
+                        $message = str_replace($template, $dataReplace, $message);
+
+                        $email->add(
+                            "Multa",
+                            $message,
+                            $salesman->nome,
+                            $salesman->email
+                        )->send();
+
+                        if ($payment->fail()) {
+                            $notification->destroy();
+                            var_dump($payment->fail()->getMessage());
+                            exit();
+                        }
+
+                        $notification->id_boleto = $payment->id;
+                        $notification->save();
                     }
 
-                    $notification->id_boleto = $payment->id;
-                    $notification->save();
-                }
-
-                if ($notification->fail()) {
-                    echo 0;
-                } else {
-                    echo 1;
+                    if ($notification->fail()) {
+                        echo 0;
+                    } else {
+                        echo 1;
+                    }
                 }
             }
         }
@@ -1777,6 +1931,7 @@ class Web
         ]);
     }
 
+
     /**
      * @return void
      */
@@ -1847,104 +2002,98 @@ class Web
             $agent->cpf = $data['identity'];
             $agent->email = $data['email'];
             $agent->nome = $data['name'];
-            $agent->senha = md5($psw);
             $agent->tipo_fiscal = 3;
-            $agent->situacao = 1;
+            $agent->situacao = 0;
             $agent->save();
 
             $dir = $folder . '/agents/' . $agent->id;
+            if (!file_exists($dir) || !is_dir($dir)) {
+                mkdir($dir, 0755);
 
-            if ($_FILES) {
-                foreach ($_FILES as $key => $file) {
-                    $target_file = basename($file['name']);
+                if ($_FILES && $_FILES['agentImage']['name'] !== '') {
+                    foreach ($_FILES as $key => $file) {
+                        $target_file = basename($file['name']);
 
-                    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+                        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-                    $extensions_arr = array("jpg", "jpeg", "png");
+                        $extensions_arr = array("jpg", "jpeg", "png");
 
-                    if (in_array($imageFileType, $extensions_arr)) {
-                        if (!file_exists($folder) || !is_dir($folder)) {
-                            mkdir($folder, 0755);
+                        if (in_array($imageFileType, $extensions_arr)) {
+                            if (!file_exists($folder) || !is_dir($folder)) {
+                                mkdir($folder, 0755);
+                            }
+                            $fileName = 'userImage.' . $imageFileType;
+
+                            $dir = $dir . '/' . $fileName;
+
+                            if (move_uploaded_file($file['tmp_name'], $dir)) {
+                                $aux = 1;
+                            }
                         }
-                        $fileName = $key . '.' . $imageFileType;
+                    }
+                } else {
+                    $fileName = 'userImage.png';
+                    $dir = $dir . '/' . $fileName;
+                    $picture = THEMES . '/assets/img/picture.png';
 
-                        if (!file_exists($dir) || !is_dir($dir)) {
-                            mkdir($dir, 0755);
-                        }
+                    if (copy($picture, $dir)) {
+                        $aux = 1;
+                    }
+                }
 
-                        $dir = $dir . '/' . $fileName;
+                if ($aux == 0) {
+                    exit;
+                }
 
-                        if (move_uploaded_file($file['tmp_name'], $dir)) {
-                            $aux = 1;
-                        }
+                if ($agent->fail()) {
+                    var_dump($agent->fail()->getMessage());
+                    unlink($dir);
+                } else {
+                    $attach = new Attach();
+                    $attach->id_usuario = $agent->id;
+                    $attach->tipo_usuario = 3;
+                    $attach->nome = $fileName;
+                    $attach->save();
+
+                    if ($attach->fail()) {
+                        $agent->destroy();
+                        unlink($dir);
+                        var_dump($attach->fail()->getMessage());
+                    } else {
+                        $email = new Email();
+                        $message = file_get_contents(THEMES . "/assets/emails/confirmRegisterEmail.php");
+
+                        $url = ROOT . "/confirmAccount/" . md5($agent->id);
+                        $template = array("%title", "%textBody", "%button", "%link", "%name");
+                        $dataReplace = array("Confirmação de Cadastro", "Sua conta foi cadastrada", "Confirmar", $url, $data['name']);
+                        $message = str_replace($template, $dataReplace, $message);
+
+                        $email->add(
+                            "Cadastro Orditi",
+                            $message,
+                            $data['name'],
+                            $data['email']
+                        )->send();
+                    }
+
+                    if ($email->error()) {
+                        echo 'identity_fail';
+                        $agent->destroy();
+                    } else {
+                        echo 'success';
                     }
                 }
             } else {
-                if (!file_exists($dir) || !is_dir($dir)) {
-                    mkdir($dir, 0755);
-                }
-
-                $fileName = 'userImage.png';
-                $dir = $dir . '/' . $fileName;
-                $picture = THEMES . '/assets/img/picture.png';
-
-                if (copy($picture, $dir)) {
-                    $aux = 1;
-                }
+                echo 'already_exist';
             }
-
-            if ($aux == 0) {
-                exit;
-            }
-
-            if ($agent->fail()) {
-                var_dump($agent->fail()->getMessage());
-                unlink($dir);
-            } else {
-                $attach = new Attach();
-                $attach->id_usuario = $agent->id;
-                $attach->tipo_usuario = 3;
-                $attach->nome = $fileName;
-                $attach->save();
-
-                if ($attach->fail()) {
-                    $agent->destroy();
-                    var_dump($attach->fail()->getMessage());
-                } else {
-                    $email = new Email();
-                    $email->add(
-                        "Cadastro Orditi",
-                        "<p style='font-family: \"Dosis\", sans-serif;'>Olá " . $data['name'] . ", sua conta foi cadastrada no </span><span style='color: #ed2e54;'> ORDITI</span></p>
-                                <p style='font-family: \"Dosis\", sans-serif;'>Estamos felizes em tê-lo conosco.</p>
-                                <br>
-                                <a href='' class='btn-3'>Confirmar cadastro</a>
-                                
-                                <p style='font-family: \"Dosis\", sans-serif;'>
-                                    Para acessar sua conta basta <a href='https://www.maceio.orditi.com/i'>clicar aqui</a> e
-                                    informar seu CPF e a seguinte senha: " . $psw . "
-                                </p>
-                                <div> <img style='width: 20%' src='https://www.maceio.orditi.com/i/themes/assets/img/nav-logo.png'> </div>",
-                        $data['name'],
-                        $data['email']
-                    )->send();
-                }
-
-                if ($email->error()) {
-                    echo 'identity_fail';
-                    $agent->destroy();
-                } else {
-                    echo 'success';
-                }
-            }
-        } else {
-            echo 'already_exist';
         }
     }
 
     /**
      * @return void
      */
-    public function validateZone($data)
+    public
+    function validateZone($data)
     {
         $image = null;
         if (is_uploaded_file($_FILES['zoneImage']['tmp_name'])) {
@@ -2007,7 +2156,8 @@ class Web
      * @param array $data
      * @return void
      */
-    public function zone(array $data): void
+    public
+    function zone(array $data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
@@ -2043,11 +2193,6 @@ class Web
                 $polygon = $aux;
                 $zone->poligono = $polygon;
 
-                if (!$zone->foto) {
-                    $image_base64 = base64_encode(file_get_contents(THEMES . '/assets/img/zone.svg'));
-                    $zone->foto = 'data:image/jpg;base64,' . $image_base64;
-                }
-
                 if (!isset($_SESSION['user']['login']) || (isset($_SESSION['user']['login']) && $_SESSION['user']['login'] === 1)) {
                     echo $this->view->render('zone', [
                         'title' => 'Zona | ' . SITE,
@@ -2070,7 +2215,8 @@ class Web
     /**
      * @return void
      */
-    public function checkLogin(): void
+    public
+    function checkLogin(): void
     {
         if (!isset($_SESSION['user']['login'])) {
             $this->router->redirect('web.home');
@@ -2081,7 +2227,8 @@ class Web
      * Check if an agent
      * @return data
      */
-    public function checkAgent(): void
+    public
+    function checkAgent(): void
     {
         if (!isset($_SESSION['user']['login']) || (isset($_SESSION['user']['login']) && !($_SESSION['user']['login'] === 3))) {
             $this->router->redirect('web.home');
@@ -2092,7 +2239,8 @@ class Web
      * Check if an agent/company
      * @return data
      */
-    public function checkuser(): void
+    public
+    function checkuser(): void
     {
         if (!isset($_SESSION['user']['login']) || (isset($_SESSION['user']['login']) && ($_SESSION['user']['login'] === 1))) {
             $this->router->redirect('web.home');
@@ -2103,7 +2251,8 @@ class Web
      * Only to SingIn and SignUp
      * @return void
      */
-    public function checkIsOff(): void
+    public
+    function checkIsOff(): void
     {
         if (!empty($_SESSION['user']['login'])) {
             $this->router->redirect('web.home');
@@ -2115,7 +2264,8 @@ class Web
      * @return void
      * Open file get method
      */
-    public function downloadFile(array $data): void
+    public
+    function downloadFile(array $data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $this->checkLogin();
@@ -2140,7 +2290,8 @@ class Web
         }
     }
 
-    public function removeSuspension($data): void
+    public
+    function removeSuspension($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $salesman = (new Salesman())->findById($data['id'], 'id, suspenso');
@@ -2163,13 +2314,17 @@ class Web
             $salesman->save();
 
             $email = new Email();
+
+            $message = file_get_contents(THEMES . "/assets/emails/removeNotificationEmail.php");
+
+            $url = "https://www.google.com";
+            $template = array("%title", "%status", "%textBody", "%button", "%link", "%name");
+            $dataReplace = array("Notificação", "MULTA", "foi removida", "Acesse", $url, $salesman->nome);
+            $message = str_replace($template, $dataReplace, $message);
+
             $email->add(
                 "Notificação",
-                "<p style='font-family: \"Dosis\", sans-serif;'>Olá " . $salesman->nome . ", sua suspensão foi removida do </span><span style='color: #ed2e54;'> ORDITI</span></p>
-                        <p style='font-family: \"Dosis\", sans-serif;'>Estamos felizes em te-lo de volta.</p>
-                        <br>
-                        <p style='font-family: \"Dosis\", sans-serif;'>Acesse <a href='https://www.maceio.orditi.com/i'>https://www.maceio.orditi.com/i</a></p>
-                        <div> <img style='width: 20%' src='https://www.maceio.orditi.com/i/themes/assets/img/nav-logo.png'> </div>",
+                $message,
                 $salesman->nome,
                 $salesman->email
             )->send();
@@ -2180,7 +2335,8 @@ class Web
         }
     }
 
-    public function zoneConfirm($data): void
+    public
+    function zoneConfirm($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
@@ -2327,7 +2483,8 @@ class Web
         }
     }
 
-    public function videos(): void
+    public
+    function videos(): void
     {
         echo $this->view->render('videos', [
             'title' => "Vídeos | " . SITE
@@ -2338,7 +2495,8 @@ class Web
      * Return from PagSeguro
      * @return void
      */
-    public function securePayment(): void
+    public
+    function securePayment(): void
     {
         if (isset($_POST['notificationType']) && $_POST['notificationType'] == 'transaction') {
             $PagSeguro = new PagSeguro();
@@ -2424,6 +2582,43 @@ class Web
         return true;
     }
 
+    public function order($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $validate = false;
+        $salesman = (new Salesman())->find('MD5(id) = :id', 'id='. $data['licenseId'])->fetch();
+        $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" .
+            url("order") . "/" . $data['licenseId'];
+        if ($salesman) {
+           $license = (new License())->findById($salesman->id_licenca);
+           if ($license) {
+               $user = (new User())->findById($license->id_usuario);
+               $template = file_get_contents(THEMES . "/assets/orders/salesmanOrder.php");
+               $variables = array("%qrcode%" ,"%process%", "%name%", "%identity%", "%ativity%", "%equipaments%", "%width%",
+                   "%street%", "%aux%", "%day%", "%month%", "%year%", "%day2%", "%month2%", "%year2%");
+               $dataReplace = array($qrUrl ,"", $user->nome, $user->cpf, $salesman->relato_atividade,
+                   $salesman->tipo_equipamento, $salesman->area_equipamento, $salesman->local_endereco, "",
+                   date('d', strtotime($license->data_inicio)), date('m', strtotime($license->data_inicio)),
+                   date('Y', strtotime($license->data_inicio)),
+                   date('d', strtotime($license->data_fim)), date('m', strtotime($license->data_fim)),
+                   date('Y', strtotime($license->data_fim)));
+               $template = str_replace($variables, $dataReplace, $template);
+
+               if ($template) {
+                   $validate = true;
+               }
+           }
+        }
+
+        if ($validate) {
+            echo "<script>alert('Aguarde até que o qrcode seja gerado.');</script>";
+            echo $template;
+        } else {
+            $this->router->redirect('web.home');
+        }
+    }
+
     /**
      * @param array $data
      * @return void
@@ -2446,14 +2641,16 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
         $email = new Email();
+
+        $message = file_get_contents(THEMES . "/assets/emails/notificationEmail.php");
+
+        $template = array("%title", "%textBody", "%status", "%titleStatus", "%name", "%dataTitle", "%dataDescription");
+        $dataReplace = array("Recebemos uma mensagem", "recebemos uma mensagem de", "MULTA", "multa", $salesman->nome, $data['title'], $data['description']);
+        $message = str_replace($template, $dataReplace, $message);
+
         $email->add(
-            "Alguém enviou uma mensagem",
-            "<div style='font-family: \"Dosis\", sans-serif;'>
-                        <p>Olá, recebemos uma mensagem de <span style='color: #157881;'>" . $_SESSION['user']['name'] . "</span></p>
-                        <p>Email: <span style='color: #157881;'>" . $_SESSION['user']['email'] . "</span></p>
-                        <p>Telefone: <span style='color: #157881;'>" . $data['phone'] . "</span></p>
-                        <p>Descrição: <span style='color: #157881;'>" . $data['description'] . "</span></p>
-                    </div>",
+            "Recebemos uma mensagem",
+            $message,
             COMPANY,
             EMAIL
         )->send();
@@ -2463,5 +2660,58 @@ class Web
         } else {
             echo 1;
         }
+    }
+
+    public function neighborhood(): void
+    {
+        $geojson = json_decode(file_get_contents(THEMES . "/assets/geojson/bairros.json"))->features;
+        foreach ($geojson as $neigh) {
+            $coordinates = $neigh->geometry->coordinates;
+
+            $array_point = array();
+
+            foreach ($coordinates as $coordinate) {
+                for ($i = 0; $i < count($coordinate); $i++) {
+                    $array_point[] = $coordinate[$i][1] . " " . $coordinate[$i][0];
+                }
+
+                $str = implode(',', $array_point);
+                $polygon = 'POLYGON((' . $str . '))';
+
+                $neighborhood = new Neighborhood();
+                $neighborhood->id = $neigh->properties->ID_BAIRROS;
+                $neighborhood->nome = $neigh->properties->BAIRRO;
+                $neighborhood->coordenadas = $polygon;
+                $neighborhood->save(['polygon']);
+
+                if ($neighborhood->fail()) {
+                    var_dump($neighborhood->fail()->getMessage());
+                }
+            }
+        }
+    }
+
+    public function neighborhoodList(): void
+    {
+        $neighborhoods = (new Neighborhood())->find('', '', 'id, nome, ST_AsText(coordenadas) as polygon')->fetch(true);
+        $aux = array();
+        $neighborhoodData = array();
+        if ($neighborhoods) {
+            foreach ($neighborhoods as $neighborhood) {
+                $polygon = explode("POLYGON((", $neighborhood->polygon);
+                $polygon = explode("))", $polygon[1]);
+                $polygon = explode(",", $polygon[0]);
+
+                $aux = array();
+                foreach ($polygon as $polig) {
+                    $polig = explode(" ", $polig);
+                    $aux[] = $polig;
+                }
+
+                $polygon = $aux;
+                $neighborhoodData[] = ['id' => $neighborhood->id, 'name' => $neighborhood->nome, 'polygon' => $polygon];
+            }
+        }
+        echo json_encode($neighborhoodData);
     }
 }

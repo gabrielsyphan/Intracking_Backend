@@ -20,11 +20,12 @@
 <script src="<?= url("themes/assets/js/leaflet.markercluster-src.js"); ?>"></script>
 <script>
     $(function () {
-        var map = null;
-        var mapTiles = {};
-        var ctrTiles = {};
-        var mapLayers = {};
-        var ctrLayers = {};
+        let map = null;
+        let mapTiles = {};
+        let ctrTiles = {};
+        let mapLayers = {};
+        let ctrLayers = {};
+        let request = false;
 
         mapTiles['Mapa Jawg'] = L.tileLayer('https://{s}.tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token=C1vu4LOmp14JjyXqidSlK8rjeSlLK1W59o1GAfoHVOpuc6YB8FSNyOyHdoz7QIk6', {
             maxNativeZoom: 19,
@@ -51,9 +52,6 @@
         mapLayers["Área das zonas"] = L.layerGroup();
         ctrLayers["Área das zonas"] = mapLayers["Área das zonas"];
 
-        mapLayers["Zonas"] = L.layerGroup();
-        ctrLayers["Zonas"] = mapLayers["Zonas"];
-
         <?php if($expireds || $paids || $pendings): ?>
         mapLayers["Ambulantes - Em dia"] = L.layerGroup();
         ctrLayers["Ambulantes - Em dia"] = mapLayers["Ambulantes - Em dia"];
@@ -63,10 +61,13 @@
 
         mapLayers["Ambulantes - Vencidos"] = L.layerGroup();
         ctrLayers["Ambulantes - Vencidos"] = mapLayers["Ambulantes - Vencidos"];
-
-        // mapLayers["Denúncias"] = L.layerGroup();
-        // ctrLayers["Denúncias"] = mapLayers["Denúncias"];
         <?php endif; ?>
+
+        mapLayers["Bairros"] = L.layerGroup();
+        ctrLayers["Bairros"] = mapLayers["Bairros"];
+
+        mapLayers["Zonas"] = L.layerGroup();
+        ctrLayers["Zonas"] = mapLayers["Zonas"];
 
         map = L.map('salesmanMap', {
             center: [-9.663136558749533, -35.71422457695007],
@@ -148,7 +149,7 @@
         map.invalidateSize(true);
 
         map.on('overlayadd', function (e) {
-            var groupMarker = new L.MarkerClusterGroup({
+            let groupMarker = new L.MarkerClusterGroup({
                 disableClusteringAtZoom: 14,
                 showCoverageOnHover: true,
                 zoomToBoundsOnClick: true,
@@ -205,6 +206,41 @@
 
                 <?php endforeach;
                 endif;?>
+            } else if (e.name == "Bairros") {
+                if (request === false) {
+                    $("#loader-div").show();
+                    $.ajax({
+                        type: "POST",
+                        url: "<?= url("neighborhoodList") ?>",
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                    }).done(function (returnData) {
+                        const neighborhoods = JSON.parse(returnData);
+
+                        neighborhoods.forEach(function (neighborhood) {
+                            let aux = [];
+                            for (let i = 0; i < neighborhood.polygon.length; i++) {
+                                aux.push([neighborhood.polygon[i][0], neighborhood.polygon[i][1]]);
+                            }
+
+                            L.polygon(aux, {
+                                color: "#4bc2ce",
+                                fillColor: "#4bc2ce"
+                            }).bindPopup(neighborhood.name).addTo(mapLayers[e.name]);
+                        });
+                        request = true;
+                    }).fail(function (returnData) {
+                        swal({
+                            icon: "error",
+                            title: "Erro!",
+                            text: "Erro ao processar requisição",
+                        });
+                        console.log(returnData);
+                    }).always(function () {
+                        $("#loader-div").hide();
+                    });
+                }
             } else {
                 <?php if($zones !== NULL): foreach ($zones as $zone) :
                 $aux = $zone->limite_ambulantes - $zone->quantidade_ambulantes;

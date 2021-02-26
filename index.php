@@ -69,6 +69,11 @@ $router->get("/downloadFile/{groupName}/{userId}/{fileName}", "Web:downloadFile"
 $router->get("/requestLicense", "Web:requestLicense", "web.requestLicense");
 $router->get("/licenseList", "Web:licenseList", "web.licenseList");
 $router->get("/licenseInfo/{licenseType}/{licenseId}", "Web:licenseInfo", "web.licenseInfo");
+$router->get("/order/{licenseId}", "Web:order", "web.order");
+$router->post("/licenseStatus","Web:licenseStatus","web.licenseStatus");
+
+$router->get("/licenseUser/{url}", "Web:licenseUser", "web.licenseUser");
+$router->post("/validateLicenseUser", "Web:validateLicenseUser", "web.validateLicenseUser");
 
 $router->get("/salesmanLicense", "Web:salesmanLicense", "web.salesmanLicense");
 $router->post("/validateSalesmanLicense", "Web:validateSalesmanLicense", "web.validateSalesmanLicense");
@@ -76,6 +81,7 @@ $router->post("/validateSalesmanLicense", "Web:validateSalesmanLicense", "web.va
 $router->get("/companyLicense", "Web:companyLicense", "web.companyLicense");
 $router->post("/validateCompanyLicense", "Web:validateCompanyLicense", "web.validateCompanyLicense");
 
+$router->post("/neighborhoodList", "Web:neighborhoodList", "web.neighborhoodList");
 /*
  * ERROS
  */
