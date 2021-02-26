@@ -55,7 +55,8 @@
                                 <div class="row pl-5 pr-5 pt-3">
                                     <div class="col-xl-6 form-group">
                                         <label>Nome:</label>
-                                        <input type="text" class="form-input" id="name" name="name" placeholder="Seu Nome">
+                                        <input type="text" class="form-input" id="name" name="name"
+                                               placeholder="Seu Nome">
                                         <div class="invalid-feedback"></div>
                                     </div>
                                     <div class="col-xl-6 form-group">
@@ -90,7 +91,8 @@
                                 </div>
                                 <hr class="ml-5 mr-5 hr-gray">
                                 <div class="pl-5 pr-5 text-right">
-                                    <button type="button" class="btn-3 quartenary-color mb-5" onclick="window.location.href='<?= $router->route('web.home'); ?>'">
+                                    <button type="button" class="btn-3 quartenary-color mb-5"
+                                            onclick="window.location.href='<?= $router->route('web.home'); ?>'">
                                         Voltar ao início
                                     </button>
                                     <button type="button" class="btn-3 tertiary-color mb-5" onclick="nextPage(1, 2)">
@@ -152,7 +154,8 @@
                                         <label class="label-file userImage-file" for="userImage"><span
                                                     class="icon-plus mr-2"></span> Selecionar Arquivo</label>
                                         <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
-                                               id="userImage" name="userImage" accept="image/png, image/jpg, image/jpeg">
+                                               id="userImage" name="userImage"
+                                               accept="image/png, image/jpg, image/jpeg">
                                         <div class="invalid-feedback"></div>
                                         <div class="userImage-file-uploaded file-uploaded-container">
                                             <div class="card-content-upload text-center p-3">
@@ -207,7 +210,8 @@
                                         <label class="label-file proofAddress-file text-center" for="proofAddress"><span
                                                     class="icon-plus mr-2"></span> Selecionar Arquivo</label>
                                         <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
-                                               id="proofAddress" name="proofAddress" accept="image/png, image/jpg, image/jpeg">
+                                               id="proofAddress" name="proofAddress"
+                                               accept="image/png, image/jpg, image/jpeg">
                                         <div class="invalid-feedback"></div>
                                         <div class="proofAddress-file-uploaded file-uploaded-container">
                                             <div class="card-content-upload text-center p-3">
@@ -271,7 +275,7 @@
                 type: _thisForm.attr('method'),
                 url: _thisForm.attr('action'),
                 data: data,
-                cache:false,
+                cache: false,
                 contentType: false,
                 processData: false,
             }).done(function (returnData) {
@@ -295,13 +299,7 @@
                         title: "Erro",
                         text: "CPF inválido. Por favor, insira um CPF válido.",
                     });
-                } else if (returnData == 'require_registration'){
-                    swal({
-                        icon: "warning",
-                        title: "Atenção",
-                        text: "Não será possível realizar o cadastro. Por favor, dirija-se a secretaria de economia e realize seu cadastro mercantil de pessoa física ou jurídica para então dar prosseguimento com o do Orditi.",
-                    });
-                }else {
+                } else {
                     swal({
                         icon: "error",
                         title: "Erro!",
@@ -341,25 +339,8 @@
                 title: "Erro",
                 text: "O CPF digitado não é válido. Por favor, insira um CPF válido e tente novamente.",
             });
-        } else {
-            let data = {'cpf': cpf};
-            $.post("<?= $router->route("web.checkAccount"); ?>", data, function (e) {
-                $("#loader-div").hide();
-                if (e == 0) {
-                    swal({
-                        icon: "warning",
-                        title: "Atenção",
-                        text: "Não será possível realizar o cadastro. Por favor, dirija-se a secretaria de economia e realize seu cadastro mercantil de pessoa física ou jurídica para então dar prosseguimento com o do Orditi.",
-                    });
-                }
-            }, "html").fail(function () {
-                $("#loader-div").hide();
-                swal({
-                    icon: "~warning",
-                    title: "Atenção",
-                    text: "Erro ao processar requisição.",
-                });
-            });
+        }else{
+            $("#loader-div").hide();
         }
     }
 </script>

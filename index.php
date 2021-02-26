@@ -45,6 +45,7 @@ $router->get("/createAgent", "Web:createAgent", "web.createAgent");
 $router->post("/validateNewAgent", "Web:validateNewAgent", "web.validateNewAgent");
 
 $router->get("/profile", "Web:profile", "web.profile");
+$router->post("/editProfile", "Web:editProfile", "web.editProfile");
 $router->get("/salesmanList", "Web:salesmanList", "web.salesmanList");
 $router->get("/salesmanMap", "Web:salesmanMap", "web.salesmanMap");
 $router->post("/createNotification", "Web:createNotification", "web.createNotification");

@@ -86,10 +86,10 @@
 </div>
 
 <div class="container-fluid mt-3 container-white border-bottom-gray">
-    <div class="row mt-5">
-        <div class="col-xl-12 mb-5">
+    <div class="row">
+        <div class="col-xl-12 mb-5 mt-5">
             <div class="web-div-box">
-                <div class="box-div-info" style="max-height: 60vh;">
+                <div class="box-div-info">
                     <div>
                         <h3 class="ml-3 title-section">Lista de pagamentos</h3>
                         <p class="ml-3 subtitle-section-p">Todos os pagamentos cadastrados no Orditi</p>
@@ -187,6 +187,7 @@
                             <?php endif; ?>
                         </div>
                     </div>
+                    <hr>
                 </div>
             </div>
         </div>

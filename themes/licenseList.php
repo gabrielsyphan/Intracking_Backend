@@ -3,7 +3,7 @@
 <div class="container-fluid container-white border-bottom-gray mt-5">
     <div class="p-5 row">
         <div class="col-xl-12 mb-5">
-            <div style="max-height: 60vh;">
+            <div>
                 <div>
                     <h3 class="ml-3 black-title-section">Minhas licenças</h3>
                     <p class="ml-3 subtitle-section-p">Todos as suas licenças aparecerão aqui.</p>

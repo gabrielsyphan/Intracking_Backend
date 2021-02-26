@@ -1,5 +1,7 @@
 <?php $v->layout("_theme.php"); ?>
 
+
+<?php if ($cmc): ?>
 <div class="container-fluid container-white mt-5">
     <div class="p-5">
         <div class="row">
@@ -67,6 +69,19 @@
         </div>
     </div>
 </div>
+<?php else: ?>
+    <div class="container pt-5 mt-5">
+        <div class="row">
+            <div class="col-xl-12 text-center">
+                <img src="<?= url('themes/assets/img/missingfile.svg') ?>" style="width: 40%;">
+                <h3>Você não pode solicitar uma licença!</h3>
+                <p>Solicite um cadastro mercantil junto à Secretaria de Economia de Maceió, para prosseguir com sua licença
+                    clique <a href="#">aqui</a>.</p>
+                <p>Para mais informações, entre em contato <a href="mailto:suporte@orditi.com">suporte@orditi.com</a></p>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
 
 <?php $v->start("scripts"); ?>
 <script>
@@ -84,7 +99,40 @@
                     title: "Ops...",
                     text: "Esta licença não está disponível no momento.",
                 });
-            break;
+                break;
+        }
+    }
+
+    function validateCpf(e) {
+        $("#loader-div").show();
+        let cpf = formatedCPF(e);
+
+        if (checkCpf(cpf) == false) {
+            $("#loader-div").hide();
+            swal({
+                icon: "error",
+                title: "Erro",
+                text: "O CPF digitado não é válido. Por favor, insira um CPF válido e tente novamente.",
+            });
+        } else {
+            let data = {'cpf': cpf};
+            $.post("<?= $router->route("web.checkAccount"); ?>", data, function (e) {
+                $("#loader-div").hide();
+                if (e == 0) {
+                    swal({
+                        icon: "warning",
+                        title: "Atenção",
+                        text: "Não será possível realizar o cadastro. Por favor, dirija-se a secretaria de economia e realize seu cadastro mercantil de pessoa física ou jurídica para então dar prosseguimento com o do Orditi.",
+                    });
+                }
+            }, "html").fail(function () {
+                $("#loader-div").hide();
+                swal({
+                    icon: "~warning",
+                    title: "Atenção",
+                    text: "Erro ao processar requisição.",
+                });
+            });
         }
     }
 </script>

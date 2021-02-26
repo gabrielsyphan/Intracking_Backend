@@ -114,6 +114,7 @@ class Web
                         $_SESSION['user']['id'] = $user->id;
                         $_SESSION['user']['name'] = $user->nome;
                         $_SESSION['user']['email'] = $user->email;
+                        $_SESSION['user']['identity'] =  $user->cpf;
 
                         $validate = 1;
                     }
@@ -125,6 +126,7 @@ class Web
                 $attach = (new Attach())->find('id_usuario = :id', 'id=' . $agent->id)->fetch(false);
                 if ($attach) {
                     $_SESSION['user']['login'] = 3;
+                    $_SESSION['user']['identity'] = $agent->cpf;
                     $_SESSION['user']['tipo'] = $agent->tipo_fiscal;
                     $_SESSION['user']['id'] = $agent->id;
                     $_SESSION['user']['name'] = $agent->nome;
@@ -265,9 +267,12 @@ class Web
         ]);
     }
 
-    public function checkAccount($data): void
+    public function checkCmc($cpf): bool
     {
-        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $cpf = filter_var($cpf, FILTER_SANITIZE_STRIPPED);
+        $cpf = preg_replace('/[^0-9]/is', '', $cpf);
+
+        $validate = false;
 
         $soap_input =
             '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:e="e-Agata_18.11">
@@ -275,7 +280,7 @@ class Web
                <soapenv:Body>
                   <e:PWSRetornoPertences.Execute>
                      <e:Flagtipopesquisa>C</e:Flagtipopesquisa>
-                     <e:Ctgcpf>' . $data['cpf'] . '</e:Ctgcpf>
+                     <e:Ctgcpf>' . $cpf . '</e:Ctgcpf>
                      <e:Ctiinscricao></e:Ctiinscricao>
                   </e:PWSRetornoPertences.Execute>
                </soapenv:Body>
@@ -296,17 +301,11 @@ class Web
         @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
         $companys = $xml->Body->PWSRetornoPertences->Sdtretornopertences->SDTRetornoPertencesItem->SDTRetornoPertencesEmpresa->SDTRetornoPertencesEmpresaItem;
 
-        if ($companys == "") {
-            echo 0;
-        } else {
-            $aux = 0;
-            foreach ($companys as $company) {
-                if ($company->SRPAutonomo == "A") {
-                    $aux = 1;
-                }
-            }
-            echo $aux;
+        if ($companys != "") {
+            $validate = true;
         }
+
+        return $validate;
     }
 
     public function checkCnpj($data): void
@@ -372,48 +371,6 @@ class Web
         $user = (new User())->find('cpf = :identity', 'identity=' . $data['identity'])->fetch();
         if ($user) {
             echo 'already_exist';
-            exit();
-        }
-
-        $cpf = preg_replace('/[^0-9]/is', '', $data['identity']);
-        $soap_input =
-            '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:e="e-Agata_18.11">
-               <soapenv:Header/>
-               <soapenv:Body>
-                  <e:PWSRetornoPertences.Execute>
-                     <e:Flagtipopesquisa>C</e:Flagtipopesquisa>
-                     <e:Ctgcpf>' . $cpf . '</e:Ctgcpf>
-                     <e:Ctiinscricao></e:Ctiinscricao>
-                  </e:PWSRetornoPertences.Execute>
-               </soapenv:Body>
-            </soapenv:Envelope>';
-
-        $curl = curl_init();
-
-        curl_setopt($curl, CURLOPT_URL, PERTENCES);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $soap_input);
-        curl_setopt($curl, CURLOPT_HEADER, false);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-
-        $soap_response = curl_exec($curl);
-
-        $xml_response = str_ireplace(['SOAP-ENV:', 'SOAP:', '.executeresponse', '.SDTRetornoPertences'], '', $soap_response);
-
-        @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
-        $companys = $xml->Body->PWSRetornoPertences->Sdtretornopertences->SDTRetornoPertencesItem->SDTRetornoPertencesEmpresa->SDTRetornoPertencesEmpresaItem;
-
-        if ($companys != '') {
-            $companyAux = 0;
-            foreach ($companys as $company) {
-                if ($company->SRPAutonomo == 'A') {
-                    $companyAux = $company->SRPInscricaoEmpresa;
-                }
-            }
-        }
-
-        if ($companys == '' || $companyAux === 0) {
-            echo 'require_registration';
             exit();
         }
 
@@ -556,8 +513,11 @@ class Web
     {
         $this->checkLogin();
 
+        $cmc = $this->checkCmc($_SESSION['user']['identity']);
+
         echo $this->view->render('requestLicense', [
-            'title' => 'Nova licença | ' . SITE
+            'title' => 'Nova licença | ' . SITE,
+            'cmc' => $cmc
         ]);
     }
 
@@ -1460,6 +1420,28 @@ class Web
         } else {
             $this->router->redirect('web.salesmanList');
         }
+    }
+
+    public function editProfile($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $user = (new User())->find("MD5(id) = :id", "id=".$data['id'])->fetch(false);
+        $response = false;
+        if ($user) {
+            $user->email = $data['email'];
+            $user->telefone = $data['phone'];
+            $user->endereco = $data['street'];
+            $user->save();
+
+            if (!$user->fail()) {
+                $response = true;
+            }
+        }
+
+        echo $response;
     }
 
     /**
@@ -2623,7 +2605,8 @@ class Web
      * @param array $data
      * @return void
      */
-    public function error(array $data): void
+    public
+    function error(array $data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         echo $this->view->render('error', [
@@ -2636,7 +2619,8 @@ class Web
      * @return void
      * Send contact Email
      */
-    public function formContact($data): void
+    public
+    function formContact($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 

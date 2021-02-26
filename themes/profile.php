@@ -130,7 +130,7 @@
                 <div class="row">
                     <div class="col-xl-8">
                         <hr>
-                        <fieldset disabled>
+                        <fieldset disabled="disabled" class="disabledCheckboxes">
                             <div class="row">
                                 <div class="col-xl-6">
                                     <div class="form-group">
@@ -160,31 +160,39 @@
                                 <div class="col-xl-6">
                                     <div class="form-group">
                                         <label>Email:</label>
-                                        <input type="text" class="form-input disabled-input"
-                                               value="<?= $user->email ?>">
+                                        <input type="text" class="form-input"
+                                               value="<?= $user->email ?>" id="email">
                                     </div>
                                 </div>
                                 <div class="col-xl-6">
                                     <div class="form-group">
                                         <label>Telefone:</label>
-                                        <input type="text" class="form-input disabled-input"
-                                               value="<?= $user->telefone ?>">
+                                        <input type="text" class="form-input"
+                                               value="<?= $user->telefone ?>" id="phone">
                                     </div>
                                 </div>
                                 <div class="col-xl-12">
                                     <div class="form-group">
                                         <label>Endereço:</label>
-                                        <input type="text" class="form-input disabled-input"
-                                               value="<?= $user->endereco ?>">
+                                        <input type="text" class="form-input"
+                                               value="<?= $user->endereco ?>" id="street">
                                     </div>
                                 </div>
                             </div>
                         </fieldset>
                     </div>
                     <div class="col-xl-4 mt-5 pt-5 text-center">
-                        <img class="mb-4 mt-4" style="width: 200px; height: 200px; border-radius: 50%;" src="<?= $userImage ?>">
-
-                        <p><span class="icon-info-circle"></span> Usuário</p>
+                        <img class="mb-4 mt-4"
+                             style="width: 200px; height: 200px; border-radius: 50%; display: block; margin: 0 auto"
+                             src="<?= $userImage ?>">
+                        <button style="border: none; outline: none; box-shadow: none;"
+                                class="secondary-color button" id="editData"><span
+                                    class="icon-edit"></span> Alterar dados
+                        </button>
+                        <button style="border: none; outline: none; box-shadow: none; display: none"
+                                class="secondary-color button" id="sendData"><span
+                                    class="icon-edit"></span> Enviar
+                        </button>
                     </div>
                     <div class="col-xl-12 mt-4 mb-5">
                         <h3 class="black-title-section">Ações</h3>
@@ -222,3 +230,52 @@
         </div>
     </div>
 </div>
+<?php $v->start('scripts'); ?>
+<script>
+    $(document).ready(function () {
+
+        $('.disabledCheckboxes').prop("disabled", true);
+
+        $(document).ready(function () {
+            $('#editData').on('click', function () {
+                $('.disabledCheckboxes').removeAttr("disabled");
+                $('#sendData').show();
+                $('#editData').hide();
+            })
+
+            $('#sendData').on('click', function () {
+                $('.disabledCheckboxes').attr("disabled", "disabled");
+                $('#sendData').hide();
+                $('#editData').show();
+
+                const data = {
+                    id: "<?= md5($user->id); ?>",
+                    phone: $('#phone').val(),
+                    email: $('#email').val(),
+                    street: $('#street').val()
+                };
+
+                console.log(data);
+
+                $.ajax({
+                    type: 'POST',
+                    url: "<?= $router->route('web.editProfile');?>",
+                    data: data,
+                }).done(function (returnData) {
+                    swal({
+                        icon: "success",
+                        title: "Sucesso!",
+                        text: "Seus dados foram alterados.",
+                    }).then((value) => {
+                      window.location.reload();
+                    });
+                }).fail(function (returnData) {
+                    console.log(returnData);
+                }).always(function (returnData) {
+                    console.log(returnData);
+                })
+            })
+        });
+    });
+</script>
+<?php $v->end(); ?>

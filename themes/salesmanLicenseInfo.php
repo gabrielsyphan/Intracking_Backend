@@ -357,7 +357,7 @@
                     </div>
                     <div class="col-10">
                         <h4 class="black-title-section">Notificações</h4>
-                        <p class="subtitle-section-p">Histórico de notif...</p>
+                        <p class="subtitle-section-p">Histórico de notificações.</p>
                     </div>
                 </div>
             <?php endif; ?>
@@ -542,7 +542,9 @@
     });
 
     $('[data-ajax-click]').on('click', function (e) {
-        location.reload();
+        e.preventDefault();
+        $("#loader-div").show();
+
         const method = $(this).data('method');
         const url = $(this).data('action');
         let data = $(this).data('form-data');
@@ -575,10 +577,12 @@
             contentType: false
         }).done(function (returnData) {
             console.log("Sucesso");
+            location.reload();
         }).fail(function () {
             console.log("Fail");
         }).always(function () {
             console.log("Sempre");
+            $("#loader-div").hide();
         });
     });
 

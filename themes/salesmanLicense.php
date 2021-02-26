@@ -115,7 +115,7 @@
                                         <div class="form-group">
                                             <label>Produtos e/ou serviços:</label>
                                             <select id="productSelect" class="form-input"  name="productSelect[]" multiple="multiple">
-                                            <?php foreach (str_split($company->produto) as $product): ?>
+                                            <?php $productDescription = ""; foreach (str_split($company->produto) as $product): ?>
                                                 <?php switch ($product):
                                                     case 0: ?>
                                                         <option class="subtitle-section-p" value="<?=$product;?>">Gêneros e produtos alimentícios em geral</option>
@@ -139,11 +139,13 @@
                                                     case 6: ?>
                                                     <option class="subtitle-section-p" value="<?=$product;?>">Artesanato, antiguidades e artigos de arte em geral</option>
                                                         <?php break;
-                                                    default: ?>
+                                                    default: $productDescription = $company->outro_produto; ?>
                                                     <option class="subtitle-section-p" value="<?=$product;?>"><?= $company->outro_produto;?></option>
                                                 <?php endswitch; ?>
                                             <?php endforeach;?>
                                             </select>
+
+                                            <input type="hidden" name="productDescription" value="<?= $productDescription ?>">
                                         </div>
                                     </div>
                                 <?php endif;?>

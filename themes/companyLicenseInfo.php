@@ -305,7 +305,7 @@
                 <div class="col-sm-6">
                     <div class="row m-0 mt-3 pt-4 pl-4 pr-4 pb-0 border-left-green div-request-license">
                         <div class="col-2 text-center mt-4">
-                            <img src="<?= url('themes/assets/img/map.png') ?>">
+                            <img src="<?= url('themes/assets/img/salesman.png') ?>">
                         </div>
                         <div class="col-10">
                             <h4 class="black-title-section">Gerar link de adesão</h4>
