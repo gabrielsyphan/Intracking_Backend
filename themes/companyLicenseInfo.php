@@ -3,49 +3,52 @@
 <div id="modal-1" class="div-modal">
     <div class="container pt-5">
         <div class="row mt-5 p-5 justify-content-center">
-            <div class="col-10 p-5 container-white">
-                <h3 class="black-title-section">Anexos</h3>
+            <div class="col-xl-10 p-5 container-white modal-overflow mh-80">
+                <div class="row">
+                    <div class="col-8">
+                        <h3 class="black-title-section">Meus anexos</h3>
+                    </div>
+                    <div class="col-4 text-right mt-3">
+                        <span class="icon-close" onclick="closeModal(1)"></span>
+                    </div>
+                </div>
                 <p class="subtitle-section-p">Arquivos enviados durante o cadastro da licença.</p>
                 <hr>
-                <div class="div-box-span-icon mt-5">
-                    <span class="icon-close" onclick="closeModal(1)"></span>
+                <div class="row m-0 p-4">
+                    <div class="col-xl-12 mb-3 pl-5 pr-5">
+                        <?php if ($uploads && count($uploads) > 0): $aux = 1;
+                            foreach ($uploads as $upload): ?>
+                                <div class="row div-gray-bg mb-5 p-5">
+                                    <div class="col-xl-3 p-0 text-center">
+                                        <img style="width: 150px;"
+                                             src="<?= url('/themes/assets/uploads/') ?><?= $upload['groupName'] . '/' .
+                                             $upload['userId'] . '/' . $upload['fileName'] ?>">
+                                    </div>
+                                    <div class="col-xl-9 text-sm-center text-md-left">
+                                        <h5 class="mt-5 mt-md-3"><?= explode(".", $upload['fileName'])[0] ?></h5>
+                                        <p class="subtitle-section-p">Para editar ou visualizar a imagem, acione os
+                                            botões abaixo.</p>
+                                        <div class="text-right mt-5 pt-3 d-flex">
+                                            <form class="mr-2"
+                                                  action="<?= url('downloadFile/' . $upload['groupName'] . '/' . $upload['userId']
+                                                      . '/' . $upload['fileName']) ?>">
+                                                <button class="btn-3 primary">Baixar</button>
+                                            </form>
+                                            <button class="btn-3 secondary-color"
+                                                    onclick="openFile('<?= $upload['groupName'] . '/' .
+                                                    $upload['userId'] . '/' . $upload['fileName'] ?>')">Visualizar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php $aux++; endforeach; endif; ?>
+                    </div>
                 </div>
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nome</th>
-                        <th scope="col">Ações</th>
-                    </tr>
-                    </thead>
-                    <tbody id="table-data">
-                    <?php if ($uploads && count($uploads) > 0):
-                        $aux = 1;
-                        foreach ($uploads as $upload): ?>
-                            <tr>
-                                <th scope="row"><?= $aux ?></th>
-                                <td><?= $upload['fileName'] ?></td>
-                                <td style="display: flex">
-                                    <form action="<?= url('downloadFile/' . $upload['groupName'] . '/' . $upload['userId']
-                                        . '/' . $upload['fileName']) ?>">
-                                        <button class="btn" type="submit">
-                                            <span class="icon-download"></span>
-                                        </button>
-                                    </form>
-                                    <button class="btn" type="submit"
-                                            onclick="openFile('<?= $upload['groupName'] . '/' .
-                                            $upload['userId'] . '/' . $upload['fileName'] ?>')">
-                                        <span class="icon-image"></span>
-                                    </button>
-                                </td>
-                            </tr>
-                            <?php $aux++; endforeach; endif; ?>
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
 </div>
+
 
 <div id="modal-2" class="div-modal">
     <div class="container pt-5">
@@ -130,6 +133,16 @@
             <div class="col-10 p-5 container-white">
                 <h3 class="black-title-section">Ambulantes</h3>
                 <p class="subtitle-section-p">Todos os ambulantes cadastrados da licença.</p>
+                <div class="d-flex">
+                    <input name="generator" id="generator" class="form-input w-25" style="height: 42px !important; border-radius: 6px 0 0 6px;">
+                    <button class="btn-3 primary" type="button" onclick="generator()" style="border-radius: 0 6px 6px 0;">
+                        <span class="icon-person_add"></span>
+                    </button>
+                    <button class="btn-3 secondary-color ml-3" type="button" onclick="" id="copy"
+                            data-clipboard-target="#generator">
+                        <span class="icon-content_copy"></span>
+                    </button>
+                </div>
                 <hr>
                 <div class="div-box-span-icon mt-5">
                     <span class="icon-close" onclick="closeModal(3)"></span>
@@ -373,7 +386,11 @@
                 data: data,
             }).done(function (returnData) {
                 if (returnData = 1) {
-                    swal("Link gerado com sucesso!", "Compartilhe com seus colaboradores.");
+                    swal({
+                        icon: "success",
+                        title: "Sucesso!",
+                        text: "Seu link de cadastro foi gerado, compartilhe com seus colaboradores para que possam realizar o cadastro vinculados a sua empresa.",
+                    });
                 }
             }).fail(function (returnData) {
                 console.log(returnData);

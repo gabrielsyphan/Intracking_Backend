@@ -17,7 +17,7 @@
                         <span class="icon-close" onclick="closeModal(1)"></span>
                     </div>
                 </div>
-                <p class="subtitle-section-p">Arquivos enviados por você durante seu cadastro.</p>
+                <p class="subtitle-section-p">Arquivos enviados durante seu cadastro da licença.</p>
                 <hr>
                 <div class="row m-0 p-4">
                     <div class="col-xl-12 mb-3 pl-5 pr-5">
