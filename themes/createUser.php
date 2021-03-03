@@ -10,54 +10,61 @@
 <?php $v->end(); ?>
 
 <div class="container-fluid container-white mt-5">
-    <div class="ustify-content-center">
-        <div class="row m-0">
-            <h2 class="h2-header">Cadastro</h2>
-            <hr>
-            <p class="h2-header">Novo usuário</p>
-            <form id="form-create-account" method="POST" action="<?= $router->route("web.validateAccount"); ?>">
-                <fieldset>
-                    <h2 class="pl-5 pr-5 h2-title-header-black">Dados Pessoais</h2>
-
-                    <div class="row pl-5 pr-5 pt-3">
-                        <div class="col-xl-6 form-group">
-                            <label>Nome:</label>
-                            <input type="text" class="form-input" id="name" name="name"
-                                   placeholder="Seu Nome">
-                            <div class="invalid-feedback"></div>
+    <div class="p-5">
+        <form id="form-create-account" method="POST" action="<?= $router->route("web.validateAccount"); ?>">
+            <fieldset class="row">
+                <div id="inputHidden"></div>
+                <div class="col-xl-12">
+                    <h2 class="black-title-section">Cadastrar novo Usuário</h2>
+                    <p class="subtitle-section-p">Descreva todos os dados do usuário.</p>
+                </div>
+                <div class="col-xl-6 mt-5">
+                    <div class="div-gray-bg border-top-green p-5">
+                        <h4 class="black-title-section">Dados Pessoais</h4>
+                        <hr>
+                        <div class="row pl-5 pr-5 pt-3  pb-5">
+                            <div class="col-xl-12 form-group">
+                                <label>Nome:</label>
+                                <input type="text" class="form-input" id="name" name="name"
+                                       placeholder="Seu Nome">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-xl-12 form-group">
+                                <label>Mãe:</label>
+                                <input type="text" class="form-input" id="maternalName" name="maternalName"
+                                       placeholder="Nome de sua mãe">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-xl-6 form-group">
+                                <label>CPF:</label>
+                                <input type="text" class="form-input" id="identity" name="identity"
+                                       onfocusout="validateCpf(this)" placeholder="Seu CPF">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-xl-6 form-group">
+                                <label>RG:</label>
+                                <input type="text" class="form-input" id="rg" name="rg" placeholder="Seu RG">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-xl-12 form-group">
+                                <label>E-mail:</label>
+                                <input type="email" class="form-input" id="email" name="email"
+                                       placeholder="Seu E-mail">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-xl-12 form-group">
+                                <label>Telefone:</label>
+                                <input type="text" class="form-input" id="phone" name="phone"
+                                       placeholder="Seu Telefone">
+                                <div class="invalid-feedback"></div>
+                            </div>
                         </div>
-                        <div class="col-xl-6 form-group">
-                            <label>Mãe:</label>
-                            <input type="text" class="form-input" id="maternalName" name="maternalName"
-                                   placeholder="Nome de sua mãe">
-                            <div class="invalid-feedback"></div>
-                        </div>
-                        <div class="col-xl-6 form-group">
-                            <label>CPF:</label>
-                            <input type="text" class="form-input" id="identity" name="identity"
-                                   onfocusout="validateCpf(this)" placeholder="Seu CPF">
-                            <div class="invalid-feedback"></div>
-                        </div>
-                        <div class="col-xl-6 form-group">
-                            <label>RG:</label>
-                            <input type="text" class="form-input" id="rg" name="rg" placeholder="Seu RG">
-                            <div class="invalid-feedback"></div>
-                        </div>
-                        <div class="col-xl-6 form-group">
-                            <label>E-mail:</label>
-                            <input type="email" class="form-input" id="email" name="email"
-                                   placeholder="Seu E-mail">
-                            <div class="invalid-feedback"></div>
-                        </div>
-                        <div class="col-xl-6 form-group">
-                            <label>Telefone:</label>
-                            <input type="text" class="form-input" id="phone" name="phone"
-                                   placeholder="Seu Telefone">
-                            <div class="invalid-feedback"></div>
-                        </div>
-
-                        <h2 class="pl-5 pr-5 h2-title-header-black">Residência</h2>
-
+                    </div>
+                </div>
+                <div class="col-xl-6 mt-5">
+                    <div class="div-gray-bg border-top-green p-5">
+                        <h4 class="black-title-section">Residência</h4>
+                        <hr>
                         <div class="row pl-5 pr-5 pt-3">
                             <div class="col-xl-12 form-group">
                                 <label>Endereço Residencial:</label>
@@ -89,107 +96,103 @@
                                        placeholder="Seu CEP">
                                 <div class="invalid-feedback"></div>
                             </div>
-                        </div>
-                    </div>
-                    <h2 class="pl-5 pr-5 h2-title-header-black">Anexos</h2>
-                    <div class="row pl-5 pr-5 pt-3" style="height: 322px;">
-                        <div class="col-xl-6">
-                            <p class="label-left">Foto do rosto: </p>
-                        </div>
-                        <div class="col-xl-6 text-center">
-                            <label class="label-file userImage-file" for="userImage"><span
-                                        class="icon-plus mr-2"></span> Selecionar Arquivo</label>
-                            <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
-                                   id="userImage" name="userImage"
-                                   accept="image/png, image/jpg, image/jpeg">
-                            <div class="invalid-feedback"></div>
-                            <div class="userImage-file-uploaded file-uploaded-container">
-                                <div class="card-content-upload text-center p-3">
-                                    <div class="card-content-type-upload">
-                                        <span class="userImage-type"></span>
+                            <h4 class="black-title-section">Anexos</h4>
+                            <div class="row pl-5 pr-5 pt-3" style="">
+                                <div class="col-xl-6">
+                                    <p class="label-left">Foto do rosto: </p>
+                                </div>
+                                <div class="col-xl-6 text-center">
+                                    <label class="label-file userImage-file" for="userImage"><span
+                                                class="icon-plus mr-2"></span> Selecionar Arquivo</label>
+                                    <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
+                                           id="userImage" name="userImage"
+                                           accept="image/png, image/jpg, image/jpeg">
+                                    <div class="invalid-feedback"></div>
+                                    <div class="userImage-file-uploaded file-uploaded-container">
+                                        <div class="card-content-upload text-center p-3">
+                                            <div class="card-content-type-upload">
+                                                <span class="userImage-type"></span>
+                                            </div>
+                                        </div>
+                                        <div class="ml-3 text-left">
+                                            <div class="d-flex">
+                                                <p class="userImage-name"></p>
+                                                <span id="userImage-span-close"
+                                                      class="icon-close ml-3 card-close-file userImage"
+                                                      onclick="changeFile(this)"></span>
+                                            </div>
+                                            <div class="card-content-progress"></div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="ml-3 text-left">
-                                    <div class="d-flex">
-                                        <p class="userImage-name"></p>
-                                        <span id="userImage-span-close"
-                                              class="icon-close ml-3 card-close-file userImage"
-                                              onclick="changeFile(this)"></span>
-                                    </div>
-                                    <div class="card-content-progress"></div>
+                                <div class="col-xl-6">
+                                    <p class="label-left">Foto da identidade (CPF + RG): </p>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-6">
-                            <p class="label-left">Foto da identidade (CPF + RG): </p>
-                        </div>
-                        <div class="col-xl-6 text-center">
-                            <label class="label-file identityImage-file" for="identityImage"><span
-                                        class="icon-plus mr-2"></span> Selecionar Arquivo</label>
-                            <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
-                                   id="identityImage" name="identityImage"
-                                   accept="image/png, image/jpg, image/jpeg">
-                            <div class="invalid-feedback"></div>
-                            <div class="identityImage-file-uploaded file-uploaded-container">
-                                <div class="card-content-upload text-center p-3">
-                                    <div class="card-content-type-upload">
-                                        <span class="identityImage-type"></span>
+                                <div class="col-xl-6 text-center">
+                                    <label class="label-file identityImage-file" for="identityImage"><span
+                                                class="icon-plus mr-2"></span> Selecionar Arquivo</label>
+                                    <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
+                                           id="identityImage" name="identityImage"
+                                           accept="image/png, image/jpg, image/jpeg">
+                                    <div class="invalid-feedback"></div>
+                                    <div class="identityImage-file-uploaded file-uploaded-container">
+                                        <div class="card-content-upload text-center p-3">
+                                            <div class="card-content-type-upload">
+                                                <span class="identityImage-type"></span>
+                                            </div>
+                                        </div>
+                                        <div class="ml-3 text-left">
+                                            <div class="d-flex">
+                                                <p class="identityImage-name"></p>
+                                                <span id="identityImage-span-close"
+                                                      class="icon-close ml-3 card-close-file"
+                                                      onclick="changeFile(this)"></span>
+                                            </div>
+                                            <div class="card-content-progress"></div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="ml-3 text-left">
-                                    <div class="d-flex">
-                                        <p class="identityImage-name"></p>
-                                        <span id="identityImage-span-close"
-                                              class="icon-close ml-3 card-close-file"
-                                              onclick="changeFile(this)"></span>
-                                    </div>
-                                    <div class="card-content-progress"></div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="col-xl-6">
-                            <p class="label-left">Comprovante de residência:</p>
-                        </div>
-
-                        <div class="col-xl-6 text-center">
-                            <label class="label-file proofAddress-file text-center" for="proofAddress"><span
-                                        class="icon-plus mr-2"></span> Selecionar Arquivo</label>
-                            <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
-                                   id="proofAddress" name="proofAddress"
-                                   accept="image/png, image/jpg, image/jpeg">
-                            <div class="invalid-feedback"></div>
-                            <div class="proofAddress-file-uploaded file-uploaded-container">
-                                <div class="card-content-upload text-center p-3">
-                                    <div class="card-content-type-upload">
-                                        <span class="proofAddress-type"></span>
-                                    </div>
+                                <div class="col-xl-6">
+                                    <p class="label-left">Comprovante de residência:</p>
                                 </div>
-                                <div class="ml-3 text-left">
-                                    <div class="d-flex">
-                                        <p class="proofAddress-name"></p>
-                                        <span id="proofAddress-span-close"
-                                              class="icon-close ml-3 card-close-file proofAddress"
-                                              onclick="changeFile(this)"></span>
+
+                                <div class="col-xl-6 text-center">
+                                    <label class="label-file proofAddress-file text-center" for="proofAddress"><span
+                                                class="icon-plus mr-2"></span> Selecionar Arquivo</label>
+                                    <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
+                                           id="proofAddress" name="proofAddress"
+                                           accept="image/png, image/jpg, image/jpeg">
+                                    <div class="invalid-feedback"></div>
+                                    <div class="proofAddress-file-uploaded file-uploaded-container">
+                                        <div class="card-content-upload text-center p-3">
+                                            <div class="card-content-type-upload">
+                                                <span class="proofAddress-type"></span>
+                                            </div>
+                                        </div>
+                                        <div class="ml-3 text-left">
+                                            <div class="d-flex">
+                                                <p class="proofAddress-name"></p>
+                                                <span id="proofAddress-span-close"
+                                                      class="icon-close ml-3 card-close-file proofAddress"
+                                                      onclick="changeFile(this)"></span>
+                                            </div>
+                                            <div class="card-content-progress"></div>
+                                        </div>
                                     </div>
-                                    <div class="card-content-progress"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <hr class="ml-5 mr-5 hr-gray">
-                    <div class="pl-5 pr-5 text-right">
-                        <button type="submit" class="btn-3 tertiary-color mb-5">Cadastrar</button>
-                    </div>
-        </div>
-        </fieldset>
+                </div>
+                <div class="col-xl-12 text-right mb-5 mt-5">
+                    <button type="submit" class="btn-3 tertiary-color">Cadastrar</button>
+                </div>
+                <hr class="">
+            </fieldset>
         </form>
     </div>
 </div>
-</div>
-</div>
-</div>
-
 <?php $v->start('scripts'); ?>
 <script>
     $(function () {

@@ -111,6 +111,7 @@
                             Exportar tabela em xls
                         </a>
                     </div>
+                    <hr>
                 </div>
             </div>
             <hr class="mb-0">
