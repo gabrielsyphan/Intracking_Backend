@@ -9,13 +9,11 @@
         </p>
     </div>
 
-    <ul class="list-unstyled components mt-5">
-        
+    <ul class="list-unstyled components mt-5 mb-5 pb-5">
         <li class="<?= ($router->isCurrentRoute("web.home") ? 'active' : ''); ?>">
             <a href="<?= url('') ?>"><span class="icon-home"></span>Início</a>
         </li>
         <?php if ($_SESSION['user']['login'] === 0): ?>
-
             <li class="<?= ($router->isCurrentRoute("web.licenseList") ? 'active' : ''); ?>">
                 <a href="<?= url("licenseList"); ?>">
                     <span class="icon-drivers-license"></span>
@@ -53,6 +51,14 @@
                     Pagamentos
                 </a>
             </li>
+
+            <li class="<?= ($router->isCurrentRoute("web.neighborhoodList") ? 'active' : ''); ?>">
+                <a href="<?= url("neighborhoodList"); ?>">
+                    <span class="icon-map-marker"></span>
+                    Bairros
+                </a>
+            </li>
+
             <li class="<?= ($router->isCurrentRoute("web.agentList") ? 'active' : ''); ?>">
                 <a href="<?= url("agentList"); ?>">
                     <span class="icon-users"></span>

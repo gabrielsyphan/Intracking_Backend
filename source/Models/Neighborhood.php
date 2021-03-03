@@ -10,6 +10,6 @@ class Neighborhood extends DataLayer
 {
     public function __construct()
     {
-        parent::__construct("bairros", [], 'id', false);
+        parent::__construct("bairros", [], '', false);
     }
 }

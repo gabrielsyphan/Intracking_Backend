@@ -121,12 +121,13 @@ class Web
                 }
             }
         } else {
-            $agent = (new Agent())->find('cpf = :identity AND senha = :password', 'identity=' . $data['identity'] . '&password=' . md5($data['psw']))->fetch();
+            $agent = (new Agent())->find('cpf = :identity AND senha = :password', 'identity=' .
+                $data['identity'] . '&password=' . md5($data['psw']))->fetch();
             if ($agent) {
                 $attach = (new Attach())->find('id_usuario = :id', 'id=' . $agent->id)->fetch(false);
                 if ($attach) {
                     $_SESSION['user']['login'] = 3;
-                    $_SESSION['user']['identity'] = $agent->cpf;
+                    $_SESSION['user']['identity'] = $data['identity'];
                     $_SESSION['user']['tipo'] = $agent->tipo_fiscal;
                     $_SESSION['user']['id'] = $agent->id;
                     $_SESSION['user']['name'] = $agent->nome;
@@ -580,7 +581,7 @@ class Web
         $notificatonAgents = array();
         if ($license) {
             $payments = (new Payment())->find('id_licenca = :id', 'id=' . $license->id)->fetch(true);
-            $user = (new User())->findById($license->id_usuario, 'id, nome');
+            $user = (new User())->findById($license->id_usuario);
             if ($user) {
                 switch ($data['licenseType']) {
                     case 1:
@@ -655,8 +656,7 @@ class Web
                             'license' => $licenseInfo,
                             'licenseValidate' => $license,
                             'licenseStatus' => $license->status,
-                            'user' => $user->nome,
-                            'userId' => $user->id,
+                            'user' => $user,
                             'uploads' => $uploads,
                             'payments' => $payments,
                             'agents' => $agents,
@@ -755,11 +755,14 @@ class Web
                 }
             }
 
+            $point = 'POINT(' . $data['latitude'] . " " . $data['longitude'] . ')';
             $neighborhood = (new Neighborhood())->find('ST_CONTAINS(ST_GEOMFROMTEXT(ST_AsText(coordenadas)), ST_GEOMFROMTEXT("' . $point . '"))=1', '', 'id, coordenadas')->fetch(false);
             $neighborhoodId = "";
 
             if ($neighborhood) {
                 $neighborhoodId = $neighborhood->id;
+                $neighborhood->quantidade_ambulantes = $neighborhood->quantidade_ambulantes + 1;
+                $neighborhood->save();
             }
 
             if ($zoneId === null) {
@@ -769,10 +772,12 @@ class Web
                     $zoneId = null;
                     $zone->quantidade_ambulantes--;
                     $zone->save();
+                } else {
+                    $zoneId = "";
                 }
             }
 
-            if ($zoneId) {
+            if ($zoneId || $zoneId == "") {
                 $license = new License();
                 $license->tipo = 1;
 
@@ -792,6 +797,7 @@ class Web
                 $license->save();
 
                 if ($license->fail()) {
+                    $neighborhood->destroy();
                     var_dump($license->fail()->getMessage());
                 } else {
                     /**
@@ -1453,7 +1459,7 @@ class Web
 
         $agent = (new Agent())->findById($data['agentSelect']);
         if ($agent) {
-            $salesman = (new Salesman())->findById($data['licenseId']);
+            $salesman = (new Salesman())->find('MD5(id) = :id', 'id='. $data['licenseId'])->fetch(false);
             if ($salesman) {
                 $notification = new Notification();
                 $notification->id_licenca = $salesman->id_licenca;
@@ -1464,7 +1470,7 @@ class Web
                 $notification->id_fiscal = $agent->id;
                 $notification->save();
 
-                if (isset($data['blockAccess']) && $data['blockAccess'] == 1) {
+                if (!isset($data['blockAccess']) || $data['blockAccess'] == 1) {
                     if ($salesman->regiao != null) {
                         $zone = (new Zone())->findById($salesman->regiao);
                         if ($zone) {
@@ -1845,25 +1851,109 @@ class Web
         echo $html;
     }
 
+    public function exportNeighborhood($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $this->checkAgent();
+        $tableHead = '';
+        $tableBody = '';
+
+        $salesmans = (new Salesman())->find('MD5(id_bairro) = :id', 'id='. $data['neighborhoodId'])
+            ->fetch(true);
+        $neihborhood = (new Neighborhood())
+            ->find('MD5(id) = :id', 'id='. $data['neighborhoodId'], 'nome')->fetch(false);
+        if ($salesmans) {
+            $tableHead .= '<tr>';
+            $tableHead .= '<td><b>Tipo</b></td>';
+            $tableHead .= '<td><b>Cpf</b></td>';
+            $tableHead .= '<td><b>Proprietário</b></td>';
+            $tableHead .= '<td><b>Início</b></td>';
+            $tableHead .= '<td><b>Fim</b></td>';
+            $tableHead .= '<td><b>Status</b></td>';
+            $tableHead .= '</tr>';
+
+            $license_type = (new LicenseType())->find()->fetch(true);
+            if ($license_type) {
+                foreach ($salesmans as $salesman) {
+                    $license = (new License())->find('id = :id', 'id='. $salesman->id_licenca)
+                        ->fetch(false);
+                    if ($license) {
+                        $user = (new User())->findById($license->id_usuario, 'id, nome, cpf');
+
+                        switch ($license->status) {
+                            case 0:
+                                $textStatus = 'Pendente';
+                                break;
+                            case 1:
+                                $textStatus = 'Ativo';
+                                break;
+                            default:
+                                $textStatus = 'Bloqueado';
+                                break;
+                        }
+
+                        $tableBody .= '<tr>';
+                        $tableBody .= '<td>' . $license_type[$license->tipo - 1]->nome . '</td>';
+                        $tableBody .= '<td>' . $user->cpf . '</td>';
+                        $tableBody .= '<td>' . $user->nome . '</td>';
+                        $tableBody .= '<td>' . $license->data_inicio . '</td>';
+                        $tableBody .= '<td>' . $license->data_fim . '</td>';
+                        $tableBody .= '<td>' . $textStatus . '</td>';
+                        $tableBody .= '</tr>';
+                    }
+                }
+            }
+        }
+
+        $file_name = 'salesman.xls';
+
+        $html = '';
+        $html .= '<table>';
+        $html .= '<tr>';
+        $html .= '<td colspan="5">Ambulantes no bairro: '. $neihborhood->nome .' - ORDITI</td>';
+        $html .= '</tr>';
+        $html .= $tableHead;
+        $html .= $tableBody;
+        $html .= '</table>';
+
+        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+        header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
+        header("Cache-Control: no-cache, must-revalidate");
+        header("Pragma: no-cache");
+        header("Content-type: application/x-msexcel");
+        header("Content-Disposition: attachment; filename=\"{$file_name}\"");
+        header("Content-Description: PHP Generated Data");
+
+        echo $html;
+    }
+
     /**
      * @return void
      */
     public function salesmanMap(): void
     {
         $zoneData = array();
-        $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
+        $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, 
+        ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')
+            ->fetch(true);
 
         $pending = array();
         $expired = array();
         $paid = array();
 
         if ($_SESSION['user']['login'] == 3) {
-            $salesmans = (new Salesman())->find('', '', 'id_licenca, latitude, longitude')->fetch(true);
+            $salesmans = (new Salesman())->find('', '', 'id_licenca, latitude, longitude')
+                ->fetch(true);
             if ($salesmans) {
                 foreach ($salesmans as $salesman) {
-                    $license = (new License())->findById($salesman->id_licenca, 'status');
+                    $license = (new License())->findById($salesman->id_licenca, 'status, id_usuario');
+                    $user = (new User())->findById($license->id_usuario);
                     if ($license) {
                         $salesman->status = $license->status;
+                        $salesman->nome = $user->nome;
+                        $salesman->cpf = $user->cpf;
+                        $salesman->telefone = $user->telefone;
+                        $salesman->id_licenca = md5($salesman->id_licenca);
 
                         if ($license->status == 1) {
                             $paid[] = $salesman;
@@ -1951,7 +2041,8 @@ class Web
          */
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
-        $agent = (new Agent())->find('matricula = :matricula', 'matricula=' . $data['registration'])->fetch();
+        $agent = (new Agent())->find('matricula = :matricula', 'matricula=' . $data['registration'])
+            ->fetch();
         $folder = THEMES . '/assets/uploads';
         $aux = 0;
 
@@ -2221,8 +2312,7 @@ class Web
      * Check if an agent/company
      * @return data
      */
-    public
-    function checkuser(): void
+    public function checkUser(): void
     {
         if (!isset($_SESSION['user']['login']) || (isset($_SESSION['user']['login']) && ($_SESSION['user']['login'] === 1))) {
             $this->router->redirect('web.home');
@@ -2646,7 +2736,7 @@ class Web
         }
     }
 
-    public function neighborhood(): void
+    public function createNeighborhood(): void
     {
         $geojson = json_decode(file_get_contents(THEMES . "/assets/geojson/bairros.json"))->features;
         foreach ($geojson as $neigh) {
@@ -2675,7 +2765,68 @@ class Web
         }
     }
 
-    public function neighborhoodList(): void
+    public function neighborhood($data): void
+    {
+        $this->checkAgent();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $neighborhood = (new Neighborhood())->find('MD5(id) = :id', 'id='. $data['id'],
+            'ST_AsText(ST_Centroid(coordenadas)) as centroid, id, nome, ST_AsText(coordenadas) as polygon')->fetch(false);
+
+        $aux = array();
+        $neighborhoodData = array();
+
+        if ($neighborhood) {
+            $centroid = explode("POINT(", $neighborhood->centroid);
+            $centroid = explode(")", $centroid[1]);
+            $centroid = explode(" ", $centroid[0]);
+            $neighborhood->centroid = $centroid;
+
+            $polygon = explode("POLYGON((", $neighborhood->polygon);
+            $polygon = explode("))", $polygon[1]);
+            $polygon = explode(",", $polygon[0]);
+
+            $aux = array();
+            foreach ($polygon as $polig) {
+                $polig = explode(" ", $polig);
+                $aux[] = $polig;
+            }
+
+            $users = array();
+
+            $salesmans = (new Salesman())->find('id_bairro = :id', 'id='. $neighborhood->id)->fetch(true);
+            if ($salesmans) {
+                foreach ($salesmans as $salesman) {
+                    $license = (new License())->findById($salesman->id_licenca, 'id_usuario');
+                    if ($license) {
+                        $user = (new User())->findById($license->id_usuario, 'id, cpf, nome, telefone');
+                        if ($user) {
+                            $users[] = ['id' => $salesman->id, 'identity' => $user->cpf, 'name' => $user->nome,
+                                'phone' => $user->telefone, 'licenseId' => md5($salesman->id_licenca)];
+                        }
+                    }
+                }
+            }
+
+            if (count($users) == 0) {
+                $users = null;
+            }
+
+
+            $neighborhood->id = md5($neighborhood->id);
+
+            echo $this->view->render('neighborhood', [
+                'title' => 'Bairro | ' . SITE,
+                'neighborhood' => $neighborhood,
+                'coordinates' => $aux,
+                'users' => $users
+            ]);
+        } else {
+            $this->router->redirect('web.salesmanMap');
+        }
+    }
+
+    public function neighborhoodPolygon(): void
     {
         $neighborhoods = (new Neighborhood())->find('', '', 'id, nome, ST_AsText(coordenadas) as polygon')->fetch(true);
         $aux = array();
@@ -2685,6 +2836,8 @@ class Web
                 $polygon = explode("POLYGON((", $neighborhood->polygon);
                 $polygon = explode("))", $polygon[1]);
                 $polygon = explode(",", $polygon[0]);
+
+                $neighborhood->id = md5($neighborhood->id);
 
                 $aux = array();
                 foreach ($polygon as $polig) {
@@ -2697,5 +2850,68 @@ class Web
             }
         }
         echo json_encode($neighborhoodData);
+    }
+
+    public function findNeighborhood($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $neighborhood = (new Neighborhood())->find('MD5(id) = :id', 'id='. $data['id'],
+            'ST_AsText(ST_Centroid(coordenadas)) as centroid, id, nome, ST_AsText(coordenadas) as polygon')
+            ->fetch(false);
+
+        $aux = array();
+        $neighborhoodData = array();
+
+        if ($neighborhood) {
+            $centroid = explode("POINT(", $neighborhood->centroid);
+            $centroid = explode(")", $centroid[1]);
+            $centroid = explode(" ", $centroid[0]);
+
+            $polygon = explode("POLYGON((", $neighborhood->polygon);
+            $polygon = explode("))", $polygon[1]);
+            $polygon = explode(",", $polygon[0]);
+
+            $aux = array();
+            foreach ($polygon as $polig) {
+                $polig = explode(" ", $polig);
+                $aux[] = $polig;
+            }
+
+            $users = array();
+
+            $salesmans = (new Salesman())->find('id_bairro = :id', 'id=' . $neighborhood->id)->fetch(true);
+            if ($salesmans) {
+                foreach ($salesmans as $salesman) {
+                    $license = (new License())->findById($salesman->id_licenca, 'id_usuario, status');
+                    if ($license) {
+                        $user = (new User())->findById($license->id_usuario, 'id, cpf, nome, telefone');
+                        if ($user) {
+                            $users[] = ['id' => $salesman->id, 'identity' => $user->cpf, 'name' => $user->nome,
+                                'phone' => $user->telefone, 'licenseId' => md5($salesman->id_licenca),
+                                'lat' => $salesman->latitude, 'lng' => $salesman->longitude, 'status' => $license->status];
+                        }
+                    }
+                }
+            }
+
+            $respose = array();
+            $respose[] = ['salesmans' => $users, 'centroid' => $centroid, 'coordinates' => $aux,
+                'neighborhoodName' => $neighborhood->nome, 'neighborhoodId' => $data['id']];
+
+            echo json_encode($respose);
+        }
+    }
+
+    public function neighborhoodList(): void
+    {
+        $this->checkAgent();
+
+        $neighborhoods = (new Neighborhood())->find('', '', 'id, nome, quantidade_ambulantes')->fetch(true);
+
+        echo $this->view->render('neighborhoodList', [
+            'title' => 'Bairros | ' . SITE,
+            'neighborhoods' => $neighborhoods
+        ]);
     }
 }

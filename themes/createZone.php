@@ -84,6 +84,7 @@
         </form>
     </div>
 </div>
+
 <?php $v->start("scripts"); ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
 <script>
@@ -189,7 +190,7 @@
 
         map = L.map('map', {
             center: [-9.6435441, -35.7257695],
-            layers: [mapTiles["Mapa OSM"]],
+            layers: [mapTiles["Mapa Jawg"]],
             zoomControl: true,
             maxZoom: 20,
             minZoom: 10,
@@ -206,7 +207,7 @@
             draw: {
                 polygon: {
                     shapeOptions: {
-                        color: 'purple'
+                        color: '#4bc2ce'
                     },
                     allowIntersection: false,
                     drawError: {

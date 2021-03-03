@@ -51,6 +51,7 @@ $router->get("/salesmanMap", "Web:salesmanMap", "web.salesmanMap");
 $router->post("/createNotification", "Web:createNotification", "web.createNotification");
 $router->post("/removeSuspension", "Web:removeSuspension", "web.removeSuspension");
 
+$router->get("/createSalesman", "Web:createSalesman", "web.createSalesman");
 $router->post("/zoneConfirm", "Web:zoneConfirm", "web.zoneConfirm");
 
 $router->get("/agentList", "Web:agentList", "web.agentList");
@@ -58,6 +59,7 @@ $router->get("/changeAgentStatus/{agentId}", "Web:changeAgentStatus", "web.chang
 
 $router->get("/videos", "Web:videos", "web.videos");
 
+$router->get("/neighborhoodList", "Web:neighborhoodList", "web.neighborhoodList");
 $router->get("/paymentList", "Web:paymentList", "web.paymentList");
 $router->get("/exportData/{fileType}", "Web:exportData", "web.exportData");
 
@@ -82,7 +84,11 @@ $router->post("/validateSalesmanLicense", "Web:validateSalesmanLicense", "web.va
 $router->get("/companyLicense", "Web:companyLicense", "web.companyLicense");
 $router->post("/validateCompanyLicense", "Web:validateCompanyLicense", "web.validateCompanyLicense");
 
-$router->post("/neighborhoodList", "Web:neighborhoodList", "web.neighborhoodList");
+$router->post("/neighborhoodPolygon", "Web:neighborhoodPolygon", "web.neighborhoodPolygon");
+$router->get("/neighborhood/{id}", "Web:neighborhood", "web.neighborhood");
+$router->post("/findNeighborhood", "Web:findNeighborhood", "web.findNeighborhood");
+$router->get("/exportNeighborhood/{neighborhoodId}", "Web:exportNeighborhood", "web.exportNeighborhood");
+
 /*
  * ERROS
  */

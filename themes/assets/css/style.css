@@ -73,10 +73,6 @@ a, a:hover {
     color: #fff;
 }
 
-#sidebar ul.components {
-    background: #44a8b1;
-}
-
 #sidebar ul a {
     color: #e7e7e7;
     margin-left: 20px;
@@ -88,8 +84,7 @@ a, a:hover {
 }
 
 #sidebar ul li {
-    padding: 5px;
-    margin-top: 13px;
+    padding: 10px;
 }
 
 #sidebar ul li a {
@@ -139,7 +134,7 @@ a, a:hover {
     font-size: 16px;
     margin-left: 5px;
     font-weight: 300;
-    width: 80%;
+    width: 78%;
     color: #999c9e;
     line-height: 40px;
 }
@@ -442,7 +437,12 @@ a[data-toggle="collapse"] {
 }
 
 #salesmanMap {
-    height: 150vh;
+    height: 120vh;
+    width: 100%;
+}
+
+#neighborhoodMap {
+    height: 60vh;
     width: 100%;
 }
 
@@ -701,7 +701,7 @@ a[data-toggle="collapse"] {
 
 .zoneInfo {
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 100;
 }
 
 .zonePhoto{
@@ -900,6 +900,15 @@ th, td {
 tbody > tr:hover {
     cursor: pointer;
     background-color: #f1f1f1 !important;
+}
+
+#neighborhoodList > tr:hover {
+    cursor: auto;
+}
+
+#neighborhoodList > tr > td > span:hover {
+    cursor: pointer;
+    color: black;
 }
 
 .tableHeader {
@@ -1352,16 +1361,20 @@ input[type=file].hidden-input-file {
     border-left: 2px solid ;
 }
 
-.border-left-yellow {
-    border-left: 2px solid #ffbc00;
+.border-left-green-light {
+    border-left: 3px solid #00efd1;
+}
+
+.border-left-green-bold {
+    border-left: 3px solid #53dc9c;
 }
 
 .border-left-red {
-    border-left: 3px solid #f05977;
+    border-left: 2px solid #f05977;
 }
 
-.border-left-green-light {
-    border-left: 3px solid #00efd1;
+.border-left-gray {
+    border-left: 3px solid #d2d2d2;
 }
 
 .border-bottom-red {

@@ -25,8 +25,8 @@
 <div class="container-fluid container-white border-bottom-gray mt-5 mb-5">
     <div class="p-5 mb-5">
         <div class="row">
-            <div class="col-xl-6 pt-5">
-                <img class="mt-5 align-middle" style="width: 90%" src="<?= url('themes/assets/img/contact-us.svg') ?>">
+            <div class="col-xl-6 pt-5 text-center">
+                <img class="mt-5 align-middle" style="width: 60%" src="<?= url('themes/assets/img/contact-us.svg') ?>">
             </div>
             <div class="col-xl-6">
                 <h3 class="black-title-section">Contate-nos</h3>
@@ -44,7 +44,7 @@
                         <textarea class="form-input" name="description"
                                   placeholder="Descreva seu problema:" required></textarea>
                     </div>
-                    <button type="submit" class="btn-3 primary-color w-100">
+                    <button type="submit" class="btn-3 primary w-100">
                         Enviar mensagem
                     </button>
                 </form>

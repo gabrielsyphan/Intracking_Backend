@@ -193,10 +193,19 @@
 
                 <div class="row">
                     <div class="col-3 subtitle-section-p">
+                        Cpf:
+                    </div>
+                    <div class="col-9 subtitle-section-p text-right">
+                        <?= $user->cpf ?>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-3 subtitle-section-p">
                         Proprietário:
                     </div>
                     <div class="col-9 subtitle-section-p text-right">
-                        <?= $user ?>
+                        <?= $user->nome ?>
                     </div>
                 </div>
 
@@ -211,7 +220,7 @@
 
                 <div class="row mt-5">
                     <div class="col-3 subtitle-section-p">
-                        CNPJ:
+                        Cnpj:
                     </div>
                     <div class="col-9 subtitle-section-p text-right">
                         <?= $license->cnpj ?>
@@ -220,7 +229,7 @@
 
                 <div class="row mt-5">
                     <div class="col-3 subtitle-section-p">
-                        CMC:
+                        Cmc:
                     </div>
                     <div class="col-9 subtitle-section-p text-right">
                         <?= $license->cmc ?>
@@ -292,32 +301,41 @@
                     </div>
                 </div>
                 <div class="col-sm-6" onclick="openModal(3)">
-                    <div class="row m-0 mt-3 p-4 border-left-yellow div-request-license">
-                        <div class="col-2 text-center mt-4">
-                            <img src="<?= url('themes/assets/img/map.png') ?>">
-                        </div>
-                        <div class="col-10">
-                            <h4 class="black-title-section">Ambulantes</h4>
-                            <p class="subtitle-section-p">Visualizar ambulantes vinculados.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="row m-0 mt-3 pt-4 pl-4 pr-4 pb-0 border-left-green div-request-license">
+                    <div class="row m-0 mt-3 p-4 border-left-gray div-request-license">
                         <div class="col-2 text-center mt-4">
                             <img src="<?= url('themes/assets/img/salesman.png') ?>">
                         </div>
                         <div class="col-10">
-                            <h4 class="black-title-section">Gerar link de adesão</h4>
-                            <div class="h-50">
-                                <input name="generator" id="generator" class="form-input w-50 h-25">
-                                <button class="btn-3 primary h-75" type="button" onclick="generator()">Gerar</button>
-                                <button class="btn-3 secondary-color h-75" type="button" onclick="" id="copy"
-                                        data-clipboard-target="#generator">Copiar
-                                </button>
-                            </div>
+                            <h4 class="black-title-section">Ambulantes</h4>
+                            <p class="subtitle-section-p">Visualizar ambulantes vinculados a empresa.</p>
                         </div>
                     </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row m-0 mt-3 p-4 border-left-green-light div-request-license mb-5" onclick="openOrder()">
+                        <div class="col-2 text-center mt-4">
+                            <img src="<?= url('themes/assets/img/order.png') ?>">
+                        </div>
+                        <div class="col-10">
+                            <h4 class="black-title-section">Alvará</h4>
+                            <p class="subtitle-section-p">Acessar alvará.</p>
+                        </div>
+                    </div>
+<!--                    <div class="row m-0 mt-3 pt-4 pl-4 pr-4 pb-0 border-left-green div-request-license">-->
+<!--                        <div class="col-2 text-center mt-4">-->
+<!--                            <img src="--><?//= url('themes/assets/img/salesman.png') ?><!--">-->
+<!--                        </div>-->
+<!--                        <div class="col-10">-->
+<!--                            <h4 class="black-title-section">Gerar link de adesão</h4>-->
+<!--                            <div class="h-50">-->
+<!--                                <input name="generator" id="generator" class="form-input w-50 h-25">-->
+<!--                                <button class="btn-3 primary h-75" type="button" onclick="generator()">Gerar</button>-->
+<!--                                <button class="btn-3 secondary-color h-75" type="button" onclick="" id="copy"-->
+<!--                                        data-clipboard-target="#generator">Copiar-->
+<!--                                </button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </div>
             </div>
         </div>

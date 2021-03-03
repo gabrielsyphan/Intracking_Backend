@@ -212,8 +212,8 @@
                                         </div>
                                     </div>
 
-                                    <input type="hidden" name="licenseId" value="<?= $license->id; ?>">
-                                    <input type="hidden" name="userId" value="<?= $user_id; ?>">
+                                    <input type="hidden" name="licenseId" value="<?= md5($license->id); ?>">
+                                    <input type="hidden" name="userId" value="<?= md5($user->id); ?>">
 
                                     <div class="col-xl-12">
                                         <div class="form-group">
@@ -369,10 +369,37 @@
 
                 <div class="row">
                     <div class="col-3 subtitle-section-p">
-                        Proprietário:
+                        Cpf:
                     </div>
                     <div class="col-9 subtitle-section-p text-right">
-                        <?= $user ?>
+                        <?= $user->cpf ?>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-3 subtitle-section-p">
+                        Nome:
+                    </div>
+                    <div class="col-9 subtitle-section-p text-right">
+                        <?= $user->nome ?>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-3 subtitle-section-p">
+                        Email:
+                    </div>
+                    <div class="col-9 subtitle-section-p text-right">
+                        <?= $user->email ?>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-3 subtitle-section-p">
+                        Telefone:
+                    </div>
+                    <div class="col-9 subtitle-section-p text-right">
+                        <?= $user->telefone ?>
                     </div>
                 </div>
 
@@ -467,7 +494,7 @@
 
     $(function () {
         let paid = L.icon({
-            iconUrl: "<?= url("themes/assets/img/marker-1.png"); ?>",
+            iconUrl: "<?= url("themes/assets/img/marker-user-green.png"); ?>",
             shadowUrl: "<?= url("themes/assets/img/marker-shadow.png"); ?>",
 
             iconSize: [31, 40],
@@ -478,7 +505,7 @@
         });
 
         let pending = L.icon({
-            iconUrl: "<?= url("themes/assets/img/marker-0.png"); ?>",
+            iconUrl: "<?= url("themes/assets/img/marker-user-yellow.png"); ?>",
             shadowUrl: "<?= url("themes/assets/img/marker-shadow.png"); ?>",
 
             iconSize: [31, 40],
@@ -489,7 +516,7 @@
         });
 
         let expired = L.icon({
-            iconUrl: "<?= url("themes/assets/img/marker-2.png"); ?>",
+            iconUrl: "<?= url("themes/assets/img/marker-user-red.png"); ?>",
             shadowUrl: "<?= url("themes/assets/img/marker-shadow.png"); ?>",
 
             iconSize: [31, 40],
