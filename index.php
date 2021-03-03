@@ -25,6 +25,7 @@ $router->get("/createAccount", "Web:createAccount", "web.createAccount");
 $router->post("/validateAccount", "Web:validateAccount", "web.validateAccount");
 $router->get("/confirmAccount/{userId}", "Web:confirmAccount", "web.confirmAccount");
 $router->post("/confirmAccountPassword", "Web:confirmAccountPassword", "web.confirmAccountPassword");
+$router->get("/createUser", "Web:createUser", "web.createUser");
 
 $router->post("/checkAccount", "Web:checkAccount", "web.checkAccount");
 $router->post("/checkCnpj", "Web:checkCnpj", "web.checkCnpj");
@@ -84,6 +85,9 @@ $router->post("/validateSalesmanLicense", "Web:validateSalesmanLicense", "web.va
 $router->get("/companyLicense", "Web:companyLicense", "web.companyLicense");
 $router->post("/validateCompanyLicense", "Web:validateCompanyLicense", "web.validateCompanyLicense");
 
+$router->get("/teste", "Web:teste", "web.teste");
+
+$router->get("/response", "WebServiceSIAT:consultaImovel");
 $router->post("/neighborhoodPolygon", "Web:neighborhoodPolygon", "web.neighborhoodPolygon");
 $router->get("/neighborhood/{id}", "Web:neighborhood", "web.neighborhood");
 $router->post("/findNeighborhood", "Web:findNeighborhood", "web.findNeighborhood");

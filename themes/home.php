@@ -80,11 +80,12 @@
                         });
                     }else{
                         swal({
-                            icon: "error",
-                            title: "Erro!",
+                            icon: "warning",
+                            title: "Ops....!",
                             text: "Não foi possível enviar o email. Por favor, ente novamente mais tarde",
                         });
                     }
+                    console.log(returnData)
                 },
                 error: function(returnData){
                     $("#loader-div").hide();

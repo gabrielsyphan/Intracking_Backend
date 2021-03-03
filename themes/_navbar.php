@@ -26,64 +26,71 @@
                     Solicitar licença
                 </a>
             </li>
-
-            <li class="<?= ($router->isCurrentRoute("web.profile") ? 'active' : ''); ?>">
-                <a href="<?= url("profile"); ?>">
-                    <span class="icon-user"></span>
-                    Perfil
-                </a>
-            </li>
         <?php else: ?>
+        <li class="
+        <?= ($router->isCurrentRoute("web.licenseList") ? 'active' : ''); ?>
+        <?= ($router->isCurrentRoute("web.salesmanProfile") ? 'active' : ''); ?>
+        <?= ($router->isCurrentRoute("web.companyInfo") ? 'active' : ''); ?>
+        ">
+            <a href="<?= url("licenseList"); ?>">
+                <span class="icon-drivers-license"></span>
+                Licenças
+            </a>
+        </li>
+        <li class="<?= ($router->isCurrentRoute("web.paymentList") ? 'active' : ''); ?>">
+            <a href="<?= url("paymentList"); ?>">
+                <span class="icon-money"></span>
+                Pagamentos
+            </a>
+        </li>
 
-            <li class="
-    <?= ($router->isCurrentRoute("web.licenseList") ? 'active' : ''); ?>
-    <?= ($router->isCurrentRoute("web.salesmanProfile") ? 'active' : ''); ?>
-    <?= ($router->isCurrentRoute("web.companyInfo") ? 'active' : ''); ?>
-    ">
-                <a href="<?= url("licenseList"); ?>">
-                    <span class="icon-drivers-license"></span>
-                    Licenças
-                </a>
-            </li>
-            <li class="<?= ($router->isCurrentRoute("web.paymentList") ? 'active' : ''); ?>">
-                <a href="<?= url("paymentList"); ?>">
-                    <span class="icon-money"></span>
-                    Pagamentos
-                </a>
-            </li>
+        <li class="<?= ($router->isCurrentRoute("web.neighborhoodList") ? 'active' : ''); ?>">
+            <a href="<?= url("neighborhoodList"); ?>">
+                <span class="icon-map-marker"></span>
+                Bairros
+            </a>
+        </li>
 
-            <li class="<?= ($router->isCurrentRoute("web.neighborhoodList") ? 'active' : ''); ?>">
-                <a href="<?= url("neighborhoodList"); ?>">
-                    <span class="icon-map-marker"></span>
-                    Bairros
-                </a>
-            </li>
+        <li class="<?= ($router->isCurrentRoute("web.agentList") ? 'active' : ''); ?>">
+            <a href="<?= url("agentList"); ?>">
+                <span class="icon-users"></span>
+                Fiscais
+            </a>
+        </li>
 
-            <li class="<?= ($router->isCurrentRoute("web.agentList") ? 'active' : ''); ?>">
-                <a href="<?= url("agentList"); ?>">
-                    <span class="icon-users"></span>
-                    Fiscais
-                </a>
-            </li>
-
-            <li class="<?= ($router->isCurrentRoute("web.createZone") ? 'active' : ''); ?>">
-                <a href="<?= url("createZone"); ?>">
-                    <span class="icon-map-signs"></span>
-                    Cadastrar zona
-                </a>
-            </li>
-            <li class="<?= ($router->isCurrentRoute("web.createAgent") ? 'active' : ''); ?>">
-                <a href="<?= url("createAgent"); ?>">
-                    <span class="icon-user-secret"></span>
-                    Cadastrar fiscal
-                </a>
-            </li>
-            
+            <?php if ($_SESSION['user']['role'] == 4 || $_SESSION['user']['role'] == 2): ?>
+                <li class="<?= ($router->isCurrentRoute("web.createZone") ? 'active' : ''); ?>">
+                    <a href="<?= url("createZone"); ?>">
+                        <span class="icon-map-signs"></span>
+                        Nova zona
+                    </a>
+                </li>
+            <?php endif; ?>
+            <?php if ($_SESSION['user']['role'] == 4): ?>
+                <li class="<?= ($router->isCurrentRoute("web.createAgent") ? 'active' : ''); ?>">
+                    <a href="<?= url("createAgent"); ?>">
+                        <span class="icon-user-secret"></span>
+                        Novo fiscal
+                    </a>
+                </li>
+                <li class="<?= ($router->isCurrentRoute("web.createUser") ? 'active' : ''); ?>">
+                    <a href="<?= url("createUser"); ?>">
+                        <span class="icon-user-plus"></span>
+                        Novo usuário
+                    </a>
+                </li>
+            <?php endif; ?>
         <?php endif; ?>
         <li class="<?= ($router->isCurrentRoute("web.salesmanMap") ? 'active' : ''); ?>">
             <a href="<?= url("salesmanMap"); ?>">
                 <span class="icon-map"></span>
                 Mapa
+            </a>
+        </li>
+        <li class="<?= ($router->isCurrentRoute("web.profile") ? 'active' : ''); ?>">
+            <a href="<?= url("profile"); ?>">
+                <span class="icon-user"></span>
+                Perfil
             </a>
         </li>
         <li class="<?= ($router->isCurrentRoute("web.videos") ? 'active' : ''); ?>">
@@ -98,7 +105,6 @@
                 Sair
             </a>
         </li>
-        
     </ul>
 </nav>
 

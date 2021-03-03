@@ -108,8 +108,8 @@
             }).done(function (returnData) {
                 if (returnData == 0) {
                     swal({
-                        icon: "error",
-                        title: "Erro!",
+                        icon: "warning",
+                        title: "Ops...!",
                         text: "Essa combinação de login e senha não pertencem a um usuário.",
                     });
                 } else if (returnData == 1) {
@@ -124,9 +124,10 @@
                     });
                 }else {
                     swal({
-                        icon: "error",
-                        title: "Erro!",
-                        text: "Erro ao processar requisição",
+                        icon: "warning",
+                        title: "Ops...!",
+                        text: "Aconteceu algum problema. Verifique se seus dados estão corretos ou tente novamente" +
+                            "mais terde.",
                     });
                 }
                 console.log(returnData);

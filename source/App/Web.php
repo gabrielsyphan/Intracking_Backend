@@ -6,6 +6,7 @@ use Source\Models\Attach;
 use Source\Models\License;
 use Source\Models\LicenseType;
 use Source\Models\Neighborhood;
+use Source\Models\Role;
 use Source\Models\User;
 use Stonks\Router\Router;
 use League\Plates\Engine;
@@ -114,8 +115,8 @@ class Web
                         $_SESSION['user']['id'] = $user->id;
                         $_SESSION['user']['name'] = $user->nome;
                         $_SESSION['user']['email'] = $user->email;
-                        $_SESSION['user']['identity'] =  $user->cpf;
-
+                        $_SESSION['user']['identity'] = $user->cpf;
+                        
                         $validate = 1;
                     }
                 }
@@ -127,8 +128,8 @@ class Web
                 $attach = (new Attach())->find('id_usuario = :id', 'id=' . $agent->id)->fetch(false);
                 if ($attach) {
                     $_SESSION['user']['login'] = 3;
-                    $_SESSION['user']['identity'] = $data['identity'];
-                    $_SESSION['user']['tipo'] = $agent->tipo_fiscal;
+                    $_SESSION['user']['identity'] = $agent->cpf;
+                    $_SESSION['user']['role'] = $agent->tipo_fiscal;
                     $_SESSION['user']['id'] = $agent->id;
                     $_SESSION['user']['name'] = $agent->nome;
                     $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/agents/' . $attach->id_usuario
@@ -592,7 +593,7 @@ class Web
                         $companyLicenses = (new License())->find('id_usuario = :id AND tipo = 2', 'id=' . $_SESSION['user']['id'], 'id')->fetch(true);
                         if ($companyLicenses) {
                             foreach ($companyLicenses as $companyLicense) {
-                                if ($licenseInfo->id_empresa == $companyLicense->id){
+                                if ($licenseInfo->id_empresa == $companyLicense->id) {
                                     $aux = true;
                                 }
                             }
@@ -627,7 +628,7 @@ class Web
                     $salesmans = (new Salesman())->find('id_empresa= :id', 'id=' . $license->id)->fetch(true);
                     $arrayAux = array();
 
-                    if($salesmans){
+                    if ($salesmans) {
                         foreach ($salesmans as $salesman) {
                             $salesmanLicense = (new License())->findById($salesman->id_licenca);
                             if ($salesmanLicense) {
@@ -682,7 +683,7 @@ class Web
 
         $register = (new License())->findById($data['id']);
 
-        if($register){
+        if ($register) {
             $register->status = $data['status'];
             $register->save();
         }
@@ -1395,11 +1396,13 @@ class Web
 
         if ($_SESSION['user']['login'] === 0) {
             $user = (new User())->findById($_SESSION['user']['id']);
-            $payments = (new Payment())->find('id_usuario = :id', 'id=' . $_SESSION['user']['id'])->fetch(true);
+            $payments = (new Payment())->find('id_usuario = :id', 'id=' . $_SESSION['user']['id'])
+                ->fetch(true);
 
             $folder = ROOT . '/themes/assets/uploads';
             $uploads = array();
-            $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 0', 'id=' . $user->id)->fetch(true);
+            $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 0', 'id=' . $user->id)
+                ->fetch(true);
             if ($attachments) {
                 foreach ($attachments as $attach) {
                     $attachName = explode('.', $attach->nome);
@@ -1423,6 +1426,41 @@ class Web
                 'uploads' => $uploads,
                 'userImage' => $userImage
             ]);
+        } else if ($_SESSION['user']['login'] === 3) {
+            $agent = (new Agent())->findById($_SESSION['user']['id']);
+
+            if ($agent) {
+                $folder = ROOT . '/themes/assets/uploads';
+                $uploads = array();
+                $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 3', 'id=' . $agent->id)
+                    ->fetch(true);
+
+                $role = (new Role())->findById($agent->tipo_fiscal);
+
+                if ($attachments) {
+                    foreach ($attachments as $attach) {
+                        $attachName = explode('.', $attach->nome);
+                        if ($attachName[0] == 'userImage') {
+                            $userImage = ROOT . '/themes/assets/uploads/agents/' . $attach->id_usuario
+                                . '/' . $attach->nome;
+                        }
+
+                        $uploads[] = [
+                            'fileName' => $attach->nome,
+                            'groupName' => 'agents',
+                            'userId' => $agent->id
+                        ];
+                    }
+                }
+
+                echo $this->view->render('profile', [
+                    'title' => 'Perfil | ' . SITE,
+                    'user' => $agent,
+                    'uploads' => $uploads,
+                    'userImage' => $userImage,
+                    'role' => $role
+                ]);
+            }
         } else {
             $this->router->redirect('web.salesmanList');
         }
@@ -1434,7 +1472,8 @@ class Web
 
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
-        $user = (new User())->find("MD5(id) = :id", "id=".$data['id'])->fetch(false);
+        $user = (new User())->find("MD5(id) = :id", "id=" . $data['id'])->fetch(false);
+        $agent = (new Agent())->find("MD5(id) = :id", "id=" . $data['id'])->fetch(false);
         $response = false;
         if ($user) {
             $user->email = $data['email'];
@@ -1443,6 +1482,14 @@ class Web
             $user->save();
 
             if (!$user->fail()) {
+                $response = true;
+            }
+        } else if ($agent) {
+            $agent->email = $data['email'];
+            $agent->telefone = $data['phone'];
+            $agent->save();
+
+            if (!$agent->fail()) {
                 $response = true;
             }
         }
@@ -2007,7 +2054,7 @@ class Web
     /**
      * @return void
      */
-    public function createZone()
+    public function createZone(): void
     {
         $this->checkAgent();
 
@@ -2031,6 +2078,15 @@ class Web
     /**
      * @return void
      */
+    public function createUser(): void
+    {
+        $this->checkAgent();
+
+        echo $this->view->render("createUser", [
+            'title' => 'Cadastrar novo usuário | ' . SITE
+        ]);
+    }
+
     /**
      * @return void
      */
@@ -2077,6 +2133,8 @@ class Web
             $agent->nome = $data['name'];
             $agent->tipo_fiscal = 3;
             $agent->situacao = 0;
+            $agent->telefone = $data['phone'];
+            $agent->tipo_fiscal = $data['jobRole'];
             $agent->save();
 
             $dir = $folder . '/agents/' . $agent->id;
@@ -2659,28 +2717,28 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
         $validate = false;
-        $salesman = (new Salesman())->find('MD5(id) = :id', 'id='. $data['licenseId'])->fetch();
+        $salesman = (new Salesman())->find('MD5(id) = :id', 'id=' . $data['licenseId'])->fetch();
         $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" .
             url("order") . "/" . $data['licenseId'];
         if ($salesman) {
-           $license = (new License())->findById($salesman->id_licenca);
-           if ($license) {
-               $user = (new User())->findById($license->id_usuario);
-               $template = file_get_contents(THEMES . "/assets/orders/salesmanOrder.php");
-               $variables = array("%qrcode%" ,"%process%", "%name%", "%identity%", "%ativity%", "%equipaments%", "%width%",
-                   "%street%", "%aux%", "%day%", "%month%", "%year%", "%day2%", "%month2%", "%year2%");
-               $dataReplace = array($qrUrl ,"", $user->nome, $user->cpf, $salesman->relato_atividade,
-                   $salesman->tipo_equipamento, $salesman->area_equipamento, $salesman->local_endereco, "",
-                   date('d', strtotime($license->data_inicio)), date('m', strtotime($license->data_inicio)),
-                   date('Y', strtotime($license->data_inicio)),
-                   date('d', strtotime($license->data_fim)), date('m', strtotime($license->data_fim)),
-                   date('Y', strtotime($license->data_fim)));
-               $template = str_replace($variables, $dataReplace, $template);
+            $license = (new License())->findById($salesman->id_licenca);
+            if ($license) {
+                $user = (new User())->findById($license->id_usuario);
+                $template = file_get_contents(THEMES . "/assets/orders/salesmanOrder.php");
+                $variables = array("%qrcode%", "%process%", "%name%", "%identity%", "%ativity%", "%equipaments%", "%width%",
+                    "%street%", "%aux%", "%day%", "%month%", "%year%", "%day2%", "%month2%", "%year2%");
+                $dataReplace = array($qrUrl, "", $user->nome, $user->cpf, $salesman->relato_atividade,
+                    $salesman->tipo_equipamento, $salesman->area_equipamento, $salesman->local_endereco, "",
+                    date('d', strtotime($license->data_inicio)), date('m', strtotime($license->data_inicio)),
+                    date('Y', strtotime($license->data_inicio)),
+                    date('d', strtotime($license->data_fim)), date('m', strtotime($license->data_fim)),
+                    date('Y', strtotime($license->data_fim)));
+                $template = str_replace($variables, $dataReplace, $template);
 
-               if ($template) {
-                   $validate = true;
-               }
-           }
+                if ($template) {
+                    $validate = true;
+                }
+            }
         }
 
         if ($validate) {
@@ -2709,8 +2767,7 @@ class Web
      * @return void
      * Send contact Email
      */
-    public
-    function formContact($data): void
+    public function formContact($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
@@ -2718,8 +2775,8 @@ class Web
 
         $message = file_get_contents(THEMES . "/assets/emails/notificationEmail.php");
 
-        $template = array("%title", "%textBody", "%status", "%titleStatus", "%name", "%dataTitle", "%dataDescription");
-        $dataReplace = array("Recebemos uma mensagem", "recebemos uma mensagem de", "MULTA", "multa", $salesman->nome, $data['title'], $data['description']);
+        $template = array("%title", "%textBody", "%name", "%dataTitle", "%dataDescription");
+        $dataReplace = array("Recebemos uma mensagem", "recebemos uma mensagem de", $_SESSION['user']['name'], $data['phone'], $data['description']);
         $message = str_replace($template, $dataReplace, $message);
 
         $email->add(
@@ -2852,6 +2909,46 @@ class Web
         echo json_encode($neighborhoodData);
     }
 
+    public function teste(): void
+    {
+        $cpf = "03432534701";
+
+        $soap_input =
+            '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:e="e-Agata_18.11">
+               <soapenv:Header/>
+               <soapenv:Body>
+                  <e:PWSRetornoPertences.Execute>
+                     <e:Flagtipopesquisa>C</e:Flagtipopesquisa>
+                     <e:Ctgcpf>' . $cpf . '</e:Ctgcpf>
+                     <e:Ctiinscricao></e:Ctiinscricao>
+                  </e:PWSRetornoPertences.Execute>
+               </soapenv:Body>
+            </soapenv:Envelope>';
+
+        $curl = curl_init();
+
+        curl_setopt($curl, CURLOPT_URL, PERTENCES);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $soap_input);
+        curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+        $soap_response = curl_exec($curl);
+
+        $xml_response = str_ireplace(['SOAP-ENV:', 'SOAP:', '.executeresponse', '.SDTRetornoPertences'], '', $soap_response);
+
+        @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
+        $companys = $xml->Body->PWSRetornoPertences->Sdtretornopertences->SDTRetornoPertencesItem->SDTRetornoPertencesEmpresa->SDTRetornoPertencesEmpresaItem;
+
+        $companyAux = 0;
+        if ($companys !== "") {
+            foreach ($companys as $company) {
+                if ($company->SRPAutonomo == "A") {
+                    var_dump($company);
+                }
+            }
+        }
+    }
     public function findNeighborhood($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);

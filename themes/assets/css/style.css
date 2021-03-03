@@ -958,13 +958,13 @@ tbody > tr:hover {
 }
 
 .loader-spin {
-    border: 10px solid #f3f3f3;
+    border: 6px solid #f3f3f3;
     border-radius: 50%;
-    border-top: 10px solid #5ea9a4;
-    width: 70px;
-    height: 70px;
+    border-top: 6px solid #4fb6bf;
+    width: 55px;
+    height: 55px;
     -webkit-animation: spin 2s linear infinite;
-    animation: spin 2s linear infinite;
+    animation: spin 0.7s linear infinite
 }
 
 @keyframes spin {

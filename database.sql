@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 03-Mar-2021 às 14:48
+-- Tempo de geração: 03-Mar-2021 às 16:42
 -- Versão do servidor: 10.4.13-MariaDB
 -- versão do PHP: 7.4.8
 
@@ -91,7 +91,8 @@ INSERT INTO `anexos` (`id`, `nome`, `tipo_usuario`, `id_usuario`) VALUES
 (74, 'socialContract.jpeg', '2', 26),
 (75, 'businessLicense.png', '2', 26),
 (76, 'otherDocument.png', '2', 26),
-(77, 'equipmentImage.jpg', '1', 27);
+(77, 'equipmentImage.jpg', '1', 27),
+(78, 'userImage.png', '3', 3);
 
 -- --------------------------------------------------------
 
@@ -300,7 +301,7 @@ CREATE TABLE `fiscais` (
 --
 
 INSERT INTO `fiscais` (`id`, `matricula`, `nome`, `email`, `senha`, `cpf`, `telefone`, `tipo_fiscal`, `situacao`) VALUES
-(1, '111111-1', 'Lucas Gabriel Peixoto de Oliveira', 'lucasgabrielpdoliveira@gmail.com', '698d51a19d8a121ce581499d7b701668', '111.657.194-36', '82 9 8718-0470', 0, 1),
+(1, '111111-1', 'Lucas Gabriel Peixoto de Oliveira', 'lucasgabrielpdoliveira@gmail.com', '698d51a19d8a121ce581499d7b701668', '111.657.194-36', '82 9 8718-0470', 4, 1),
 (2, '222222-2', 'Ruan Ramírez', 'ruanramirez01@gmail.com', '', '034.325.347-01', '82 9 9931-6991', 3, 0);
 
 -- --------------------------------------------------------
@@ -385,9 +386,18 @@ CREATE TABLE `status_licencas` (
 
 CREATE TABLE `tipo_fiscal` (
   `id` int(11) NOT NULL,
-  `numero` int(11) NOT NULL,
   `nome` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Extraindo dados da tabela `tipo_fiscal`
+--
+
+INSERT INTO `tipo_fiscal` (`id`, `nome`) VALUES
+(1, 'Estagiário'),
+(2, 'Fiscal'),
+(3, 'Finanças'),
+(4, 'Gestor');
 
 -- --------------------------------------------------------
 
@@ -629,7 +639,7 @@ ALTER TABLE `ambulantes`
 -- AUTO_INCREMENT de tabela `anexos`
 --
 ALTER TABLE `anexos`
-  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
 
 --
 -- AUTO_INCREMENT de tabela `boletos`
@@ -653,7 +663,7 @@ ALTER TABLE `eventual`
 -- AUTO_INCREMENT de tabela `fiscais`
 --
 ALTER TABLE `fiscais`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `licencas`
@@ -683,7 +693,7 @@ ALTER TABLE `status_licencas`
 -- AUTO_INCREMENT de tabela `tipo_fiscal`
 --
 ALTER TABLE `tipo_fiscal`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de tabela `tipo_licenca`

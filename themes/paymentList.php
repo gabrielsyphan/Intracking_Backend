@@ -112,11 +112,10 @@
                         </a>
                     </div>
                 </div>
-
             </div>
-            <hr style="margin-bottom: 0">
+            <hr class="mb-0">
             <div class="box-div-info-overflow-x">
-                <?php if ($payments == NULL): ?>
+                <?php if (!$payments): ?>
                     <div class="p-5 mt-5 text-center">
                         <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
                         <p class="mt-5 subtitle-section-p">Ops! Não encontramos nenhum pagamento para exibir

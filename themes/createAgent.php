@@ -63,35 +63,55 @@
                                             <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
-
-                                    <div class="col-xl-6">
-                                        <div class="form-group align-items-center">
-                                            <label class="label-left">Foto de perfil: <span class="spanAlert">(Opcional)</span></label>
-                                        </div>
-                                    </div>
                                     <div class="col-xl-6">
                                         <div class="form-group">
-                                            <label for="agentImage"
-                                                   class="label-file text-center item-max-width agentImage-file"><span
-                                                        class="icon-plus mr-2"></span> Selecionar
-                                                Arquivo</label>
-                                            <input type="file" class="hidden-input-file" id="agentImage"
-                                                   name="agentImage"
-                                                   accept="image/png, image/jpg, image/jpeg"
-                                                   onchange="uploadImage(this)">
-                                            <div class="agentImage-file-uploaded file-uploaded-container">
-                                                <div class="card-content-upload text-center p-3">
-                                                    <div class="card-content-type-upload">
-                                                        <span class="agentImage-type"></span>
+                                            <label>Telefone:</label>
+                                            <input type="text" class="form-input" id="phone"
+                                                   name="phone"
+                                                   title="Telefone" placeholder="Seu Telefone">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label>Cargo:</label>
+                                            <select class="form-input" name="jobRole">
+                                                <option value="1">Estagiário</option>
+                                                <option value="2" selected>Fiscal</option>
+                                                <option value="3">Finanças</option>
+                                                <option value="4">Gestor</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-12">
+                                        <div class="form-group">
+                                            <label>Foto de perfil: <span class="spanAlert">(Opcional)</span></label>
+                                            <div class="form-group">
+                                                <label for="agentImage"
+                                                       class="label-file text-center item-max-width agentImage-file"><span
+                                                            class="icon-plus mr-2"></span> Selecionar
+                                                    Arquivo</label>
+                                                <input type="file" class="hidden-input-file" id="agentImage"
+                                                       name="agentImage"
+                                                       accept="image/png, image/jpg, image/jpeg"
+                                                       onchange="uploadImage(this)">
+                                                <div class="agentImage-file-uploaded file-uploaded-container">
+                                                    <div class="card-content-upload text-center p-3">
+                                                        <div class="card-content-type-upload">
+                                                            <span class="agentImage-type"></span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="ml-3 text-left">
-                                                    <div class="d-flex">
-                                                        <p class="agentImage-name"></p>
-                                                        <span id="agentImage-span-close" class="icon-close ml-3 card-close-file"
-                                                              onclick="changeFile(this)"></span>
+                                                    <div class="ml-3 text-left">
+                                                        <div class="d-flex">
+                                                            <p class="agentImage-name"></p>
+                                                            <span id="agentImage-span-close"
+                                                                  class="icon-close ml-3 card-close-file"
+                                                                  onclick="changeFile(this)"></span>
+                                                        </div>
+                                                        <div class="card-content-progress"></div>
                                                     </div>
-                                                    <div class="card-content-progress"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -103,7 +123,7 @@
                 </div>
                 <div class="col-xl-6 mt-5">
                     <div class="div-gray-bg border-top-green p-5 text-center">
-                        <img class="mt-5 mb-5" style="width: 66%" src="<?= url('themes/assets/img/agent.svg') ?>">
+                        <img class="mt-5 mb-5" style="width: 59%" src="<?= url('themes/assets/img/agent.svg') ?>">
 
                         <h1 class="black-title-section">Cadastrar Fiscal</h1>
                         <div class="pr-5 pl-5">
@@ -127,90 +147,92 @@
 </div>
 
 <?php $v->start('scripts'); ?>
-    <script>
-        $("#identity").mask('000.000.000-00');
+<script>
+    $("#identity").mask('000.000.000-00');
+    $("#registration").mask('000000-0');
+    $("#phone").mask('00 0 0000-0000');
 
-        $('#form').on('submit', function (e) {
-            e.preventDefault();
-            $("#loader-div").show();
+    $('#form').on('submit', function (e) {
+        e.preventDefault();
+        $("#loader-div").show();
 
-            const _thisForm = $(this);
-            const data = new FormData(this);
-            const fieldsetDisable = _thisForm.find('fieldset');
-            fieldsetDisable.attr('disabled', true);
+        const _thisForm = $(this);
+        const data = new FormData(this);
+        const fieldsetDisable = _thisForm.find('fieldset');
+        fieldsetDisable.attr('disabled', true);
 
-            if (formSubmit(this) === true) {
-                $.ajax({
-                    type: _thisForm.attr('method'),
-                    url: _thisForm.attr('action'),
-                    data: data,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                }).done(function (returnData) {
-                    if (returnData == 'success') {
-                        swal({
-                            icon: "success",
-                            title: "Tudo certo!",
-                            text: "Acesse seu email para confirmar seu cadastro e criar sua senha.",
-                        }).then((result) => {
-                            window.location.href = "<?= $router->route('web.home') ?>";
-                        });
-                        $("#form").trigger("reset");
-                        changeFile();
-                    } else if (returnData == 'already_exist') {
-                        swal({
-                            icon: "error",
-                            title: "Erro",
-                            text: "Já existe alguém cadastrado com esses dados.",
-                        });
-                    } else if (returnData == 'registrationError') {
-                        swal({
-                            icon: "error",
-                            title: "Erro",
-                            text: "CPF inválido. Por favor, insira um CPF válido.",
-                        });
-                    } else if (returnData == 'require_registration') {
-                        swal({
-                            icon: "warning",
-                            title: "Atenção",
-                            text: "Não será possível realizar o cadastro. Por favor, dirija-se a secretaria de economia e realize seu cadastro mercantil de pessoa física ou jurídica para então dar prosseguimento com o do Orditi.",
-                        });
-                    } else {
-                        swal({
-                            icon: "error",
-                            title: "Erro!",
-                            text: "Não foi possível realizar o cadastro. Por favor, tente novamente mais tarde.",
-                        });
-                    }
-                    console.log(returnData);
-                }).fail(function (e) {
+        if (formSubmit(this) === true) {
+            $.ajax({
+                type: _thisForm.attr('method'),
+                url: _thisForm.attr('action'),
+                data: data,
+                cache: false,
+                contentType: false,
+                processData: false,
+            }).done(function (returnData) {
+                if (returnData == 'success') {
+                    swal({
+                        icon: "success",
+                        title: "Tudo certo!",
+                        text: "Acesse seu email para confirmar seu cadastro e criar sua senha.",
+                    }).then((result) => {
+                        window.location.reload();
+                    });
+                    $("#form").trigger("reset");
+                    changeFile();
+                } else if (returnData == 'already_exist') {
+                    swal({
+                        icon: "error",
+                        title: "Erro",
+                        text: "Já existe alguém cadastrado com esses dados.",
+                    });
+                } else if (returnData == 'registrationError') {
+                    swal({
+                        icon: "error",
+                        title: "Erro",
+                        text: "CPF inválido. Por favor, insira um CPF válido.",
+                    });
+                } else if (returnData == 'require_registration') {
+                    swal({
+                        icon: "warning",
+                        title: "Atenção",
+                        text: "Não será possível realizar o cadastro. Por favor, dirija-se a secretaria de economia e realize seu cadastro mercantil de pessoa física ou jurídica para então dar prosseguimento com o do Orditi.",
+                    });
+                } else {
                     swal({
                         icon: "error",
                         title: "Erro!",
-                        text: "Erro ao processar requisição",
+                        text: "Não foi possível realizar o cadastro. Por favor, tente novamente mais tarde.",
                     });
-                    console.log(e);
-                }).always(function () {
-                    $("#loader-div").hide();
-                    fieldsetDisable.removeAttr("disabled");
-                });
-            }
-        });
-
-        function validateCpf(e) {
-            $("#loader-div").show();
-            let cpf = formatedCPF(e);
-
-            if (checkCpf(cpf) == false) {
+                }
+                console.log(returnData);
+            }).fail(function (e) {
                 swal({
                     icon: "error",
-                    title: "Erro",
-                    text: "O CPF digitado não é válido. Por favor, insira um CPF válido e tente novamente.",
+                    title: "Erro!",
+                    text: "Erro ao processar requisição",
                 });
-            }
-
-            $("#loader-div").hide();
+                console.log(e);
+            }).always(function () {
+                $("#loader-div").hide();
+                fieldsetDisable.removeAttr("disabled");
+            });
         }
-    </script>
+    });
+
+    function validateCpf(e) {
+        $("#loader-div").show();
+        let cpf = formatedCPF(e);
+
+        if (checkCpf(cpf) == false) {
+            swal({
+                icon: "error",
+                title: "Erro",
+                text: "O CPF digitado não é válido. Por favor, insira um CPF válido e tente novamente.",
+            });
+        }
+
+        $("#loader-div").hide();
+    }
+</script>
 <?php $v->end(); ?>

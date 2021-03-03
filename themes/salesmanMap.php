@@ -52,16 +52,7 @@
         mapLayers["Área das zonas"] = L.layerGroup();
         ctrLayers["Área das zonas"] = mapLayers["Área das zonas"];
 
-        <?php if($expireds || $paids || $pendings): ?>
-        mapLayers["Ambulantes - Em dia"] = L.layerGroup();
-        ctrLayers["Ambulantes - Em dia"] = mapLayers["Ambulantes - Em dia"];
 
-        mapLayers["Ambulantes - Pendentes"] = L.layerGroup();
-        ctrLayers["Ambulantes - Pendentes"] = mapLayers["Ambulantes - Pendentes"];
-
-        mapLayers["Ambulantes - Vencidos"] = L.layerGroup();
-        ctrLayers["Ambulantes - Vencidos"] = mapLayers["Ambulantes - Vencidos"];
-        <?php endif; ?>
 
         mapLayers["Bairros"] = L.layerGroup();
         ctrLayers["Bairros"] = mapLayers["Bairros"];

@@ -2,6 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7969065d-fc6e-4bee-9c08-d9fa595d99a4" name="Default Changelist" comment="">
+<<<<<<< HEAD
+      <change afterPath="$PROJECT_DIR$/source/App/WebServiceSIAT.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/App/Web.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/App/Web.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/_navbar.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/_navbar.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/assets/uploads/agents/22/userImage.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/createAgent.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/createAgent.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/createUser.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/createUser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/profile.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/profile.php" afterDir="false" />
+=======
       <change afterPath="$PROJECT_DIR$/source/Models/Neighborhood.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/themes/neighborhood.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/themes/neighborhoodList.php" afterDir="false" />
@@ -143,6 +154,7 @@
       <change beforePath="$PROJECT_DIR$/vendor/phpseclib/phpseclib/phpseclib/System/SSH/Agent/Identity.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/phpseclib/phpseclib/phpseclib/System/SSH/Agent/Identity.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/phpseclib/phpseclib/phpseclib/bootstrap.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/phpseclib/phpseclib/phpseclib/bootstrap.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/phpseclib/phpseclib/phpseclib/openssl.cnf" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/phpseclib/phpseclib/phpseclib/openssl.cnf" afterDir="false" />
+>>>>>>> origin/gabriel
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -151,9 +163,13 @@
   </component>
   <component name="ComposerSettings" doNotAsk="true">
     <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+<<<<<<< HEAD
+    <execution />
+=======
     <execution>
       <executable />
     </execution>
+>>>>>>> origin/gabriel
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -199,7 +215,11 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js.last.introduce.type" value="LET" />
+<<<<<<< HEAD
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/themes" />
+=======
     <property name="last_opened_file_path" value="$PROJECT_DIR$/themes/assets/orders" />
+>>>>>>> origin/gabriel
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -211,11 +231,19 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+<<<<<<< HEAD
+      <recent name="C:\xampp\htdocs\OrditiWeb\themes" />
+      <recent name="C:\xampp\htdocs\OrditiWeb\themes\assets\emails" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+=======
       <recent name="C:\xampp\htdocs\OrditiWeb\themes\assets\orders" />
       <recent name="C:\xampp\htdocs\OrditiWeb\themes\assets\emails" />
     </key>
   </component>
   <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+>>>>>>> origin/gabriel
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -240,29 +268,48 @@
       <workItem from="1614007731104" duration="4613000" />
       <workItem from="1614081329037" duration="8798000" />
       <workItem from="1614253388259" duration="13695000" />
+<<<<<<< HEAD
+      <workItem from="1614336366150" duration="3452000" />
+      <workItem from="1614346195814" duration="3184000" />
+      <workItem from="1614599078159" duration="10630000" />
+      <workItem from="1614678092456" duration="6360000" />
+      <workItem from="1614767520977" duration="9438000" />
+=======
       <workItem from="1614336366150" duration="3096000" />
       <workItem from="1614597635174" duration="14848000" />
       <workItem from="1614629575563" duration="570000" />
       <workItem from="1614684894444" duration="13655000" />
       <workItem from="1614770136006" duration="6215000" />
+>>>>>>> origin/gabriel
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
+<<<<<<< HEAD
+    <option name="version" value="3" />
+=======
     <option name="version" value="1" />
+>>>>>>> origin/gabriel
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
           <value>
+<<<<<<< HEAD
+            <State />
+=======
             <State>
               <option name="COLUMN_ORDER" />
             </State>
+>>>>>>> origin/gabriel
           </value>
         </entry>
       </map>
     </option>
+<<<<<<< HEAD
+    <option name="oldMeFiltersMigrated" value="true" />
+=======
   </component>
   <component name="WindowStateProjectService">
     <state x="2646" y="405" key="NewPhpFileDialog" timestamp="1614613286593">
@@ -285,5 +332,6 @@
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="2452" y="-5" width="838" height="1032" key="search.everywhere.popup/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1614693407171" />
+>>>>>>> origin/gabriel
   </component>
 </project>

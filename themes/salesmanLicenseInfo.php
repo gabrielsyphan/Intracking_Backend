@@ -46,7 +46,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <?php $aux++; endforeach; endif; ?>
+                            <?php $aux++; endforeach; endif; ?>
                     </div>
                 </div>
             </div>
@@ -270,34 +270,8 @@
             <p class="subtitle-section-p">Informações da licença de ambulante</p>
             <hr>
         </div>
-        <div class="col-xl-3">
-            <div class="div-gray-bg border-top-green p-5 mb-5">
-                <h4 class="black-title-section">Dias trabalhados</h4>
-                <hr>
-                <?php foreach (str_split($license->atendimento_dias) as $days):
-                    if ($days == 0): ?>
-                        <p class="subtitle-section-p">Domingo</p>
-                    <?php elseif ($days == 1): ?>
-                        <p class="subtitle-section-p">Segunda-Feira</p>
-                    <?php elseif ($days == 2): ?>
-                        <p class="subtitle-section-p">Terça-Feira</p>
-                    <?php elseif ($days == 3): ?>
-                        <p class="subtitle-section-p">Quarta-Feira</p>
-                    <?php elseif ($days == 4): ?>
-                        <p class="subtitle-section-p">Quinta-Feira</p>
-                    <?php elseif ($days == 5): ?>
-                        <p class="subtitle-section-p">Sexta-Feira</p>
-                    <?php elseif ($days == 6): ?>
-                        <p class="subtitle-section-p">Sábado</p>
-                    <?php endif; endforeach; ?>
-
-                <h4 class="black-title-section mt-5">Horário de trabalho</h4>
-                <hr>
-                <p class="subtitle-section-p"><?= $license->atendimento_hora_inicio ?>
-                    - <?= $license->atendimento_hora_fim ?></p>
-            </div>
-
-            <div class="row m-0 mt-3 p-4 border-left-green div-request-license mb-5" onclick="openModal(2)">
+        <div class="col-md-3">
+            <div class="row m-0 p-4 border-left-green div-request-license mb-5" onclick="openModal(2)">
                 <div class="col-2 text-center mt-4">
                     <img src="<?= url('themes/assets/img/cash-payment.png') ?>">
                 </div>
@@ -324,6 +298,26 @@
                 <div class="col-10">
                     <h4 class="black-title-section">Alvará</h4>
                     <p class="subtitle-section-p">Acessar alvará.</p>
+                </div>
+            </div>
+
+            <div class="row m-0 mt-3 p-4 border-left-green div-request-license mb-5">
+                <div class="col-2 text-center mt-4">
+                    <img src="<?= url('themes/assets/img/auxIcon.png') ?>">
+                </div>
+                <div class="col-10">
+                    <h4 class="black-title-section">Auxiliares</h4>
+                    <p class="subtitle-section-p">Visualizar auxiliares.</p>
+                </div>
+            </div>
+
+            <div class="row m-0 mt-3 p-4 border-left-green div-request-license mb-5">
+                <div class="col-2 text-center mt-4">
+                    <img src="<?= url('themes/assets/img/mapIcon.png') ?>">
+                </div>
+                <div class="col-10">
+                    <h4 class="black-title-section">Mapa</h4>
+                    <p class="subtitle-section-p">Geolocalização da licença.</p>
                 </div>
             </div>
 
@@ -362,7 +356,7 @@
                 </div>
             <?php endif; ?>
         </div>
-        <div class="col-xl-9 mb-5">
+        <div class="col-md-9 mb-5">
             <div class="div-gray-bg border-top-green p-5">
                 <h4 class="black-title-section">Informações da licença</h4>
                 <hr>
@@ -473,6 +467,35 @@
                     <?php elseif ($product == 7): ?>
                         <p class="subtitle-section-p"><?= $license->relato_atividade ?></p>
                     <?php endif; endforeach; ?>
+
+                    <div class="row mt-5">
+                        <div class="col-md-6">
+                            <h4 class="black-title-section">Dias trabalhados</h4>
+                            <hr>
+                            <?php foreach (str_split($license->atendimento_dias) as $days):
+                                if ($days == 0): ?>
+                                    <p class="subtitle-section-p">Domingo</p>
+                                <?php elseif ($days == 1): ?>
+                                    <p class="subtitle-section-p">Segunda-Feira</p>
+                                <?php elseif ($days == 2): ?>
+                                    <p class="subtitle-section-p">Terça-Feira</p>
+                                <?php elseif ($days == 3): ?>
+                                    <p class="subtitle-section-p">Quarta-Feira</p>
+                                <?php elseif ($days == 4): ?>
+                                    <p class="subtitle-section-p">Quinta-Feira</p>
+                                <?php elseif ($days == 5): ?>
+                                    <p class="subtitle-section-p">Sexta-Feira</p>
+                                <?php elseif ($days == 6): ?>
+                                    <p class="subtitle-section-p">Sábado</p>
+                                <?php endif; endforeach; ?>
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="black-title-section">Horário de trabalho</h4>
+                            <hr>
+                            <p class="subtitle-section-p"><?= $license->atendimento_hora_inicio ?>
+                                - <?= $license->atendimento_hora_fim ?></p>
+                        </div>
+                    </div>
             </div>
             <div class="div-gray-bg border-top-green mt-5 p-5">
                 <h4 class="black-title-section">Local de trabalho</h4>
