@@ -134,7 +134,7 @@
                 <h3 class="black-title-section">Ambulantes</h3>
                 <p class="subtitle-section-p">Todos os ambulantes cadastrados da licença.</p>
                 <div class="d-flex">
-                    <input name="generator" id="generator" class="form-input w-25" style="height: 42px !important; border-radius: 6px 0 0 6px;">
+                    <input name="generator" id="generator" class="form-input w-50" style="height: 42px !important; border-radius: 6px 0 0 6px;" value="<?= url('licenseUser/') . $license->acesso; ?>">
                     <button class="btn-3 primary" type="button" onclick="generator()" style="border-radius: 0 6px 6px 0;">
                         <span class="icon-person_add"></span>
                     </button>
@@ -260,6 +260,15 @@
 
                 <div class="row mt-5">
                     <div class="col-3 subtitle-section-p">
+                        Relato da atividade:
+                    </div>
+                    <div class="col-9 subtitle-section-p text-right">
+                        <?= $license->relato_atividade ?>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-3 subtitle-section-p">
                         Endereço:
                     </div>
                     <div class="col-9 subtitle-section-p text-right">
@@ -287,7 +296,7 @@
                     <?php elseif ($product == 6): ?>
                         <p class="subtitle-section-p">Artesanato, antiguidades e artigos de arte em geral</p>
                     <?php elseif ($product == 7): ?>
-                        <p class="subtitle-section-p"><?= $license->relato_atividade ?></p>
+                        <p class="subtitle-section-p"><?= $license->outro_produto ?></p>
                     <?php endif; endforeach; ?>
             </div>
             <div class="row mt-3">
@@ -361,7 +370,10 @@
         let date = new Date()
 
         async function sha256(date) {
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
             // encode as UTF-8
             const msgBuffer = new TextEncoder('utf-8').encode(date);
 
@@ -412,5 +424,9 @@
             text: "Não foi possível copiar o link.",
         });
     });
+
+    function openOrder() {
+        window.open('<?= url('order') ?>/2/<?= md5($license->id) ?>', '_blank')
+    }
 </script>
 <?php $v->end(); ?>

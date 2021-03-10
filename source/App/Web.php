@@ -6,6 +6,7 @@ use Source\Models\Attach;
 use Source\Models\License;
 use Source\Models\LicenseType;
 use Source\Models\Neighborhood;
+use Source\Models\Punishment;
 use Source\Models\Role;
 use Source\Models\User;
 use Stonks\Router\Router;
@@ -116,6 +117,7 @@ class Web
                         $_SESSION['user']['name'] = $user->nome;
                         $_SESSION['user']['email'] = $user->email;
                         $_SESSION['user']['identity'] = $user->cpf;
+                        $_SESSION['user']['role'] = 0;
                         
                         $validate = 1;
                     }
@@ -505,6 +507,8 @@ class Web
             ]);
 
         }
+
+        echo $validate;
     }
 
     /**
@@ -575,11 +579,10 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $validate = false;
         $aux = false;
+        $notifications = false;
 
         $license = (new License())->find('MD5(id) = :id', 'id=' . $data['licenseId'])->fetch();
         $agents = (new Agent())->find('', '', 'id, nome')->fetch(true);
-        $notifications = false;
-        $notificatonAgents = array();
         if ($license) {
             $payments = (new Payment())->find('id_licenca = :id', 'id=' . $license->id)->fetch(true);
             $user = (new User())->findById($license->id_usuario);
@@ -616,7 +619,8 @@ class Web
                         }
                         break;
                     case 2:
-                        $licenseInfo = (new Company())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
+                        $licenseInfo = (new Company())->find('id_licenca = :id', 'id=' . $license->id)
+                            ->fetch();
                         $templateName = 'companyLicenseInfo';
                         $groupName = 'companys';
                         break;
@@ -624,8 +628,13 @@ class Web
 
                 if ($licenseInfo) {
                     $uploads = array();
-                    $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = :type', 'id=' . $license->id . '&type=' . $data['licenseType'])->fetch(true);
-                    $salesmans = (new Salesman())->find('id_empresa= :id', 'id=' . $license->id)->fetch(true);
+                    $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = :type',
+                        'id=' . $license->id . '&type=' . $data['licenseType'])->fetch(true);
+                    $userAttachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 0',
+                        'id=' . $license->id_usuario)->fetch(true);
+
+                    $salesmans = (new Salesman())->find('id_empresa = :id', 'id=' . $license->id)
+                        ->fetch(true);
                     $arrayAux = array();
 
                     if ($salesmans) {
@@ -641,6 +650,8 @@ class Web
                         }
                     }
 
+                    $userImage = '';
+
                     if ($attachments) {
                         foreach ($attachments as $attach) {
                             $uploads[] = [
@@ -648,6 +659,12 @@ class Web
                                 'groupName' => $groupName,
                                 'userId' => $license->id
                             ];
+                        }
+
+                        foreach ($userAttachments as $userAttachment) {
+                            if (explode('.', $userAttachment->nome)[0] == 'userImage') {
+                                $userImage = $userAttachment->nome;
+                            }
                         }
 
                         $validate = true;
@@ -663,7 +680,8 @@ class Web
                             'agents' => $agents,
                             'notifications' => $notifications,
                             'companyConfirm' => $aux,
-                            'salesmans' => $arrayAux
+                            'salesmans' => $arrayAux,
+                            'userImage' => $userImage
                         ]);
                     }
                 }
@@ -687,6 +705,40 @@ class Web
             $register->status = $data['status'];
             $register->save();
         }
+    }
+
+    public function licenseCancel($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $response = array();
+        $salesman = (new Salesman())->find('MD5(id) = :id', 'id='. $data['id'], 'id_licenca')
+            ->fetch(false);
+
+        if ($salesman) {
+            $license = (new License())->findById($salesman->id_licenca);
+            if ($license) {
+                if ($license->status == 2) {
+                    $response = ['blocked' => true];
+                } else {
+                    $payments = (new Payment())->find('id_licenca = :id AND status = 0', 'id='. $license->id)
+                        ->fetch(true);
+
+                    if ($payments) {
+                        $response = ['payments' => true];
+                    } else {
+                        $license->status = 4;
+                        $license->save();
+
+                        if (!$license->fail()) {
+                            $response = ['success' => true];
+                        }
+                    }
+                }
+            }
+        }
+
+        echo json_encode($response);
     }
 
     /**
@@ -1028,6 +1080,70 @@ class Web
         }
 
         echo $response;
+    }
+
+    public function licenseBlock($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $response = false;
+        $salesman = (new Salesman())->find('MD5(id) = :id', 'id=' . $data['licenseId'], 'id, id_licenca')
+            ->fetch(false);
+
+        if ($salesman) {
+            $license = (new License())->findById($salesman->id_licenca);
+            $user = (new User())->findById($license->id_usuario);
+            if ($license) {
+                $punishment = new Punishment();
+                $punishment->titulo = $data['punishmentTitle'];
+                $punishment->descricao = $data['punishmentDesciption'];
+                $punishment->id_fiscal = $_SESSION['user']['id'];
+                $punishment->id_ambulante = $salesman->id;
+
+                if ($data['punishmentValue'] == 0) {
+                    $punishment->id_boleto = null;
+                }
+
+                $punishment->save();
+
+                if (!$punishment->fail()) {
+                    if ($license->status == 2 && $data['punishmentStatus'] == 0) {
+                        $email = new Email();
+                        $email->add(
+                            'Licença desbloqueada',
+                            'Você teve sua licença desbloqueada no orditi. Acesse seu perfil para saber mais.',
+                            $user->nome,
+                            $user->email
+                        )->send();
+                        $license->status = 0;
+                    }
+
+                    if ($data['punishmentStatus'] == 1) {
+                        $email = new Email();
+                        $email->add(
+                            'Licença bloqueada',
+                            'Você teve sua licença bloqueada no orditi. Acesse seu perfil para saber mais.',
+                            $user->nome,
+                            $user->email
+                        )->send();
+                        $license->status = 2;
+                    }
+
+                    $license->save();
+
+                    if (!$license->fail()) {
+                        $response = true;
+                    } else {
+                        $punishment->destroy();
+                    }
+                }
+            }
+        }
+
+        if ($response == false) {
+            echo json_encode(['fail' => 'General error']);
+        } else {
+            echo json_encode(['success' => 'Update success']);
+        }
     }
 
     public function licenseUser($data): void
@@ -1551,116 +1667,6 @@ class Web
 
                     if ($notification->fail()) {
                         var_dump($notification->fail()->getMessage());
-                        exit();
-                    }
-
-                    if (!($data['penality'] == '' || $data['penality'] == ' ' || $data['penality'] == 0 || $data['penality'] == 00)) {
-                        $license = (new License())->findById($salesman->id_licenca);
-                        if (!$license) {
-                            exit();
-                        }
-
-                        $paymentDate = date('Y-m-d', strtotime("+3 days"));
-                        $payment = new Payment();
-                        $payment->id_licenca = $license->id;
-                        $payment->cod_referencia = null;
-                        $payment->cod_pagamento = null;
-                        $payment->valor = $data['penality'];
-                        $payment->id_usuario = $license->id_usuario;
-                        $payment->tipo = 1;
-                        $payment->pagar_em = $paymentDate;
-                        $payment->save();
-
-                        $extCode = 'ODT' . $payment->id;
-
-//                                $soap_input = '
-//                                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eag="EAgata" xmlns:e="e-Agata_18.11">
-//                                   <soapenv:Header/>
-//                                   <soapenv:Body>
-//                                      <eag:WSTaxaExternas.Execute>
-//                                         <eag:Chave>TAXA_EXTERNA</eag:Chave>
-//                                         <eag:Usulogin>CIDADAO</eag:Usulogin>
-//                                         <eag:Ususenha>123456</eag:Ususenha>
-//                                         <eag:Sdttaxaexterna>
-//                                            <e:SDTTaxaExternas.SDTTaxaExternasItem>
-//                                               <e:TipoMode>INS</e:TipoMode>
-//                                               <e:EXTTipoContr>3</e:EXTTipoContr>
-//                                               <e:EXTCodigo>'. $extCode .'</e:EXTCodigo>
-//                                               <e:EXTDescricao>numero da licenca</e:EXTDescricao>
-//                                               <e:EXTTipoMulta></e:EXTTipoMulta>
-//                                               <e:EXTDescMulta></e:EXTDescMulta>
-//                                               <e:EXTanolct>2020</e:EXTanolct>
-//                                               <e:EXTtpoTaxaExternas>2</e:EXTtpoTaxaExternas>
-//                                               <e:EXTCTBid>1254</e:EXTCTBid>
-//                                               <e:EXTcpfcnpjpropr></e:EXTcpfcnpjpropr>
-//                                               <e:EXTInscricao>'. $companyAux .'</e:EXTInscricao>
-//                                               <e:EXTvlrvvt>'. $valueToPayment[0] .'</e:EXTvlrvvt>
-//                                               <e:EXTvlrvvtdesconto>0.00</e:EXTvlrvvtdesconto>
-//                                               <e:EXTvencimento>'. $paymentDate .'</e:EXTvencimento>
-//                                               <e:EXTSituacao>A</e:EXTSituacao>
-//                                               <e:Nome></e:Nome>
-//                                               <e:Endereco></e:Endereco>
-//                                               <e:Numero></e:Numero>
-//                                               <e:complemento></e:complemento>
-//                                               <e:Municipio></e:Municipio>
-//                                               <e:cep></e:cep>
-//                                               <e:uf>AL</e:uf>
-//                                            </e:SDTTaxaExternas.SDTTaxaExternasItem>
-//                                         </eag:Sdttaxaexterna>
-//                                      </eag:WSTaxaExternas.Execute>
-//                                   </soapenv:Body>
-//                                </soapenv:Envelope>';
-//
-//                                $curl = curl_init();
-//
-//                                curl_setopt($curl, CURLOPT_URL, EAGATA);
-//                                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-//                                curl_setopt($curl, CURLOPT_POSTFIELDS, $soap_input);
-//                                curl_setopt($curl, CURLOPT_HEADER, false);
-//                                curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-//
-//                                $soap_response = curl_exec($curl);
-//
-//                                $xml_response = str_ireplace(['SOAP-ENV:', 'SOAP:', '.executeresponse', '.SDTConsultaParcelamentoItem', '.SDTMensagem_TaxaExternaItem'], '', $soap_response);
-//
-//                                @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
-//                                $code = $xml->Body->WSTaxaExternas->Mensagem->SDTMensagem_TaxaExterna->NossoNumero;
-
-//                                $payment->cod_referencia = $code;
-//                                $payment->cod_pagamento = $extCode;
-
-                        $payment->cod_referencia = 15123;
-                        $payment->cod_pagamento = 'teste';
-                        $payment->save();
-
-                        $email = new Email();
-
-                        $message = file_get_contents(THEMES . "/assets/emails/notificationEmail.php");
-
-                        $url = ROOT;
-                        $template = array("%title", "%textBody", "%status", "%titleStatus", "%button", "%link", "%name", "%dataTitle", "%dataDescription");
-                        $dataReplace = array("Notificação", "Sua conta apresenta uma", "MULTA", "multa", "Acesse", $url, $salesman->nome, $data['title'], $data['description']);
-                        $message = str_replace($template, $dataReplace, $message);
-
-                        $email->add(
-                            "Multa",
-                            $message,
-                            $salesman->nome,
-                            $salesman->email
-                        )->send();
-
-                        if ($payment->fail()) {
-                            $notification->destroy();
-                            var_dump($payment->fail()->getMessage());
-                            exit();
-                        }
-
-                        $notification->id_boleto = $payment->id;
-                        $notification->save();
-                    }
-
-                    if ($notification->fail()) {
-                        echo 0;
                     } else {
                         echo 1;
                     }
@@ -2381,8 +2387,7 @@ class Web
      * Only to SingIn and SignUp
      * @return void
      */
-    public
-    function checkIsOff(): void
+    public function checkIsOff(): void
     {
         if (!empty($_SESSION['user']['login'])) {
             $this->router->redirect('web.home');
@@ -2717,18 +2722,79 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
         $validate = false;
-        $salesman = (new Salesman())->find('MD5(id) = :id', 'id=' . $data['licenseId'])->fetch();
-        $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" .
-            url("order") . "/" . $data['licenseId'];
-        if ($salesman) {
-            $license = (new License())->findById($salesman->id_licenca);
-            if ($license) {
-                $user = (new User())->findById($license->id_usuario);
-                $template = file_get_contents(THEMES . "/assets/orders/salesmanOrder.php");
-                $variables = array("%qrcode%", "%process%", "%name%", "%identity%", "%ativity%", "%equipaments%", "%width%",
-                    "%street%", "%aux%", "%day%", "%month%", "%year%", "%day2%", "%month2%", "%year2%");
-                $dataReplace = array($qrUrl, "", $user->nome, $user->cpf, $salesman->relato_atividade,
-                    $salesman->tipo_equipamento, $salesman->area_equipamento, $salesman->local_endereco, "",
+
+        if ($data['type'] == 1) {
+            $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" .
+                url("order") . "/1/" . $data['licenseId'];
+            $salesman = (new Salesman())->find('MD5(id) = :id', 'id=' . $data['licenseId'])->fetch();
+            if ($salesman) {
+                $license = (new License())->findById($salesman->id_licenca);
+                if ($license) {
+                    $user = (new User())->findById($license->id_usuario);
+                    $template = file_get_contents(THEMES . "/assets/orders/salesmanOrder.php");
+                    $variables = array("%qrcode%", "%process%", "%name%", "%identity%", "%ativity%", "%equipaments%", "%width%",
+                        "%street%", "%aux%", "%day%", "%month%", "%year%", "%day2%", "%month2%", "%year2%");
+                    $dataReplace = array($qrUrl, "", $user->nome, $user->cpf, $salesman->relato_atividade,
+                        $salesman->tipo_equipamento, $salesman->area_equipamento, $salesman->local_endereco, "",
+                        date('d', strtotime($license->data_inicio)), date('m', strtotime($license->data_inicio)),
+                        date('Y', strtotime($license->data_inicio)),
+                        date('d', strtotime($license->data_fim)), date('m', strtotime($license->data_fim)),
+                        date('Y', strtotime($license->data_fim)));
+                    $template = str_replace($variables, $dataReplace, $template);
+
+                    if ($template) {
+                        $validate = true;
+                    }
+                }
+            }
+        } else {
+            $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" .
+                url("order") . "/2/" . $data['licenseId'];
+            $company = (new Company())->find('MD5(id) = :id', 'id=' . $data['licenseId'])->fetch();
+
+            if ($company) {
+                $neighborhoods = array();
+                $salesmans = (new Salesman())
+                    ->find('id_empresa = :id', 'id='. $company->id, 'id_bairro')->fetch(true);
+
+                if ($salesmans) {
+                    foreach ($salesmans as $salesman) {
+                        $neighborhood = (new Neighborhood())->findById($salesman->id_bairro, 'nome');
+                        if ($neighborhood) {
+                            $aux = false;
+                            $lenght = count($neighborhoods);
+                            if ($lenght > 0) {
+                                for ($i = 0; $i < $lenght; $i++) {
+                                    if ($neighborhoods[$i] == $neighborhood->nome) {
+                                        $aux = true;
+                                    }
+                                }
+                            }
+                            if ($aux == false) {
+                                $neighborhoods[$lenght] = $neighborhood->nome;
+                            }
+                        }
+                    }
+                }
+
+                $neighAux = '';
+                $neighLenght = count($neighborhoods);
+                if ($neighLenght > 0) {
+                    foreach ($neighborhoods as $neighborhood) {
+                        if ($neighborhood == $neighborhoods[$neighLenght-1]) {
+                            $neighAux .= $neighborhood;
+                        } else {
+                            $neighAux .= $neighborhood .', ';
+                        }
+                    }
+                }
+
+                $license = (new License())->findById($company->id_licenca);
+                $template = file_get_contents(THEMES . "/assets/orders/companyOrder.php");
+                $variables = array("%qrcode%", "%process%", "%companyName%", "%identity%", "%ativity%", "%equipaments%", "%width%",
+                    "%autorizedQuantity%", "%neighborhoods%", "%day%", "%month%", "%year%", "%day2%", "%month2%", "%year2%");
+                $dataReplace = array($qrUrl, "", $company->nome_fantasia, $company->cnpj, $company->relato_atividade, "",
+                    "", $company->quantidade_equipamentos, $neighAux,
                     date('d', strtotime($license->data_inicio)), date('m', strtotime($license->data_inicio)),
                     date('Y', strtotime($license->data_inicio)),
                     date('d', strtotime($license->data_fim)), date('m', strtotime($license->data_fim)),
@@ -2742,7 +2808,6 @@ class Web
         }
 
         if ($validate) {
-            echo "<script>alert('Aguarde até que o qrcode seja gerado.');</script>";
             echo $template;
         } else {
             $this->router->redirect('web.home');

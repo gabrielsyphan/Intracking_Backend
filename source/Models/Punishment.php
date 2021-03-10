@@ -1,15 +1,13 @@
 <?php
 
-
 namespace Source\Models;
-
 
 use CoffeeCode\DataLayer\DataLayer;
 
-class Neighborhood extends DataLayer
+class Punishment extends DataLayer
 {
     public function __construct()
     {
-        parent::__construct("bairros", [], 'id', false);
+        parent::__construct("penalidades", [], 'id', false);
     }
 }

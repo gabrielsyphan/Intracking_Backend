@@ -73,8 +73,9 @@ $router->get("/downloadFile/{groupName}/{userId}/{fileName}", "Web:downloadFile"
 $router->get("/requestLicense", "Web:requestLicense", "web.requestLicense");
 $router->get("/licenseList", "Web:licenseList", "web.licenseList");
 $router->get("/licenseInfo/{licenseType}/{licenseId}", "Web:licenseInfo", "web.licenseInfo");
-$router->get("/order/{licenseId}", "Web:order", "web.order");
+$router->get("/order/{type}/{licenseId}", "Web:order", "web.order");
 $router->post("/licenseStatus","Web:licenseStatus","web.licenseStatus");
+$router->post("/licenseBlock","Web:licenseBlock","web.licenseBlock");
 
 $router->get("/licenseUser/{url}", "Web:licenseUser", "web.licenseUser");
 $router->post("/validateLicenseUser", "Web:validateLicenseUser", "web.validateLicenseUser");
@@ -92,6 +93,8 @@ $router->post("/neighborhoodPolygon", "Web:neighborhoodPolygon", "web.neighborho
 $router->get("/neighborhood/{id}", "Web:neighborhood", "web.neighborhood");
 $router->post("/findNeighborhood", "Web:findNeighborhood", "web.findNeighborhood");
 $router->get("/exportNeighborhood/{neighborhoodId}", "Web:exportNeighborhood", "web.exportNeighborhood");
+
+$router->post("/licenseCancel", "Web:licenseCancel", "web.licenseCancel");
 
 /*
  * ERROS

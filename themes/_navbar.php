@@ -37,12 +37,14 @@
                 Licenças
             </a>
         </li>
+        <?php if ($_SESSION['user']['role'] == 3 ||  $_SESSION['user']['role'] == 4): ?>
         <li class="<?= ($router->isCurrentRoute("web.paymentList") ? 'active' : ''); ?>">
             <a href="<?= url("paymentList"); ?>">
                 <span class="icon-money"></span>
                 Pagamentos
             </a>
         </li>
+        <?php endif; ?>
 
         <li class="<?= ($router->isCurrentRoute("web.neighborhoodList") ? 'active' : ''); ?>">
             <a href="<?= url("neighborhoodList"); ?>">
