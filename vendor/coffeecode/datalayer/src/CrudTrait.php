@@ -39,8 +39,9 @@ trait CrudTrait
             }else {
                 $stmt = Connect::getInstance()->prepare("INSERT INTO {$this->entity} ({$columns}) 
                 VALUES ({$values})");
-                $stmt->execute($this->filter($data));
             }
+
+            $stmt->execute($this->filter($data));
 
             return Connect::getInstance()->lastInsertId();
         } catch (PDOException $exception) {

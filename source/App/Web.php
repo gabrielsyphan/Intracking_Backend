@@ -3,6 +3,11 @@
 namespace Source\App;
 
 use Source\Models\Attach;
+use Source\Models\License;
+use Source\Models\LicenseType;
+use Source\Models\Neighborhood;
+use Source\Models\Punishment;
+use Source\Models\Role;
 use Source\Models\User;
 use Stonks\Router\Router;
 use League\Plates\Engine;
@@ -14,7 +19,6 @@ use Source\Models\Email;
 use Source\Models\Notification;
 use Source\Models\PagSeguro;
 use Source\Models\Payment;
-use Source\Models\Report;
 use Source\Models\Salesman;
 use Source\Models\Zone;
 
@@ -60,12 +64,8 @@ class Web
         if (empty($_SESSION['user'])) {
             $this->login();
         } else {
-            $salesmans = (new Salesman())
-                ->find('situacao = 1', '', 'latitude, longitude, nome, foto')->fetch(true);
-
             echo $this->view->render('home', [
-                'title' => 'Início | ' . SITE,
-                'salesmans' => $salesmans
+                'title' => 'Início | ' . SITE
             ]);
         }
     }
@@ -100,96 +100,50 @@ class Web
     public function validateLogin($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
-        $salesman = (new Salesman())->find('identidade = :identity AND senha = :password',
+        $user = (new User())->find('cpf = :identity AND senha = :password',
             'identity=' . $data['identity'] . '&password=' . md5($data['psw']))->fetch();
-        if ($salesman) {
-            $attachs = (new Attach())->find('id_usuario = :id', 'id=' . $salesman->id)->fetch(true);
+        $validate = 0;
+
+        if ($user) {
+            $attachs = (new Attach())->find('id_usuario = :id', 'id=' . $user->id)->fetch(true);
             if ($attachs) {
                 foreach ($attachs as $attach) {
-                    $attachName = explode('.', $attach->file_name)[0];
+                    $attachName = explode('.', $attach->nome)[0];
                     if ($attachName == 'userImage') {
-                        $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/salesmans/' . $attach->id_usuario
-                            . '/' . $attach->file_name;
-                        $_SESSION['user']['login'] = 1;
-                        $_SESSION['user']['id'] = $salesman->id;
-                        $_SESSION['user']['name'] = $salesman->nome;
-                        $_SESSION['user']['email'] = $salesman->email;
+                        $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/users/' . $attach->id_usuario
+                            . '/' . $attach->nome;
+                        $_SESSION['user']['login'] = 0;
+                        $_SESSION['user']['id'] = $user->id;
+                        $_SESSION['user']['name'] = $user->nome;
+                        $_SESSION['user']['email'] = $user->email;
+                        $_SESSION['user']['identity'] = $user->cpf;
+                        $_SESSION['user']['role'] = 0;
+                        
+                        $validate = 1;
                     }
                 }
             }
-            echo 2;
         } else {
-            $salesman = (new Salesman())->find('identidade = :identity AND senha_temporaria = :password',
-                'identity=' . $data['identity'] . '&password=' . md5($data['psw']))->fetch();
-            if ($salesman) {
-                $attachs = (new Attach())->find('id_usuario = :id', 'id=' . $salesman->id)->fetch(true);
-                if ($attachs) {
-                    foreach ($attachs as $attach) {
-                        $attachName = explode('.', $attach->file_name)[0];
-                        if ($attachName == 'userImage') {
-                            $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/salesmans/' . $attach->id_usuario
-                                . '/' . $attach->file_name;
-                            $_SESSION['user']['login'] = 1;
-                            $_SESSION['user']['id'] = $salesman->id;
-                            $_SESSION['user']['name'] = $salesman->nome;
-                            $_SESSION['user']['email'] = $salesman->email;
-                            $salesman->senha = md5($data['psw']);
-                            $salesman->senha_temporaria = '';
-                            $salesman->save();
-                        }
-                    }
-                }
-                echo 1;
-            } else {
-                $company = (new Company())->find('cnpj = :cnpj AND senha = :password',
-                    'cnpj=' . $data['identity'] . '&password=' . md5($data['psw']))->fetch();
-                if ($company) {
-                    $attachs = (new Attach())->find('id_usuario = :id', 'id=' . $company->id)->fetch(true);
-                    if ($attachs) {
-                        foreach ($attachs as $attach) {
-                            $attachName = explode('.', $attach->file_name)[0];
-                            if ($attachName == 'userImage') {
-                                $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/companys/' . $attach->id_usuario
-                                    . '/' . $attach->file_name;
-                                $_SESSION['user']['login'] = 2;
-                                $_SESSION['user']['id'] = $company->id;
+            $agent = (new Agent())->find('cpf = :identity AND senha = :password', 'identity=' .
+                $data['identity'] . '&password=' . md5($data['psw']))->fetch();
+            if ($agent) {
+                $attach = (new Attach())->find('id_usuario = :id', 'id=' . $agent->id)->fetch(false);
+                if ($attach) {
+                    $_SESSION['user']['login'] = 3;
+                    $_SESSION['user']['identity'] = $agent->cpf;
+                    $_SESSION['user']['role'] = $agent->tipo_fiscal;
+                    $_SESSION['user']['id'] = $agent->id;
+                    $_SESSION['user']['name'] = $agent->nome;
+                    $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/agents/' . $attach->id_usuario
+                        . '/' . $attach->nome;
+                    $_SESSION['user']['email'] = $agent->email;
 
-                                $_SESSION['user']['name'] = $company->nome_fantasia;
-                                $_SESSION['user']['email'] = $company->email;
-                            }
-                        }
-                    }
-                    echo 2;
-                } else {
-                    $company = (new Company())->find('cnpj = :cnpj AND senha_temporaria = :password',
-                        'cnpj=' . $data['identity'] . '&password=' . md5($data['psw']))->fetch();
-                    if ($company) {
-                        $attachs = (new Attach())->find('id_usuario = :id', 'id=' . $company->id)->fetch(true);
-                        if ($attachs) {
-                            foreach ($attachs as $attach) {
-                                $attachName = explode('.', $attach->file_name)[0];
-                                if ($attachName == 'userImage') {
-                                    $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/companys/' . $attach->id_usuario
-                                        . '/' . $attach->file_name;
-                                    $_SESSION['user']['login'] = 2;
-                                    $_SESSION['user']['id'] = $company->id;
-                                    $_SESSION['user']['name'] = $company->nome_fantasia;
-                                    $_SESSION['user']['email'] = $company->email;
-                                    $company->senha = md5($data['psw']);
-                                    $company->senha_temporaria = '';
-                                    $company->save();
-                                }
-                            }
-                        }
-                        echo 1;
-                    }
+                    $validate = 1;
                 }
             }
         }
 
-        if (!isset($_SESSION['user']['login'])) {
-            echo 0;
-        }
+        echo $validate;
     }
 
 
@@ -207,31 +161,6 @@ class Web
 
     /**
      * @return void
-     */
-    public function validateAgent($data): void
-    {
-        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
-        $agent = (new Agent())->find('matricula = :registration AND senha = :password', 'registration=' . $data['registration'] . '&password=' . md5($data['password']))->fetch();
-        if ($agent) {
-            $attach = (new Attach())->find('id_usuario = :id', 'id=' . $agent->id)->fetch(false);
-            if ($attach) {
-                $_SESSION['user']['login'] = 3;
-                $_SESSION['user']['id'] = $agent->id;
-                $_SESSION['user']['name'] = $agent->nome;
-                $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/agents/' . $attach->id_usuario
-                    . '/' . $attach->file_name;
-                $_SESSION['user']['email'] = $agent->email;
-                echo 1;
-            } else {
-                echo 0;
-            }
-        } else {
-            echo 0;
-        }
-    }
-
-    /**
-     * @return void
      * New user image
      */
     public function updateUserImg($data): void
@@ -239,6 +168,7 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
         if ($_FILES) {
+            $response = 'fail';
             /**
              * Load all images
              */
@@ -255,24 +185,15 @@ class Web
                         ->fetch(true);
                     if ($attach) {
                         foreach ($attach as $att) {
-                            $ext = explode('.', $att->file_name);
+                            $ext = explode('.', $att->nome);
                             if ($ext[0] == 'userImage') {
-                                switch ($att->tipo_usuario) {
-                                    case 1:
-                                        $folder = THEMES . '/assets/uploads/salesmans';
-                                        $folder2 = ROOT . '/themes/assets/uploads/salesmans';
-                                        break;
-                                    case 2:
-                                        $folder = THEMES . '/assets/uploads/companys';
-                                        $folder2 = ROOT . '/themes/assets/uploads/companys';
-                                        break;
-                                    case 3:
-                                        $folder = THEMES . '/assets/uploads/agents';
-                                        $folder2 = ROOT . '/themes/assets/uploads/agents';
-                                        break;
-                                    default:
-                                        $folder = null;
-                                        break;
+
+                                if ($att->tipo_usuario == 3) {
+                                    $folder = THEMES . '/assets/uploads/agents';
+                                    $folder2 = ROOT . '/themes/assets/uploads/agents';
+                                } else {
+                                    $folder = THEMES . '/assets/uploads/users';
+                                    $folder2 = ROOT . '/themes/assets/uploads/users';
                                 }
 
                                 if ($folder) {
@@ -280,22 +201,28 @@ class Web
                                         mkdir($folder, 0755);
                                     }
 
-                                    $filename = $ext[0] . '.' . $imageFileType;
+                                    $fileName = $ext[0] . '.' . $imageFileType;
 
-                                    $dir = $folder . '/' . $att->id_usuario . '/' . $filename;
-                                    $dir2 = $folder2 . '/' . $att->id_usuario . '/' . $filename;
+                                    $dir = $folder . '/' . $att->id_usuario . '/';
+                                    $dir2 = $folder2 . '/' . $att->id_usuario . '/' . $fileName;
 
-                                    if (file_exists($dir)) {
-                                        unlink($dir);
+                                    if (file_exists($dir . $att->nome)) {
+                                        unlink($dir . $att->nome);
                                     }
 
-                                    $att->file_name = $filename;
+                                    $dir = $dir . $fileName;
+
+                                    $att->nome = $fileName;
                                     $att->save();
 
-                                    move_uploaded_file($file['tmp_name'], $dir);
-                                    $_SESSION['user']['image'] = $dir2;
-
-                                    echo 1;
+                                    if ($att->fail()) {
+                                        $att->fail()->getMessege();
+                                        $att->destroy();
+                                    } else {
+                                        move_uploaded_file($file['tmp_name'], $dir);
+                                        $_SESSION['user']['image'] = $dir2;
+                                        $response = 'success';
+                                    }
                                 }
                             }
                         }
@@ -303,6 +230,7 @@ class Web
                 }
             }
         }
+        echo $response;
     }
 
     /**
@@ -343,9 +271,12 @@ class Web
         ]);
     }
 
-    public function checkAccount($data): void
+    public function checkCmc($cpf): bool
     {
-        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $cpf = filter_var($cpf, FILTER_SANITIZE_STRIPPED);
+        $cpf = preg_replace('/[^0-9]/is', '', $cpf);
+
+        $validate = false;
 
         $soap_input =
             '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:e="e-Agata_18.11">
@@ -353,7 +284,7 @@ class Web
                <soapenv:Body>
                   <e:PWSRetornoPertences.Execute>
                      <e:Flagtipopesquisa>C</e:Flagtipopesquisa>
-                     <e:Ctgcpf>' . $data['cpf'] . '</e:Ctgcpf>
+                     <e:Ctgcpf>' . $cpf . '</e:Ctgcpf>
                      <e:Ctiinscricao></e:Ctiinscricao>
                   </e:PWSRetornoPertences.Execute>
                </soapenv:Body>
@@ -374,17 +305,11 @@ class Web
         @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
         $companys = $xml->Body->PWSRetornoPertences->Sdtretornopertences->SDTRetornoPertencesItem->SDTRetornoPertencesEmpresa->SDTRetornoPertencesEmpresaItem;
 
-        if ($companys == "") {
-            echo 0;
-        } else {
-            $aux = 0;
-            foreach ($companys as $company) {
-                if ($company->SRPAutonomo == "A") {
-                    $aux = 1;
-                }
-            }
-            echo $aux;
+        if ($companys != "") {
+            $validate = true;
         }
+
+        return $validate;
     }
 
     public function checkCnpj($data): void
@@ -436,134 +361,105 @@ class Web
 
     /**
      * @return void
-     */
-    public function companyProfile(): void
-    {
-        $this->checkLogin();
-
-        if ($_SESSION['user']['login'] == 1) {
-            $this->router->redirect("web.profile");
-        }
-
-        $company = (new Company())->findById($_SESSION['user']['id']);
-        if ($company !== null) {
-            $payments = (new Payment())->find('id_empresa = :id', 'id=' . $company->id)->fetch(true);
-            $salesmans = (new Salesman())->find('id_empresa = :id', 'id=' . $company->id)->fetch(true);
-            $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
-
-            $paymentArray = array();
-            if ($payments) {
-                foreach ($payments as $payment) {
-                    $salesmanName = (new Salesman())->findById($payment->id_ambulante, 'nome');
-                    if ($salesmanName) {
-                        $payment->name = $salesmanName->nome;
-                        $paymentArray[] = $payment;
-                    }
-                }
-            } else {
-                $paymentArray == null;
-            }
-
-            if ($zones) {
-                foreach ($zones as $zone) {
-                    $centroid = explode("POINT(", $zone->centroide);
-                    $centroid = explode(")", $centroid[1]);
-                    $centroid = explode(" ", $centroid[0]);
-
-                    $polygon = explode("POLYGON((", $zone->poligono);
-                    $polygon = explode("))", $polygon[1]);
-                    $polygon = explode(",", $polygon[0]);
-
-                    $aux = array();
-                    foreach ($polygon as $polig) {
-                        $polig = explode(" ", $polig);
-                        $aux[] = $polig;
-                    }
-
-                    $polygon = $aux;
-
-                    $zone->centroide = $centroid;
-                    $zone->poligono = $polygon;
-                    unset($zone->detalhes, $zone->foto);
-                    $zoneData[] = $zone;
-                }
-            }
-
-            $folder = ROOT . '/themes/assets/uploads';
-            $uploads = array();
-            $aux = 1;
-            $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 2', 'id=' . $company->id)->fetch(true);
-            if ($attachments) {
-                foreach ($attachments as $attach) {
-                    $attachName = explode('.', $attach->file_name);
-                    if ($attachName[0] == 'userImage') {
-                        $userImage = ROOT . '/themes/assets/uploads/companys/' . $attach->id_usuario
-                            . '/' . $attach->file_name;
-                    }
-
-                    $uploads[] = [
-                        'fileName' => $attach->file_name,
-                        'groupName' => 'companys',
-                        'userId' => $company->id
-                    ];
-                    $aux++;
-                }
-            }
-
-            if ($salesmans) {
-                $count = count($salesmans);
-            } else {
-                $count = 0;
-            }
-
-            echo $this->view->render("companyProfile", [
-                'title' => 'Empresa | ' . SITE,
-                'company' => $company,
-                'salesmans' => $salesmans,
-                'salesmansCount' => $count,
-                'zones' => $zoneData,
-                'payments' => $paymentArray,
-                'userImage' => $userImage,
-                'uploads' => $uploads
-            ]);
-        } else {
-            $this->router->redirect('web.salesmanList');
-        }
-    }
-
-    /**
-     * @return void
      * @var $data
      */
     public function validateAccount($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
-        $street = $data['street'] . ', ' . $data['city'] . ', ' . $data['neighborhood'] . ', ' . $data['number'];
+        if ($this->checkCpf($data['identity']) == false) {
+            echo 'identity_fail';
+            exit();
+        }
 
-        $user = new \Source\Models\User();
-        $user->cpf = $data['identity'];
-        $user->rg = $data['rg'];
-        $user->nome = $data['name'];
-        $user->endereco = $street;
-        $user->email = $data['email'];
-        $user->telefone = $data['phone'];
-        $user->nome_mae = $data['maternalName'];
-        $user->save();
+        $user = (new User())->find('cpf = :identity', 'identity=' . $data['identity'])->fetch();
+        if ($user) {
+            echo 'already_exist';
+            exit();
+        }
 
-        if ($user->fail()) {
-            var_dump($user->fail()->getMessage());
+        if ($_FILES) {
+            $street = $data['street'] . ', ' . $data['city'] . ', ' . $data['neighborhood'] . ', ' . $data['number'];
+
+            $user = new User();
+            $user->cpf = $data['identity'];
+            $user->rg = $data['rg'];
+            $user->nome = $data['name'];
+            $user->endereco = $street;
+            $user->email = $data['email'];
+            $user->telefone = $data['phone'];
+            $user->nome_mae = $data['maternalName'];
+            $user->save();
+
+            if ($user->fail()) {
+                var_dump($user->fail()->getMessage());
+            } else {
+                /**
+                 * Load all images
+                 */
+                foreach ($_FILES as $key => $file) {
+                    $target_file = basename($file['name']);
+
+                    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                    $extensions_arr = array("jpg", "jpeg", "png");
+
+                    if (in_array($imageFileType, $extensions_arr)) {
+                        $folder = THEMES . '/assets/uploads/users';
+                        if (!file_exists($folder) || !is_dir($folder)) {
+                            mkdir($folder, 0755);
+                        }
+                        $fileName = $key . '.' . $imageFileType;
+                        $dir = $folder . '/' . $user->id;
+
+                        if (!file_exists($dir) || !is_dir($dir)) {
+                            mkdir($dir, 0755);
+                        }
+
+                        $dir = $dir . '/' . $fileName;
+
+                        move_uploaded_file($file['tmp_name'], $dir);
+
+                        $attach = new Attach();
+                        $attach->id_usuario = $user->id;
+                        $attach->tipo_usuario = 0;
+                        $attach->nome = $fileName;
+                        $attach->save();
+
+                        if ($attach->fail()) {
+                            $user->destroy();
+                            var_dump($attach->fail()->getMessage());
+                            exit();
+                        }
+                    }
+                }
+
+                $email = new Email();
+
+                $message = file_get_contents(THEMES . "/assets/emails/confirmRegisterEmail.php");
+
+                $url = ROOT . "/confirmAccount/" . md5($user->id);
+
+                $template = array("%title", "%textBody", "%button", "%link", "%name");
+                $dataReplace = array("Confirmação de Cadastro", "Para confirmar seu cadastro", "Confirmar", $url, $user->nome);
+                $message = str_replace($template, $dataReplace, $message);
+
+                $email->add(
+                    "Confirmação de cadastro",
+                    $message,
+                    $user->nome,
+                    $user->email
+                )->send();
+                if ($email->error()) {
+                    $attach->destroy();
+                    $user->destroy();
+                    var_dump($email->error()->getMessage());
+                } else {
+                    echo "success";
+                }
+            }
         } else {
-            $email = new Email();
-            $email->add(
-                "Confirmação de cadastro",
-                "<p>Olá " . $user->name . "! Para confirmar seu cadastro no Orditi, clique no botão abaixo.</p>
-                        <a class='btn-3 primary' href='https://maceio.orditi.com/" . md5($user->id) . "'>Confirmar</a>
-                    <div> <img style='width: 20%' src='https://www.maceio.orditi.com/i/themes/assets/img/nav-logo.png'> </div>",
-                $user->nome,
-                $user->email
-            )->send();
-            echo 0;
+            echo "fail";
         }
     }
 
@@ -575,11 +471,946 @@ class Web
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
-        $user = (new User())->find('MD5(id) = :id AND senha = NULL', 'id=' . $data['userId'])->fetch();
+        $validate = false;
+        $user = (new User())->find('MD5(id) = :id AND senha IS NULL', 'id=' . $data['userId'])->fetch();
+
+        if (!$user) {
+            $user = (new Agent())->find('MD5(id) = :id AND senha IS NULL', 'id=' . $data['userId'])->fetch();
+        }
+
         if ($user) {
-            echo 1;
+            $validate = true;
+            $attach = (new Attach())->find('id_usuario = :id', 'id=' . $user->id)->fetch(true);
+            if ($attach) {
+                foreach ($attach as $att) {
+                    if (explode('.', $att->nome)[0] == 'userImage') {
+                        if ($att->tipo_usuario == 3) {
+                            $userImage = ROOT . '/themes/assets/uploads/agents/' . $user->id
+                                . '/' . $att->nome;
+                        } else {
+                            $userImage = ROOT . '/themes/assets/uploads/users/' . $user->id
+                                . '/' . $att->nome;
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($validate == false) {
+            $this->router->redirect('web.home');
         } else {
-            echo 0;
+            echo $this->view->render('confirmPassword', [
+                'title' => 'Confirmar senha | ' . SITE,
+                'userId' => $data['userId'],
+                'userName' => $user->nome,
+                'userImage' => $userImage
+            ]);
+
+        }
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
+    public function requestLicense(): void
+    {
+        $this->checkLogin();
+
+        $cmc = $this->checkCmc($_SESSION['user']['identity']);
+
+        echo $this->view->render('requestLicense', [
+            'title' => 'Nova licença | ' . SITE,
+            'cmc' => $cmc
+        ]);
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
+    public function salesmanLicense($companyId = null): void
+    {
+        $this->checkLogin();
+
+        $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
+        $company = null;
+
+        if ($companyId) {
+            $company = (new Company())->findById($companyId);
+        }
+
+        if ($zones) {
+            foreach ($zones as $zone) {
+                $polygon = explode("POLYGON((", $zone->poligono);
+                $polygon = explode("))", $polygon[1]);
+                $polygon = explode(",", $polygon[0]);
+
+                $aux = array();
+                foreach ($polygon as $polig) {
+                    $polig = explode(" ", $polig);
+                    $aux[] = $polig;
+                }
+
+                $polygon = $aux;
+
+                $zone->poligono = $polygon;
+                $zoneData[] = $zone;
+            }
+        }
+
+        echo $this->view->render('salesmanLicense', [
+            'title' => 'Licença de Ambulante | ' . SITE,
+            'zones' => $zones,
+            'company' => $company,
+        ]);
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
+    public function licenseInfo($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $validate = false;
+        $aux = false;
+        $notifications = false;
+
+        $license = (new License())->find('MD5(id) = :id', 'id=' . $data['licenseId'])->fetch();
+        $agents = (new Agent())->find('', '', 'id, nome')->fetch(true);
+        if ($license) {
+            $payments = (new Payment())->find('id_licenca = :id', 'id=' . $license->id)->fetch(true);
+            $user = (new User())->findById($license->id_usuario);
+            if ($user) {
+                switch ($data['licenseType']) {
+                    case 1:
+                        $licenseInfo = (new Salesman())->find('id_licenca = :id', 'id=' . $license->id)->fetch();
+                        $templateName = 'salesmanLicenseInfo';
+                        $groupName = 'salesmans';
+
+                        $companyLicenses = (new License())->find('id_usuario = :id AND tipo = 2', 'id=' . $_SESSION['user']['id'], 'id')->fetch(true);
+                        if ($companyLicenses) {
+                            foreach ($companyLicenses as $companyLicense) {
+                                if ($licenseInfo->id_empresa == $companyLicense->id) {
+                                    $aux = true;
+                                }
+                            }
+                        }
+
+                        if ($aux == false && $_SESSION['user']['login'] != 3 && $license->id_usuario != $_SESSION['user']['id']) {
+                            $this->router->redirect('web.home');
+                        }
+
+                        $notifications = (new Notification())->find('id_licenca = :id', 'id=' . $license->id)->fetch(true);
+                        if ($notifications) {
+                            foreach ($notifications as $notification) {
+                                $agent = (new Agent())->findById($notification->id_fiscal);
+                                if ($notification->id_boleto) {
+                                    $notificationPayment = (new Payment())->findById($notification->id_boleto, 'cod_referencia');
+                                    $notification->cod_referencia = $notificationPayment->cod_referencia;
+                                }
+                                $notification->agentName = $agent->nome;
+                            }
+                        }
+                        break;
+                    case 2:
+                        $licenseInfo = (new Company())->find('id_licenca = :id', 'id=' . $license->id)
+                            ->fetch();
+                        $templateName = 'companyLicenseInfo';
+                        $groupName = 'companys';
+                        break;
+                }
+
+                if ($licenseInfo) {
+                    $uploads = array();
+                    $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = :type',
+                        'id=' . $license->id . '&type=' . $data['licenseType'])->fetch(true);
+                    $userAttachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 0',
+                        'id=' . $license->id_usuario)->fetch(true);
+
+                    $salesmans = (new Salesman())->find('id_empresa = :id', 'id=' . $license->id)
+                        ->fetch(true);
+                    $arrayAux = array();
+
+                    if ($salesmans) {
+                        foreach ($salesmans as $salesman) {
+                            $salesmanLicense = (new License())->findById($salesman->id_licenca);
+                            if ($salesmanLicense) {
+                                $salesmanUser = (new User())->findById($salesmanLicense->id_usuario);
+                                if ($salesmanUser) {
+                                    $salesmanUser->status = $salesmanLicense->status;
+                                    $arrayAux[] = $salesmanUser;
+                                }
+                            }
+                        }
+                    }
+
+                    $userImage = '';
+
+                    if ($attachments) {
+                        foreach ($attachments as $attach) {
+                            $uploads[] = [
+                                'fileName' => $attach->nome,
+                                'groupName' => $groupName,
+                                'userId' => $license->id
+                            ];
+                        }
+
+                        foreach ($userAttachments as $userAttachment) {
+                            if (explode('.', $userAttachment->nome)[0] == 'userImage') {
+                                $userImage = $userAttachment->nome;
+                            }
+                        }
+
+                        $validate = true;
+
+                        echo $this->view->render($templateName, [
+                            'title' => 'Minha Licença | ' . SITE,
+                            'license' => $licenseInfo,
+                            'licenseValidate' => $license,
+                            'licenseStatus' => $license->status,
+                            'user' => $user,
+                            'uploads' => $uploads,
+                            'payments' => $payments,
+                            'agents' => $agents,
+                            'notifications' => $notifications,
+                            'companyConfirm' => $aux,
+                            'salesmans' => $arrayAux,
+                            'userImage' => $userImage
+                        ]);
+                    }
+                }
+            }
+        }
+
+        if ($validate == false) {
+            $this->router->redirect('web.home');
+        }
+    }
+
+    public function licenseStatus($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $register = (new License())->findById($data['id']);
+
+        if ($register) {
+            $register->status = $data['status'];
+            $register->save();
+        }
+    }
+
+    public function licenseCancel($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $response = array();
+        $salesman = (new Salesman())->find('MD5(id) = :id', 'id='. $data['id'], 'id_licenca')
+            ->fetch(false);
+
+        if ($salesman) {
+            $license = (new License())->findById($salesman->id_licenca);
+            if ($license) {
+                if ($license->status == 2) {
+                    $response = ['blocked' => true];
+                } else {
+                    $payments = (new Payment())->find('id_licenca = :id AND status = 0', 'id='. $license->id)
+                        ->fetch(true);
+
+                    if ($payments) {
+                        $response = ['payments' => true];
+                    } else {
+                        $license->status = 4;
+                        $license->save();
+
+                        if (!$license->fail()) {
+                            $response = ['success' => true];
+                        }
+                    }
+                }
+            }
+        }
+
+        echo json_encode($response);
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
+    public function validateSalesmanLicense($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $response = 'fail';
+
+        if ($_FILES) {
+            $user = (new User())->findById($_SESSION['user']['id']);
+            $cpf = preg_replace('/[^0-9]/is', '', $user->cpf);
+            $soap_input =
+                '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:e="e-Agata_18.11">
+               <soapenv:Header/>
+               <soapenv:Body>
+                  <e:PWSRetornoPertences.Execute>
+                     <e:Flagtipopesquisa>C</e:Flagtipopesquisa>
+                     <e:Ctgcpf>' . $cpf . '</e:Ctgcpf>
+                     <e:Ctiinscricao></e:Ctiinscricao>
+                  </e:PWSRetornoPertences.Execute>
+               </soapenv:Body>
+            </soapenv:Envelope>';
+
+            $curl = curl_init();
+
+            curl_setopt($curl, CURLOPT_URL, PERTENCES);
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $soap_input);
+            curl_setopt($curl, CURLOPT_HEADER, false);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+            $soap_response = curl_exec($curl);
+
+            $xml_response = str_ireplace(['SOAP-ENV:', 'SOAP:', '.executeresponse', '.SDTRetornoPertences'], '', $soap_response);
+
+            @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
+            $companys = $xml->Body->PWSRetornoPertences->Sdtretornopertences->SDTRetornoPertencesItem->SDTRetornoPertencesEmpresa->SDTRetornoPertencesEmpresaItem;
+
+            if ($companys != '') {
+                $companyAux = 0;
+                foreach ($companys as $company) {
+                    if ($company->SRPAutonomo == 'A') {
+                        $companyAux = $company->SRPInscricaoEmpresa;
+                    }
+                }
+            }
+
+            if ($companyAux == 0) {
+                exit();
+            }
+
+            $point = 'POINT(' . $data['longitude'] . " " . $data['latitude'] . ')';
+            $zone = (new Zone())->find('ST_CONTAINS(ST_GEOMFROMTEXT(ST_AsText(coordenadas)), ST_GEOMFROMTEXT("' . $point . '"))=1', '', 'id, limite_ambulantes, quantidade_ambulantes')->fetch();
+            $zoneId = null;
+
+            if ($zone) {
+                if ($zone->quantidade_ambulantes < $zone->limite_ambulantes) {
+                    $zone->quantidade_ambulantes++;
+                    $zone->save();
+
+                    $zoneId = $zone->id;
+                }
+            }
+
+            $point = 'POINT(' . $data['latitude'] . " " . $data['longitude'] . ')';
+            $neighborhood = (new Neighborhood())->find('ST_CONTAINS(ST_GEOMFROMTEXT(ST_AsText(coordenadas)), ST_GEOMFROMTEXT("' . $point . '"))=1', '', 'id, coordenadas')->fetch(false);
+            $neighborhoodId = "";
+
+            if ($neighborhood) {
+                $neighborhoodId = $neighborhood->id;
+                $neighborhood->quantidade_ambulantes = $neighborhood->quantidade_ambulantes + 1;
+                $neighborhood->save();
+            }
+
+            if ($zoneId === null) {
+                $salesmans = (new Salesman)->find('latitude = :lat AND longitude = :lng', 'lat=' . $data['latitude'] . '&lng=' . $data['longitude'], 'latitude, longitude')->fetch(true);
+                if ($salesmans) {
+                    $response = 'somebodySameLocation';
+                    $zoneId = null;
+                    $zone->quantidade_ambulantes--;
+                    $zone->save();
+                } else {
+                    $zoneId = "";
+                }
+            }
+
+            if ($zoneId || $zoneId == "") {
+                $license = new License();
+                $license->tipo = 1;
+
+                if ($data['companyId']) {
+                    $company = (new Company)->findById($data['companyId']);
+                    if ($company) {
+                        $license->status = 3;
+                    }
+                } else {
+                    $license->status = 0;
+                }
+
+                $license->id_usuario = $_SESSION['user']['id'];
+                $license->data_inicio = date('Y-m-d');
+                $license->data_fim = date('Y-m-d', strtotime("+3 days"));
+                $license->cmc = $companyAux;
+                $license->save();
+
+                if ($license->fail()) {
+                    $neighborhood->destroy();
+                    var_dump($license->fail()->getMessage());
+                } else {
+                    /**
+                     * Load all images
+                     */
+                    foreach ($_FILES as $key => $file) {
+                        $target_file = basename($file['name']);
+
+                        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                        $extensions_arr = array("jpg", "jpeg", "png");
+
+                        if (in_array($imageFileType, $extensions_arr)) {
+                            $folder = THEMES . '/assets/uploads/salesmans';
+                            if (!file_exists($folder) || !is_dir($folder)) {
+                                mkdir($folder, 0755);
+                            }
+                            $fileName = $key . '.' . $imageFileType;
+                            $dir = $folder . '/' . $license->id;
+
+                            if (!file_exists($dir) || !is_dir($dir)) {
+                                mkdir($dir, 0755);
+                            }
+
+                            $dir = $dir . '/' . $fileName;
+
+                            move_uploaded_file($file['tmp_name'], $dir);
+
+                            $attach = new Attach();
+                            $attach->id_usuario = $license->id;
+                            $attach->tipo_usuario = 1;
+                            $attach->nome = $fileName;
+                            $attach->save();
+
+                            if ($attach->fail()) {
+                                $license->destroy();
+                                var_dump($attach->fail()->getMessage());
+                                exit();
+                            } else {
+                                $curl = curl_init();
+                                curl_setopt($curl, CURLOPT_RETURNTRANSFER, True);
+                                curl_setopt($curl, CURLOPT_URL, 'https://nominatim.openstreetmap.org/reverse.php?lat=' . $data['latitude'] . '&lon=' . $data['longitude'] . '&zoom=18&format=jsonv2');
+                                curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:7.0.1) Gecko/20100101 Firefox/7.0.1');
+                                $street = curl_exec($curl);
+                                curl_close($curl);
+                                $street = json_decode($street);
+                                $street = $street->display_name;
+                                $area = $data['width'] * $data['length'];
+                                $valueToPayment = array();
+                                $products = "";
+                                $productDescription = null;
+                                $productsData = $data['productSelect'];
+
+                                foreach ($productsData as $product) {
+                                    $products = $products . "" . $product;
+                                    if ($product == 0 || $product == 1) {
+                                        if ($area <= 1.50) {
+                                            $valueToPayment[] = 40.00;
+                                        } else {
+                                            $valueToPayment[] = 72.00;
+                                        }
+                                    } else if ($product == 2 || $product == 3 || $product == 4 || $product == 5) {
+                                        if ($area <= 1.50) {
+                                            $valueToPayment[] = 80.00;
+                                        } else {
+                                            $valueToPayment[] = 144.00;
+                                        }
+                                    } else if ($product == 6) {
+                                        if ($area <= 1.50) {
+                                            $valueToPayment[] = 72.00;
+                                        } else {
+                                            $valueToPayment[] = 80.00;
+                                        }
+                                    } else if ($product == 7) {
+                                        $productDescription = $data['productDescription'];
+                                        if ($area <= 1.50) {
+                                            $valueToPayment[] = 72.00;
+                                        } else {
+                                            $valueToPayment[] = 80.00;
+                                        }
+                                    }
+                                }
+                                rsort($valueToPayment);
+
+                                $workedDays = "";
+                                foreach ($data['workedDays'] as $workedDay) {
+                                    $workedDays = $workedDays . "" . $workedDay;
+                                }
+
+                                $salesman = new Salesman();
+                                $salesman->id_zona = $zoneId;
+                                $salesman->id_bairro = $neighborhoodId;
+                                $salesman->id_licenca = $license->id;
+
+                                if ($data['companyId']) {
+                                    $company = (new Company)->findById($data['companyId']);
+                                    if ($company) {
+                                        $salesman->id_empresa = $company->id_licenca;
+                                    }
+                                }
+
+                                $salesman->local_endereco = $street;
+                                $salesman->latitude = $data['latitude'];
+                                $salesman->longitude = $data['longitude'];
+                                $salesman->produto = $products;
+                                $salesman->atendimento_dias = $workedDays;
+                                $salesman->atendimento_hora_inicio = $data['initHour'];
+                                $salesman->atendimento_hora_fim = $data['endHour'];
+                                $salesman->relato_atividade = $productDescription;
+                                $salesman->area_equipamento = $data['width'] . " x " . $data['length'];
+                                $salesman->tipo_equipamento = $data['howWillSell'];
+                                $salesman->save();
+
+                                /**
+                                 * Send email with new temporary recovery password
+                                 */
+                                $email = new Email();
+
+                                $message = file_get_contents(THEMES . "/assets/emails/confirmSalesman.php");
+
+                                $url = ROOT . "/licenseInfo/1/" . md5($license->id);
+                                $template = array("%title", "%textBody", "%button", "%link", "%companyName", "%name");
+                                $dataReplace = array("Confirmação de vínculo", "Para confirmar vínculo de", "Visualizar", $url, $company->nome_fantasia, $user->nome);
+                                $message = str_replace($template, $dataReplace, $message);
+
+                                $email->add(
+                                    "Confirmar vínculo",
+                                    $message,
+                                    $user->nome,
+                                    $user->email
+                                )->send();
+
+                                if ($salesman->fail()) {
+                                    $attach->destroy();
+                                    $license->destroy();
+                                    var_dump($salesman->fail()->getMessage());
+                                    exit();
+                                } else {
+                                    $paymentDate = date('Y-m-d', strtotime("+3 days"));
+                                    $payment = new Payment();
+                                    $payment->id_licenca = $license->id;
+                                    $payment->cod_referencia = null;
+                                    $payment->cod_pagamento = null;
+                                    $payment->valor = $valueToPayment[0];
+                                    $payment->id_usuario = $_SESSION['user']['id'];
+                                    $payment->tipo = 1;
+                                    $payment->pagar_em = $paymentDate;
+                                    $payment->save();
+
+                                    $extCode = 'ODT' . $payment->id;
+
+//                                $soap_input = '
+//                                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eag="EAgata" xmlns:e="e-Agata_18.11">
+//                                   <soapenv:Header/>
+//                                   <soapenv:Body>
+//                                      <eag:WSTaxaExternas.Execute>
+//                                         <eag:Chave>TAXA_EXTERNA</eag:Chave>
+//                                         <eag:Usulogin>CIDADAO</eag:Usulogin>
+//                                         <eag:Ususenha>123456</eag:Ususenha>
+//                                         <eag:Sdttaxaexterna>
+//                                            <e:SDTTaxaExternas.SDTTaxaExternasItem>
+//                                               <e:TipoMode>INS</e:TipoMode>
+//                                               <e:EXTTipoContr>3</e:EXTTipoContr>
+//                                               <e:EXTCodigo>'. $extCode .'</e:EXTCodigo>
+//                                               <e:EXTDescricao>numero da licenca</e:EXTDescricao>
+//                                               <e:EXTTipoMulta></e:EXTTipoMulta>
+//                                               <e:EXTDescMulta></e:EXTDescMulta>
+//                                               <e:EXTanolct>2020</e:EXTanolct>
+//                                               <e:EXTtpoTaxaExternas>2</e:EXTtpoTaxaExternas>
+//                                               <e:EXTCTBid>1254</e:EXTCTBid>
+//                                               <e:EXTcpfcnpjpropr></e:EXTcpfcnpjpropr>
+//                                               <e:EXTInscricao>'. $companyAux .'</e:EXTInscricao>
+//                                               <e:EXTvlrvvt>'. $valueToPayment[0] .'</e:EXTvlrvvt>
+//                                               <e:EXTvlrvvtdesconto>0.00</e:EXTvlrvvtdesconto>
+//                                               <e:EXTvencimento>'. $paymentDate .'</e:EXTvencimento>
+//                                               <e:EXTSituacao>A</e:EXTSituacao>
+//                                               <e:Nome></e:Nome>
+//                                               <e:Endereco></e:Endereco>
+//                                               <e:Numero></e:Numero>
+//                                               <e:complemento></e:complemento>
+//                                               <e:Municipio></e:Municipio>
+//                                               <e:cep></e:cep>
+//                                               <e:uf>AL</e:uf>
+//                                            </e:SDTTaxaExternas.SDTTaxaExternasItem>
+//                                         </eag:Sdttaxaexterna>
+//                                      </eag:WSTaxaExternas.Execute>
+//                                   </soapenv:Body>
+//                                </soapenv:Envelope>';
+//
+//                                $curl = curl_init();
+//
+//                                curl_setopt($curl, CURLOPT_URL, EAGATA);
+//                                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+//                                curl_setopt($curl, CURLOPT_POSTFIELDS, $soap_input);
+//                                curl_setopt($curl, CURLOPT_HEADER, false);
+//                                curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+//
+//                                $soap_response = curl_exec($curl);
+//
+//                                $xml_response = str_ireplace(['SOAP-ENV:', 'SOAP:', '.executeresponse', '.SDTConsultaParcelamentoItem', '.SDTMensagem_TaxaExternaItem'], '', $soap_response);
+//
+//                                @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
+//                                $code = $xml->Body->WSTaxaExternas->Mensagem->SDTMensagem_TaxaExterna->NossoNumero;
+
+//                                $payment->cod_referencia = $code;
+//                                $payment->cod_pagamento = $extCode;
+
+                                    $payment->cod_referencia = 15123;
+                                    $payment->cod_pagamento = 'teste';
+                                    $payment->save();
+
+                                    if ($payment->fail()) {
+                                        $attach->destroy();
+                                        $license->destroy();
+                                        $salesman->destroy();
+                                        var_dump($payment->fail()->getMessage());
+                                        exit();
+                                    } else {
+                                        $response = 'success';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        echo $response;
+    }
+
+    public function licenseBlock($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $response = false;
+        $salesman = (new Salesman())->find('MD5(id) = :id', 'id=' . $data['licenseId'], 'id, id_licenca')
+            ->fetch(false);
+
+        if ($salesman) {
+            $license = (new License())->findById($salesman->id_licenca);
+            $user = (new User())->findById($license->id_usuario);
+            if ($license) {
+                $punishment = new Punishment();
+                $punishment->titulo = $data['punishmentTitle'];
+                $punishment->descricao = $data['punishmentDesciption'];
+                $punishment->id_fiscal = $_SESSION['user']['id'];
+                $punishment->id_ambulante = $salesman->id;
+
+                if ($data['punishmentValue'] == 0) {
+                    $punishment->id_boleto = null;
+                }
+
+                $punishment->save();
+
+                if (!$punishment->fail()) {
+                    if ($license->status == 2 && $data['punishmentStatus'] == 0) {
+                        $email = new Email();
+                        $email->add(
+                            'Licença desbloqueada',
+                            'Você teve sua licença desbloqueada no orditi. Acesse seu perfil para saber mais.',
+                            $user->nome,
+                            $user->email
+                        )->send();
+                        $license->status = 0;
+                    }
+
+                    if ($data['punishmentStatus'] == 1) {
+                        $email = new Email();
+                        $email->add(
+                            'Licença bloqueada',
+                            'Você teve sua licença bloqueada no orditi. Acesse seu perfil para saber mais.',
+                            $user->nome,
+                            $user->email
+                        )->send();
+                        $license->status = 2;
+                    }
+
+                    $license->save();
+
+                    if (!$license->fail()) {
+                        $response = true;
+                    } else {
+                        $punishment->destroy();
+                    }
+                }
+            }
+        }
+
+        if ($response == false) {
+            echo json_encode(['fail' => 'General error']);
+        } else {
+            echo json_encode(['success' => 'Update success']);
+        }
+    }
+
+    public function licenseUser($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $company = (new Company())->find('acesso = :url', 'url=' . $data['url'])->fetch();
+        if ($company) {
+            $this->salesmanLicense($company->id);
+        } else {
+            $this->home();
+        }
+    }
+
+    public function validateLicenseUser($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $validate = false;
+        $company = (new Company())->find('MD5(id) = :id', 'id=' . $data['id'])->fetch();
+
+        if ($company) {
+            $company->acesso = $data['link'];
+            $company->save();
+
+            if (!$company->fail()) {
+                $validate = true;
+            }
+        }
+
+        echo $validate;
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
+    public function validateCompanyLicense($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $response = 'fail';
+
+        if ($_FILES) {
+            $user = (new User())->findById($_SESSION['user']['id']);
+            $cpf = preg_replace('/[^0-9]/is', '', $user->cpf);
+
+            $soap_input =
+                '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:e="e-Agata_18.11">
+               <soapenv:Header/>
+               <soapenv:Body>
+                  <e:PWSRetornoPertences.Execute>
+                     <e:Flagtipopesquisa>C</e:Flagtipopesquisa>
+                     <e:Ctgcpf>' . $cpf . '</e:Ctgcpf>
+                     <e:Ctiinscricao></e:Ctiinscricao>
+                  </e:PWSRetornoPertences.Execute>
+               </soapenv:Body>
+            </soapenv:Envelope>';
+
+            $curl = curl_init();
+
+            curl_setopt($curl, CURLOPT_URL, PERTENCES);
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $soap_input);
+            curl_setopt($curl, CURLOPT_HEADER, false);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+            $soap_response = curl_exec($curl);
+
+            $xml_response = str_ireplace(['SOAP-ENV:', 'SOAP:', '.executeresponse', '.SDTRetornoPertences'], '', $soap_response);
+
+            @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
+            $companys = $xml->Body->PWSRetornoPertences->Sdtretornopertences->SDTRetornoPertencesItem->SDTRetornoPertencesEmpresa->SDTRetornoPertencesEmpresaItem;
+
+            $companyAux = 0;
+            if ($companys !== "") {
+                foreach ($companys as $company) {
+                    if ($company->SRPAutonomo == "A") {
+                        if ($company->SRPInscricaoEmpresa == $data['cmc']) {
+                            $companyAux = 1;
+                        }
+                    }
+                }
+            }
+
+            if ($companyAux == 0) {
+                $products = "";
+                foreach ($data['productSelect'] as $product) {
+                    $products = $products . "" . $product;
+                }
+
+                $license = new License();
+                $license->tipo = 2;
+                $license->status = 1;
+                $license->id_usuario = $_SESSION['user']['id'];
+                $license->data_inicio = date('Y-m-d');
+                $license->data_fim = date('Y-m-d', strtotime("+3 days"));
+                $license->cmc = $data['cmc'];
+                $license->save();
+
+                if ($license->fail()) {
+                    var_dump($license->fail()->getMessage());
+                    exit();
+                } else {
+                    /**
+                     * Load all images
+                     */
+                    foreach ($_FILES as $key => $file) {
+                        $target_file = basename($file['name']);
+                        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+                        $extensions_arr = array("jpg", "jpeg", "png");
+
+                        if (in_array($imageFileType, $extensions_arr)) {
+                            $folder = THEMES . '/assets/uploads/companys';
+                            if (!file_exists($folder) || !is_dir($folder)) {
+                                mkdir($folder, 0755);
+                            }
+                            $fileName = $key . '.' . $imageFileType;
+                            $dir = $folder . '/' . $license->id;
+
+                            if (!file_exists($dir) || !is_dir($dir)) {
+                                mkdir($dir, 0755);
+                            }
+
+                            $dir = $dir . '/' . $fileName;
+
+                            move_uploaded_file($file['tmp_name'], $dir);
+
+                            $attach = new Attach();
+                            $attach->id_usuario = $license->id;
+                            $attach->tipo_usuario = 2;
+                            $attach->nome = $fileName;
+                            $attach->save();
+                        }
+                    }
+
+                    if ($attach->fail()) {
+                        $license->destroy();
+                        var_dump($attach->fail()->getMessage());
+                        exit();
+                    } else {
+                        $company = new Company();
+                        $company->id_licenca = $license->id;
+                        $company->cnpj = $data['cnpj'];
+                        $company->cmc = $data['cmc'];
+                        $company->nome_fantasia = $data['fantasyName'];
+                        $company->endereco = $data['street'];
+                        $company->numero = $data['number'];
+                        $company->bairro = $data['neighborhood'];
+                        $company->cidade = $data['city'];
+                        $company->bairro = $data['neighborhood'];
+                        $company->cep = $data['postcode'];
+                        $company->produto = $products;
+                        $company->outro_produto = $data['productDescription'];
+                        $company->relato_atividade = $data['ativityDescription'];
+                        $company->quantidade_equipamentos = $data['equipamentAmount'];
+                        $company->save();
+
+                        if ($company->fail()) {
+                            $attach->destroy();
+                            $license->destroy();
+                            var_dump($company->fail()->getMessage());
+                            exit();
+                        } else {
+                            $response = 'success';
+                        }
+                    }
+                }
+            }
+        }
+
+        echo $response;
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
+    public function companyLicense(): void
+    {
+        $this->checkLogin();
+
+        echo $this->view->render('companyLicense', [
+            'title' => 'Licença de Empresa | ' . SITE,
+            'zones' => null
+        ]);
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
+    public function licenseList(): void
+    {
+        $this->checkLogin();
+
+        $license_type = (new LicenseType())->find()->fetch(true);
+        $users = array();
+        if ($_SESSION['user']['login'] == 3) {
+            $licenses = (new License())->find()->fetch(true);
+
+            $auxPaid = 0;
+            $auxPending = 0;
+            $auxBlocked = 0;
+            $countLicense = 0;
+
+            if ($licenses) {
+                foreach ($licenses as $license) {
+                    if ($license->status == 1) {
+                        $auxPaid++;
+                    } else if ($license->status == 2) {
+                        $auxBlocked++;
+                    } else {
+                        $auxPending++;
+                    }
+
+                    $user = (new User())->findById($license->id_usuario, 'id, nome, cpf');
+                    $users[$user->id] = $user;
+                }
+                $countLicense = count($licenses);
+            }
+
+            echo $this->view->render('salesmanList', [
+                'title' => 'Licenças | ' . SITE,
+                'licenses' => $licenses,
+                'registered' => $countLicense,
+                'paid' => $auxPaid,
+                'pending' => $auxPending,
+                'blocked' => $auxBlocked,
+                'types' => $license_type,
+                'users' => $users
+            ]);
+        } else {
+            $licenses = (new License())->find('id_usuario = :id', 'id=' . $_SESSION['user']['id'])
+                ->fetch(true);
+
+            echo $this->view->render('licenseList', [
+                'title' => 'Minhas licenças | ' . SITE,
+                'licenses' => $licenses,
+                'types' => $license_type
+            ]);
+        }
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
+    public function confirmAccountPassword($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        if ($data['password'] === $data['rePassword']) {
+            $user = (new User())->find('MD5(id) = :id AND senha IS NULL', 'id=' . $data['userId'])->fetch();
+            if (!$user) {
+                $user = (new Agent())->find('MD5(id) = :id AND senha IS NULL', 'id=' . $data['userId'])->fetch();
+            }
+            if ($user) {
+                $user->senha = md5($data['password']);
+                $user->save();
+                if ($user->fail()) {
+                    $user->fail()->getMessage();
+                } else {
+                    echo 'pswSuccess';
+                }
+            } else {
+                $this->router->redirect('web.home');
+            }
+        } else {
+            echo 'pswFail';
         }
     }
 
@@ -611,7 +1442,7 @@ class Web
      */
     public function logout(): void
     {
-        if (!empty($_SESSION['user']['login'])) {
+        if (!empty($_SESSION['user'])) {
             unset($_SESSION['user']);
         }
 
@@ -625,57 +1456,46 @@ class Web
     public function pswRecovery($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
-        $salesman = (new Salesman())->find('identidade = :identity', 'identity=' . $data['identity'])->fetch();
-        if ($salesman !== NULL) {
-            if ($salesman->identidade === $data['identity']) {
-                /**
-                 * Generate a new recovery password
-                 */
-                $editSalesman = (new Salesman)->findById($salesman->id);
-                $tempPsw = md5($salesman->senha);
-                $tempPsw = substr($tempPsw, 1, 5);
-                $editSalesman->senha_temporaria = md5($tempPsw);
-                $editSalesman->save();
+        $user = (new User())->find('cpf = :identity', 'identity=' . $data['identity'])->fetch();
 
-                /**
-                 * Send email with new temporary recovery password
-                 */
-                $name = explode(" ", $salesman->nome);
-                $name = $name[0] . " " . $name[1];
-                $email = new Email();
-                $email->add(
-                    "Recuperação de senha Orditi",
-                    "<p style='font-family: \"Dosis\", sans-serif;'>Olá " . $name . ", sua senha de recuperação no Orditi é <span style='color: #157881;'>" . $tempPsw . "</span></p>
-                    <div> <img style='width: 20%' src='https://www.maceio.orditi.com/i/themes/assets/img/nav-logo.png'> </div>",
-                    $salesman->nome,
-                    $salesman->email
-                )->send();
-            }
+        if (!$user) {
+            $user = (new Agent())->find('cpf = :identity', 'identity=' . $data['identity'])->fetch();
         }
 
-        $company = (new Company())->find('cnpj = :identity', 'identity=' . $data['identity'])->fetch();
-        if ($company !== NULL) {
-            if ($company->cnpj === $data['identity']) {
-                /**
-                 * Generate a new recovery password
-                 */
-                $editCompany = (new Company())->findById($company->id);
-                $tempPsw = md5($company->senha);
-                $tempPsw = substr($tempPsw, 1, 5);
-                $editCompany->senha_temporaria = md5(123);
-                $editCompany->save();
+        if ($user->cpf === $data['identity']) {
 
-                /**
-                 * Send email with new temporary recovery password
-                 */
-                $email = new Email();
-                $email->add(
-                    "Recuperação de senha Orditi",
-                    "<p style='font-family: \"Dosis\", sans-serif;'>Olá " . $company->nome_fantasia . ", sua senha de recuperação no Orditi é <span style='color: #157881;'>" . $tempPsw . "</span></p>
-                    <div> <img style='width: 20%' src='https://www.maceio.orditi.com/i/themes/assets/img/nav-logo.png'> </div>",
-                    $company->nome_fantasia,
-                    $company->email
-                )->send();
+            $user->senha = NULL;
+            $user->save();
+
+            if ($user->fail()) {
+                var_dump($user->fail()->getMessege());
+                exit;
+            }
+
+            /**
+             * Send email with new temporary recovery password
+             */
+            $email = new Email();
+
+            $message = file_get_contents(THEMES . "/assets/emails/confirmRegisterEmail.php");
+
+            $url = ROOT . "/confirmAccount/" . md5($user->id);
+            $template = array("%title", "%textBody", "%button", "%link", "%name");
+            $dataReplace = array("Recuperação de senha", "Para recuperar sua senha", "Recuperar", $url, $user->nome);
+            $message = str_replace($template, $dataReplace, $message);
+
+            $email->add(
+                "Recuperação de senha",
+                $message,
+                $user->nome,
+                $user->email
+            )->send();
+
+            if ($email->error()) {
+                var_dump($email->error()->getMessage());
+                exit;
+            } else {
+                echo 'pswSuccess';
             }
         }
     }
@@ -688,103 +1508,107 @@ class Web
     {
         $this->checkLogin();
 
-        if ($_SESSION['user']['login'] == 2) {
-            $this->router->redirect("web.companyProfile");
-        }
-
-        if ($_SESSION['user']['login'] === 1) {
-            $salesman = (new Salesman())->findById($_SESSION['user']['id']);
-            $payments = (new Payment())->find('id_ambulante = :id', 'id=' . $_SESSION['user']['id'])->fetch(true);
-
-            if ($salesman->regiao != null) {
-                $zone = (new Zone())->findById($salesman->regiao, 'id, nome, ST_AsText(coordenadas) as poligono, limite_ambulantes, quantidade_ambulantes');
-            } else {
-                $zone = null;
-            }
-
-            if ($zone) {
-                $polygon = explode("POLYGON((", $zone->poligono);
-                $polygon = explode("))", $polygon[1]);
-                $polygon = explode(",", $polygon[0]);
-
-                $aux = array();
-                foreach ($polygon as $polig) {
-                    $polig = explode(" ", $polig);
-                    $aux[] = $polig;
-                }
-                $polygon = $aux;
-                $zone->poligono = $polygon;
-            }
-
-            if ($salesman->suspenso == 0 && ($salesman->latitude == null || $salesman->longitude == null)) {
-                $zoneData = array();
-                $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
-
-                if ($zones) {
-                    foreach ($zones as $zone) {
-                        $polygon = explode("POLYGON((", $zone->poligono);
-                        $polygon = explode("))", $polygon[1]);
-                        $polygon = explode(",", $polygon[0]);
-
-                        $aux = array();
-                        foreach ($polygon as $polig) {
-                            $polig = explode(" ", $polig);
-                            $aux[] = $polig;
-                        }
-
-                        $polygon = $aux;
-
-                        $zone->poligono = $polygon;
-                        $zoneData[] = $zone;
-                    }
-                } else {
-                    $zoneData = null;
-                }
-            } else {
-                $zoneData = null;
-            }
-
-            if ($salesman->id_empresa != null) {
-                $company = (new Company())->findById($salesman->id_empresa, 'nome_fantasia');
-            } else {
-                $company = null;
-            }
-
+        if ($_SESSION['user']['login'] === 0) {
+            $user = (new User())->findById($_SESSION['user']['id']);
+            $payments = (new Payment())->find('id_usuario = :id', 'id=' . $_SESSION['user']['id'])
+                ->fetch(true);
 
             $folder = ROOT . '/themes/assets/uploads';
             $uploads = array();
-            $aux = 1;
-            $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 1', 'id=' . $salesman->id)->fetch(true);
+            $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 0', 'id=' . $user->id)
+                ->fetch(true);
             if ($attachments) {
                 foreach ($attachments as $attach) {
-                    $attachName = explode('.', $attach->file_name);
+                    $attachName = explode('.', $attach->nome);
                     if ($attachName[0] == 'userImage') {
-                        $userImage = ROOT . '/themes/assets/uploads/salesmans/' . $attach->id_usuario
-                            . '/' . $attach->file_name;
+                        $userImage = ROOT . '/themes/assets/uploads/users/' . $attach->id_usuario
+                            . '/' . $attach->nome;
                     }
 
                     $uploads[] = [
-                        'fileName' => $attach->file_name,
-                        'groupName' => 'salesmans',
-                        'userId' => $salesman->id
+                        'fileName' => $attach->nome,
+                        'groupName' => 'users',
+                        'userId' => $user->id
                     ];
-                    $aux++;
                 }
             }
 
             echo $this->view->render('profile', [
                 'title' => 'Perfil | ' . SITE,
-                'salesman' => $salesman,
+                'user' => $user,
                 'payments' => $payments,
-                'zone' => $zone,
-                'company' => $company,
-                'zones' => $zoneData,
                 'uploads' => $uploads,
                 'userImage' => $userImage
             ]);
         } else if ($_SESSION['user']['login'] === 3) {
+            $agent = (new Agent())->findById($_SESSION['user']['id']);
+
+            if ($agent) {
+                $folder = ROOT . '/themes/assets/uploads';
+                $uploads = array();
+                $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 3', 'id=' . $agent->id)
+                    ->fetch(true);
+
+                $role = (new Role())->findById($agent->tipo_fiscal);
+
+                if ($attachments) {
+                    foreach ($attachments as $attach) {
+                        $attachName = explode('.', $attach->nome);
+                        if ($attachName[0] == 'userImage') {
+                            $userImage = ROOT . '/themes/assets/uploads/agents/' . $attach->id_usuario
+                                . '/' . $attach->nome;
+                        }
+
+                        $uploads[] = [
+                            'fileName' => $attach->nome,
+                            'groupName' => 'agents',
+                            'userId' => $agent->id
+                        ];
+                    }
+                }
+
+                echo $this->view->render('profile', [
+                    'title' => 'Perfil | ' . SITE,
+                    'user' => $agent,
+                    'uploads' => $uploads,
+                    'userImage' => $userImage,
+                    'role' => $role
+                ]);
+            }
+        } else {
             $this->router->redirect('web.salesmanList');
         }
+    }
+
+    public function editProfile($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $user = (new User())->find("MD5(id) = :id", "id=" . $data['id'])->fetch(false);
+        $agent = (new Agent())->find("MD5(id) = :id", "id=" . $data['id'])->fetch(false);
+        $response = false;
+        if ($user) {
+            $user->email = $data['email'];
+            $user->telefone = $data['phone'];
+            $user->endereco = $data['street'];
+            $user->save();
+
+            if (!$user->fail()) {
+                $response = true;
+            }
+        } else if ($agent) {
+            $agent->email = $data['email'];
+            $agent->telefone = $data['phone'];
+            $agent->save();
+
+            if (!$agent->fail()) {
+                $response = true;
+            }
+        }
+
+        echo $response;
     }
 
     /**
@@ -794,25 +1618,20 @@ class Web
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
-        $agent = (new Agent())->findById($data['id2']);
-        if ($agent == NULL) {
-            echo 0;
-        } else {
-            $salesman = (new Salesman())->findById($data['id1']);
-            if ($salesman == NULL) {
-                echo 0;
-            } else {
+        $agent = (new Agent())->findById($data['agentSelect']);
+        if ($agent) {
+            $salesman = (new Salesman())->find('MD5(id) = :id', 'id='. $data['licenseId'])->fetch(false);
+            if ($salesman) {
                 $notification = new Notification();
-                $notification->ambulante_id = $data['id1'];
+                $notification->id_licenca = $salesman->id_licenca;
                 $notification->data_notificacao = $data['date'];
                 $notification->hora_notificacao = $data['time'];
                 $notification->titulo = $data['title'];
-                $notification->descricao = $data['description'];
-                $notification->fiscal_id = $data['id2'];
-                $notification->fiscal_nome = $agent->nome;
+                $notification->descricao = $data['noticationDescription'];
+                $notification->id_fiscal = $agent->id;
                 $notification->save();
 
-                if (isset($data['blockAccess']) && $data['blockAccess'] == 1) {
+                if (!isset($data['blockAccess']) || $data['blockAccess'] == 1) {
                     if ($salesman->regiao != null) {
                         $zone = (new Zone())->findById($salesman->regiao);
                         if ($zone) {
@@ -828,106 +1647,27 @@ class Web
                     $salesman->longitude = null;
                     $salesman->save();
 
-                    $email = new Email();
-                    $email->add(
-                        "Notificação",
-                        "<p style='font-family: \"Dosis\", sans-serif;'>Olá " . $salesman->nome . ", você acaba de ter sua conta <span style='color: #ed2e54;'>SUSPENSA</span> do <span style='color: #ed2e54;'> ORDITI</span></p>
-                        <p style='font-family: \"Dosis\", sans-serif;'>Título da suspensão: <span style='color: #ed2e54;'>" . $data['title'] . "</span></p>
-                        <p style='font-family: \"Dosis\", sans-serif;'>Descrição: <span style='color: #ed2e54;'>" . $data['description'] . "</span></p>
-                        <div> <img style='width: 20%' src='https://www.maceio.orditi.com/i/themes/assets/img/nav-logo.png'> </div>",
-                        $salesman->nome,
-                        $salesman->email
-                    )->send();
-                }
+                    // $email = new Email();
 
-                if (!($data['penality'] == '' || $data['penality'] == ' ' || $data['penality'] == 0 || $data['penality'] == 00)) {
-                    $paymentDate = date('Y-m-d', strtotime("+3 days"));
+                    // $message = file_get_contents(THEMES . "/assets/emails/notificationEmail.php");
 
-                    $payment = new Payment();
-                    $payment->id_ambulante = $data['id1'];
-                    $payment->valor = $data['penality'];
-                    $payment->pagar_em = date('Y-m-d H:i:s', strtotime("+3 days"));
-                    $payment->tipo = 0;
-                    $payment->status = 0;
-                    $payment->cod_referencia = null;
-                    $payment->cod_pagamento = null;
-                    $payment->save();
+                    // $url = ROOT;
+                    // $template = array("%title", "%textBody", "%status", "%titleStatus", "%button", "%link", "%name", "%dataTitle", "%dataDescription");
+                    // $dataReplace = array("Notificação", "Sua conta encontra-se", "SUSPENSA", "suspensão", "Acesse", $url, $salesman->nome, $data['title'], $data['description']);
+                    // $message = str_replace($template, $dataReplace, $message);
 
-                    $extCode = 'ODT' . $payment->id;
+                    // $email->add(
+                    //     "Notificação",
+                    //     $message,
+                    //     $salesman->nome,
+                    //     $salesman->email
+                    // )->send();
 
-                    $soap_input = '
-                            <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eag="EAgata" xmlns:e="e-Agata_18.11">
-                               <soapenv:Header/>
-                               <soapenv:Body>
-                                  <eag:WSTaxaExternas.Execute>
-                                     <eag:Chave>TAXA_EXTERNA</eag:Chave>
-                                     <eag:Usulogin>CIDADAO</eag:Usulogin>
-                                     <eag:Ususenha>123456</eag:Ususenha>
-                                     <eag:Sdttaxaexterna>
-                                        <e:SDTTaxaExternas.SDTTaxaExternasItem>
-                                           <e:TipoMode>INS</e:TipoMode>
-                                           <e:EXTTipoContr>3</e:EXTTipoContr>
-                                           <e:EXTCodigo>' . $extCode . '</e:EXTCodigo>
-                                           <e:EXTDescricao>numero da licenca</e:EXTDescricao>
-                                           <e:EXTTipoMulta></e:EXTTipoMulta>
-                                           <e:EXTDescMulta></e:EXTDescMulta>
-                                           <e:EXTanolct>2020</e:EXTanolct>
-                                           <e:EXTtpoTaxaExternas>2</e:EXTtpoTaxaExternas>
-                                           <e:EXTCTBid>1254</e:EXTCTBid>
-                                           <e:EXTcpfcnpjpropr></e:EXTcpfcnpjpropr>
-                                           <e:EXTInscricao>' . $salesman->cmc . '</e:EXTInscricao>
-                                           <e:EXTvlrvvt>' . $data['penality'] . '</e:EXTvlrvvt>
-                                           <e:EXTvlrvvtdesconto>0.00</e:EXTvlrvvtdesconto>
-                                           <e:EXTvencimento>' . $paymentDate . '</e:EXTvencimento>
-                                           <e:EXTSituacao>A</e:EXTSituacao>
-                                           <e:Nome></e:Nome>
-                                           <e:Endereco></e:Endereco>
-                                           <e:Numero></e:Numero>
-                                           <e:complemento></e:complemento>
-                                           <e:Municipio></e:Municipio>
-                                           <e:cep></e:cep>
-                                           <e:uf>AL</e:uf>
-                                        </e:SDTTaxaExternas.SDTTaxaExternasItem>
-                                     </eag:Sdttaxaexterna>
-                                  </eag:WSTaxaExternas.Execute>
-                               </soapenv:Body>
-                            </soapenv:Envelope>';
-
-                    $curl = curl_init();
-
-                    curl_setopt($curl, CURLOPT_URL, EAGATA);
-                    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, $soap_input);
-                    curl_setopt($curl, CURLOPT_HEADER, false);
-                    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-
-                    $soap_response = curl_exec($curl);
-
-                    $xml_response = str_ireplace(['SOAP-ENV:', 'SOAP:', '.executeresponse', '.SDTConsultaParcelamentoItem', '.SDTMensagem_TaxaExternaItem'], '', $soap_response);
-
-                    @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
-                    $code = $xml->Body->WSTaxaExternas->Mensagem->SDTMensagem_TaxaExterna->NossoNumero;
-
-                    $payment->cod_pagamento = $extCode;
-                    $payment->cod_referencia = $code;
-                    $payment->save();
-
-                    $email = new Email();
-                    $email->add(
-                        "Multa",
-                        "<p style='font-family: \"Dosis\", sans-serif;'>Olá " . $salesman->nome . ", você acaba de receber uma <span style='color: #ed2e54;'>MULTA</span> no valor de  <span style='color: #157881;'>R$" . $data['penality'] . "</span> que deverá ser paga até o dia <span style='color: #ed2e54;'>" . date('d-m-Y', strtotime($paymentDate)) . "</span></p>
-                    <p style='font-family: \"Dosis\", sans-serif;'>Título da multa: <span style='color: #ed2e54;'>" . $data['title'] . "</span></p>
-                    <p style='font-family: \"Dosis\", sans-serif;'>Descrição: <span style='color: #ed2e54;'>" . $data['description'] . "</span></p>
-                    <div> <img style='width: 20%' src='https://www.maceio.orditi.com/i/themes/assets/img/nav-logo.png'> </div>",
-                        $salesman->nome,
-                        $salesman->email
-                    )->send();
-                }
-
-                if ($notification->fail()) {
-                    echo 0;
-                } else {
-                    echo 1;
+                    if ($notification->fail()) {
+                        var_dump($notification->fail()->getMessage());
+                    } else {
+                        echo 1;
+                    }
                 }
             }
         }
@@ -946,12 +1686,14 @@ class Web
         $auxPaid = 0;
         $auxPendent = 0;
         $auxExpired = 0;
+        $paymentCount = 0;
 
         if ($payments) {
             foreach ($payments as $payment) {
-                $salesmanName = (new Salesman())->findById($payment->id_ambulante, 'nome');
-                if ($salesmanName) {
-                    $payment->name = $salesmanName->nome;
+                $license = (new License())->findById($payment->id_licenca);
+                if ($license) {
+                    $user = (new User())->findById($license->id_usuario);
+                    $payment->name = $user->nome;
                     $paymentArray[] = $payment;
                 }
 
@@ -963,6 +1705,7 @@ class Web
                     $auxExpired++;
                 }
             }
+            $paymentCount = count($payments);
         } else {
             $paymentArray = null;
         }
@@ -970,7 +1713,7 @@ class Web
         echo $this->view->render('paymentList', [
             'title' => 'Pagamentos | ' . SITE,
             'payments' => $paymentArray,
-            'amount' => count($payments),
+            'amount' => $paymentCount,
             'paid' => $auxPaid,
             'pendent' => $auxPendent,
             'expired' => $auxExpired
@@ -982,14 +1725,14 @@ class Web
      */
     public function agentList(): void
     {
-        $agents = (new Agent)->find('', '', 'id, matricula, cpf, email, nome, status')->fetch(true);
+        $agents = (new Agent)->find('', '', 'id, matricula, cpf, email, nome, situacao')->fetch(true);
         $apporved = 0;
         $blocked = 0;
         $pendding = 0;
         foreach ($agents as $agent) {
-            if ($agent->status == 1) {
+            if ($agent->situacao == 1) {
                 $apporved++;
-            } else if ($agent->status == 0) {
+            } else if ($agent->situacao == 0) {
                 $pendding++;
             } else {
                 $blocked++;
@@ -1016,16 +1759,19 @@ class Web
 
         $agent = (new Agent())->findById($data['agentId']);
         if ($agent) {
-            if ($agent->status == 1) {
-                $agent->status = 2;
+            if ($agent->situacao == 1) {
+                $agent->situacao = 2;
             } else {
-                $agent->status = 1;
+                $agent->situacao = 1;
             }
 
             $agent->save();
-            $this->router->redirect('web.agentList');
+            if ($agent->fail()) {
+                var_dump($agent->fail()->getMessage());
+            } else {
+                $this->router->redirect('web.agentList');
+            }
         }
-
     }
 
     /**
@@ -1036,128 +1782,114 @@ class Web
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $this->checkAgent();
+        $tableHead = '';
+        $tableBody = '';
 
         if ($data['fileType'] == 1) {
-            // File Name
-            $file_name = 'pagamentos.xls';
+            $tableName = 'licencas';
 
-            // File Head
-            $html = '';
-            $html .= '<table>';
-            $html .= '<tr>';
-            $html .= '<td colspan="5">Planilha de pagamentos - ORDITI</td>';
-            $html .= '</tr>';
+            $tableHead .= '<tr>';
+            $tableHead .= '<td><b>Tipo</b></td>';
+            $tableHead .= '<td><b>Cpf</b></td>';
+            $tableHead .= '<td><b>Proprietário</b></td>';
+            $tableHead .= '<td><b>Início</b></td>';
+            $tableHead .= '<td><b>Fim</b></td>';
+            $tableHead .= '<td><b>Status</b></td>';
+            $tableHead .= '</tr>';
 
-            // File Fields
-            $html .= '<tr>';
-            $html .= '<td><b>Status</b></td>';
-            $html .= '<td><b>Valor</b></td>';
-            $html .= '<td><b>Vencimento</b></td>';
-            $html .= '<td><b>Pagamento</b></td>';
-            $html .= '<td><b>Ambulante</b></td>';
-            $html .= '</tr>';
+            $licenses = (new License())->find()->fetch(true);
+            if ($licenses) {
+                $license_type = (new LicenseType())->find()->fetch(true);
+                if ($license_type) {
+                    foreach ($licenses as $license) {
+                        $user = (new User())->findById($license->id_usuario, 'id, nome, cpf');
 
-            // File Body
-            $payments = (new Payment())->find->fetch(true);
-            if ($payments) {
-                foreach ($payments as $payment) {
-                    $salesman = (new Salesman())->findById($payment->id_ambulante, 'nome');
-                    if ($payment->status == 3 || $payment->status == 0) {
-                        $status = "Pendente";
-                    } elseif ($payment->status == 1) {
-                        $status = "Pago";
-                    } else {
-                        $status = "Vencido";
+                        switch ($license->status):
+                            case 0:
+                                $textStatus = 'Pendente';
+                                break;
+                            case 1:
+                                $textStatus = 'Ativo';
+                                break;
+                            default:
+                                $textStatus = 'Bloqueado';
+                                break;
+                        endswitch;
+
+                        $tableBody .= '<tr>';
+                        $tableBody .= '<td>' . $license_type[$license->tipo - 1]->nome . '</td>';
+                        $tableBody .= '<td>' . $user->cpf . '</td>';
+                        $tableBody .= '<td>' . $user->nome . '</td>';
+                        $tableBody .= '<td>' . $license->data_inicio . '</td>';
+                        $tableBody .= '<td>' . $license->data_fim . '</td>';
+                        $tableBody .= '<td>' . $textStatus . '</td>';
+                        $tableBody .= '</tr>';
                     }
-
-                    $html .= '<tr>';
-                    $html .= '<td>' . $status . '</td>';
-                    $html .= '<td>R$ ' . $payment->valor . ',00</td>';
-                    $html .= '<td>' . date('d-m-Y', strtotime($payment->pagar_em)) . '</td>';
-                    $html .= '<td>' . date('d-m-Y', strtotime($payment->pago_em)) . '</td>';
-                    $html .= '<td>' . $salesman->nome . '</td>';
-                    $html .= '</tr>';
                 }
             }
         } else if ($data['fileType'] == 2) {
-            // File Name
-            $file_name = 'ambulantes.xls';
+            $tableName = 'pagamentos';
 
-            // File Head
-            $html = '';
-            $html .= '<table>';
-            $html .= '<tr>';
-            $html .= '<td colspan="5">Planilha de ambulantes - ORDITI</td>';
-            $html .= '</tr>';
+            $tableHead .= '<tr>';
+            $tableHead .= '<td><b>Valor</b></td>';
+            $tableHead .= '<td><b>Vencimento</b></td>';
+            $tableHead .= '<td><b>Cod Referência</b></td>';
+            $tableHead .= '<td><b>Tipo</b></td>';
+            $tableHead .= '<td><b>Status</b></td>';
+            $tableHead .= '<td><b>Proprietário</b></td>';
+            $tableHead .= '</tr>';
 
-            // File Fields
-            $html .= '<tr>';
-            $html .= '<td><b>Cpf</b></td>';
-            $html .= '<td><b>Nome</b></td>';
-            $html .= '<td><b>Situação</b></td>';
-            $html .= '<td><b>Empresa</b></td>';
-            $html .= '<td><b>Localização</b></td>';
-            $html .= '</tr>';
-
-            $salesmans = (new Salesman())->find()->fetch(true);
-            if ($salesmans) {
-                foreach ($salesmans as $salesman) {
-                    if ($salesman->stituacao == 0 || $salesman->stituacao == 3) {
-                        $status = 'Pendente';
-                    } else if ($salesman->stituacao == 1) {
-                        $status = 'Ativo';
-                    } else {
-                        $status = 'Inadimplente';
+            $payments = (new Payment())->find()->fetch(true);
+            if ($payments) {
+                foreach ($payments as $payment) {
+                    $license = (new License())->findById($payment->id_licenca);
+                    if ($license) {
+                        $user = (new User())->findById($license->id_usuario);
+                        $payment->name = $user->nome;
                     }
 
-                    if ($salesman->id_empresa != null) {
-                        $company = (new Company())->findById($salesman->id_empresa, 'nome_fantasia');
-                        $company = $company->nome_fantasia;
-                    } else {
-                        $company = 'Não possui';
+                    switch ($payment->status) {
+                        case 1:
+                            $textStatus = 'Ativo';
+                            break;
+                        case 2:
+                            $textStatus = 'Bloqueado';
+                            break;
+                        default:
+                            $textStatus = 'Pendente';
+                            break;
                     }
 
-                    $html .= '<tr>';
-                    $html .= '<td>' . $salesman->identidade . '</td>';
-                    $html .= '<td>' . $salesman->nome . '</td>';
-                    $html .= '<td>' . $status . '</td>';
-                    $html .= '<td>' . $company . '</td>';
-                    $html .= '<td>' . $salesman->end_local . '</td>';
-                    $html .= '</tr>';
-                }
-            }
-        } else if ($data['fileType'] == 3) {
-            $companys = (new Company())->find()->fetch(true);
-            if ($companys) {
-                // File Name
-                $file_name = 'empresas.xls';
+                    switch ($payment->tipo) {
+                        case 1:
+                            $paymentType = 'Recorrente';
+                            break;
+                        default:
+                            $paymentType = 'Vencido';
+                            break;
+                    }
 
-                // File Head
-                $html = '';
-                $html .= '<table>';
-                $html .= '<tr>';
-                $html .= '<td colspan="5">Planilha de empresas - ORDITI</td>';
-                $html .= '</tr>';
-
-                // File Fields
-                $html .= '<tr>';
-                $html .= '<td><b>Cnpj</b></td>';
-                $html .= '<td><b>Nome</b></td>';
-                $html .= '<td><b>Ambulantes</b></td>';
-                $html .= '<td><b>Equipamentos</b></td>';
-                $html .= '<td><b>Localização</b></td>';
-                $html .= '</tr>';
-                foreach ($companys as $company) {
-                    $html .= '<tr>';
-                    $html .= '<td>' . $company->cnpj . '</td>';
-                    $html .= '<td>' . $company->nome_fantasia . '</td>';
-                    $html .= '<td>' . $company->contador_ambulantes . '</td>';
-                    $html .= '<td>' . $company->quantidade_equipamentos . '</td>';
-                    $html .= '<td>' . $company->endereco . ', ' . $company->numero . ', ' . $company->bairro . ', ' . $company->cidade . ', ' . $company->cep . '</td>';
-                    $html .= '</tr>';
+                    $tableBody .= '<tr>';
+                    $tableBody .= '<td>' . $payment->valor . '</td>';
+                    $tableBody .= '<td>' . date('d-m-Y', strtotime($payment->pagar_em)) . '</td>';
+                    $tableBody .= '<td>' . $payment->cod_referencia . '</td>';
+                    $tableBody .= '<td>' . $paymentType . '</td>';
+                    $tableBody .= '<td>' . $textStatus . '</td>';
+                    $tableBody .= '<td>' . $payment->name . '</td>';
+                    $tableBody .= '</tr>';
                 }
             }
         }
+
+        $file_name = $tableName . '.xls';
+
+        $html = '';
+        $html .= '<table>';
+        $html .= '<tr>';
+        $html .= '<td colspan="5">Planilha de ' . $tableName . ' - ORDITI</td>';
+        $html .= '</tr>';
+        $html .= $tableHead;
+        $html .= $tableBody;
 
         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
         header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
@@ -1166,50 +1898,84 @@ class Web
         header("Content-type: application/x-msexcel");
         header("Content-Disposition: attachment; filename=\"{$file_name}\"");
         header("Content-Description: PHP Generated Data");
-        // Envia o conteúdo do arquivo
 
         echo $html;
     }
 
-    /**
-     * @return void
-     */
-    public function salesmanList(): void
+    public function exportNeighborhood($data): void
     {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $this->checkAgent();
+        $tableHead = '';
+        $tableBody = '';
 
-        $salesmans = (new Salesman())
-            ->find('', '', 'id, identidade, rg, nome, end_local, email, fone, situacao')
+        $salesmans = (new Salesman())->find('MD5(id_bairro) = :id', 'id='. $data['neighborhoodId'])
             ->fetch(true);
-        $companys = (new Company())
-            ->find('', '', 'id, cnpj, rg, nome_fantasia, email, fone, endereco, cidade, 
-            bairro, numero, cep, situacao')
-            ->fetch(true);
+        $neihborhood = (new Neighborhood())
+            ->find('MD5(id) = :id', 'id='. $data['neighborhoodId'], 'nome')->fetch(false);
+        if ($salesmans) {
+            $tableHead .= '<tr>';
+            $tableHead .= '<td><b>Tipo</b></td>';
+            $tableHead .= '<td><b>Cpf</b></td>';
+            $tableHead .= '<td><b>Proprietário</b></td>';
+            $tableHead .= '<td><b>Início</b></td>';
+            $tableHead .= '<td><b>Fim</b></td>';
+            $tableHead .= '<td><b>Status</b></td>';
+            $tableHead .= '</tr>';
 
-        $auxPaid = 0;
-        $auxPending = 0;
-        $auxBlocked = 0;
-        foreach ($salesmans as $salesman) {
-            if ($salesman->situacao == 1) {
-                $auxPaid++;
-            } else {
-                $auxPending++;
-            }
+            $license_type = (new LicenseType())->find()->fetch(true);
+            if ($license_type) {
+                foreach ($salesmans as $salesman) {
+                    $license = (new License())->find('id = :id', 'id='. $salesman->id_licenca)
+                        ->fetch(false);
+                    if ($license) {
+                        $user = (new User())->findById($license->id_usuario, 'id, nome, cpf');
 
-            if ($salesman->suspenso == 1) {
-                $auxBlocked++;
+                        switch ($license->status) {
+                            case 0:
+                                $textStatus = 'Pendente';
+                                break;
+                            case 1:
+                                $textStatus = 'Ativo';
+                                break;
+                            default:
+                                $textStatus = 'Bloqueado';
+                                break;
+                        }
+
+                        $tableBody .= '<tr>';
+                        $tableBody .= '<td>' . $license_type[$license->tipo - 1]->nome . '</td>';
+                        $tableBody .= '<td>' . $user->cpf . '</td>';
+                        $tableBody .= '<td>' . $user->nome . '</td>';
+                        $tableBody .= '<td>' . $license->data_inicio . '</td>';
+                        $tableBody .= '<td>' . $license->data_fim . '</td>';
+                        $tableBody .= '<td>' . $textStatus . '</td>';
+                        $tableBody .= '</tr>';
+                    }
+                }
             }
         }
 
-        echo $this->view->render('salesmanList', [
-            'title' => 'Usuários | ' . SITE,
-            'salesmans' => $salesmans,
-            'companys' => $companys,
-            'registered' => count($salesmans),
-            'paid' => $auxPaid,
-            'pending' => $auxPending,
-            'blocked' => $auxBlocked
-        ]);
+        $file_name = 'salesman.xls';
+
+        $html = '';
+        $html .= '<table>';
+        $html .= '<tr>';
+        $html .= '<td colspan="5">Ambulantes no bairro: '. $neihborhood->nome .' - ORDITI</td>';
+        $html .= '</tr>';
+        $html .= $tableHead;
+        $html .= $tableBody;
+        $html .= '</table>';
+
+        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+        header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
+        header("Cache-Control: no-cache, must-revalidate");
+        header("Pragma: no-cache");
+        header("Content-type: application/x-msexcel");
+        header("Content-Disposition: attachment; filename=\"{$file_name}\"");
+        header("Content-Description: PHP Generated Data");
+
+        echo $html;
     }
 
     /**
@@ -1218,8 +1984,39 @@ class Web
     public function salesmanMap(): void
     {
         $zoneData = array();
-        $reports = (new Report())->find()->fetch(true);
-        $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
+        $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, 
+        ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')
+            ->fetch(true);
+
+        $pending = array();
+        $expired = array();
+        $paid = array();
+
+        if ($_SESSION['user']['login'] == 3) {
+            $salesmans = (new Salesman())->find('', '', 'id_licenca, latitude, longitude')
+                ->fetch(true);
+            if ($salesmans) {
+                foreach ($salesmans as $salesman) {
+                    $license = (new License())->findById($salesman->id_licenca, 'status, id_usuario');
+                    $user = (new User())->findById($license->id_usuario);
+                    if ($license) {
+                        $salesman->status = $license->status;
+                        $salesman->nome = $user->nome;
+                        $salesman->cpf = $user->cpf;
+                        $salesman->telefone = $user->telefone;
+                        $salesman->id_licenca = md5($salesman->id_licenca);
+
+                        if ($license->status == 1) {
+                            $paid[] = $salesman;
+                        } else if ($license->status == 2) {
+                            $expired[] = $salesman;
+                        } else {
+                            $pending[] = $salesman;
+                        }
+                    }
+                }
+            }
+        }
 
         if ($zones) {
             foreach ($zones as $zone) {
@@ -1244,30 +2041,24 @@ class Web
                 unset($zone->detalhes, $zone->foto);
                 $zoneData[] = $zone;
             }
+        } else {
+            $zoneData = null;
         }
 
-        $salesmans = (new Salesman())->find('', '', 'id, latitude, longitude, nome, area_equipamento, identidade, situacao')->fetch(true);
-        if (!isset($_SESSION['user']['login']) || (isset($_SESSION['user']['login']) && ($_SESSION['user']['login'] === 1 || $_SESSION['user']['login'] == 2))) {
-            echo $this->view->render('salesmanMap', [
-                'title' => 'Mapa',
-                'salesmans' => null,
-                'reports' => $reports,
-                'zones' => $zoneData
-            ]);
-        } else {
-            echo $this->view->render('salesmanMap', [
-                'title' => 'Mapa',
-                'salesmans' => $salesmans,
-                'reports' => $reports,
-                'zones' => $zoneData
-            ]);
-        }
+        echo $this->view->render('salesmanMap', [
+            'title' => 'Mapa',
+            'zones' => $zoneData,
+            'pendings' => $pending,
+            'paids' => $paid,
+            'expireds' => $expired
+        ]);
     }
+
 
     /**
      * @return void
      */
-    public function createZone()
+    public function createZone(): void
     {
         $this->checkAgent();
 
@@ -1291,58 +2082,144 @@ class Web
     /**
      * @return void
      */
+    public function createUser(): void
+    {
+        $this->checkAgent();
+
+        echo $this->view->render("createUser", [
+            'title' => 'Cadastrar novo usuário | ' . SITE
+        ]);
+    }
+
+    /**
+     * @return void
+     */
     public function validateNewAgent($data): void
     {
+        /**
+         * Filter all form data
+         */
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
-        $image = null;
-        if (is_uploaded_file($_FILES['localImage']['tmp_name'])) {
-            $target_file = basename($_FILES['localImage']['name']);
+        $agent = (new Agent())->find('matricula = :matricula', 'matricula=' . $data['registration'])
+            ->fetch();
+        $folder = THEMES . '/assets/uploads';
+        $aux = 0;
 
-            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        if (!$agent) {
+            $psw = substr(md5(date('Y-m-d H:i:s')), 1, 5);
 
-            $extensions_arr = array("jpg", "jpeg", "png");
+            $empty = array_keys($data, "");
 
-            if (in_array($imageFileType, $extensions_arr)) {
-                $image_base64 = base64_encode(file_get_contents($_FILES['localImage']['tmp_name']));
-                $image = 'data:image/' . $imageFileType . ';base64,' . $image_base64;
+            $validateEmail = ($data["email"] === $data["confirm_email"]);
+
+            if ($empty) {
+                echo json_encode(["required" => $empty]);
+                exit;
             }
-        }
 
-        $psw = substr(md5(date('Y-m-d H:i:s')), 1, 5);
+            if (!filter_var($data["email"], FILTER_VALIDATE_EMAIL)) {
+                echo json_encode(["formatInvalid" => [
+                    "email" => "Formato de email inválido!"
+                ]]);
+                exit;
+            }
 
-        $agent = new Agent();
-        $agent->matricula = $data['registration'];
-        $agent->cpf = $data['identity'];
-        $agent->email = $data['email'];
-        $agent->nome = $data['name'];
-        $agent->senha = md5($psw);
-        $agent->tipo = 1;
-        $agent->foto = $image;
-        $agent->save();
+            if (!$validateEmail) {
+                echo json_encode(["validateResponse" => "registrationError"]);
+                exit;
+            }
 
-        if ($agent->fail()) {
-            var_dump($agent->fail()->getMessage());
-        } else {
-            $email = new Email();
-            $email->add(
-                "Cadastro Orditi",
-                "<p style='font-family: \"Dosis\", sans-serif;'>Olá " . $data['name'] . ", você teve sua conta cadastrada no </span><span style='color: #ed2e54;'> ORDITI</span></p>
-                        <p style='font-family: \"Dosis\", sans-serif;'>Estamos felizes em te-lo conosco.</p>
-                        <br>
-                        <p style='font-family: \"Dosis\", sans-serif;'>
-                            Para acessar sua conta basta <a href='https://www.maceio.orditi.com/i'>clicar aqui</a> e
-                            informar seu CPF e a seguinte senha: " . $psw . "
-                        </p>
-                        <div> <img style='width: 20%' src='https://www.maceio.orditi.com/i/themes/assets/img/nav-logo.png'> </div>",
-                $data['name'],
-                $data['email']
-            )->send();
+            $agent = new Agent();
+            $agent->matricula = $data['registration'];
+            $agent->cpf = $data['identity'];
+            $agent->email = $data['email'];
+            $agent->nome = $data['name'];
+            $agent->tipo_fiscal = 3;
+            $agent->situacao = 0;
+            $agent->telefone = $data['phone'];
+            $agent->tipo_fiscal = $data['jobRole'];
+            $agent->save();
 
-            if ($email->error()) {
-                var_dump($email->error()->getMessage());
+            $dir = $folder . '/agents/' . $agent->id;
+            if (!file_exists($dir) || !is_dir($dir)) {
+                mkdir($dir, 0755);
+
+                if ($_FILES && $_FILES['agentImage']['name'] !== '') {
+                    foreach ($_FILES as $key => $file) {
+                        $target_file = basename($file['name']);
+
+                        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                        $extensions_arr = array("jpg", "jpeg", "png");
+
+                        if (in_array($imageFileType, $extensions_arr)) {
+                            if (!file_exists($folder) || !is_dir($folder)) {
+                                mkdir($folder, 0755);
+                            }
+                            $fileName = 'userImage.' . $imageFileType;
+
+                            $dir = $dir . '/' . $fileName;
+
+                            if (move_uploaded_file($file['tmp_name'], $dir)) {
+                                $aux = 1;
+                            }
+                        }
+                    }
+                } else {
+                    $fileName = 'userImage.png';
+                    $dir = $dir . '/' . $fileName;
+                    $picture = THEMES . '/assets/img/picture.png';
+
+                    if (copy($picture, $dir)) {
+                        $aux = 1;
+                    }
+                }
+
+                if ($aux == 0) {
+                    exit;
+                }
+
+                if ($agent->fail()) {
+                    var_dump($agent->fail()->getMessage());
+                    unlink($dir);
+                } else {
+                    $attach = new Attach();
+                    $attach->id_usuario = $agent->id;
+                    $attach->tipo_usuario = 3;
+                    $attach->nome = $fileName;
+                    $attach->save();
+
+                    if ($attach->fail()) {
+                        $agent->destroy();
+                        unlink($dir);
+                        var_dump($attach->fail()->getMessage());
+                    } else {
+                        $email = new Email();
+                        $message = file_get_contents(THEMES . "/assets/emails/confirmRegisterEmail.php");
+
+                        $url = ROOT . "/confirmAccount/" . md5($agent->id);
+                        $template = array("%title", "%textBody", "%button", "%link", "%name");
+                        $dataReplace = array("Confirmação de Cadastro", "Sua conta foi cadastrada", "Confirmar", $url, $data['name']);
+                        $message = str_replace($template, $dataReplace, $message);
+
+                        $email->add(
+                            "Cadastro Orditi",
+                            $message,
+                            $data['name'],
+                            $data['email']
+                        )->send();
+                    }
+
+                    if ($email->error()) {
+                        echo 'identity_fail';
+                        $agent->destroy();
+                    } else {
+                        echo 'success';
+                    }
+                }
             } else {
-                echo 1;
+                echo 'already_exist';
             }
         }
     }
@@ -1350,18 +2227,19 @@ class Web
     /**
      * @return void
      */
-    public function validateZone($data)
+    public
+    function validateZone($data)
     {
         $image = null;
-        if (is_uploaded_file($_FILES['localImage']['tmp_name'])) {
-            $target_file = basename($_FILES['localImage']['name']);
+        if (is_uploaded_file($_FILES['zoneImage']['tmp_name'])) {
+            $target_file = basename($_FILES['zoneImage']['name']);
 
             $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
             $extensions_arr = array("jpg", "jpeg", "png");
 
             if (in_array($imageFileType, $extensions_arr)) {
-                $image_base64 = base64_encode(file_get_contents($_FILES['localImage']['tmp_name']));
+                $image_base64 = base64_encode(file_get_contents($_FILES['zoneImage']['tmp_name']));
                 $image = 'data:image/' . $imageFileType . ';base64,' . $image_base64;
             }
         }
@@ -1377,19 +2255,22 @@ class Web
             $array_point = array();
 
             foreach ($coodinates as $coodinate) {
-                $array_point[] = $coodinate->lat . " " . $coodinate->lng;
+                $array_point[] = $coodinate->lng . " " . $coodinate->lat;
             }
+
+            $array_point[] = $coodinates[0]->lng . " " . $coodinates[0]->lat;
 
             $str = implode(',', $array_point);
             $polygon = 'POLYGON((' . $str . '))';
 
             $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
             $zone = new Zone();
             $zone->nome = $data['zoneName'];
             if ($image !== null) {
                 $zone->foto = $image;
             }
-            $zone->detalhes = $description;
+            $zone->descricao = $description;
             $zone->limite_ambulantes = $data['available'];
             $zone->quantidade_ambulantes = $data['occupied'];
             $zone->coordenadas = $polygon;
@@ -1410,13 +2291,25 @@ class Web
      * @param array $data
      * @return void
      */
-    public function zone(array $data): void
+    public
+    function zone(array $data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
         if (is_numeric($data['id'])) {
-            $zone = (new Zone())->find('id = :zoneId', 'zoneId=' . $data['id'], 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes, foto, detalhes')->fetch();
-            $salesmans = (new Salesman())->find('regiao = :zoneId', 'zoneId=' . $data['id'], 'id, identidade, nome, situacao, fone, email')->fetch(true);
+            $zone = (new Zone())->find('id = :zoneId', 'zoneId=' . $data['id'], 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes, foto, descricao')->fetch();
+            $salesmans = (new Salesman())->find('id_zona = :zoneId', 'zoneId=' . $data['id'], 'id_licenca')->fetch(true);
+            $users = array();
+
+            if ($salesmans) {
+                foreach ($salesmans as $salesman) {
+                    $license = (new License())->findById($salesman->id_licenca);
+                    if ($license) {
+                        $users[] = (new User)->findById($license->id_usuario);
+                    }
+                }
+            }
+
             if ($zone !== null) {
                 $centroid = explode("POINT(", $zone->centroide);
                 $centroid = explode(")", $centroid[1]);
@@ -1435,11 +2328,6 @@ class Web
                 $polygon = $aux;
                 $zone->poligono = $polygon;
 
-                if (!$zone->foto) {
-                    $image_base64 = base64_encode(file_get_contents(THEMES . '/assets/img/zone.jpg'));
-                    $zone->foto = 'data:image/jpg;base64,' . $image_base64;
-                }
-
                 if (!isset($_SESSION['user']['login']) || (isset($_SESSION['user']['login']) && $_SESSION['user']['login'] === 1)) {
                     echo $this->view->render('zone', [
                         'title' => 'Zona | ' . SITE,
@@ -1450,7 +2338,7 @@ class Web
                     echo $this->view->render('zone', [
                         'title' => 'Zona | ' . SITE,
                         'zone' => $zone,
-                        'salesmans' => $salesmans
+                        'salesmans' => $users
                     ]);
                 }
             } else {
@@ -1462,7 +2350,8 @@ class Web
     /**
      * @return void
      */
-    public function checkLogin(): void
+    public
+    function checkLogin(): void
     {
         if (!isset($_SESSION['user']['login'])) {
             $this->router->redirect('web.home');
@@ -1473,7 +2362,8 @@ class Web
      * Check if an agent
      * @return data
      */
-    public function checkAgent(): void
+    public
+    function checkAgent(): void
     {
         if (!isset($_SESSION['user']['login']) || (isset($_SESSION['user']['login']) && !($_SESSION['user']['login'] === 3))) {
             $this->router->redirect('web.home');
@@ -1484,7 +2374,7 @@ class Web
      * Check if an agent/company
      * @return data
      */
-    public function checkuser(): void
+    public function checkUser(): void
     {
         if (!isset($_SESSION['user']['login']) || (isset($_SESSION['user']['login']) && ($_SESSION['user']['login'] === 1))) {
             $this->router->redirect('web.home');
@@ -1495,7 +2385,8 @@ class Web
      * Only to SingIn and SignUp
      * @return void
      */
-    public function checkIsOff(): void
+    public
+    function checkIsOff(): void
     {
         if (!empty($_SESSION['user']['login'])) {
             $this->router->redirect('web.home');
@@ -1505,127 +2396,15 @@ class Web
     /**
      * @param array $data
      * @return void
-     */
-    public function salesmanProfile(array $data): void
-    {
-        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
-        $this->checkuser();
-
-        if (is_numeric($data['id'])) {
-            if ($_SESSION['user']['login'] == 2) {
-                $salesman = (new Salesman())->find('id = :dataId AND id_empresa = :company', 'dataId=' . $data['id'] . '&company=' . $_SESSION['user']['id'])->fetch();
-            } else {
-                $salesman = (new Salesman())->findById($data['id']);
-            }
-            if ($salesman !== null) {
-                $notification = (new Notification())->find('ambulante_id = :id', 'id=' . $salesman->id)->fetch(true);
-                $payments = (new Payment())->find('id_ambulante = :id', 'id=' . $salesman->id)->fetch(true);
-                $agents = (new Agent())->find('', '', 'id, nome')->fetch(true);
-
-                if ($salesman->regiao !== null) {
-                    $zone = (new Zone())->findById($salesman->regiao, 'id, nome, ST_AsText(coordenadas) as poligono, limite_ambulantes, quantidade_ambulantes');
-                } else {
-                    $zone = null;
-                }
-
-                if ($salesman->id_empresa !== NULL) {
-                    $company = (new Company())->findById($salesman->id_empresa, 'nome_fantasia');
-                } else {
-                    $company = null;
-                }
-
-                if ($zone) {
-                    $polygon = explode("POLYGON((", $zone->poligono);
-                    $polygon = explode("))", $polygon[1]);
-                    $polygon = explode(",", $polygon[0]);
-
-                    $aux = array();
-                    foreach ($polygon as $polig) {
-                        $polig = explode(" ", $polig);
-                        $aux[] = $polig;
-                    }
-                    $polygon = $aux;
-                    $zone->poligono = $polygon;
-                }
-
-                if ($salesman->suspenso == 0 && ($salesman->latitude == null || $salesman->longitude == null)) {
-                    $zoneData = array();
-                    $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
-
-                    if ($zones) {
-                        foreach ($zones as $zone) {
-                            $polygon = explode("POLYGON((", $zone->poligono);
-                            $polygon = explode("))", $polygon[1]);
-                            $polygon = explode(",", $polygon[0]);
-
-                            $aux = array();
-                            foreach ($polygon as $polig) {
-                                $polig = explode(" ", $polig);
-                                $aux[] = $polig;
-                            }
-
-                            $polygon = $aux;
-
-                            $zone->poligono = $polygon;
-                            $zoneData[] = $zone;
-                        }
-                    } else {
-                        $zoneData = null;
-                    }
-                } else {
-                    $zoneData = null;
-                }
-
-                $folder = ROOT . '/themes/assets/uploads';
-                $uploads = array();
-                $aux = 1;
-                $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 1', 'id=' . $salesman->id)->fetch(true);
-                if ($attachments) {
-                    foreach ($attachments as $attach) {
-                        $attachName = explode('.', $attach->file_name);
-                        if ($attachName[0] == 'userImage') {
-                            $userImage = ROOT . '/themes/assets/uploads/salesmans/' . $attach->id_usuario
-                                . '/' . $attach->file_name;
-                        }
-
-                        $uploads[] = [
-                            'fileName' => $attach->file_name,
-                            'groupName' => 'salesmans',
-                            'userId' => $salesman->id
-                        ];
-                        $aux++;
-                    }
-                }
-
-                echo $this->view->render('profile', [
-                    'title' => 'Ambulante | ' . SITE,
-                    'salesman' => $salesman,
-                    'notifications' => $notification,
-                    'payments' => $payments,
-                    'agents' => $agents,
-                    'zone' => $zone,
-                    'company' => $company,
-                    'zones' => $zoneData,
-                    'uploads' => $uploads,
-                    'userImage' => $userImage
-                ]);
-            } else {
-                $this->router->redirect('web.salesmanList');
-            }
-        }
-    }
-
-    /**
-     * @param array $data
-     * @return void
      * Open file get method
      */
-    public function downloadFile(array $data): void
+    public
+    function downloadFile(array $data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $this->checkLogin();
 
-        $file = (new Attach())->find('file_name = :fileName', 'fileName=' . $data['fileName'])
+        $file = (new Attach())->find('nome = :fileName', 'fileName=' . $data['fileName'])
             ->fetch(false);
 
         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
@@ -1640,12 +2419,13 @@ class Web
                 THEMES . "/assets/uploads/{$data['groupName']}/{$data['userId']}/{$data['fileName']}"
             );
 
-            header("Content-Disposition: attachment; filename=\"{$file->file_name}\"");
+            header("Content-Disposition: attachment; filename=\"{$file->nome}\"");
             echo($fileToDownload);
         }
     }
 
-    public function removeSuspension($data): void
+    public
+    function removeSuspension($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $salesman = (new Salesman())->findById($data['id'], 'id, suspenso');
@@ -1668,13 +2448,17 @@ class Web
             $salesman->save();
 
             $email = new Email();
+
+            $message = file_get_contents(THEMES . "/assets/emails/removeNotificationEmail.php");
+
+            $url = "https://www.google.com";
+            $template = array("%title", "%status", "%textBody", "%button", "%link", "%name");
+            $dataReplace = array("Notificação", "MULTA", "foi removida", "Acesse", $url, $salesman->nome);
+            $message = str_replace($template, $dataReplace, $message);
+
             $email->add(
                 "Notificação",
-                "<p style='font-family: \"Dosis\", sans-serif;'>Olá " . $salesman->nome . ", sua suspensão foi removida do </span><span style='color: #ed2e54;'> ORDITI</span></p>
-                        <p style='font-family: \"Dosis\", sans-serif;'>Estamos felizes em te-lo de volta.</p>
-                        <br>
-                        <p style='font-family: \"Dosis\", sans-serif;'>Acesse <a href='https://www.maceio.orditi.com/i'>https://www.maceio.orditi.com/i</a></p>
-                        <div> <img style='width: 20%' src='https://www.maceio.orditi.com/i/themes/assets/img/nav-logo.png'> </div>",
+                $message,
                 $salesman->nome,
                 $salesman->email
             )->send();
@@ -1685,7 +2469,8 @@ class Web
         }
     }
 
-    public function zoneConfirm($data): void
+    public
+    function zoneConfirm($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
@@ -1832,104 +2617,8 @@ class Web
         }
     }
 
-    /**
-     * @param array $data
-     * @return void
-     */
-    public function companyInfo(array $data): void
-    {
-        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
-        $this->checkAgent();
-
-        if (is_numeric($data['id'])) {
-            $company = (new Company())->findById($data['id']);
-            if ($company !== null) {
-                $payments = (new Payment())->find('id_empresa = :id', 'id=' . $company->id)->fetch(true);
-                $salesmans = (new Salesman())->find('id_empresa = :id', 'id=' . $company->id)->fetch(true);
-                $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
-
-                $paymentArray = array();
-                if ($payments) {
-                    foreach ($payments as $payment) {
-                        $salesmanName = (new Salesman())->findById($payment->id_ambulante, 'nome');
-                        if ($salesmanName) {
-                            $payment->name = $salesmanName->nome;
-                            $paymentArray[] = $payment;
-                        }
-                    }
-                } else {
-                    $paymentArray == null;
-                }
-
-                if ($zones) {
-                    foreach ($zones as $zone) {
-                        $centroid = explode("POINT(", $zone->centroide);
-                        $centroid = explode(")", $centroid[1]);
-                        $centroid = explode(" ", $centroid[0]);
-
-                        $polygon = explode("POLYGON((", $zone->poligono);
-                        $polygon = explode("))", $polygon[1]);
-                        $polygon = explode(",", $polygon[0]);
-
-                        $aux = array();
-                        foreach ($polygon as $polig) {
-                            $polig = explode(" ", $polig);
-                            $aux[] = $polig;
-                        }
-
-                        $polygon = $aux;
-
-                        $zone->centroide = $centroid;
-                        $zone->poligono = $polygon;
-                        unset($zone->detalhes, $zone->foto);
-                        $zoneData[] = $zone;
-                    }
-                }
-
-                $folder = ROOT . '/themes/assets/uploads';
-                $uploads = array();
-                $aux = 1;
-                $attachments = (new Attach())->find('id_usuario = :id AND tipo_usuario = 2', 'id=' . $company->id)->fetch(true);
-                if ($attachments) {
-                    foreach ($attachments as $attach) {
-                        $attachName = explode('.', $attach->file_name);
-                        if ($attachName[0] == 'userImage') {
-                            $userImage = ROOT . '/themes/assets/uploads/companys/' . $attach->id_usuario
-                                . '/' . $attach->file_name;
-                        }
-
-                        $uploads[] = [
-                            'fileName' => $attach->file_name,
-                            'groupName' => 'companys',
-                            'userId' => $company->id
-                        ];
-                        $aux++;
-                    }
-                }
-
-                if ($salesmans) {
-                    $count = count($salesmans);
-                } else {
-                    $count = 0;
-                }
-
-                echo $this->view->render("companyProfile", [
-                    'title' => 'Empresa | ' . SITE,
-                    'company' => $company,
-                    'salesmans' => $salesmans,
-                    'salesmansCount' => $count,
-                    'zones' => $zoneData,
-                    'payments' => $paymentArray,
-                    'userImage' => $userImage,
-                    'uploads' => $uploads
-                ]);
-            } else {
-                $this->router->redirect('web.salesmanList');
-            }
-        }
-    }
-
-    public function videos(): void
+    public
+    function videos(): void
     {
         echo $this->view->render('videos', [
             'title' => "Vídeos | " . SITE
@@ -1940,7 +2629,8 @@ class Web
      * Return from PagSeguro
      * @return void
      */
-    public function securePayment(): void
+    public
+    function securePayment(): void
     {
         if (isset($_POST['notificationType']) && $_POST['notificationType'] == 'transaction') {
             $PagSeguro = new PagSeguro();
@@ -2026,11 +2716,109 @@ class Web
         return true;
     }
 
+    public function order($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $validate = false;
+
+        if ($data['type'] == 1) {
+            $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" .
+                url("order") . "/1/" . $data['licenseId'];
+            $salesman = (new Salesman())->find('MD5(id) = :id', 'id=' . $data['licenseId'])->fetch();
+            if ($salesman) {
+                $license = (new License())->findById($salesman->id_licenca);
+                if ($license) {
+                    $user = (new User())->findById($license->id_usuario);
+                    $template = file_get_contents(THEMES . "/assets/orders/salesmanOrder.php");
+                    $variables = array("%qrcode%", "%process%", "%name%", "%identity%", "%ativity%", "%equipaments%", "%width%",
+                        "%street%", "%aux%", "%day%", "%month%", "%year%", "%day2%", "%month2%", "%year2%");
+                    $dataReplace = array($qrUrl, "", $user->nome, $user->cpf, $salesman->relato_atividade,
+                        $salesman->tipo_equipamento, $salesman->area_equipamento, $salesman->local_endereco, "",
+                        date('d', strtotime($license->data_inicio)), date('m', strtotime($license->data_inicio)),
+                        date('Y', strtotime($license->data_inicio)),
+                        date('d', strtotime($license->data_fim)), date('m', strtotime($license->data_fim)),
+                        date('Y', strtotime($license->data_fim)));
+                    $template = str_replace($variables, $dataReplace, $template);
+
+                    if ($template) {
+                        $validate = true;
+                    }
+                }
+            }
+        } else {
+            $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" .
+                url("order") . "/2/" . $data['licenseId'];
+            $company = (new Company())->find('MD5(id) = :id', 'id=' . $data['licenseId'])->fetch();
+
+            if ($company) {
+                $neighborhoods = array();
+                $salesmans = (new Salesman())
+                    ->find('id_empresa = :id', 'id='. $company->id, 'id_bairro')->fetch(true);
+
+                if ($salesmans) {
+                    foreach ($salesmans as $salesman) {
+                        $neighborhood = (new Neighborhood())->findById($salesman->id_bairro, 'nome');
+                        if ($neighborhood) {
+                            $aux = false;
+                            $lenght = count($neighborhoods);
+                            if ($lenght > 0) {
+                                for ($i = 0; $i < $lenght; $i++) {
+                                    if ($neighborhoods[$i] == $neighborhood->nome) {
+                                        $aux = true;
+                                    }
+                                }
+                            }
+                            if ($aux == false) {
+                                $neighborhoods[$lenght] = $neighborhood->nome;
+                            }
+                        }
+                    }
+                }
+
+                $neighAux = '';
+                $neighLenght = count($neighborhoods);
+                if ($neighLenght > 0) {
+                    foreach ($neighborhoods as $neighborhood) {
+                        if ($neighborhood == $neighborhoods[$neighLenght-1]) {
+                            $neighAux .= $neighborhood;
+                        } else {
+                            $neighAux .= $neighborhood .', ';
+                        }
+                    }
+                }
+
+                $license = (new License())->findById($company->id_licenca);
+                $template = file_get_contents(THEMES . "/assets/orders/companyOrder.php");
+                $variables = array("%qrcode%", "%process%", "%companyName%", "%identity%", "%ativity%", "%equipaments%", "%width%",
+                    "%autorizedQuantity%", "%neighborhoods%", "%day%", "%month%", "%year%", "%day2%", "%month2%", "%year2%");
+                $dataReplace = array($qrUrl, "", $company->nome_fantasia, $company->cnpj, $company->relato_atividade, "",
+                    "", $company->quantidade_equipamentos, $neighAux,
+                    date('d', strtotime($license->data_inicio)), date('m', strtotime($license->data_inicio)),
+                    date('Y', strtotime($license->data_inicio)),
+                    date('d', strtotime($license->data_fim)), date('m', strtotime($license->data_fim)),
+                    date('Y', strtotime($license->data_fim)));
+                $template = str_replace($variables, $dataReplace, $template);
+
+                if ($template) {
+                    $validate = true;
+                }
+            }
+        }
+
+        if ($validate) {
+            echo $template;
+        } else {
+            $this->router->redirect('web.home');
+        }
+    }
+
     /**
      * @param array $data
      * @return void
      */
-    public function error(array $data): void
+    public
+    function error(array $data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         echo $this->view->render('error', [
@@ -2048,14 +2836,16 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
         $email = new Email();
+
+        $message = file_get_contents(THEMES . "/assets/emails/notificationEmail.php");
+
+        $template = array("%title", "%textBody", "%name", "%dataTitle", "%dataDescription");
+        $dataReplace = array("Recebemos uma mensagem", "recebemos uma mensagem de", $_SESSION['user']['name'], $data['phone'], $data['description']);
+        $message = str_replace($template, $dataReplace, $message);
+
         $email->add(
-            "Alguém enviou uma mensagem",
-            "<div style='font-family: \"Dosis\", sans-serif;'>
-                        <p>Olá, recebemos uma mensagem de <span style='color: #157881;'>" . $_SESSION['user']['name'] . "</span></p>
-                        <p>Email: <span style='color: #157881;'>" . $_SESSION['user']['email'] . "</span></p>
-                        <p>Telefone: <span style='color: #157881;'>" . $data['phone'] . "</span></p>
-                        <p>Descrição: <span style='color: #157881;'>" . $data['description'] . "</span></p>
-                    </div>",
+            "Recebemos uma mensagem",
+            $message,
             COMPANY,
             EMAIL
         )->send();
@@ -2065,5 +2855,224 @@ class Web
         } else {
             echo 1;
         }
+    }
+
+    public function createNeighborhood(): void
+    {
+        $geojson = json_decode(file_get_contents(THEMES . "/assets/geojson/bairros.json"))->features;
+        foreach ($geojson as $neigh) {
+            $coordinates = $neigh->geometry->coordinates;
+
+            $array_point = array();
+
+            foreach ($coordinates as $coordinate) {
+                for ($i = 0; $i < count($coordinate); $i++) {
+                    $array_point[] = $coordinate[$i][1] . " " . $coordinate[$i][0];
+                }
+
+                $str = implode(',', $array_point);
+                $polygon = 'POLYGON((' . $str . '))';
+
+                $neighborhood = new Neighborhood();
+                $neighborhood->id = $neigh->properties->ID_BAIRROS;
+                $neighborhood->nome = $neigh->properties->BAIRRO;
+                $neighborhood->coordenadas = $polygon;
+                $neighborhood->save(['polygon']);
+
+                if ($neighborhood->fail()) {
+                    var_dump($neighborhood->fail()->getMessage());
+                }
+            }
+        }
+    }
+
+    public function neighborhood($data): void
+    {
+        $this->checkAgent();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $neighborhood = (new Neighborhood())->find('MD5(id) = :id', 'id='. $data['id'],
+            'ST_AsText(ST_Centroid(coordenadas)) as centroid, id, nome, ST_AsText(coordenadas) as polygon')->fetch(false);
+
+        $aux = array();
+        $neighborhoodData = array();
+
+        if ($neighborhood) {
+            $centroid = explode("POINT(", $neighborhood->centroid);
+            $centroid = explode(")", $centroid[1]);
+            $centroid = explode(" ", $centroid[0]);
+            $neighborhood->centroid = $centroid;
+
+            $polygon = explode("POLYGON((", $neighborhood->polygon);
+            $polygon = explode("))", $polygon[1]);
+            $polygon = explode(",", $polygon[0]);
+
+            $aux = array();
+            foreach ($polygon as $polig) {
+                $polig = explode(" ", $polig);
+                $aux[] = $polig;
+            }
+
+            $users = array();
+
+            $salesmans = (new Salesman())->find('id_bairro = :id', 'id='. $neighborhood->id)->fetch(true);
+            if ($salesmans) {
+                foreach ($salesmans as $salesman) {
+                    $license = (new License())->findById($salesman->id_licenca, 'id_usuario');
+                    if ($license) {
+                        $user = (new User())->findById($license->id_usuario, 'id, cpf, nome, telefone');
+                        if ($user) {
+                            $users[] = ['id' => $salesman->id, 'identity' => $user->cpf, 'name' => $user->nome,
+                                'phone' => $user->telefone, 'licenseId' => md5($salesman->id_licenca)];
+                        }
+                    }
+                }
+            }
+
+            if (count($users) == 0) {
+                $users = null;
+            }
+
+
+            $neighborhood->id = md5($neighborhood->id);
+
+            echo $this->view->render('neighborhood', [
+                'title' => 'Bairro | ' . SITE,
+                'neighborhood' => $neighborhood,
+                'coordinates' => $aux,
+                'users' => $users
+            ]);
+        } else {
+            $this->router->redirect('web.salesmanMap');
+        }
+    }
+
+    public function neighborhoodPolygon(): void
+    {
+        $neighborhoods = (new Neighborhood())->find('', '', 'id, nome, ST_AsText(coordenadas) as polygon')->fetch(true);
+        $aux = array();
+        $neighborhoodData = array();
+        if ($neighborhoods) {
+            foreach ($neighborhoods as $neighborhood) {
+                $polygon = explode("POLYGON((", $neighborhood->polygon);
+                $polygon = explode("))", $polygon[1]);
+                $polygon = explode(",", $polygon[0]);
+
+                $neighborhood->id = md5($neighborhood->id);
+
+                $aux = array();
+                foreach ($polygon as $polig) {
+                    $polig = explode(" ", $polig);
+                    $aux[] = $polig;
+                }
+
+                $polygon = $aux;
+                $neighborhoodData[] = ['id' => $neighborhood->id, 'name' => $neighborhood->nome, 'polygon' => $polygon];
+            }
+        }
+        echo json_encode($neighborhoodData);
+    }
+
+    public function teste(): void
+    {
+        $cpf = "03432534701";
+
+        $soap_input =
+            '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:e="e-Agata_18.11">
+               <soapenv:Header/>
+               <soapenv:Body>
+                  <e:PWSRetornoPertences.Execute>
+                     <e:Flagtipopesquisa>C</e:Flagtipopesquisa>
+                     <e:Ctgcpf>' . $cpf . '</e:Ctgcpf>
+                     <e:Ctiinscricao></e:Ctiinscricao>
+                  </e:PWSRetornoPertences.Execute>
+               </soapenv:Body>
+            </soapenv:Envelope>';
+
+        $curl = curl_init();
+
+        curl_setopt($curl, CURLOPT_URL, PERTENCES);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $soap_input);
+        curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+        $soap_response = curl_exec($curl);
+
+        $xml_response = str_ireplace(['SOAP-ENV:', 'SOAP:', '.executeresponse', '.SDTRetornoPertences'], '', $soap_response);
+
+        @$xml = new SimpleXMLElement($xml_response, NULL, FALSE);
+        $companys = $xml->Body->PWSRetornoPertences->Sdtretornopertences->SDTRetornoPertencesItem->SDTRetornoPertencesEmpresa->SDTRetornoPertencesEmpresaItem;
+
+        $companyAux = 0;
+        if ($companys !== "") {
+            foreach ($companys as $company) {
+                if ($company->SRPAutonomo == "A") {
+                    var_dump($company);
+                }
+            }
+        }
+    }
+    public function findNeighborhood($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $neighborhood = (new Neighborhood())->find('MD5(id) = :id', 'id='. $data['id'],
+            'ST_AsText(ST_Centroid(coordenadas)) as centroid, id, nome, ST_AsText(coordenadas) as polygon')
+            ->fetch(false);
+
+        $aux = array();
+        $neighborhoodData = array();
+
+        if ($neighborhood) {
+            $centroid = explode("POINT(", $neighborhood->centroid);
+            $centroid = explode(")", $centroid[1]);
+            $centroid = explode(" ", $centroid[0]);
+
+            $polygon = explode("POLYGON((", $neighborhood->polygon);
+            $polygon = explode("))", $polygon[1]);
+            $polygon = explode(",", $polygon[0]);
+
+            $aux = array();
+            foreach ($polygon as $polig) {
+                $polig = explode(" ", $polig);
+                $aux[] = $polig;
+            }
+
+            $users = array();
+
+            $salesmans = (new Salesman())->find('id_bairro = :id', 'id=' . $neighborhood->id)->fetch(true);
+            if ($salesmans) {
+                foreach ($salesmans as $salesman) {
+                    $license = (new License())->findById($salesman->id_licenca, 'id_usuario, status');
+                    if ($license) {
+                        $user = (new User())->findById($license->id_usuario, 'id, cpf, nome, telefone');
+                        if ($user) {
+                            $users[] = ['id' => $salesman->id, 'identity' => $user->cpf, 'name' => $user->nome,
+                                'phone' => $user->telefone, 'licenseId' => md5($salesman->id_licenca),
+                                'lat' => $salesman->latitude, 'lng' => $salesman->longitude, 'status' => $license->status];
+                        }
+                    }
+                }
+            }
+
+            $respose = array();
+            $respose[] = ['salesmans' => $users, 'centroid' => $centroid, 'coordinates' => $aux,
+                'neighborhoodName' => $neighborhood->nome, 'neighborhoodId' => $data['id']];
+
+            echo json_encode($respose);
+        }
+    }
+
+    public function neighborhoodList(): void
+    {
+        $this->checkAgent();
+
+        $neighborhoods = (new Neighborhood())->find('', '', 'id, nome, quantidade_ambulantes')->fetch(true);
+
+        echo $this->view->render('neighborhoodList', [
+            'title' => 'Bairros | ' . SITE,
+            'neighborhoods' => $neighborhoods
+        ]);
     }
 }

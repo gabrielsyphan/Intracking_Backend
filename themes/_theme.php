@@ -27,7 +27,7 @@
                 <div class="loader-spin"></div>
             </div>
 
-            <?php  if(isset($_SESSION['user']['login'])): ?>
+            <?php if(isset($_SESSION['user']['login'])): ?>
                 <div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLongTitle"
                      aria-hidden="true">
                     <div class="modal-dialog" role="document">

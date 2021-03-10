@@ -1,228 +1,238 @@
 <?php $v->layout("_theme.php") ?>
 
-<div class="container">
-    <div class="row mt-5 p-4 justify-content-center">
-        <div class="col-xl-8">
-            <div class="web-div-box">
-                <div class="box-div-info p-5">
-                    <div class="mb-5 text-center">
-                        <img class="mt-5 mb-5" style="width: 40%" src="<?= url('themes/assets/img/agent.svg') ?>">
+<div class="container-fluid container-white mt-5">
+    <div class="p-5">
+        <form id="form" method="POST" action="<?= $router->route("web.validateNewAgent"); ?>">
+            <fieldset class="row">
+                <div class="col-xl-12">
+                    <h2 class="black-title-section">Cadastrar de fiscal</h2>
+                    <p class="subtitle-section-p">Descreva as informações do fiscal.</p>
+                </div>
+                <div class="col-xl-6 mt-5">
+                    <div class="div-gray-bg border-top-green p-5">
+                        <h4 class="black-title-section">Dados do fiscal</h4>
+                        <hr>
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <div class="row">
+                                    <div class="col-xl-12">
+                                        <div class="form-group">
+                                            <label>Nome:</label>
+                                            <input type="text" class="form-input" id="name"
+                                                   name="name"
+                                                   title="Nome do fiscal" placeholder="Seu Nome">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
 
-                        <h1 class="h2-title-header-black">Cadastrar Fiscal</h1>
-                        <div class="pr-5 pl-5">
-                            <p class="pr-5 pl-5 mr-5 ml-5">Aqui você poderá cadastrar os agentes que farão a
-                                fiscalização dos ambulantes</p>
-                        </div>
-                    </div>
-                    <form id="form" method="POST" class="mt-5" action="<?= $router->route("web.validateNewAgent"); ?>">
-                        <fieldset>
-                            <div class="row">
-                                <div class="col-xl-12">
-                                    <div class="row">
-                                        <div class="col-xl-12">
-                                            <div class="form-group">
-                                                <label>Nome:</label>
-                                                <input type="text" class="form-input" id="name"
-                                                       name="name"
-                                                       title="Nome do fiscal" placeholder="Seu Nome">
-                                                <div class="invalid-feedback"></div>
-                                            </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label>CPF:</label>
+                                            <input type="text" class="form-input" id="identity"
+                                                   onfocusout="validateCpf(this)" name="identity"
+                                                   title="CPF do fiscal" placeholder="Seu CPF">
+                                            <div class="invalid-feedback"></div>
                                         </div>
+                                    </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label>Matrícula:</label>
+                                            <input type="text" class="form-input" id="registration"
+                                                   name="registration"
+                                                   title="Matrícula do fiscal" placeholder="Sua Matrícula"
+                                            >
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
 
-                                        <div class="col-xl-6">
-                                            <div class="form-group">
-                                                <label>CPF:</label>
-                                                <input type="text" class="form-input" id="identity"
-                                                       onfocusout="checkCpf(this)" name="identity"
-                                                       title="CPF do fiscal" placeholder="Seu CPF">
-                                                <div class="invalid-feedback"></div>
-                                            </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label>E-mail:</label>
+                                            <input type="email" class="form-input" id="email" name="email"
+                                                   title="Email do fiscal" placeholder="Seu E-mail">
+                                            <div class="invalid-feedback"></div>
                                         </div>
-                                        <div class="col-xl-6">
-                                            <div class="form-group">
-                                                <label>Matrícula:</label>
-                                                <input type="text" class="form-input" id="registration"
-                                                       name="registration"
-                                                       title="Matrícula do fiscal" placeholder="Sua Matrícula"
-                                                >
-                                                <div class="invalid-feedback"></div>
-                                            </div>
-                                        </div>
+                                    </div>
 
-                                        <div class="col-xl-6">
-                                            <div class="form-group">
-                                                <label>E-mail:</label>
-                                                <input type="email" class="form-input" id="email" name="email"
-                                                       title="Email do fiscal" placeholder="Seu E-mail">
-                                                <div class="invalid-feedback"></div>
-                                            </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label>Confirmar E-mail:</label>
+                                            <input type="email" class="form-input" id="confirm_email"
+                                                   name="confirm_email"
+                                                   title="Email do fiscal" placeholder="Confirme Seu E-mail">
+                                            <div class="invalid-feedback"></div>
                                         </div>
+                                    </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label>Telefone:</label>
+                                            <input type="text" class="form-input" id="phone"
+                                                   name="phone"
+                                                   title="Telefone" placeholder="Seu Telefone">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
 
-                                        <div class="col-xl-6">
-                                            <div class="form-group">
-                                                <label>Confirmar E-mail:</label>
-                                                <input type="email" class="form-input" id="confirm_email"
-                                                       name="confirm_email"
-                                                       title="Email do fiscal" placeholder="Confirme Seu E-mail">
-                                                <div class="invalid-feedback"></div>
-                                            </div>
+                                    <div class="col-xl-6">
+                                        <div class="form-group">
+                                            <label>Cargo:</label>
+                                            <select class="form-input" name="jobRole">
+                                                <option value="1">Estagiário</option>
+                                                <option value="2" selected>Fiscal</option>
+                                                <option value="3">Finanças</option>
+                                                <option value="4">Gestor</option>
+                                            </select>
                                         </div>
+                                    </div>
 
-                                        <div class="col-xl-6">
-                                            <div class="form-group align-items-center">
-                                                <label class="label-left">Foto de perfil: <span class="spanAlert">(Opcional)</span></label>
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-6">
+                                    <div class="col-xl-12">
+                                        <div class="form-group">
+                                            <label>Foto de perfil: <span class="spanAlert">(Opcional)</span></label>
                                             <div class="form-group">
-                                                <label for="localImage"
-                                                       class="label-file text-center item-max-width localImage-file"><span
-                                                            class="icon-plus mr-2"></span> Selecionar Arquivo</label>
-                                                <input type="file" class="hidden-input-file" id="localImage"
-                                                       name="localImage"
+                                                <label for="agentImage"
+                                                       class="label-file text-center item-max-width agentImage-file"><span
+                                                            class="icon-plus mr-2"></span> Selecionar
+                                                    Arquivo</label>
+                                                <input type="file" class="hidden-input-file" id="agentImage"
+                                                       name="agentImage"
                                                        accept="image/png, image/jpg, image/jpeg"
                                                        onchange="uploadImage(this)">
-                                                <div class="localImage-file-uploaded file-uploaded-container">
+                                                <div class="agentImage-file-uploaded file-uploaded-container">
                                                     <div class="card-content-upload text-center p-3">
                                                         <div class="card-content-type-upload">
-                                                            <span class="localImage-type"></span>
+                                                            <span class="agentImage-type"></span>
                                                         </div>
                                                     </div>
                                                     <div class="ml-3 text-left">
                                                         <div class="d-flex">
-                                                            <p class="localImage-name"></p>
-                                                            <span class="icon-close ml-3 card-close-file"
-                                                                  onclick="changeFile()"></span>
+                                                            <p class="agentImage-name"></p>
+                                                            <span id="agentImage-span-close"
+                                                                  class="icon-close ml-3 card-close-file"
+                                                                  onclick="changeFile(this)"></span>
                                                         </div>
                                                         <div class="card-content-progress"></div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div class="col-xl-12 mb-3 text-center">
-                                            <hr class="m-0">
-                                            <button type="submit" class="btn-3 primary-color mt-5 item-max-width">
-                                                REGISTRAR
-                                            </button>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </fieldset>
-                    </form>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+                <div class="col-xl-6 mt-5">
+                    <div class="div-gray-bg border-top-green p-5 text-center">
+                        <img class="mt-5 mb-5" style="width: 59%" src="<?= url('themes/assets/img/agent.svg') ?>">
+
+                        <h1 class="black-title-section">Cadastrar Fiscal</h1>
+                        <div class="pr-5 pl-5">
+                            <p class="subtitle-section-p">Aqui você poderá cadastrar os agentes que farão a
+                                fiscalização dos ambulantes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-12 text-right mt-5 mb-5">
+                    <button type="button" class="btn-3 secondary-color">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn-3 primary">
+                        Cadastrar
+                    </button>
+                    <hr>
+                </div>
+            </fieldset>
+        </form>
     </div>
 </div>
 
 <?php $v->start('scripts'); ?>
 <script>
-    $("#registration").mask('000000-0', {reverse: true});
+    $("#identity").mask('000.000.000-00');
+    $("#registration").mask('000000-0');
+    $("#phone").mask('00 0 0000-0000');
 
-    $("#identity").mask('000.000.000-00', {reverse: true});
-
-    $("#form").on('submit', function (e) {
+    $('#form').on('submit', function (e) {
         e.preventDefault();
-
         $("#loader-div").show();
 
-        //armazena o forulario submetido em _thisForm
         const _thisForm = $(this);
+        const data = new FormData(this);
+        const fieldsetDisable = _thisForm.find('fieldset');
+        fieldsetDisable.attr('disabled', true);
 
-        //limpa qualquer validacao
-        _thisForm.find(".is-invalid").removeClass("is-invalid").next().text("");
-
-        let validate = true;
-
-        //validacao campos em branco backend
-        _thisForm.find("[name=name], [name=identity], [name=registration], [name=email]").each(function () {
-            if (!$(this).val()) {
-                $(this).addClass("is-invalid").next().text("Campo obrigatório!");
-                validate = false;
-            }
-        })
-
-        let name = $("#name").val();
-        name = name.split(' ');
-
-        if (!name[1]) {
-            $("#name").addClass("is-invalid").next().text("Insira seu nome completo!");
-
-            validate = false;
-        }
-
-        if (!validate) {
-            $("#loader-div").hide();
-            return false;
-        }
-
-        const data = _thisForm.serialize();
-
-        const fieldsetDisable = _thisForm.find("fieldset");
-        fieldsetDisable.attr("disabled", true);
-
-        $.ajax({
-            url: _thisForm.attr("action"),
-            type: _thisForm.attr("method"),
-            data: data,
-            dataType: "json"
-        }).done(function (data) {
-            // validacao campos em branco back-end
-            if (data.required) {
-                $.each(data.required, function (index, value) {
-                    _thisForm.find(`[name=${value}]`).addClass("is-invalid").next().text("Campo obrigatório!");
-                });
-            }
-
-            // validacao de campos de formato invalido
-            if (data.formatInvalid) {
-                for (let prop in data.formatInvalid) {
-                    _thisForm.find(`[name=${prop}]`).addClass("is-invalid").next().text(data.formatInvalid[prop]);
+        if (formSubmit(this) === true) {
+            $.ajax({
+                type: _thisForm.attr('method'),
+                url: _thisForm.attr('action'),
+                data: data,
+                cache: false,
+                contentType: false,
+                processData: false,
+            }).done(function (returnData) {
+                if (returnData == 'success') {
+                    swal({
+                        icon: "success",
+                        title: "Tudo certo!",
+                        text: "Acesse seu email para confirmar seu cadastro e criar sua senha.",
+                    }).then((result) => {
+                        window.location.reload();
+                    });
+                    $("#form").trigger("reset");
+                    changeFile();
+                } else if (returnData == 'already_exist') {
+                    swal({
+                        icon: "error",
+                        title: "Erro",
+                        text: "Já existe alguém cadastrado com esses dados.",
+                    });
+                } else if (returnData == 'registrationError') {
+                    swal({
+                        icon: "error",
+                        title: "Erro",
+                        text: "CPF inválido. Por favor, insira um CPF válido.",
+                    });
+                } else if (returnData == 'require_registration') {
+                    swal({
+                        icon: "warning",
+                        title: "Atenção",
+                        text: "Não será possível realizar o cadastro. Por favor, dirija-se a secretaria de economia e realize seu cadastro mercantil de pessoa física ou jurídica para então dar prosseguimento com o do Orditi.",
+                    });
+                } else {
+                    swal({
+                        icon: "error",
+                        title: "Erro!",
+                        text: "Não foi possível realizar o cadastro. Por favor, tente novamente mais tarde.",
+                    });
                 }
-            }
-
-            if (data.validateResponse == "registrationError") {
+                console.log(returnData);
+            }).fail(function (e) {
                 swal({
-                    title: "Atenção",
-                    text: "Ocorreu um erro ao enviar e-mail de confirmação.",
-                    icon: "warning",
-                    button: "Entendi",
+                    icon: "error",
+                    title: "Erro!",
+                    text: "Erro ao processar requisição",
                 });
-            } else if (data.validateResponse == "success") {
-                swal({
-                    title: "Sucesso",
-                    text: "Cadastro realizado com sucesso!",
-                    icon: "success",
-                    button: "Entendi",
-                });
-
-                $("#form").trigger("reset");
-                changeFile();
-            } else if (data.validateResponse == "registrationExist") {
-                swal({
-                    title: "Atenção",
-                    text: "Essa matrícula já pertence a um usuário.",
-                    icon: "warning",
-                    button: "Entendi",
-                });
-            }
-        }).fail(function (e) {
-            console.log(e);
-        }).always(function () {
-            fieldsetDisable.removeAttr("disabled");
-            $("#loader-div").hide();
-        })
+                console.log(e);
+            }).always(function () {
+                $("#loader-div").hide();
+                fieldsetDisable.removeAttr("disabled");
+            });
+        }
     });
 
-    function changeFile() {
-        $(".localImage-file-uploaded").hide();
-        $(".hidden-input-file").val(null);
-        $(".localImage-file").show();
-        $(".localImage-type").empty();
-        $(".localImage-name").empty();
+    function validateCpf(e) {
+        $("#loader-div").show();
+        let cpf = formatedCPF(e);
+
+        if (checkCpf(cpf) == false) {
+            swal({
+                icon: "error",
+                title: "Erro",
+                text: "O CPF digitado não é válido. Por favor, insira um CPF válido e tente novamente.",
+            });
+        }
+
+        $("#loader-div").hide();
     }
 </script>
 <?php $v->end(); ?>
-

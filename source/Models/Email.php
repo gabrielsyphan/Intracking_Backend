@@ -22,7 +22,7 @@ class Email
         $this->mail = new PHPMailer( true);
         $this->data = new stdClass();
 
-        // $this->mail->isSMTP();
+        $this->mail->isSMTP();
         $this->mail->isHTML();
         $this->mail->setLanguage('br');
 

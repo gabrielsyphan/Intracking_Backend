@@ -21,23 +21,20 @@ $router->group(null);
 $router->get("/", "Web:home", "web.home");
 $router->post("/formContact", "Web:formContact", "web.formContact");
 
-//$router->get("/dashboard", "Web:dashboard", "web.dashboard");
-
 $router->get("/createAccount", "Web:createAccount", "web.createAccount");
 $router->post("/validateAccount", "Web:validateAccount", "web.validateAccount");
-$router->post("/confirmAccount/{userId}", "Web:confirmAccount", "web.confirmAccount");
+$router->get("/confirmAccount/{userId}", "Web:confirmAccount", "web.confirmAccount");
+$router->post("/confirmAccountPassword", "Web:confirmAccountPassword", "web.confirmAccountPassword");
+$router->get("/createUser", "Web:createUser", "web.createUser");
+
 $router->post("/checkAccount", "Web:checkAccount", "web.checkAccount");
 $router->post("/checkCnpj", "Web:checkCnpj", "web.checkCnpj");
-
 $router->post("/checkZone", "Web:checkZone", "web.checkZone");
 
 $router->post("/pswRecovery", "Web:pswRecovery", "web.pswRecovery");
-$router->post("/newPsw", "Web:newPsw", "web.newPsw");
 
 $router->get("/login", "Web:login", "web.login");
 $router->post("/validateLogin", "Web:validateLogin", "web.validateLogin");
-$router->get("/agent", "Web:agent", "web.agent");
-$router->post("/validateAgent", "Web:validateAgent", "web.validateAgent");
 
 $router->get("/logout", "Web:logout", "web.logout");
 
@@ -49,10 +46,13 @@ $router->get("/createAgent", "Web:createAgent", "web.createAgent");
 $router->post("/validateNewAgent", "Web:validateNewAgent", "web.validateNewAgent");
 
 $router->get("/profile", "Web:profile", "web.profile");
+$router->post("/editProfile", "Web:editProfile", "web.editProfile");
 $router->get("/salesmanList", "Web:salesmanList", "web.salesmanList");
 $router->get("/salesmanMap", "Web:salesmanMap", "web.salesmanMap");
 $router->post("/createNotification", "Web:createNotification", "web.createNotification");
 $router->post("/removeSuspension", "Web:removeSuspension", "web.removeSuspension");
+
+$router->get("/createSalesman", "Web:createSalesman", "web.createSalesman");
 $router->post("/zoneConfirm", "Web:zoneConfirm", "web.zoneConfirm");
 
 $router->get("/agentList", "Web:agentList", "web.agentList");
@@ -60,19 +60,41 @@ $router->get("/changeAgentStatus/{agentId}", "Web:changeAgentStatus", "web.chang
 
 $router->get("/videos", "Web:videos", "web.videos");
 
+$router->get("/neighborhoodList", "Web:neighborhoodList", "web.neighborhoodList");
 $router->get("/paymentList", "Web:paymentList", "web.paymentList");
 $router->get("/exportData/{fileType}", "Web:exportData", "web.exportData");
-
-$router->get("/companyProfile", "Web:companyProfile", "web.companyProfile");
-
-$router->get("/salesman/{id}", "Web:salesmanProfile", "web.salesmanProfile");
-$router->get("/company/{id}", "Web:companyInfo", "web.companyInfo");
 
 $router->post("/securePayment", "Web:securePayment", "web.securePayment");
 $router->post("/createPayment", "Web:createPayment", "web.createPayment");
 
 $router->post("/updateUserImg", "Web:updateUserImg", "web.updateUserImg");
 $router->get("/downloadFile/{groupName}/{userId}/{fileName}", "Web:downloadFile", "web.downloadFile");
+
+$router->get("/requestLicense", "Web:requestLicense", "web.requestLicense");
+$router->get("/licenseList", "Web:licenseList", "web.licenseList");
+$router->get("/licenseInfo/{licenseType}/{licenseId}", "Web:licenseInfo", "web.licenseInfo");
+$router->get("/order/{type}/{licenseId}", "Web:order", "web.order");
+$router->post("/licenseStatus","Web:licenseStatus","web.licenseStatus");
+$router->post("/licenseBlock","Web:licenseBlock","web.licenseBlock");
+
+$router->get("/licenseUser/{url}", "Web:licenseUser", "web.licenseUser");
+$router->post("/validateLicenseUser", "Web:validateLicenseUser", "web.validateLicenseUser");
+
+$router->get("/salesmanLicense", "Web:salesmanLicense", "web.salesmanLicense");
+$router->post("/validateSalesmanLicense", "Web:validateSalesmanLicense", "web.validateSalesmanLicense");
+
+$router->get("/companyLicense", "Web:companyLicense", "web.companyLicense");
+$router->post("/validateCompanyLicense", "Web:validateCompanyLicense", "web.validateCompanyLicense");
+
+$router->get("/teste", "Web:teste", "web.teste");
+
+$router->get("/response", "WebServiceSIAT:consultaImovel");
+$router->post("/neighborhoodPolygon", "Web:neighborhoodPolygon", "web.neighborhoodPolygon");
+$router->get("/neighborhood/{id}", "Web:neighborhood", "web.neighborhood");
+$router->post("/findNeighborhood", "Web:findNeighborhood", "web.findNeighborhood");
+$router->get("/exportNeighborhood/{neighborhoodId}", "Web:exportNeighborhood", "web.exportNeighborhood");
+
+$router->post("/licenseCancel", "Web:licenseCancel", "web.licenseCancel");
 
 /*
  * ERROS
