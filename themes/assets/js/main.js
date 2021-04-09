@@ -572,5 +572,5 @@ function closeModal(e) {
 }
 
 function openFile(url) {
-    window.open('https://localhost/OrditiWeb/themes/assets/uploads/' + url, '_blank');
+    window.open('https://localhost/orditi/themes/assets/uploads/' + url, '_blank');
 }

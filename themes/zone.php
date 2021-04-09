@@ -27,72 +27,7 @@ endif; ?>
 
 <div class="container-fluid mt-5 container-white">
     <div class="row">
-        <div class="col-xl-3 p-0" id="sidebar-inter">
-            <?php if ($zone->foto): ?>
-                <img class="w-100"
-                     src="<?= $zone->foto; ?>">
-            <?php else: ?>
-                <div class="zonePhoto <?= $backgroundClass ?>">
-                    <?= substr($zone->nome, 0, 1); ?>
-                </div>
-            <?php endif; ?>
-
-            <div class="m-5 text-center">
-                <h3 class="black-title-section font-weight-normal"><?= $zone->nome; ?></h3>
-
-                <p class="subtitle-section-p-black pl-2 pr-2"><?= $zone->descricao ?></p>
-            </div>
-
-            <div class="pl-5 pr-5">
-                <div class="row div-gray-bg p-3">
-                    <div class="col-8">
-                        <h5 class="title-section">
-                            <img class="mr-2" src="<?= url('themes/assets/img/mapMarker.png') ?>">
-                            Vagas Totais
-                        </h5>
-                    </div>
-                    <div class="col-4">
-                        <h4 class="text-center">
-                            <?= $zone->limite_ambulantes; ?>
-                        </h4>
-                    </div>
-                </div>
-            </div>
-            <div class="pl-5 pr-5 mt-3">
-                <div class="row div-gray-bg p-3">
-                    <div class="col-8">
-                        <h5 class="title-section">
-                            <img class="mr-2" src="<?= url('themes/assets/img/open.png') ?>">
-                            Disponíveis
-                        </h5>
-                    </div>
-                    <div class="col-4">
-                        <h4 class="text-center">
-                            <?= ($zone->limite_ambulantes - $zone->quantidade_ambulantes); ?>
-                        </h4>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pl-5 pr-5 mt-3">
-                <div class="row div-gray-bg p-3">
-                    <div class="col-8">
-                        <h5 class="title-section ">
-                            <img class="mr-2" src="<?= url('themes/assets/img/flag.png') ?>">
-                            Ocupadas
-                        </h5>
-                    </div>
-                    <div class="col-4">
-                        <h4 class="text-center">
-                            <?= $zone->quantidade_ambulantes; ?>
-                        </h4>
-                    </div>
-                </div>
-            </div>
-
-            <hr>
-        </div>
-        <div class="col-xl-9 p-0">
+        <div class="col-md-8 p-0">
             <div class="map-container">
                 <div id="mapZone" class="<?= $salesmans ? 'mapInfo' : 'mapZone'; ?>"></div>
             </div>
@@ -100,8 +35,8 @@ endif; ?>
                 <div class="col-xl-12">
                     <div class="web-div-box">
                         <div class="box-div-info ml-3">
-                            <h4 class="black-title-section font-weight-normal">Lista de Ambulantes</h4>
-                            <p class="subtitle-section-p">Todos os ambulantes cadastrados na Zona</p>
+                            <h4 class="black-div-zone-info-text font-weight-normal">Lista de Ambulantes</h4>
+                            <p class="subdiv-zone-info-text-p">Todos os ambulantes cadastrados na Zona</p>
                             <hr style="margin-bottom: 0">
                             <div class="box-div-info-overflow-x">
                                 <table class="table table-striped">
@@ -160,6 +95,70 @@ endif; ?>
                     </div>
                 </div>
             <?php endif; ?>
+        </div>
+
+        <div class="col-md-4 p-0" id="sidebar-inter">
+            <iframe src="https://www.google.com/maps/embed?pb=!4v1617115456065!6m8!1m7!1sh2uwEPd3HSSwcRMfhM_hRQ!2m2!1d<?= $zone->centroide[1] ?>!2d<?= $zone->centroide[0] ?>!3f343.7!4f3.739999999999995!5f0.7820865974627469" width="403" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            <div class="m-5">
+                <h3 class="black-div-zone-info-text font-weight-normal"><?= $zone->nome; ?></h3>
+                <p class="subdiv-zone-info-text-p-black"><?= $zone->descricao ?></p>
+                <hr>
+            </div>
+
+            <div class="pl-5 pr-5">
+                <div class="d-flex div-zone-info-data">
+                    <div class="p-3 text-center div-circle <?= $backgroundClass ?>">
+                        <span class="icon-all_inclusive zone-info-icons"></span>
+                    </div>
+                    <div class="ml-3">
+                        <h4 class="m-0 mt-4 div-zone-info-text">
+                            <span class="font-weight-normal">Vagas totais:</span>
+                            <?= $zone->limite_ambulantes; ?>
+                        </h4>
+                    </div>
+                </div>
+
+                <div class="d-flex div-zone-info-data mt-4">
+                    <div class="p-3 text-center div-circle <?= $backgroundClass ?>">
+                        <span class="icon-lock_open zone-info-icons"></span>
+                    </div>
+                    <div class="ml-3">
+                        <h4 class="m-0 mt-4 div-zone-info-text">
+                            <span class="font-weight-normal">Vagas disponíveis:</span>
+                            <?= ($zone->limite_ambulantes - $zone->quantidade_ambulantes); ?>
+                        </h4>
+                    </div>
+                </div>
+
+                <div class="d-flex div-zone-info-data mt-4">
+                    <div class="p-3 text-center div-circle <?= $backgroundClass ?>">
+                        <span class="icon-flag zone-info-icons"></span>
+                    </div>
+                    <div class="ml-3">
+                        <h4 class="m-0 mt-4 div-zone-info-text">
+                            <span class="font-weight-normal">Vagas ocupadas:</span>
+                            <?= $zone->quantidade_ambulantes; ?>
+                        </h4>
+                    </div>
+                </div>
+
+                <div class="d-flex div-zone-info-data mt-4">
+                    <div class="p-3 text-center div-circle <?= $backgroundClass ?>">
+                        <span class="icon-map-pin zone-info-icons"></span>
+                    </div>
+                    <div class="ml-3">
+                        <h4 class="m-0 mt-4 div-zone-info-text">
+                            <span class="font-weight-normal">Vagas fixas:</span>
+                            <?= $zone->vagas_fixas; ?>
+                        </h4>
+                    </div>
+                    <a href="<?= url('/editFixedZones/'). md5($zone->id) ?>" class="float-right ml-5 mt-4">
+                        <span class="icon-edit"></span>
+                        Editar
+                    </a>
+                </div>
+                <hr>
+            </div>
         </div>
     </div>
 </div>

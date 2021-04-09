@@ -47,7 +47,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            <?php $aux++; endforeach; endif; ?>
+                                <?php $aux++; endforeach; endif; ?>
                     </div>
                 </div>
             </div>
@@ -226,22 +226,22 @@ endswitch;?>
                     </div>
                 </div>
 
-                <?php if ($_SESSION['user']['role'] == 3 ||  $_SESSION['user']['role'] == 4): ?>
-                <div class="col-md-3" onclick="changeWindow('block')">
-                    <div class="row mt-5 justify-content-center">
-                        <div class="col-md-10 p-0 mb-5 cursor-pointer">
-                            <div class="p-4 text-center background-red b-radius-top">
-                                <div class="circle-card-option-red">
-                                    <span class="icon-block"></span>
+                <?php if ($_SESSION['user']['role'] == 2 || $_SESSION['user']['role'] == 3 ||  $_SESSION['user']['role'] == 4): ?>
+                    <div class="col-md-3" onclick="changeWindow('block')">
+                        <div class="row mt-3 justify-content-center">
+                            <div class="col-md-10 p-0 mb-5 cursor-pointer">
+                                <div class="p-4 text-center background-red b-radius-top">
+                                    <div class="circle-card-option-red">
+                                        <span class="icon-block"></span>
+                                    </div>
                                 </div>
-                            </div>
-                            <hr class="m-0">
-                            <div class="p-5 text-center gray-box b-radius-bottom">
-                                Multar ou bloquear licença
+                                <hr class="m-0">
+                                <div class="p-5 text-center gray-box b-radius-bottom">
+                                    Multar ou bloquear licença
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 <?php endif; ?>
             </div>
 
@@ -431,8 +431,8 @@ endswitch;?>
             </div>
             <div class="text-center mt-5 d-none license-url-link">
                 <img class="mb-5 w-25" src="<?= url('themes/assets/img/nav-logo.png') ?>">
-               <h5 class="black-title-section">Disponível ao acesso em:
-                   <?= url('licenseinfo/1/'. md5($user->id)) ?></h5>
+                <h5 class="black-title-section">Disponível ao acesso em:
+                    <?= url('licenseinfo/1/'. md5($user->id)) ?></h5>
             </div>
         </div>
         <div class="col-md-12 license-payment display-none">
@@ -499,172 +499,172 @@ endswitch;?>
                 </table>
             </div>
         </div>
-        <?php if ($_SESSION['user']['role'] == 3 ||  $_SESSION['user']['role'] == 4): ?>
-        <div class="col-md-12 license-block display-none">
-            <div class="float-right">
-                <button class="btn secondary-color btn-menu" onclick="backMenu('block')">
-                    <span class="icon-arrow_back"></span>
-                </button>
-            </div>
-            <hr>
-            <div class="row m-0">
-                <?php if ($_SESSION['user']['role'] == 3): ?>
-                <div class="col-6">
-                    <div class="div-gray-bg border-top-green p-5">
-                        <div class="header-title">
-                            <h4 class="black-title-section">Multar ou bloquear licença</h4>
-                            <hr>
-                        </div>
-                        <form id="pay-form" method="POST" action="<?= $router->route('web.licenseBlock') ?>">
-                            <fieldset>
-                                <input type="hidden" name="licenseId" value="<?= md5($license->id) ?>">
-                                <div class="form-group">
-                                    <label>Título:</label>
-                                    <input type="text" class="form-input" placeholder="Insira um título para a ação" name="punishmentTitle">
-                                    <div class="invalidate-feedback"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Decrição:</label>
-                                    <input type="text" class="form-input" placeholder="Descreva o motivo" name="punishmentDesciption">
-                                    <div class="invalidate-feedback"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Valor:</label>
-                                    <input type="number" class="form-input" placeholder="Digite o valor da multa" name="punishmentValue">
-                                    <div class="invalidate-feedback"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Situação:</label>
-                                    <label class="control control--radio">Permitida
-                                        <input type="radio" name="punishmentStatus" value="0" checked="checked"/>
-                                        <div class="control__indicator"></div>
-                                    </label>
-                                    <label class="control control--radio">Bloqueada
-                                        <input type="radio" value="1" name="punishmentStatus"/>
-                                        <div class="control__indicator"></div>
-                                    </label>
-                                </div>
-                                <div class="float-right">
-                                    <button class="btn-3 primary c-white">Confirmar</button>
-                                </div>
-                            </fieldset>
-                        </form>
-                    </div>
+        <?php if ($_SESSION['user']['role'] == 2 || $_SESSION['user']['role'] == 3 ||  $_SESSION['user']['role'] == 4): ?>
+            <div class="col-md-12 license-block display-none">
+                <div class="float-right">
+                    <button class="btn secondary-color btn-menu" onclick="backMenu('block')">
+                        <span class="icon-arrow_back"></span>
+                    </button>
                 </div>
-                <?php endif; ?>
-                <div class="col-6">
-                    <div class="div-gray-bg border-top-green p-5">
-                        <div class="header-title">
-                            <h4 class="black-title-section">Cadastrar nova notificação</h4>
-                            <hr>
-                        </div>
-                        <form id="form-create-notification" action="<?= $router->route("web.createNotification"); ?>"
-                              method="POST">
-                            <fieldset>
-                                <div class="row">
-                                    <div class="col-md-12">
+                <hr>
+                <div class="row m-0">
+                    <?php if ($_SESSION['user']['role'] == 3): ?>
+                        <div class="col-6">
+                            <div class="div-gray-bg border-top-green p-5">
+                                <div class="header-title">
+                                    <h4 class="black-title-section">Multar ou bloquear licença</h4>
+                                    <hr>
+                                </div>
+                                <form id="pay-form" method="POST" action="<?= $router->route('web.licenseBlock') ?>">
+                                    <fieldset>
+                                        <input type="hidden" name="licenseId" value="<?= md5($license->id) ?>">
                                         <div class="form-group">
                                             <label>Título:</label>
-                                            <input type="text" class="form-input" id="title" name="title"
-                                                   title="Insira um título para a notificação"
-                                                   placeholder="Ex.: Local irregular">
+                                            <input type="text" class="form-input" placeholder="Insira um título para a ação" name="punishmentTitle">
                                             <div class="invalidate-feedback"></div>
                                         </div>
-                                    </div>
-
-                                    <div class="col-md-4">
                                         <div class="form-group">
-                                            <label>Data da notificação:</label>
-                                            <input type="date" class="form-input" id="date" name="date"
-                                                   title="Data da notificação">
+                                            <label>Decrição:</label>
+                                            <input type="text" class="form-input" placeholder="Descreva o motivo" name="punishmentDesciption">
                                             <div class="invalidate-feedback"></div>
                                         </div>
-                                    </div>
-
-                                    <div class="col-md-4">
                                         <div class="form-group">
-                                            <label>Hora da notificação:</label>
-                                            <input type="time" class="form-input" id="time" name="time"
-                                                   title="Hora da notificação">
+                                            <label>Valor:</label>
+                                            <input type="number" class="form-input" placeholder="Digite o valor da multa" name="punishmentValue">
                                             <div class="invalidate-feedback"></div>
                                         </div>
-                                    </div>
-
-                                    <div class="col-md-4">
                                         <div class="form-group">
-                                            <label>Fiscal:</label>
-                                            <select id="agentSelect" class="form-input" name="agentSelect">
-                                                <option style="display: none;" class="opt0" value="0">Selecione o fiscal
-                                                    responsável pela notificação
-                                                </option>
-                                                <?php foreach ($agents as $agent): ?>
-                                                    <option value="<?= $agent->id ?>"
-                                                            selected><?= $agent->nome ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
+                                            <label>Situação:</label>
+                                            <label class="control control--radio">Permitida
+                                                <input type="radio" name="punishmentStatus" value="0" checked="checked"/>
+                                                <div class="control__indicator"></div>
+                                            </label>
+                                            <label class="control control--radio">Bloqueada
+                                                <input type="radio" value="1" name="punishmentStatus"/>
+                                                <div class="control__indicator"></div>
+                                            </label>
                                         </div>
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label>Descrição:</label>
-                                            <input type="text" class="form-input" id="noticationDescription"
-                                                   name="noticationDescription"
-                                                   placeholder="Ex.: Indivíduo notificado por estar atuando em local diferente do cadastrado no sistema">
-                                            <div class="invalidate-feedback"></div>
+                                        <div class="float-right">
+                                            <button class="btn-3 primary c-white">Confirmar</button>
                                         </div>
-                                    </div>
-
-                                    <input type="hidden" name="licenseId" value="<?= md5($license->id); ?>">
-                                    <input type="hidden" name="userId" value="<?= md5($user->id); ?>">
-
-                                    <div class="col-xl-12 text-right mt-4">
-                                        <button type="submit" class="btn-3 primary">
-                                            Cadastrar
-                                        </button>
-                                    </div>
-                                </div>
-                            </fieldset>
-                        </form>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="row m-0 mt-5 div-gray-bg border-top-green p-5">
-                        <?php if ($notifications): ?>
-                            <div class="col-12">
-                                <h4 class="black-title-section">Histórico de notificações</h4>
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <div class="col-6">
+                        <div class="div-gray-bg border-top-green p-5">
+                            <div class="header-title">
+                                <h4 class="black-title-section">Cadastrar nova notificação</h4>
                                 <hr>
                             </div>
-                        <?php foreach ($notifications as $notification): ?>
-                            <div class="col-md-6 mb-5">
-                                <div class="container-white border-left-red p-5">
-                                    <h4 class="black-title-section"><?= $notification->titulo ?></h4>
-                                    <p class="subtitle-section-p"><?= $notification->descricao ?></p>
-                                    <p class="subtitle-section-p">
-                                        Realizado em <?= date("d/m/y", strtotime($notification->data_notificacao)); ?>
-                                        as <?= $notification->hora_notificacao ?>
-                                    </p>
-                                    <?php if ($notification->id_boleto): ?>
-                                        <a href="<?= BOLETOS . $notification->cod_referencia ?>" target="blank"
-                                           class="text-red">
-                                            Visualizar boleto
-                                        </a>
-                                    <?php endif; ?>
-                                    <div class="text-right">
-                                        <label class="black-title-section"><?= $notification->agentName ?></label>
+                            <form id="form-create-notification" action="<?= $router->route("web.createNotification"); ?>"
+                                  method="POST">
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Título:</label>
+                                                <input type="text" class="form-input" id="title" name="title"
+                                                       title="Insira um título para a notificação"
+                                                       placeholder="Ex.: Local irregular">
+                                                <div class="invalidate-feedback"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Data da notificação:</label>
+                                                <input type="date" class="form-input" id="date" name="date"
+                                                       title="Data da notificação">
+                                                <div class="invalidate-feedback"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Hora da notificação:</label>
+                                                <input type="time" class="form-input" id="time" name="time"
+                                                       title="Hora da notificação">
+                                                <div class="invalidate-feedback"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Fiscal:</label>
+                                                <select id="agentSelect" class="form-input" name="agentSelect">
+                                                    <option style="display: none;" class="opt0" value="0">Selecione o fiscal
+                                                        responsável pela notificação
+                                                    </option>
+                                                    <?php foreach ($agents as $agent): ?>
+                                                        <option value="<?= $agent->id ?>"
+                                                                selected><?= $agent->nome ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Descrição:</label>
+                                                <input type="text" class="form-input" id="noticationDescription"
+                                                       name="noticationDescription"
+                                                       placeholder="Ex.: Indivíduo notificado por estar atuando em local diferente do cadastrado no sistema">
+                                                <div class="invalidate-feedback"></div>
+                                            </div>
+                                        </div>
+
+                                        <input type="hidden" name="licenseId" value="<?= md5($license->id); ?>">
+                                        <input type="hidden" name="userId" value="<?= md5($user->id); ?>">
+
+                                        <div class="col-xl-12 text-right mt-4">
+                                            <button type="submit" class="btn-3 primary">
+                                                Cadastrar
+                                            </button>
+                                        </div>
                                     </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="row m-0 mt-5 div-gray-bg border-top-green p-5">
+                            <?php if ($notifications): ?>
+                                <div class="col-12">
+                                    <h4 class="black-title-section">Histórico de notificações</h4>
+                                    <hr>
                                 </div>
-                            </div>
-                        <?php endforeach; else: ?>
-                            <div class="col-12 text-center p-5">
-                                <img class="w-25" src="<?= url('themes/assets/img/empty-list.svg') ?>">
-                                <p class="subtitle-section-p mt-3">Não há notificações cadastradas para esse ambulante.</p>
-                            </div>
-                        <?php endif; ?>
+                                <?php foreach ($notifications as $notification): ?>
+                                    <div class="col-md-6 mb-5">
+                                        <div class="container-white border-left-red p-5">
+                                            <h4 class="black-title-section"><?= $notification->titulo ?></h4>
+                                            <p class="subtitle-section-p"><?= $notification->descricao ?></p>
+                                            <p class="subtitle-section-p">
+                                                Realizado em <?= date("d/m/y", strtotime($notification->data_notificacao)); ?>
+                                                as <?= $notification->hora_notificacao ?>
+                                            </p>
+                                            <?php if ($notification->id_boleto): ?>
+                                                <a href="<?= BOLETOS . $notification->cod_referencia ?>" target="blank"
+                                                   class="text-red">
+                                                    Visualizar boleto
+                                                </a>
+                                            <?php endif; ?>
+                                            <div class="text-right">
+                                                <label class="black-title-section"><?= $notification->agentName ?></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; else: ?>
+                                <div class="col-12 text-center p-5">
+                                    <img class="w-25" src="<?= url('themes/assets/img/empty-list.svg') ?>">
+                                    <p class="subtitle-section-p mt-3">Não há notificações cadastradas para esse ambulante.</p>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         <?php endif; ?>
     </div>
 </div>

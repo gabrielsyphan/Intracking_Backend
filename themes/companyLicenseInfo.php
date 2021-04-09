@@ -370,10 +370,6 @@
         let date = new Date()
 
         async function sha256(date) {
-<<<<<<< HEAD
-
-=======
->>>>>>> master
             // encode as UTF-8
             const msgBuffer = new TextEncoder('utf-8').encode(date);
 

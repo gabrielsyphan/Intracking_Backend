@@ -26,6 +26,7 @@
         let mapLayers = {};
         let ctrLayers = {};
         let request = false;
+        let users = [];
 
         mapTiles['Mapa Jawg'] = L.tileLayer('https://{s}.tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token=C1vu4LOmp14JjyXqidSlK8rjeSlLK1W59o1GAfoHVOpuc6YB8FSNyOyHdoz7QIk6', {
             maxNativeZoom: 19,
@@ -49,16 +50,30 @@
         });
         ctrTiles["Satelite"] = mapTiles["Satelite"];
 
-        mapLayers["Área das zonas"] = L.layerGroup();
-        ctrLayers["Área das zonas"] = mapLayers["Área das zonas"];
+        mapTiles['Satelite 2'] = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            maxNativeZoom: 19,
+            maxZoom: 20,
+            minZoom: 10
+        });
+        ctrTiles["Satelite 2"] = mapTiles["Satelite 2"];
 
-
+        mapLayers["Desenho das Áreas"] = L.layerGroup();
+        ctrLayers["Desenho das Áreas"] = mapLayers["Desenho das Áreas"];
 
         mapLayers["Bairros"] = L.layerGroup();
         ctrLayers["Bairros"] = mapLayers["Bairros"];
 
-        mapLayers["Zonas"] = L.layerGroup();
-        ctrLayers["Zonas"] = mapLayers["Zonas"];
+        mapLayers["Áreas"] = L.layerGroup();
+        ctrLayers["Áreas"] = mapLayers["Áreas"];
+
+        mapLayers["Ambulantes - Em dia"] = L.layerGroup();
+        ctrLayers["Ambulantes - Em dia"] = mapLayers["Ambulantes - Em dia"];
+
+        mapLayers["Ambulantes - Pendentes"] = L.layerGroup();
+        ctrLayers["Ambulantes - Pendentes"] = mapLayers["Ambulantes - Pendentes"];
+
+        mapLayers["Ambulantes - Vencidos"] = L.layerGroup();
+        ctrLayers["Ambulantes - Vencidos"] = mapLayers["Ambulantes - Vencidos"];
 
         map = L.map('salesmanMap', {
             center: [-9.663136558749533, -35.71422457695007],
@@ -70,6 +85,17 @@
         });
 
         L.control.layers(ctrTiles, ctrLayers).addTo(map);
+
+        let userMarker = L.icon({
+            iconUrl: "<?= url("themes/assets/img/userMarker.png"); ?>",
+            shadowUrl: "<?= url("themes/assets/img/marker-shadow.png"); ?>",
+
+            iconSize: [31, 40],
+            shadowSize: [41, 41],
+            iconAnchor: [15, 41],
+            shadowAnchor: [13, 41],
+            popupAnchor: [0, -41]
+        });
 
         let pending = L.icon({
             iconUrl: "<?= url("themes/assets/img/marker-user-yellow.png"); ?>",
@@ -138,6 +164,7 @@
         });
 
         map.invalidateSize(true);
+        geolocation();
 
         map.on('overlayadd', function (e) {
             let groupMarker = new L.MarkerClusterGroup({
@@ -146,7 +173,7 @@
                 zoomToBoundsOnClick: true,
                 spiderfyOnMaxZoom: true
             });
-
+            
             if (e.name == "Ambulantes - Em dia") {
                 <?php if($paids):
                 foreach ($paids as $paid):
@@ -157,21 +184,21 @@
                         'style="border-right:1px solid rgba(0, 0, 0, 0.1)"></div><div class="col-10"><div>' +
                         '</div><div class="zoneInfo"><?= $paid->cpf ?><br>' +
                         '<br><?= $paid->nome ?><br><br><?= $paid->telefone ?>' +
-                        '<div class="textPopup mt-4"><a href="<?= url('licenseInfo/1/') . $pending->id_licenca ?>">' +
+                        '<div class="textPopup mt-4"><a href="<?= url('licenseInfo/1/') . $paid->id_licenca ?>">' +
                         'Visualizar</a></div></div></div></div>').addTo(groupMarker);
                 <?php endif; endforeach; endif; ?>
             } else if (e.name == "Ambulantes - Pendentes") {
                 <?php if($pendings):
                 foreach ($pendings as $pending):
                 if($pending->status == 0 || $pending->status == 3): ?>
-                    L.marker([<?= $pending->latitude ?>, <?= $pending->longitude ?>], {icon: pending})
-                        .bindPopup('' +
-                            '<div class="container" style="width: 200px"><div class="row"><div class="col-2"' +
-                            'style="border-right:1px solid rgba(0, 0, 0, 0.1)"></div><div class="col-10"><div>' +
-                            '</div><div class="zoneInfo"><?= $pending->cpf ?><br>' +
-                            '<br><?= $pending->nome ?><br><br><?= $pending->telefone ?>' +
-                            '<div class="textPopup mt-4"><a href="<?= url('licenseInfo/1/') . $pending->id_licenca ?>">' +
-                            'Visualizar</a></div></div></div></div>').addTo(groupMarker);
+                L.marker([<?= $pending->latitude ?>, <?= $pending->longitude ?>], {icon: pending})
+                    .bindPopup('' +
+                        '<div class="container" style="width: 200px"><div class="row"><div class="col-2"' +
+                        'style="border-right:1px solid rgba(0, 0, 0, 0.1)"></div><div class="col-10"><div>' +
+                        '</div><div class="zoneInfo"><?= $pending->cpf ?><br>' +
+                        '<br><?= $pending->nome ?><br><br><?= $pending->telefone ?>' +
+                        '<div class="textPopup mt-4"><a href="<?= url('licenseInfo/1/') . $pending->id_licenca ?>">' +
+                        'Visualizar</a></div></div></div></div>').addTo(groupMarker);
                 <?php endif; endforeach; endif; ?>
             } else if (e.name == "Ambulantes - Vencidos") {
                 <?php if($expireds):
@@ -183,10 +210,10 @@
                         'style="border-right:1px solid rgba(0, 0, 0, 0.1)"></div><div class="col-10"><div>' +
                         '</div><div class="zoneInfo"><?= $expired->cpf ?><br>' +
                         '<br><?= $expired->nome ?><br><br><?= $expired->telefone ?>' +
-                        '<div class="textPopup mt-4"><a href="<?= url('licenseInfo/1/') . $pending->id_licenca ?>">' +
+                        '<div class="textPopup mt-4"><a href="<?= url('licenseInfo/1/') . $expired->id_licenca ?>">' +
                         'Visualizar</a></div></div></div></div>').addTo(groupMarker);
                 <?php endif; endforeach; endif; ?>
-            } else if (e.name == "Área das zonas") {
+            } else if (e.name == "Desenho das Áreas") {
                 let area = [];
                 let aux = [];
                 <?php if($zones != NULL):
@@ -210,7 +237,7 @@
                 L.polygon(aux, {
                     color: '<?= $color ?>',
                     fillColor: '<?= $color ?>'
-                }).bindPopup('<div class="textPopup">Local: <?= $zone->nome ?> </div> <br> <div class="zoneInfo">Vagas: <?= $zone->limite_ambulantes ?> <br> Ocupadas: <?= $zone->quantidade_ambulantes ?> <br> Disponíveis: <?= $zone->limite_ambulantes - $zone->quantidade_ambulantes ?> </div> <br> <div class="textPopup"> <a href="<?= url("zone/" . $zone->id) ?>" target="_blank">Mais informações</a></div>').addTo(mapLayers[e.name]);
+                }).bindPopup('<div class="textPopup">Local: <?= $zone->nome ?> </div> <br> <div class="zoneInfo">Vagas: <?= $zone->limite_ambulantes ?> <br> Ocupadas: <?= $zone->quantidade_ambulantes ?> <br> Disponíveis: <?= $zone->limite_ambulantes - $zone->quantidade_ambulantes ?><br> Fixas: <?= $zone->vagas_fixas ?></div> <br> <div class="textPopup"> <a href="<?= url("zone/" . md5($zone->id)) ?>" target="_blank">Mais informações</a></div>').addTo(mapLayers[e.name]);
                 aux = [];
 
                 <?php endforeach;
@@ -234,25 +261,25 @@
                             }
 
                             <?php if ($_SESSION['user']['login'] === 3): ?>
-                                L.polygon(aux, {
-                                    color: "#4bc2ce",
-                                    fillColor: "#4bc2ce"
-                                }).bindPopup(
-                                    '<div class="container" style="width: 200px"><div class="row"><div class="col-2"' +
-                                    'style="border-right:1px solid rgba(0, 0, 0, 0.1)"></div><div class="col-10"><div>' +
-                                    '</div><div class="zoneInfo mt-4">'+ neighborhood.name +'<br>' +
-                                    '<br><div class="textPopup"><a href="<?= url('neighborhood') ?>/'+ neighborhood.id +'">Visualizar</a></div></div></div></div>'
-                                ).addTo(mapLayers[e.name]);
+                            L.polygon(aux, {
+                                color: "#4bc2ce",
+                                fillColor: "#4bc2ce"
+                            }).bindPopup(
+                                '<div class="container" style="width: 200px"><div class="row"><div class="col-2"' +
+                                'style="border-right:1px solid rgba(0, 0, 0, 0.1)"></div><div class="col-10"><div>' +
+                                '</div><div class="zoneInfo mt-4">' + neighborhood.name + '<br>' +
+                                '<br><div class="textPopup"><a href="<?= url('neighborhood') ?>/' + neighborhood.id + '">Visualizar</a></div></div></div></div>'
+                            ).addTo(mapLayers[e.name]);
                             <?php else: ?>
-                                L.polygon(aux, {
-                                    color: "#4bc2ce",
-                                    fillColor: "#4bc2ce"
-                                }).bindPopup(
-                                    '<div class="container" style="width: 200px"><div class="row"><div class="col-2"' +
-                                    'style="border-right:1px solid rgba(0, 0, 0, 0.1)"></div><div class="col-10"><div>' +
-                                    '</div><div class="zoneInfo mt-4">'+ neighborhood.name +'<br>' +
-                                    '<br></div></div></div>'
-                                ).addTo(mapLayers[e.name]);
+                            L.polygon(aux, {
+                                color: "#4bc2ce",
+                                fillColor: "#4bc2ce"
+                            }).bindPopup(
+                                '<div class="container" style="width: 200px"><div class="row"><div class="col-2"' +
+                                'style="border-right:1px solid rgba(0, 0, 0, 0.1)"></div><div class="col-10"><div>' +
+                                '</div><div class="zoneInfo mt-4">' + neighborhood.name + '<br>' +
+                                '<br></div></div></div>'
+                            ).addTo(mapLayers[e.name]);
                             <?php endif; ?>
                         });
                         request = true;
@@ -279,7 +306,7 @@
                         '<?= $zone->nome ?></div><div class="zoneInfo"><?= $zone->limite_ambulantes ?> vagas<br>' +
                         '<?= $zone->quantidade_ambulantes ?> ocupadas<br>' +
                         '<?= $zone->limite_ambulantes - $zone->quantidade_ambulantes ?> disponíveis</div><br>' +
-                        '<div class="textPopup"><a href="<?= url("zone/" . $zone->id) ?>" target="_blank">' +
+                        '<div class="textPopup"><a href="<?= url("zone/" . md5($zone->id)) ?>" target="_blank">' +
                         'Mais informações</a></div></div></div></div>').addTo(groupMarker);
                 <?php elseif ($aux = 50 && $aux <= 99): ?>
                 L.marker([<?= $zone->centroide[1] ?>, <?= $zone->centroide[0] ?>], {icon: zone_yellow})
@@ -289,7 +316,7 @@
                         '<?= $zone->nome ?></div><div class="zoneInfo"><?= $zone->limite_ambulantes ?> vagas<br>' +
                         '<?= $zone->quantidade_ambulantes ?> ocupadas<br>' +
                         '<?= $zone->limite_ambulantes - $zone->quantidade_ambulantes ?> disponíveis</div><br>' +
-                        '<div class="textPopup"><a href="<?= url("zone/" . $zone->id) ?>" target="_blank">' +
+                        '<div class="textPopup"><a href="<?= url("zone/" . md5($zone->id)) ?>" target="_blank">' +
                         'Mais informações</a></div></div></div></div>').addTo(groupMarker);
                 <?php else: ?>
                 L.marker([<?= $zone->centroide[1] ?>, <?= $zone->centroide[0] ?>], {icon: zone_red})
@@ -299,16 +326,42 @@
                         '<?= $zone->nome ?></div><div class="zoneInfo"><?= $zone->limite_ambulantes ?> vagas<br>' +
                         '<?= $zone->quantidade_ambulantes ?> ocupadas<br>' +
                         '<?= $zone->limite_ambulantes - $zone->quantidade_ambulantes ?> disponíveis</div><br>' +
-                        '<div class="textPopup"><a href="<?= url("zone/" . $zone->id) ?>" target="_blank">' +
+                        '<div class="textPopup"><a href="<?= url("zone/" . md5($zone->id)) ?>" target="_blank">' +
                         'Mais informações</a></div></div></div></div>').addTo(groupMarker);
                 <?php endif;
                 endforeach; endif; ?>
             }
 
+
             mapLayers[e.name].addLayer(groupMarker);
 
             map.addLayer(mapLayers);
         });
+
+        function geolocation() {
+
+            setInterval(function loarMarkers() {
+                geolocations.forEach(element => {
+                    let user = {};
+                    let aux = 0;
+
+                    users.forEach(marker => {
+                        if (marker.id == element.user.id) {
+                            map.removeLayer(marker.marker);
+                        }
+
+                        delete users[aux];
+                        aux++;
+                    });
+
+                    user = {
+                        marker: L.marker([element.lat, element.lng], {icon: userMarker}).bindPopup(element.user.nome).addTo(map),
+                        id: element.user.id
+                    };
+                    users.push(user);
+                });
+            }, 3000);
+        }
     });
 </script>
 <?php $v->end(); ?>

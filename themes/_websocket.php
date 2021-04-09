@@ -2,6 +2,8 @@
     <script src="https://websocket-orditi.herokuapp.com/socket.io/socket.io.js"></script>
     <script>
         let messages = [];
+        let geolocations = [];
+
         const socket = io('https://websocket-orditi.herokuapp.com/');
         socket.nickname = '';
 
@@ -37,7 +39,8 @@
                 $(".chat-messages").append("<div class='text-center mt-5 pt-5 div-image'><img src='<?= url("/themes/assets/img/empty.svg") ?>' style='width: 80%;'> <h5 class='mt-3'>Nenhuma mensagem recebida.</h5></div>");
             });
 
-            socket.on('chat msg', exibirMsg);
+            socket.on('chat msg', showMsg);
+            socket.on('geolocation', showGeolocation);
         });
 
         function sendMessage(socket) {
@@ -49,7 +52,15 @@
             $('#input-message').val('');
         }
 
-        function exibirMsg(msg) {
+        function showGeolocation(geolocation) {
+            geolocations.push({
+                user: geolocation.user,
+                lat: geolocation.lat,
+                lng: geolocation.lng
+            });
+        }
+
+        function showMsg(msg) {
             let userName = msg.user.split(' ');
             if (userName[1]) {
                 userName = userName[0] + ' ' + userName[1];

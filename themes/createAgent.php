@@ -4,7 +4,7 @@
     <div class="p-5">
         <form id="form" method="POST" action="<?= $router->route("web.validateNewAgent"); ?>">
             <fieldset class="row">
-                <div class="col-xl-12">
+                <div class="col-md-12">
                     <h2 class="black-title-section">Cadastrar de fiscal</h2>
                     <p class="subtitle-section-p">Descreva as informações do fiscal.</p>
                 </div>
@@ -13,9 +13,9 @@
                         <h4 class="black-title-section">Dados do fiscal</h4>
                         <hr>
                         <div class="row">
-                            <div class="col-xl-12">
+                            <div class="col-md-12">
                                 <div class="row">
-                                    <div class="col-xl-12">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Nome:</label>
                                             <input type="text" class="form-input" id="name"
@@ -25,7 +25,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xl-6">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>CPF:</label>
                                             <input type="text" class="form-input" id="identity"
@@ -34,7 +34,7 @@
                                             <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
-                                    <div class="col-xl-6">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Matrícula:</label>
                                             <input type="text" class="form-input" id="registration"
@@ -45,7 +45,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xl-6">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>E-mail:</label>
                                             <input type="email" class="form-input" id="email" name="email"
@@ -54,7 +54,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xl-6">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Confirmar E-mail:</label>
                                             <input type="email" class="form-input" id="confirm_email"
@@ -63,7 +63,7 @@
                                             <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
-                                    <div class="col-xl-6">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Telefone:</label>
                                             <input type="text" class="form-input" id="phone"
@@ -73,7 +73,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xl-6">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Cargo:</label>
                                             <select class="form-input" name="jobRole">
@@ -85,7 +85,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xl-12">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Foto de perfil: <span class="spanAlert">(Opcional)</span></label>
                                             <div class="form-group">
@@ -121,7 +121,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-6 mt-5">
+                <div class="col-md-6 mt-5 only-desktop d-none">'
                     <div class="div-gray-bg border-top-green p-5 text-center">
                         <img class="mt-5 mb-5" style="width: 59%" src="<?= url('themes/assets/img/agent.svg') ?>">
 
@@ -132,7 +132,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-12 text-right mt-5 mb-5">
+                <div class="col-md-12 text-right mt-5 mb-5">
                     <button type="button" class="btn-3 secondary-color">
                         Cancelar
                     </button>

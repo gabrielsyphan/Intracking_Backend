@@ -57,10 +57,15 @@ trait CrudTrait
      * @return int|null
      * @throws Exception
      */
-    protected function update(array $data, string $terms, string $params): ?int
+    protected function update(array $data, string $terms, string $params, $options): ?int
     {
         if ($this->timestamps) {
             $data["updated_at"] = (new DateTime("now"))->format("Y-m-d H:i:s");
+        }
+
+        if(array_keys($options, "polygon")){
+            $coordinates = $data['coordenadas'];
+            unset($data['coordenadas']);
         }
 
         try {
@@ -68,6 +73,11 @@ trait CrudTrait
             foreach ($data as $bind => $value) {
                 $dateSet[] = "{$bind} = :{$bind}";
             }
+
+            if (isset($coordinates)) {
+                $dateSet[] = "coordenadas = PolygonFromText('{$coordinates}')";
+            }
+
             $dateSet = implode(", ", $dateSet);
             parse_str($params, $params);
 

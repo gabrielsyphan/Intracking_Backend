@@ -2,7 +2,7 @@
 
 <div class="container-fluid mt-5">
     <div class="row">
-        <div class="col-6 col-xl-3 mb-4">
+        <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
@@ -22,7 +22,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-xl-3 mb-4">
+        <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
@@ -42,7 +42,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-xl-3 mb-4">
+        <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
@@ -62,7 +62,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-xl-3 mb-4">
+        <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
@@ -89,7 +89,7 @@
     <div class="row mt-5">
         <div class="col-xl-12 mb-5">
             <div class="web-div-box">
-                <div class="box-div-info" style="max-height: 60vh;">
+                <div class="box-div-info">
                     <div>
                         <h3 class="ml-3 title-section">Lista de fiscais</h3>
                         <p class="ml-3 subtitle-section-p">Todos os fiscais e empresas cadastrados no Orditi</p>

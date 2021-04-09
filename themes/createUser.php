@@ -18,11 +18,11 @@
                     <h2 class="black-title-section">Cadastrar novo Usuário</h2>
                     <p class="subtitle-section-p">Descreva todos os dados do usuário.</p>
                 </div>
-                <div class="col-xl-6 mt-5">
+                <div class="col-md-6 mt-5">
                     <div class="div-gray-bg border-top-green p-5">
                         <h4 class="black-title-section">Dados Pessoais</h4>
                         <hr>
-                        <div class="row pl-5 pr-5 pt-3  pb-5">
+                        <div class="row">
                             <div class="col-xl-12 form-group">
                                 <label>Nome:</label>
                                 <input type="text" class="form-input" id="name" name="name"
@@ -35,13 +35,13 @@
                                        placeholder="Nome de sua mãe">
                                 <div class="invalid-feedback"></div>
                             </div>
-                            <div class="col-xl-6 form-group">
+                            <div class="col-md-6 form-group">
                                 <label>CPF:</label>
                                 <input type="text" class="form-input" id="identity" name="identity"
                                        onfocusout="validateCpf(this)" placeholder="Seu CPF">
                                 <div class="invalid-feedback"></div>
                             </div>
-                            <div class="col-xl-6 form-group">
+                            <div class="col-md-6 form-group">
                                 <label>RG:</label>
                                 <input type="text" class="form-input" id="rg" name="rg" placeholder="Seu RG">
                                 <div class="invalid-feedback"></div>
@@ -61,36 +61,36 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-6 mt-5">
+                <div class="col-md-6 mt-5">
                     <div class="div-gray-bg border-top-green p-5">
                         <h4 class="black-title-section">Residência</h4>
                         <hr>
-                        <div class="row pl-5 pr-5 pt-3">
+                        <div class="row">
                             <div class="col-xl-12 form-group">
                                 <label>Endereço Residencial:</label>
                                 <input type="text" class="form-input" id="street" name="street"
                                        placeholder="Endereço da sua casa">
                                 <div class="invalid-feedback"></div>
                             </div>
-                            <div class="col-xl-6 form-group">
+                            <div class="col-md-6 form-group">
                                 <label>Nº:</label>
                                 <input type="text" class="form-input" id="number" name="number"
                                        placeholder="Número da sua casa">
                                 <div class="invalid-feedback"></div>
                             </div>
-                            <div class="col-xl-6 form-group">
+                            <div class="col-md-6 form-group">
                                 <label>Bairro:</label>
                                 <input type="text" class="form-input" id="neighborhood" name="neighborhood"
                                        placeholder="Seu Bairro">
                                 <div class="invalid-feedback"></div>
                             </div>
-                            <div class="col-xl-6 form-group">
+                            <div class="col-md-6 form-group">
                                 <label>Cidade:</label>
                                 <input type="text" class="form-input" id="city" name="city"
                                        placeholder="Sua Cidade">
                                 <div class="invalid-feedback"></div>
                             </div>
-                            <div class="col-xl-6 form-group">
+                            <div class="col-md-6 form-group">
                                 <label>CEP:</label>
                                 <input type="text" class="form-input" id="postcode" name="postcode"
                                        placeholder="Seu CEP">
@@ -126,7 +126,7 @@
                                     </div>
                                 </div>
                                 <div class="col-xl-6">
-                                    <p class="label-left">Foto da identidade (CPF + RG): </p>
+                                    <p class="label-left">Identidade (CPF + RG): </p>
                                 </div>
                                 <div class="col-xl-6 text-center">
                                     <label class="label-file identityImage-file" for="identityImage"><span
@@ -186,7 +186,7 @@
                     </div>
                 </div>
                 <div class="col-xl-12 text-right mb-5 mt-5">
-                    <button type="submit" class="btn-3 tertiary-color">Cadastrar</button>
+                    <button type="submit" class="btn-3 primary">Cadastrar</button>
                 </div>
                 <hr class="">
             </fieldset>

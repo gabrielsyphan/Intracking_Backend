@@ -3,8 +3,11 @@
 namespace Source\App;
 
 use Source\Models\Attach;
+use Source\Models\Fixed;
+use Source\Models\FoodTruck;
 use Source\Models\License;
 use Source\Models\LicenseType;
+use Source\Models\Market;
 use Source\Models\Neighborhood;
 use Source\Models\Punishment;
 use Source\Models\Role;
@@ -21,6 +24,7 @@ use Source\Models\PagSeguro;
 use Source\Models\Payment;
 use Source\Models\Salesman;
 use Source\Models\Zone;
+use Source\Models\Occupation;
 
 /**
  * Class Web
@@ -118,7 +122,7 @@ class Web
                         $_SESSION['user']['email'] = $user->email;
                         $_SESSION['user']['identity'] = $user->cpf;
                         $_SESSION['user']['role'] = 0;
-                        
+
                         $validate = 1;
                     }
                 }
@@ -127,18 +131,22 @@ class Web
             $agent = (new Agent())->find('cpf = :identity AND senha = :password', 'identity=' .
                 $data['identity'] . '&password=' . md5($data['psw']))->fetch();
             if ($agent) {
-                $attach = (new Attach())->find('id_usuario = :id', 'id=' . $agent->id)->fetch(false);
-                if ($attach) {
-                    $_SESSION['user']['login'] = 3;
-                    $_SESSION['user']['identity'] = $agent->cpf;
-                    $_SESSION['user']['role'] = $agent->tipo_fiscal;
-                    $_SESSION['user']['id'] = $agent->id;
-                    $_SESSION['user']['name'] = $agent->nome;
-                    $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/agents/' . $attach->id_usuario
-                        . '/' . $attach->nome;
-                    $_SESSION['user']['email'] = $agent->email;
+                if ($agent->situacao == 2) {
+                    $validate = 3;
+                } else {
+                    $attach = (new Attach())->find('id_usuario = :id', 'id=' . $agent->id)->fetch(false);
+                    if ($attach) {
+                        $_SESSION['user']['login'] = 3;
+                        $_SESSION['user']['identity'] = $agent->cpf;
+                        $_SESSION['user']['role'] = $agent->tipo_fiscal;
+                        $_SESSION['user']['id'] = $agent->id;
+                        $_SESSION['user']['name'] = $agent->nome;
+                        $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/agents/' . $attach->id_usuario
+                            . '/' . $attach->nome;
+                        $_SESSION['user']['email'] = $agent->email;
 
-                    $validate = 1;
+                        $validate = 1;
+                    }
                 }
             }
         }
@@ -519,11 +527,29 @@ class Web
     {
         $this->checkLogin();
 
-        $cmc = $this->checkCmc($_SESSION['user']['identity']);
+        //$cmc = $this->checkCmc($_SESSION['user']['identity']);
 
         echo $this->view->render('requestLicense', [
             'title' => 'Nova licença | ' . SITE,
-            'cmc' => $cmc
+            'cmc' => null
+        ]);
+    }
+
+    public function requestLicenseUser($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $user = (new User())->find('MD5(id) = :id', 'id=' . $data['id'])->fetch(false);
+
+        //$cmc = $this->checkCmc($user->cpf);
+
+
+        echo $this->view->render('requestLicense', [
+            'title' => 'Nova licença | ' . SITE,
+            'cmc' => null,
+            'user' => $user
         ]);
     }
 
@@ -566,6 +592,405 @@ class Web
             'zones' => $zones,
             'company' => $company,
         ]);
+    }
+
+   public function salesmanLicenseUser($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
+        $user = (new User())->find('MD5(id) = :id', 'id=' . $data['id'])->fetch(false);
+
+        if ($zones) {
+            foreach ($zones as $zone) {
+                $polygon = explode("POLYGON((", $zone->poligono);
+                $polygon = explode("))", $polygon[1]);
+                $polygon = explode(",", $polygon[0]);
+
+                $aux = array();
+                foreach ($polygon as $polig) {
+                    $polig = explode(" ", $polig);
+                    $aux[] = $polig;
+                }
+
+                $polygon = $aux;
+
+                $zone->poligono = $polygon;
+                $zoneData[] = $zone;
+            }
+        }
+
+        echo $this->view->render('salesmanLicense', [
+            'title' => 'Licença de Ambulante | ' . SITE,
+            'zones' => $zones,
+            'userId' => md5($user->id),
+            'company' => null
+        ]);
+    }
+
+    public function marketLicense(): void
+    {
+        $zones = (new Zone())->find('vagas_fixas > 0', '', 'id, nome')->fetch(true);
+
+        echo $this->view->render('marketLicense', [
+            'title' => 'Licença - Mercado | '. SITE,
+            'zones' => $zones,
+            'userId' => null
+        ]);
+    }
+
+    public function marketLicenseUser($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $zones = (new Zone())->find('vagas_fixas > 0', '', 'id, nome')->fetch(true);
+
+        echo $this->view->render('marketLicense', [
+            'title' => 'Licença - Mercado | '. SITE,
+            'zones' => $zones,
+            'userId' => $data['id']
+        ]);
+    }
+
+    public function marketData($data):void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $response = array();
+
+        $zone = (new Zone())
+            ->find(
+            'md5(id) = :id',
+            'id='. $data['referenceCode'],
+            'id, ST_AsText(coordenadas) as polygon, ST_AsText(ST_Centroid(coordenadas)) as centroid, nome'
+            )->fetch(false);
+        if ($zone) {
+            $centroid = explode("POINT(", $zone->centroid);
+            $centroid = explode(")", $centroid[1]);
+            $centroid = explode(" ", $centroid[0]);
+
+            $polygon = explode("POLYGON((", $zone->polygon);
+            $polygon = explode("))", $polygon[1]);
+            $polygon = explode(",", $polygon[0]);
+
+            $aux = array();
+            foreach ($polygon as $polig) {
+                $polig = explode(" ", $polig);
+                $aux[] = $polig;
+            }
+
+            $fixeds = (new Fixed())
+                ->find(
+                    'id_zona = :id',
+                    'id='. $zone->id,
+                    'cod_identificador, nome'
+                )->fetch(true);
+
+            if ($fixeds) {
+                foreach ($fixeds as $fixed) {
+                    if (!$fixed->id_licenca) {
+                        $response['success'][] = [
+                            'name' => $fixed->nome,
+                            'referenceCode' => $fixed->cod_identificador
+                        ];
+                    }
+                }
+
+                $response['zoneData'] = [
+                    'polygon' => $aux,
+                    'lat' => $centroid[1],
+                    'lng' => $centroid[0],
+                    'name' => $zone->nome
+                ];
+            }
+        } else {
+            $response['fail'] = 'Zone not found.';
+        }
+
+        echo json_encode($response);
+    }
+
+    public function validateMarketLicense($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $zone = (new Zone())
+            ->find('MD5(id) = :id', 'id='. $data['marketSelect'], 'id')
+            ->fetch(false);
+
+        if ($data['userId']) {
+            $userId =  (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id')->fetch(false);
+            if($userId) {
+                $userId = $userId->id;
+            } else {
+                $userId = $_SESSION['user']['id'];
+            }
+        } else {
+            $userId = $_SESSION['user']['id'];
+        }
+
+        $license = new License();
+        $license->cmc = 99000279;
+        $license->tipo = 7;
+        $license->id_usuario = $userId;
+        $license->data_inicio = date('Y-m-d');
+        $license->data_fim = date('Y-m-d', strtotime("+3 days"));
+        $license->status = 0;
+        $license->save();
+
+        if ($license->fail()) {
+            var_dump($license->fail()->getMessage());
+        }
+
+        $fixed = (new Fixed())
+            ->find('cod_identificador = :code', 'code='. $data['fixedSelect'])
+            ->fetch(false);
+        if ($fixed) {
+            $fixed->id_licenca = $license->id;
+            $fixed->save();
+
+            if ($fixed->fail()) {
+                var_dump($fixed->fail()->getMessage());
+                $license->destroy();
+            } else {
+                $products = "";
+                $productDescription = $data['productDescription'];
+                $productsData = $data['productSelect'];
+
+                foreach ($productsData as $product) {
+                    $products = $products . "" . $product;
+                }
+
+                $workedDays = "";
+                foreach ($data['workedDays'] as $workedDay) {
+                    $workedDays = $workedDays . "" . $workedDay;
+                }
+
+                $market = new Market();
+                $market->produtos = $products;
+                $market->relato_atividade = $productDescription;
+                $market->id_zona = $zone->id;
+                $market->id_licenca = $license->id;
+                $market->id_vaga = $fixed->id;
+                $market->atendimento_dias = $workedDays;
+                $market->atendimento_hora_inicio = $data['initHour'];
+                $market->atendimento_hora_fim = $data['endHour'];
+                $market->save();
+
+                if ($market->fail()) {
+                    var_dump($market->fail()->getMessage());
+                }
+
+                $paymentDate = date('Y-m-d', strtotime("+3 days"));
+                $payment = new Payment();
+                $payment->id_licenca = $license->id;
+                $payment->cod_referencia = null;
+                $payment->cod_pagamento = null;
+                $payment->valor = $fixed->valor;
+                $payment->id_usuario = $userId;
+                $payment->tipo = 1;
+                $payment->pagar_em = $paymentDate;
+                $payment->save();
+
+                $extCode = 'ODTP-' . $payment->id;
+                $payment->cod_referencia = 15123;
+                $payment->cod_pagamento = 'teste';
+                $payment->save();
+
+                echo "success";
+            }
+        } else {
+            $license->destroy();
+        }
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
+    public function occupationLicense($companyId = null): void
+    {
+        $this->checkLogin();
+
+        $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
+
+        if ($zones) {
+            foreach ($zones as $zone) {
+                $polygon = explode("POLYGON((", $zone->poligono);
+                $polygon = explode("))", $polygon[1]);
+                $polygon = explode(",", $polygon[0]);
+
+                $aux = array();
+                foreach ($polygon as $polig) {
+                    $polig = explode(" ", $polig);
+                    $aux[] = $polig;
+                }
+
+                $polygon = $aux;
+
+                $zone->poligono = $polygon;
+                $zoneData[] = $zone;
+            }
+        }
+
+        echo $this->view->render('occupationLicense', [
+            'title' => 'Licença de Uso de Solo | ' . SITE,
+            'userId' => null,
+            'zones' => $zones,
+        ]);
+    }
+
+    public function validateOccupationLicense($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $response = 'fail';
+
+        if ($_FILES) {
+
+            $curl = curl_init();
+
+            curl_setopt($curl, CURLOPT_URL, PERTENCES);
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($curl, CURLOPT_HEADER, false);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+
+            $point = 'POINT(' . $data['latitude'] . " " . $data['longitude'] . ')';
+            $neighborhood = (new Neighborhood())->find('ST_CONTAINS(ST_GEOMFROMTEXT(ST_AsText(coordenadas)), ST_GEOMFROMTEXT("' . $point . '"))=1', '', 'id, coordenadas')->fetch(false);
+            $neighborhoodId = "";
+
+            if ($neighborhood) {
+                $neighborhoodId = $neighborhood->id;
+                $neighborhood->quantidade_ambulantes = $neighborhood->quantidade_ambulantes + 1;
+                $neighborhood->save();
+            }
+            $license = new License();
+            $license->tipo = 5;
+
+            $license->status = 3;
+
+            if ($data['userId']) {
+                $userId = (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id')->fetch(false);
+                $userId = $userId->id;
+            } else {
+                $userId = $_SESSION['user']['id'];
+            }
+            $license->id_usuario = $userId;
+            $license->data_inicio = date('Y-m-d');
+            $license->data_fim = date('Y-m-d', strtotime("+3 days"));
+            $license->cmc = '';
+            $license->save();
+
+            if ($license->fail()) {
+                var_dump($license->fail()->getMessage());
+            } else {
+                /**
+                 * Load all images
+                 */
+                $curl = curl_init();
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, True);
+                curl_setopt($curl, CURLOPT_URL, 'https://nominatim.openstreetmap.org/reverse.php?lat=' . $data['latitude'] . '&lon=' . $data['longitude'] . '&zoom=18&format=jsonv2');
+                curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:7.0.1) Gecko/20100101 Firefox/7.0.1');
+                $street = curl_exec($curl);
+                curl_close($curl);
+                $street = json_decode($street);
+                $street = $street->display_name;
+                $area = $data['width'] * $data['length'];
+                $valueToPayment = array();
+
+                $workedDays = "";
+                foreach ($data['workedDays'] as $workedDay) {
+                    $workedDays = $workedDays . "" . $workedDay;
+                }
+
+                $occupation = new Occupation();
+                $occupation->id_licenca = $license->id;
+                $occupation->cnpj = $data['cnpj'];
+                $occupation->latitude = $data['latitude'];
+                $occupation->longitude = $data['longitude'];
+                $occupation->atendimento_dias = $workedDays;
+                $occupation->atendimento_hora_inicio = $data['initHour'];
+                $occupation->atendimento_hora_final = $data['endHour'];
+                $occupation->tipo_equipamento = $data['howWillSell'];
+                $occupation->area_equipamento = $data['width'] . "x" . $data['length'];
+                $occupation->nome_empresa = $data['fantasyName'];
+                $occupation->endereco = $street;
+
+                $occupation->save();
+
+                if ($occupation->fail()) {
+                    $license->destroy();
+                    var_dump($occupation->fail()->getMessage());
+                    exit();
+                } else {
+                    $paymentDate = date('Y-m-d', strtotime("+3 days"));
+                    $payment = new Payment();
+                    $payment->id_licenca = $license->id;
+                    $payment->cod_referencia = null;
+                    $payment->cod_pagamento = null;
+                    $payment->valor = 1;
+                    $payment->id_usuario = $_SESSION['user']['id'];
+                    $payment->tipo = 1;
+                    $payment->pagar_em = $paymentDate;
+                    $payment->save();
+                    $extCode = 'ODT' . $payment->id;
+                    $payment->cod_referencia = 15123;
+                    $payment->cod_pagamento = 'teste';
+                    $payment->save();
+
+                    if ($payment->fail()) {
+                        $license->destroy();
+                        $occupation->destroy();
+                        var_dump($payment->fail()->getMessage());
+                        exit();
+                    } else {
+                        foreach ($_FILES as $key => $file) {
+                            $target_file = basename($file['name']);
+
+                            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                            $extensions_arr = array("jpg", "jpeg", "png");
+
+                            if (in_array($imageFileType, $extensions_arr)) {
+                                $folder = THEMES . '/assets/uploads/occupation';
+                                if (!file_exists($folder) || !is_dir($folder)) {
+                                    mkdir($folder, 0755);
+                                }
+                                $fileName = $key . '.' . $imageFileType;
+                                $dir = $folder . '/' . $license->id;
+
+                                if (!file_exists($dir) || !is_dir($dir)) {
+                                    mkdir($dir, 0755);
+                                }
+
+                                $dir = $dir . '/' . $fileName;
+
+                                move_uploaded_file($file['tmp_name'], $dir);
+
+                                $attach = new Attach();
+                                $attach->id_usuario = $license->id;
+                                $attach->tipo_usuario = 5;
+                                $attach->nome = $fileName;
+                                $attach->save();
+
+                                if ($attach->fail()) {
+                                    $license->destroy();
+                                    var_dump($attach->fail()->getMessage());
+                                    exit();
+                                } else {
+                                    $response = 'success';
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        echo $response;
     }
 
     /**
@@ -624,6 +1049,31 @@ class Web
                         $templateName = 'companyLicenseInfo';
                         $groupName = 'companys';
                         break;
+                    case 5:
+                        $licenseInfo = (new Occupation())->find('id_licenca = :id', 'id=' . $license->id)
+                            ->fetch();
+                        $templateName = 'occupationLicenseInfo';
+                        $groupName = 'occupation';
+                        break;
+                    case 6:
+                        $licenseInfo = (new FoodTruck())->find('id_licenca = :id', 'id=' . $license->id)
+                            ->fetch();
+                        $templateName = 'foodTrucksLicenseInfo';
+                        $groupName = 'foodtruck';
+                        break;
+                    case 7:
+                        $licenseInfo = (new Market())->find('id_licenca = :id', 'id=' . $license->id)
+                            ->fetch(false);
+                        $zone = (new Zone())->findById($licenseInfo->id_zona, 'nome');
+                        $fixed = (new Fixed())->findById($licenseInfo->id_vaga, 'cod_identificador, nome');
+
+                        $licenseInfo->zone = $zone->nome;
+                        $licenseInfo->code = $fixed->cod_identificador;
+                        $licenseInfo->fixed = $fixed->nome;
+
+                        $templateName = 'marketLicenseInfo';
+                        $groupName = 'markets';
+                        break;
                 }
 
                 if ($licenseInfo) {
@@ -669,20 +1119,10 @@ class Web
 
                         $validate = true;
 
-                        echo $this->view->render($templateName, [
-                            'title' => 'Minha Licença | ' . SITE,
-                            'license' => $licenseInfo,
-                            'licenseValidate' => $license,
-                            'licenseStatus' => $license->status,
-                            'user' => $user,
-                            'uploads' => $uploads,
-                            'payments' => $payments,
-                            'agents' => $agents,
-                            'notifications' => $notifications,
-                            'companyConfirm' => $aux,
-                            'salesmans' => $arrayAux,
-                            'userImage' => $userImage
-                        ]);
+                    }
+
+                    if ($data['licenseType'] == 6) {
+                        $validate = true;
                     }
                 }
             }
@@ -690,7 +1130,147 @@ class Web
 
         if ($validate == false) {
             $this->router->redirect('web.home');
+        } else {
+            echo $this->view->render($templateName, [
+                'title' => 'Minha Licença | ' . SITE,
+                'license' => $licenseInfo,
+                'licenseValidate' => $license,
+                'licenseStatus' => $license->status,
+                'user' => $user,
+                'uploads' => $uploads,
+                'payments' => $payments,
+                'agents' => $agents,
+                'notifications' => $notifications,
+                'companyConfirm' => $aux,
+                'salesmans' => $arrayAux,
+                'userImage' => $userImage
+            ]);
         }
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
+
+    public function foodTruckLicense(): void
+    {
+        echo $this->view->render('foodTrucksLicense', [
+            'title' => 'Licença de FoodTrucks | ' . SITE
+        ]);
+    }
+
+    public function validateFoodTruckLicense($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $response = array();
+
+        if ($_FILES) {
+            $products = "";
+
+            foreach ($data['productSelect'] as $product) {
+                $products = $products . "" . $product;
+            }
+
+            $license = new License();
+            $license->tipo = 6;
+            $license->status = 3;
+            $license->id_usuario = $_SESSION['user']['id'];
+            $license->data_inicio = date('Y-m-d');
+            $license->data_fim = date('Y-m-d', strtotime("+3 days"));
+            $license->save();
+
+            if ($license->fail()) {
+                var_dump($license->fail()->getMessage());
+                exit();
+            } else {
+                $point = 'POINT(' . $data['latitude'] . " " . $data['longitude'] . ')';
+                $neighborhood = (new Neighborhood())->find('ST_CONTAINS(ST_GEOMFROMTEXT(ST_AsText(coordenadas)), ST_GEOMFROMTEXT("' . $point . '"))=1', '', 'id, coordenadas')->fetch(false);
+                $neighborhoodId = "";
+
+                if ($neighborhood) {
+                    $neighborhoodId = $neighborhood->id;
+                } else {
+                    $neighborhoodId = 0;
+                }
+
+                $curl = curl_init();
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, True);
+                curl_setopt($curl, CURLOPT_URL, 'https://nominatim.openstreetmap.org/reverse.php?lat=' . $data['latitude'] . '&lon=' . $data['longitude'] . '&zoom=18&format=jsonv2');
+                curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:7.0.1) Gecko/20100101 Firefox/7.0.1');
+                $street = curl_exec($curl);
+                curl_close($curl);
+                $street = json_decode($street);
+                $street = $street->display_name;
+
+                /**
+                 * Load all images
+                 */
+                $folder = THEMES . '/assets/uploads/foodtruck';
+                if (!file_exists($folder) || !is_dir($folder)) {
+                    mkdir($folder, 0755);
+                }
+                $dir2 = $folder . '/' . $license->id;
+
+                if (!file_exists($dir2) || !is_dir($dir2)) {
+                    mkdir($dir2, 0755);
+                }
+
+                foreach ($_FILES as $key => $file) {
+                    $target_file = basename($file['name']);
+                    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+                    $extensions_arr = array("jpg", "jpeg", "png");
+                    $fileName = $key . '.' . $imageFileType;
+
+                    if (in_array($imageFileType, $extensions_arr)) {
+                        $dir = $dir2 . '/' . $fileName;
+
+                        move_uploaded_file($file['tmp_name'], $dir);
+
+                        $attach = new Attach();
+                        $attach->id_usuario = $license->id;
+                        $attach->tipo_usuario = 6;
+                        $attach->nome = $fileName;
+                        $attach->save();
+                    }
+                }
+
+                if ($attach->fail()) {
+                    $license->destroy();
+                    var_dump($attach->fail()->getMessage());
+                    exit();
+                } else {
+                    $foodTrucks = new FoodTruck();
+                    $foodTrucks->endereco = $street;
+                    $foodTrucks->id_licenca = $license->id;
+                    $foodTrucks->cnpj = $data['cnpj'];
+                    $foodTrucks->cmc = $data['cmc'];
+                    $foodTrucks->nome_fantasia = $data['fantasyName'];
+                    $foodTrucks->id_bairro = $neighborhoodId;
+                    $foodTrucks->produto = $products;
+                    $foodTrucks->relato_equipamento = $data['equipmentDescription'];
+                    $foodTrucks->descricao = $data['infoDescription'];
+                    $foodTrucks->latitude = $data['latitude'];
+                    $foodTrucks->longitude = $data['longitude'];
+
+                    $foodTrucks->save();
+
+                    if ($foodTrucks->fail()) {
+                        $attach->destroy();
+                        $license->destroy();
+                        var_dump($foodTrucks->fail()->getMessage());
+                        exit();
+                    } else {
+                        $response[] = [
+                            "success" => true
+                        ];
+                    }
+                }
+            }
+        }
+        echo json_encode($response);
     }
 
     public function licenseStatus($data): void
@@ -712,7 +1292,7 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
         $response = array();
-        $salesman = (new Salesman())->find('MD5(id) = :id', 'id='. $data['id'], 'id_licenca')
+        $salesman = (new Salesman())->find('MD5(id) = :id', 'id=' . $data['id'], 'id_licenca')
             ->fetch(false);
 
         if ($salesman) {
@@ -721,7 +1301,7 @@ class Web
                 if ($license->status == 2) {
                     $response = ['blocked' => true];
                 } else {
-                    $payments = (new Payment())->find('id_licenca = :id AND status = 0', 'id='. $license->id)
+                    $payments = (new Payment())->find('id_licenca = :id AND status = 0', 'id=' . $license->id)
                         ->fetch(true);
 
                     if ($payments) {
@@ -791,9 +1371,11 @@ class Web
                 }
             }
 
-            if ($companyAux == 0) {
-                exit();
-            }
+            // if ($companyAux == 0) {
+            //     exit();
+            // }
+
+            $companyAux = 0;
 
             $point = 'POINT(' . $data['longitude'] . " " . $data['latitude'] . ')';
             $zone = (new Zone())->find('ST_CONTAINS(ST_GEOMFROMTEXT(ST_AsText(coordenadas)), ST_GEOMFROMTEXT("' . $point . '"))=1', '', 'id, limite_ambulantes, quantidade_ambulantes')->fetch();
@@ -843,7 +1425,13 @@ class Web
                     $license->status = 0;
                 }
 
-                $license->id_usuario = $_SESSION['user']['id'];
+                if ($data['userId']) {
+                    $userId =  (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id')->fetch(false);
+                    $userId = $userId->id;
+                } else {
+                    $userId = $_SESSION['user']['id'];
+                }
+                $license->id_usuario = $userId;
                 $license->data_inicio = date('Y-m-d');
                 $license->data_fim = date('Y-m-d', strtotime("+3 days"));
                 $license->cmc = $companyAux;
@@ -963,25 +1551,6 @@ class Web
                                 $salesman->area_equipamento = $data['width'] . " x " . $data['length'];
                                 $salesman->tipo_equipamento = $data['howWillSell'];
                                 $salesman->save();
-
-                                /**
-                                 * Send email with new temporary recovery password
-                                 */
-                                $email = new Email();
-
-                                $message = file_get_contents(THEMES . "/assets/emails/confirmSalesman.php");
-
-                                $url = ROOT . "/licenseInfo/1/" . md5($license->id);
-                                $template = array("%title", "%textBody", "%button", "%link", "%companyName", "%name");
-                                $dataReplace = array("Confirmação de vínculo", "Para confirmar vínculo de", "Visualizar", $url, $company->nome_fantasia, $user->nome);
-                                $message = str_replace($template, $dataReplace, $message);
-
-                                $email->add(
-                                    "Confirmar vínculo",
-                                    $message,
-                                    $user->nome,
-                                    $user->email
-                                )->send();
 
                                 if ($salesman->fail()) {
                                     $attach->destroy();
@@ -1335,6 +1904,25 @@ class Web
      * @return void
      * @var $data
      */
+    public function companyLicenseUser($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $user = (new User())->find('MD5(id)=:id', 'id=' . $data['id'])->fetch(false);
+
+        echo $this->view->render('companyLicense', [
+            'title' => 'Licença de Empresa | ' . SITE,
+            'zones' => null,
+            'user' => md5($user->id)
+        ]);
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
     public function licenseList(): void
     {
         $this->checkLogin();
@@ -1399,6 +1987,7 @@ class Web
             $user = (new User())->find('MD5(id) = :id AND senha IS NULL', 'id=' . $data['userId'])->fetch();
             if (!$user) {
                 $user = (new Agent())->find('MD5(id) = :id AND senha IS NULL', 'id=' . $data['userId'])->fetch();
+                $user->situacao = 1;
             }
             if ($user) {
                 $user->senha = md5($data['password']);
@@ -1540,7 +2129,8 @@ class Web
                 'user' => $user,
                 'payments' => $payments,
                 'uploads' => $uploads,
-                'userImage' => $userImage
+                'userImage' => $userImage,
+                'type' => 2
             ]);
         } else if ($_SESSION['user']['login'] === 3) {
             $agent = (new Agent())->findById($_SESSION['user']['id']);
@@ -1574,12 +2164,55 @@ class Web
                     'user' => $agent,
                     'uploads' => $uploads,
                     'userImage' => $userImage,
-                    'role' => $role
+                    'role' => $role,
+                    'type' => 1
                 ]);
             }
         } else {
             $this->router->redirect('web.salesmanList');
         }
+    }
+
+    public function profileUser($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $user = (new User())->find('MD5(id) = :id', 'id=' . $data['id'])->fetch(false);
+        $payments = (new Payment())->find('id_usuario = :id', 'id=' . $data['id'] )
+            ->fetch(true);
+
+        $folder = ROOT . '/themes/assets/uploads';
+        $uploads = array();
+        $attachments = (new Attach())->find('MD5(id_usuario) = :id AND tipo_usuario = 0', 'id=' . $data['id'])
+            ->fetch(true);
+        if ($attachments) {
+            foreach ($attachments as $attach) {
+                $attachName = explode('.', $attach->nome);
+                if ($attachName[0] == 'userImage') {
+                    $userImage = $folder . '/users/' . $attach->id_usuario
+                        . '/' . $attach->nome;
+                }
+
+                $uploads[] = [
+                    'fileName' => $attach->nome,
+                    'groupName' => 'users',
+                    'userId' => $data['id']
+                ];
+            }
+        }
+
+        echo $this->view->render('profile', [
+            'title' => 'Perfil | ' . SITE,
+            'type' => 2,
+            'user' => $user,
+            'payments' => $payments,
+            'uploads' => $uploads,
+            'userImage' => $userImage
+        ]);
+
+
     }
 
     public function editProfile($data): void
@@ -1622,7 +2255,7 @@ class Web
 
         $agent = (new Agent())->findById($data['agentSelect']);
         if ($agent) {
-            $salesman = (new Salesman())->find('MD5(id) = :id', 'id='. $data['licenseId'])->fetch(false);
+            $salesman = (new Salesman())->find('MD5(id) = :id', 'id=' . $data['licenseId'])->fetch(false);
             if ($salesman) {
                 $notification = new Notification();
                 $notification->id_licenca = $salesman->id_licenca;
@@ -1778,6 +2411,36 @@ class Web
 
     /**
      * @return void
+     */
+    public function userList(): void
+    {
+        $users = (new User)->find('', '', 'id, cpf, email, nome')->fetch(true);
+        $approved = 0;
+        $blocked = 0;
+        $pendding = 0;
+        foreach ($users as $user) {
+            if ($user->situacao == 1) {
+                $approved++;
+            } else if ($user->situacao == 0) {
+                $pendding++;
+            } else {
+                $blocked++;
+            }
+        }
+
+        echo $this->view->render('userList', [
+            'title' => 'Usuários | ' . SITE,
+            'user' => $user,
+            'users' => $users,
+            'userCount' => count($users),
+            'approved' => $approved,
+            'blocked' => $blocked,
+            'pendding' => $pendding
+        ]);
+    }
+
+    /**
+     * @return void
      * Export payment list in xls file
      */
     public function exportData(array $data): void
@@ -1911,10 +2574,10 @@ class Web
         $tableHead = '';
         $tableBody = '';
 
-        $salesmans = (new Salesman())->find('MD5(id_bairro) = :id', 'id='. $data['neighborhoodId'])
+        $salesmans = (new Salesman())->find('MD5(id_bairro) = :id', 'id=' . $data['neighborhoodId'])
             ->fetch(true);
         $neihborhood = (new Neighborhood())
-            ->find('MD5(id) = :id', 'id='. $data['neighborhoodId'], 'nome')->fetch(false);
+            ->find('MD5(id) = :id', 'id=' . $data['neighborhoodId'], 'nome')->fetch(false);
         if ($salesmans) {
             $tableHead .= '<tr>';
             $tableHead .= '<td><b>Tipo</b></td>';
@@ -1928,7 +2591,7 @@ class Web
             $license_type = (new LicenseType())->find()->fetch(true);
             if ($license_type) {
                 foreach ($salesmans as $salesman) {
-                    $license = (new License())->find('id = :id', 'id='. $salesman->id_licenca)
+                    $license = (new License())->find('id = :id', 'id=' . $salesman->id_licenca)
                         ->fetch(false);
                     if ($license) {
                         $user = (new User())->findById($license->id_usuario, 'id, nome, cpf');
@@ -1963,7 +2626,7 @@ class Web
         $html = '';
         $html .= '<table>';
         $html .= '<tr>';
-        $html .= '<td colspan="5">Ambulantes no bairro: '. $neihborhood->nome .' - ORDITI</td>';
+        $html .= '<td colspan="5">Ambulantes no bairro: ' . $neihborhood->nome . ' - ORDITI</td>';
         $html .= '</tr>';
         $html .= $tableHead;
         $html .= $tableBody;
@@ -1987,7 +2650,7 @@ class Web
     {
         $zoneData = array();
         $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, 
-        ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')
+        ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes, vagas_fixas')
             ->fetch(true);
 
         $pending = array();
@@ -2146,83 +2809,83 @@ class Web
             $dir = $folder . '/agents/' . $agent->id;
             if (!file_exists($dir) || !is_dir($dir)) {
                 mkdir($dir, 0755);
+            }
 
-                if ($_FILES && $_FILES['agentImage']['name'] !== '') {
-                    foreach ($_FILES as $key => $file) {
-                        $target_file = basename($file['name']);
+            if ($_FILES && $_FILES['agentImage']['name'] !== '') {
+                foreach ($_FILES as $key => $file) {
+                    $target_file = basename($file['name']);
 
-                        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+                    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-                        $extensions_arr = array("jpg", "jpeg", "png");
+                    $extensions_arr = array("jpg", "jpeg", "png");
 
-                        if (in_array($imageFileType, $extensions_arr)) {
-                            if (!file_exists($folder) || !is_dir($folder)) {
-                                mkdir($folder, 0755);
-                            }
-                            $fileName = 'userImage.' . $imageFileType;
-
-                            $dir = $dir . '/' . $fileName;
-
-                            if (move_uploaded_file($file['tmp_name'], $dir)) {
-                                $aux = 1;
-                            }
+                    if (in_array($imageFileType, $extensions_arr)) {
+                        if (!file_exists($folder) || !is_dir($folder)) {
+                            mkdir($folder, 0755);
                         }
-                    }
-                } else {
-                    $fileName = 'userImage.png';
-                    $dir = $dir . '/' . $fileName;
-                    $picture = THEMES . '/assets/img/picture.png';
+                        $fileName = 'userImage.' . $imageFileType;
 
-                    if (copy($picture, $dir)) {
-                        $aux = 1;
-                    }
-                }
+                        $dir = $dir . '/' . $fileName;
 
-                if ($aux == 0) {
-                    exit;
-                }
-
-                if ($agent->fail()) {
-                    var_dump($agent->fail()->getMessage());
-                    unlink($dir);
-                } else {
-                    $attach = new Attach();
-                    $attach->id_usuario = $agent->id;
-                    $attach->tipo_usuario = 3;
-                    $attach->nome = $fileName;
-                    $attach->save();
-
-                    if ($attach->fail()) {
-                        $agent->destroy();
-                        unlink($dir);
-                        var_dump($attach->fail()->getMessage());
-                    } else {
-                        $email = new Email();
-                        $message = file_get_contents(THEMES . "/assets/emails/confirmRegisterEmail.php");
-
-                        $url = ROOT . "/confirmAccount/" . md5($agent->id);
-                        $template = array("%title", "%textBody", "%button", "%link", "%name");
-                        $dataReplace = array("Confirmação de Cadastro", "Sua conta foi cadastrada", "Confirmar", $url, $data['name']);
-                        $message = str_replace($template, $dataReplace, $message);
-
-                        $email->add(
-                            "Cadastro Orditi",
-                            $message,
-                            $data['name'],
-                            $data['email']
-                        )->send();
-                    }
-
-                    if ($email->error()) {
-                        echo 'identity_fail';
-                        $agent->destroy();
-                    } else {
-                        echo 'success';
+                        if (move_uploaded_file($file['tmp_name'], $dir)) {
+                            $aux = 1;
+                        }
                     }
                 }
             } else {
-                echo 'already_exist';
+                $fileName = 'userImage.png';
+                $dir = $dir . '/' . $fileName;
+                $picture = THEMES . '/assets/img/picture.png';
+
+                if (copy($picture, $dir)) {
+                    $aux = 1;
+                }
             }
+
+            if ($aux == 0) {
+                exit;
+            }
+
+            if ($agent->fail()) {
+                var_dump($agent->fail()->getMessage());
+                unlink($dir);
+            } else {
+                $attach = new Attach();
+                $attach->id_usuario = $agent->id;
+                $attach->tipo_usuario = 3;
+                $attach->nome = $fileName;
+                $attach->save();
+
+                if ($attach->fail()) {
+                    $agent->destroy();
+                    unlink($dir);
+                    var_dump($attach->fail()->getMessage());
+                } else {
+                    $email = new Email();
+                    $message = file_get_contents(THEMES . "/assets/emails/confirmRegisterEmail.php");
+
+                    $url = ROOT . "/confirmAccount/" . md5($agent->id);
+                    $template = array("%title", "%textBody", "%button", "%link", "%name");
+                    $dataReplace = array("Confirmação de Cadastro", "Sua conta foi cadastrada", "Confirmar", $url, $data['name']);
+                    $message = str_replace($template, $dataReplace, $message);
+
+                    $email->add(
+                        "Cadastro Orditi",
+                        $message,
+                        $data['name'],
+                        $data['email']
+                    )->send();
+                }
+
+                if ($email->error()) {
+                    echo 'identity_fail';
+                    $agent->destroy();
+                } else {
+                    echo 'success';
+                }
+            }
+        } else {
+            echo 'already_exist';
         }
     }
 
@@ -2276,12 +2939,27 @@ class Web
             $zone->limite_ambulantes = $data['available'];
             $zone->quantidade_ambulantes = $data['occupied'];
             $zone->coordenadas = $polygon;
-
+            $zone->vagas_fixas = $data['fixed'];
             $zone->save(['polygon']);
 
             if ($zone->fail()) {
                 var_dump($zone->fail()->getMessage());
             } else {
+                if ($data['fixed'] > 0) {
+                    for ($i = 0; $i < $data['fixed']; $i++) {
+                        $fixed = new Fixed();
+                        $fixed->cod_identificador = 'ODTF-'. (new \DateTime('' . date('d-m-Y H:i:s')))
+                            ->getTimestamp() . $i;
+                        $fixed->id_zona = $zone->id;
+                        $fixed->save();
+
+                        if ($fixed->fail()) {
+                            var_dump($fixed->fail()->getMessage());
+                            $zone->destroy();
+                        }
+                    }
+                }
+
                 echo 1;
             }
         } else {
@@ -2293,13 +2971,14 @@ class Web
      * @param array $data
      * @return void
      */
-    public
-    function zone(array $data): void
+    public function zone(array $data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
-        if (is_numeric($data['id'])) {
-            $zone = (new Zone())->find('id = :zoneId', 'zoneId=' . $data['id'], 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes, foto, descricao')->fetch();
+        $zone = (new Zone())->find('MD5(id) = :id', 'id='. $data['id'], 'id, ST_AsText(coordenadas) as poligono, 
+            ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes,
+             vagas_fixas, foto, descricao')->fetch(false);
+        if ($zone) {
             $salesmans = (new Salesman())->find('id_zona = :zoneId', 'zoneId=' . $data['id'], 'id_licenca')->fetch(true);
             $users = array();
 
@@ -2332,13 +3011,13 @@ class Web
 
                 if (!isset($_SESSION['user']['login']) || (isset($_SESSION['user']['login']) && $_SESSION['user']['login'] === 1)) {
                     echo $this->view->render('zone', [
-                        'title' => 'Zona | ' . SITE,
+                        'title' => 'Área | ' . SITE,
                         'salesmans' => null,
                         'zone' => $zone
                     ]);
                 } else {
                     echo $this->view->render('zone', [
-                        'title' => 'Zona | ' . SITE,
+                        'title' => 'Área | ' . SITE,
                         'zone' => $zone,
                         'salesmans' => $users
                     ]);
@@ -2350,10 +3029,170 @@ class Web
     }
 
     /**
+     * @param array $data
      * @return void
      */
-    public
-    function checkLogin(): void
+    public function editFixedZones($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $zone = (new Zone())
+            ->find(
+                'MD5(id) = :id AND vagas_fixas > 0',
+                'id='. $data['id'],
+                'id, nome, descricao, vagas_fixas,
+                        ST_AsText(coordenadas) as polygon, 
+                        ST_AsText(ST_Centroid(coordenadas)) as centroid,
+                        quantidade_ambulantes, limite_ambulantes'
+            )->fetch(false);
+        $fixed = (new Fixed())->find('id_zona = :id', 'id='. $zone->id, 'cod_identificador')
+            ->fetch(true);
+
+        if ($zone) {
+            $centroid = explode("POINT(", $zone->centroid);
+            $centroid = explode(")", $centroid[1]);
+            $centroid = explode(" ", $centroid[0]);
+
+            $polygon = explode("POLYGON((", $zone->polygon);
+            $polygon = explode("))", $polygon[1]);
+            $polygon = explode(",", $polygon[0]);
+
+            $aux = array();
+            foreach ($polygon as $polig) {
+                $polig = explode(" ", $polig);
+                $aux[] = $polig;
+            }
+
+
+            echo $this->view->render('editZoneFixed', [
+                'title' => 'Editar vagas fixas | '. SITE,
+                'fixed' => $fixed,
+                'zone' => $zone,
+                'centroid' => $centroid,
+                'polygon' => $aux
+            ]);
+        } else {
+            $this->router->redirect('web.salesmanMap');
+        }
+    }
+
+    /**
+     * @param array $data
+     * @return void
+     */
+    public function zoneFixedData($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $response = array();
+
+        $fixed = (new Fixed())->find('cod_identificador = :cod', 'cod='. $data['referenceCode'],
+            'ST_AsText(coordenadas) as polygon, id_zona, id_licenca, nome, descricao, valor')->fetch(false);
+
+        $aux = array();
+        $neighborhoodData = array();
+
+        if ($fixed) {
+            if ($fixed->polygon) {
+                $polygon = explode("POLYGON((", $fixed->polygon);
+                $polygon = explode("))", $polygon[1]);
+                $polygon = explode(",", $polygon[0]);
+
+                $aux = array();
+                foreach ($polygon as $polig) {
+                    $polig = explode(" ", $polig);
+                    $aux[] = $polig;
+                }
+            }
+
+            $response['success'] = [
+                    'zoneId' => $fixed->id_zona,
+                    'license' => $fixed->id_licenca,
+                    'name' => $fixed->nome,
+                    'description' => $fixed->descricao,
+                    'value' => $fixed->valor,
+                    'polygon' => $aux
+                ];
+        } else {
+            $response['fail'] = 'Reference code not found';
+        }
+
+        echo json_encode($response);
+    }
+
+    public function validateEditFixedZone($data): void
+    {
+        $geojson = $data['geojson'];
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $response = array();
+
+        $fixed = (new Fixed())->find('cod_identificador = :cod', 'cod='. $data['fixedSelect'])->fetch(false);
+        if ($fixed) {
+            $uFixed = (new Fixed())->findById($fixed->id);
+            $coodinates = json_decode($geojson);
+            $array_point = array();
+            foreach ($coodinates as $coodinate) {
+                $array_point[] = $coodinate->lng . " " . $coodinate->lat;
+            }
+
+            $array_point[] = $coodinates[0]->lng . " " . $coodinates[0]->lat;
+            $str = implode(',', $array_point);
+            $polygon = 'POLYGON((' . $str . '))';
+
+            $uFixed->nome = $data['fixedName'];
+            $uFixed->descricao = $data['fixedDescription'];
+            $uFixed->valor = $data['fixedValue'];
+            $uFixed->coordenadas = $polygon;
+            $uFixed->save(['polygon']);
+
+            if ($uFixed->fail()) {
+                var_dump($uFixed->fail()->getMessage());
+            } else {
+                $response['success'] = 'Data updated';
+            }
+        } else {
+            $response['fail'] = 'Reference code not found';
+        }
+
+        echo json_encode($response);
+    }
+
+    public function newFixedArea($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $response = false;
+        $zone = (new Zone())->find('MD5(id) = :id', 'id='. $data['zone'], 'id, vagas_fixas')->fetch(false);
+        if ($zone) {
+            $zone->vagas_fixas = $zone->vagas_fixas + 1;
+            $zone->save();
+
+            if (!$zone->fail) {
+                $fixed = (new Fixed())
+                    ->find('id_zona = :id', 'id='. $zone->id, 'id, cod_identificador')
+                    ->order('id DESC')->fetch(false);
+
+                $nFixed = new Fixed();
+                $aux = substr($fixed->cod_identificador, -1);
+                $fixed->cod_identificador = substr($fixed->cod_identificador, 0, -1);
+                $nFixed->cod_identificador = $fixed->cod_identificador . ($aux + 1);
+                $nFixed->id_zona = $zone->id;
+                $nFixed->save();
+
+                if ($nFixed->fail()) {
+                    $zone->vagas_fixas = $zone->vagas_fixas - 1;
+                    $zone->save();
+                } else {
+                    $response = true;
+                }
+            }
+        }
+
+        echo $response;
+    }
+
+    /**
+     * @return void
+     */
+    public function checkLogin(): void
     {
         if (!isset($_SESSION['user']['login'])) {
             $this->router->redirect('web.home');
@@ -2362,20 +3201,14 @@ class Web
 
     /**
      * Check if an agent
-     * @return data
      */
-    public
-    function checkAgent(): void
+    public function checkAgent(): void
     {
         if (!isset($_SESSION['user']['login']) || (isset($_SESSION['user']['login']) && !($_SESSION['user']['login'] === 3))) {
             $this->router->redirect('web.home');
         }
     }
 
-    /**
-     * Check if an agent/company
-     * @return data
-     */
     public function checkUser(): void
     {
         if (!isset($_SESSION['user']['login']) || (isset($_SESSION['user']['login']) && ($_SESSION['user']['login'] === 1))) {
@@ -2399,8 +3232,7 @@ class Web
      * @return void
      * Open file get method
      */
-    public
-    function downloadFile(array $data): void
+    public function downloadFile(array $data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $this->checkLogin();
@@ -2425,8 +3257,7 @@ class Web
         }
     }
 
-    public
-    function removeSuspension($data): void
+    public function removeSuspension($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $salesman = (new Salesman())->findById($data['id'], 'id, suspenso');
@@ -2470,8 +3301,7 @@ class Web
         }
     }
 
-    public
-    function zoneConfirm($data): void
+    public function zoneConfirm($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
@@ -2755,7 +3585,7 @@ class Web
             if ($company) {
                 $neighborhoods = array();
                 $salesmans = (new Salesman())
-                    ->find('id_empresa = :id', 'id='. $company->id, 'id_bairro')->fetch(true);
+                    ->find('id_empresa = :id', 'id=' . $company->id, 'id_bairro')->fetch(true);
 
                 if ($salesmans) {
                     foreach ($salesmans as $salesman) {
@@ -2781,10 +3611,10 @@ class Web
                 $neighLenght = count($neighborhoods);
                 if ($neighLenght > 0) {
                     foreach ($neighborhoods as $neighborhood) {
-                        if ($neighborhood == $neighborhoods[$neighLenght-1]) {
+                        if ($neighborhood == $neighborhoods[$neighLenght - 1]) {
                             $neighAux .= $neighborhood;
                         } else {
-                            $neighAux .= $neighborhood .', ';
+                            $neighAux .= $neighborhood . ', ';
                         }
                     }
                 }
@@ -2892,7 +3722,7 @@ class Web
         $this->checkAgent();
 
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
-        $neighborhood = (new Neighborhood())->find('MD5(id) = :id', 'id='. $data['id'],
+        $neighborhood = (new Neighborhood())->find('MD5(id) = :id', 'id=' . $data['id'],
             'ST_AsText(ST_Centroid(coordenadas)) as centroid, id, nome, ST_AsText(coordenadas) as polygon')->fetch(false);
 
         $aux = array();
@@ -2916,7 +3746,7 @@ class Web
 
             $users = array();
 
-            $salesmans = (new Salesman())->find('id_bairro = :id', 'id='. $neighborhood->id)->fetch(true);
+            $salesmans = (new Salesman())->find('id_bairro = :id', 'id=' . $neighborhood->id)->fetch(true);
             if ($salesmans) {
                 foreach ($salesmans as $salesman) {
                     $license = (new License())->findById($salesman->id_licenca, 'id_usuario');
@@ -3014,11 +3844,12 @@ class Web
             }
         }
     }
+
     public function findNeighborhood($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
-        $neighborhood = (new Neighborhood())->find('MD5(id) = :id', 'id='. $data['id'],
+        $neighborhood = (new Neighborhood())->find('MD5(id) = :id', 'id=' . $data['id'],
             'ST_AsText(ST_Centroid(coordenadas)) as centroid, id, nome, ST_AsText(coordenadas) as polygon')
             ->fetch(false);
 
