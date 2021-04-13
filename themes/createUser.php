@@ -96,89 +96,90 @@
                                        placeholder="Seu CEP">
                                 <div class="invalid-feedback"></div>
                             </div>
-                            <h4 class="black-title-section">Anexos</h4>
-                            <div class="row pl-5 pr-5 pt-3" style="">
-                                <div class="col-xl-6">
-                                    <p class="label-left">Foto do rosto: </p>
-                                </div>
-                                <div class="col-xl-6 text-center">
-                                    <label class="label-file userImage-file" for="userImage"><span
-                                                class="icon-plus mr-2"></span> Selecionar Arquivo</label>
-                                    <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
-                                           id="userImage" name="userImage"
-                                           accept="image/png, image/jpg, image/jpeg">
-                                    <div class="invalid-feedback"></div>
-                                    <div class="userImage-file-uploaded file-uploaded-container">
-                                        <div class="card-content-upload text-center p-3">
-                                            <div class="card-content-type-upload">
-                                                <span class="userImage-type"></span>
-                                            </div>
-                                        </div>
-                                        <div class="ml-3 text-left">
-                                            <div class="d-flex">
-                                                <p class="userImage-name"></p>
-                                                <span id="userImage-span-close"
-                                                      class="icon-close ml-3 card-close-file userImage"
-                                                      onclick="changeFile(this)"></span>
-                                            </div>
-                                            <div class="card-content-progress"></div>
+                        </div>
+                        <h4 class="black-title-section">Anexos</h4>
+                        <hr>
+                        <div class="row" style="">
+                            <div class="col-xl-6">
+                                <p class="label-left">Foto do rosto: </p>
+                            </div>
+                            <div class="col-xl-6 text-center">
+                                <label class="label-file userImage-file" for="userImage"><span
+                                            class="icon-plus mr-2"></span> Selecionar Arquivo</label>
+                                <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
+                                       id="userImage" name="userImage"
+                                       accept="image/png, image/jpg, image/jpeg">
+                                <div class="invalid-feedback"></div>
+                                <div class="userImage-file-uploaded file-uploaded-container">
+                                    <div class="card-content-upload text-center p-3">
+                                        <div class="card-content-type-upload">
+                                            <span class="userImage-type"></span>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-xl-6">
-                                    <p class="label-left">Identidade (CPF + RG): </p>
-                                </div>
-                                <div class="col-xl-6 text-center">
-                                    <label class="label-file identityImage-file" for="identityImage"><span
-                                                class="icon-plus mr-2"></span> Selecionar Arquivo</label>
-                                    <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
-                                           id="identityImage" name="identityImage"
-                                           accept="image/png, image/jpg, image/jpeg">
-                                    <div class="invalid-feedback"></div>
-                                    <div class="identityImage-file-uploaded file-uploaded-container">
-                                        <div class="card-content-upload text-center p-3">
-                                            <div class="card-content-type-upload">
-                                                <span class="identityImage-type"></span>
-                                            </div>
+                                    <div class="ml-3 text-left">
+                                        <div class="d-flex">
+                                            <p class="userImage-name"></p>
+                                            <span id="userImage-span-close"
+                                                  class="icon-close ml-3 card-close-file userImage"
+                                                  onclick="changeFile(this)"></span>
                                         </div>
-                                        <div class="ml-3 text-left">
-                                            <div class="d-flex">
-                                                <p class="identityImage-name"></p>
-                                                <span id="identityImage-span-close"
-                                                      class="icon-close ml-3 card-close-file"
-                                                      onclick="changeFile(this)"></span>
-                                            </div>
-                                            <div class="card-content-progress"></div>
-                                        </div>
+                                        <div class="card-content-progress"></div>
                                     </div>
                                 </div>
-
-                                <div class="col-xl-6">
-                                    <p class="label-left">Comprovante de residência:</p>
+                            </div>
+                            <div class="col-xl-6">
+                                <p class="label-left">Identidade (CPF + RG): </p>
+                            </div>
+                            <div class="col-xl-6 text-center">
+                                <label class="label-file identityImage-file" for="identityImage"><span
+                                            class="icon-plus mr-2"></span> Selecionar Arquivo</label>
+                                <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
+                                       id="identityImage" name="identityImage"
+                                       accept="image/png, image/jpg, image/jpeg">
+                                <div class="invalid-feedback"></div>
+                                <div class="identityImage-file-uploaded file-uploaded-container">
+                                    <div class="card-content-upload text-center p-3">
+                                        <div class="card-content-type-upload">
+                                            <span class="identityImage-type"></span>
+                                        </div>
+                                    </div>
+                                    <div class="ml-3 text-left">
+                                        <div class="d-flex">
+                                            <p class="identityImage-name"></p>
+                                            <span id="identityImage-span-close"
+                                                  class="icon-close ml-3 card-close-file"
+                                                  onclick="changeFile(this)"></span>
+                                        </div>
+                                        <div class="card-content-progress"></div>
+                                    </div>
                                 </div>
+                            </div>
 
-                                <div class="col-xl-6 text-center">
-                                    <label class="label-file proofAddress-file text-center" for="proofAddress"><span
-                                                class="icon-plus mr-2"></span> Selecionar Arquivo</label>
-                                    <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
-                                           id="proofAddress" name="proofAddress"
-                                           accept="image/png, image/jpg, image/jpeg">
-                                    <div class="invalid-feedback"></div>
-                                    <div class="proofAddress-file-uploaded file-uploaded-container">
-                                        <div class="card-content-upload text-center p-3">
-                                            <div class="card-content-type-upload">
-                                                <span class="proofAddress-type"></span>
-                                            </div>
+                            <div class="col-xl-6">
+                                <p class="label-left">Comprovante de residência:</p>
+                            </div>
+
+                            <div class="col-xl-6 text-center">
+                                <label class="label-file proofAddress-file text-center" for="proofAddress"><span
+                                            class="icon-plus mr-2"></span> Selecionar Arquivo</label>
+                                <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
+                                       id="proofAddress" name="proofAddress"
+                                       accept="image/png, image/jpg, image/jpeg">
+                                <div class="invalid-feedback"></div>
+                                <div class="proofAddress-file-uploaded file-uploaded-container">
+                                    <div class="card-content-upload text-center p-3">
+                                        <div class="card-content-type-upload">
+                                            <span class="proofAddress-type"></span>
                                         </div>
-                                        <div class="ml-3 text-left">
-                                            <div class="d-flex">
-                                                <p class="proofAddress-name"></p>
-                                                <span id="proofAddress-span-close"
-                                                      class="icon-close ml-3 card-close-file proofAddress"
-                                                      onclick="changeFile(this)"></span>
-                                            </div>
-                                            <div class="card-content-progress"></div>
+                                    </div>
+                                    <div class="ml-3 text-left">
+                                        <div class="d-flex">
+                                            <p class="proofAddress-name"></p>
+                                            <span id="proofAddress-span-close"
+                                                  class="icon-close ml-3 card-close-file proofAddress"
+                                                  onclick="changeFile(this)"></span>
                                         </div>
+                                        <div class="card-content-progress"></div>
                                     </div>
                                 </div>
                             </div>

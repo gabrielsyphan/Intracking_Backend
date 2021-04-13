@@ -22,7 +22,7 @@
                                 <div class="row div-gray-bg mb-5 p-5">
                                     <div class="col-xl-3 p-0 text-center">
                                         <img style="width: 150px;"
-                                             src="<?= url('/themes/assets/uploads/') ?><?= $upload['groupName'] . '/' .
+                                             src="<?= url('themes/assets/uploads/') ?><?= $upload['groupName'] . '/' .
                                              $upload['userId'] . '/' . $upload['fileName'] ?>">
                                     </div>
                                     <div class="col-xl-9 text-sm-center text-md-left">
@@ -79,11 +79,18 @@
                                         <input type="text" class="form-input disabled-input" value="<?= $user->nome ?>">
                                     </div>
                                 </div>
-                                <div class="col-xl-6">
+                                <div class="col-xl-3">
                                     <div class="form-group">
                                         <label>Cargo:</label>
                                         <input type="text" class="form-input disabled-input"
                                                value="<?= $role->nome ?>">
+                                    </div>
+                                </div>
+                                <div class="col-xl-3">
+                                    <div class="form-group">
+                                        <label>Orgão:</label>
+                                        <input type="text" class="form-input disabled-input"
+                                               value="<?= $team->sigla ?>">
                                     </div>
                                 </div>
                                 <div class="col-xl-6">
@@ -349,6 +356,18 @@
                                             <div class="col-10">
                                                 <h4>Solicitar licença</h4>
                                                 <p class="subtitle-section-p">Solicite uma licença para o usuário selecionado.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6" onclick="openModal(1)">
+                                        <div class="row m-0 mt-3 p-4 div-request-license border-left-yellow">
+                                            <div class="col-2 mt-5 mt-md-3 text-center mt-4">
+                                                <img src="<?= url('themes/assets/img/files.png') ?>">
+                                            </div>
+                                            <div class="col-10">
+                                                <h4>Anexos</h4>
+                                                <p class="subtitle-section-p">Arquivos enviados por você durante seu
+                                                    cadastro.</p>
                                             </div>
                                         </div>
                                     </div>

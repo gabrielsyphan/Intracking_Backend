@@ -10,6 +10,7 @@
                 <p class="subtitle-section-p">Selecione o tipo de licença correspondente a função a qual
                     deseja exercer. Você poderá solicitar quantas licenças quiser posteriormente.</p>
 
+                <?php if((isset($_SESSION['user']['team']) && $_SESSION['user']['team'] == 1) || !isset($_SESSION['user']['team'])): ?>
                 <div class="row m-0 mt-5 p-4 div-request-license" onclick="newLicense(1)">
                     <div class="col-2 text-center mt-4">
                         <img src="<?= url('themes/assets/img/salesman.png') ?>">
@@ -55,6 +56,7 @@
                         <p class="subtitle-section-p">Para vendedores que atuam em um local fixo.</p>
                     </div>
                 </div>
+                <?php endif; ?>
 
                 <div class="row m-0 mt-3 p-4 div-request-license" onclick="newLicense(6)">
                     <div class="col-2 text-center mt-4">
@@ -65,6 +67,8 @@
                         <p class="subtitle-section-p">Para foodtrucks na cidade.</p>
                     </div>
                 </div>
+
+                <?php if((isset($_SESSION['user']['team']) && $_SESSION['user']['team'] == 2) || !isset($_SESSION['user']['team'])): ?>
                 <div class="row m-0 mt-3 p-4 div-request-license" onclick="newLicense(7)">
                     <div class="col-2 text-center mt-4">
                         <img src="<?= url('themes/assets/img/market.png') ?>">
@@ -74,6 +78,7 @@
                         <p class="subtitle-section-p">Para vendedores que atuam em um mercado.</p>
                     </div>
                 </div>
+                <?php endif; ?>
             </div>
             <div class="col-xl-5 mt-5 pt-5 text-center image-request-license">
                 <img style="width: 80%; margin-top: 150px" src="<?= url('themes/assets/img/license.svg') ?>">

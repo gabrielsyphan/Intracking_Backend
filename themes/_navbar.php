@@ -46,12 +46,14 @@
                     </li>
                 <?php endif; ?>
 
+                <?php if($_SESSION['user']['team'] == 1): ?>
                 <li class="<?= ($router->isCurrentRoute("web.neighborhoodList") ? 'active' : ''); ?>">
                     <a href="<?= url("neighborhoodList"); ?>">
                         <span class="icon-map-marker"></span>
                         Bairros
                     </a>
                 </li>
+                <?php endif; ?>
 
                 <?php if ($_SESSION['user']['role'] == 4): ?>
                     <li class="<?= ($router->isCurrentRoute("web.agentList") ? 'active' : ''); ?>">

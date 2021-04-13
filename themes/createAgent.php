@@ -2,7 +2,7 @@
 
 <div class="container-fluid container-white mt-5">
     <div class="p-5">
-        <form id="form" method="POST" action="<?= $router->route("web.validateNewAgent"); ?>">
+        <form id="form" method="POST" action="<?= $router->route("web.validateAgent"); ?>">
             <fieldset class="row">
                 <div class="col-md-12">
                     <h2 class="black-title-section">Cadastrar de fiscal</h2>

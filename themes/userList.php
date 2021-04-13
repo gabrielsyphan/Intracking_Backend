@@ -21,7 +21,7 @@
                     </div>
                     <hr class="mb-0">
                     <div class="box-div-info-overflow-x">
-                        <?php if (!$user): ?>
+                        <?php if (!$users): ?>
                             <div class="p-5 mt-5 text-center">
                                 <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
                                 <p class="mt-5 subtitle-section-p">Ops! Não encontramos nenhum ambulante ou empresa.
@@ -37,25 +37,17 @@
                                     </th>
                                     <th scope="col" class="table-col-1">Email <span class="icon-arrow_downward"></span>
                                     </th>
+                                    <th scope="col" class="table-col-1">Telefone <span class="icon-arrow_downward"></span>
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody id="table-data">
-                                <?php foreach ($users as $user):
-                                    switch ($user->id):
-                                        case 38:
-                                            $trClass = 'border-left-yellow';
-                                            break;
-                                        case 1:
-                                            $trClass = 'border-left-green';
-                                            break;
-                                        default:
-                                            $trClass = 'border-left-red';
-                                            break;
-                                    endswitch; ?>
-                                    <tr class="<?= $trClass ?>" onclick="profile('<?= md5($user->id) ;?>')">
+                                <?php foreach ($users as $user): ?>
+                                    <tr class="border-left-green" onclick="profile('<?= md5($user->id) ;?>')">
                                         <td><?= $user->cpf ?></td>
                                         <td><?= $user->nome ?></td>
                                         <td><?= $user->email ?></td>
+                                        <td><?= $user->telefone ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                                 </tbody>
@@ -78,7 +70,7 @@
 <script src="<?= url("themes/assets/vendor/bootstrap/js/popper.js"); ?>"></script>
 <script src="<?= url("themes/assets/vendor/bootstrap/js/bootstrap.min.js"); ?>"></script>
 <script>
-    let filterValue = 2;
+    let filterValue = 1;
 
     function alterFilter(e) {
         filterValue = e;
