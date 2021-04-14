@@ -135,20 +135,20 @@
                         <tbody id="table-data">
                         <?php foreach ($licenses as $license):
                             switch ($license->status):
-                                case 0:
+                                case 1:
+                                    $divStatus = 'primary';
+                                    $textStatus = 'Ativo';
+                                    $trClass = 'border-left-green';
+                                    break;
+                                case 2:
+                                    $divStatus = 'secondary';
+                                    $textStatus = 'Bloqueado';
+                                    $trClass = 'border-left-red';
+                                    break;
+                                default:
                                     $divStatus = 'tertiary';
                                     $textStatus = 'Pendente';
                                     $trClass = 'border-left-yellow';
-                                    break;
-                                case 1:
-                                    $divStatus = 'primary';
-                                    $textStatus = 'Ativa';
-                                    $trClass = 'border-left-green';
-                                    break;
-                                default:
-                                    $divStatus = 'secondary';
-                                    $textStatus = 'Suspensa';
-                                    $trClass = 'border-left-red';
                                     break;
                             endswitch; ?>
                             <tr class="<?= $trClass ?>"

@@ -3,6 +3,7 @@
 namespace Source\App;
 
 use Source\Models\Attach;
+use Source\Models\Auxiliary;
 use Source\Models\Fixed;
 use Source\Models\FoodTruck;
 use Source\Models\License;
@@ -1337,7 +1338,14 @@ class Web
         $response = 'fail';
 
         if ($_FILES) {
-            $user = (new User())->findById($_SESSION['user']['id']);
+            if ($data['userId']) {
+                $user =  (new User())->find('MD5(id)=:id', 'id=' . $data['userId'])->fetch(false);
+                $userId = $user->id;
+            } else {
+                $user = (new User())->findById($_SESSION['user']['id']);
+                $userId = $_SESSION['user']['id'];
+            }
+
             $cpf = preg_replace('/[^0-9]/is', '', $user->cpf);
             $soap_input =
                 '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:e="e-Agata_18.11">
@@ -1409,32 +1417,20 @@ class Web
                 if ($salesmans) {
                     $response = 'somebodySameLocation';
                     $zoneId = null;
-                    $zone->quantidade_ambulantes--;
-                    $zone->save();
+
+                    if($zone) {
+                        $zone->quantidade_ambulantes--;
+                        $zone->save();
+                    }
                 } else {
                     $zoneId = "";
                 }
             }
 
-            if ($zoneId || $zoneId == "") {
+            if (($zoneId || $zoneId == "") && $zoneId != null) {
                 $license = new License();
                 $license->tipo = 1;
-
-                if ($data['companyId']) {
-                    $company = (new Company)->findById($data['companyId']);
-                    if ($company) {
-                        $license->status = 3;
-                    }
-                } else {
-                    $license->status = 0;
-                }
-
-                if ($data['userId']) {
-                    $userId =  (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id')->fetch(false);
-                    $userId = $userId->id;
-                } else {
-                    $userId = $_SESSION['user']['id'];
-                }
+                $license->status = 2;
                 $license->id_usuario = $userId;
                 $license->data_inicio = date('Y-m-d');
                 $license->data_fim = date('Y-m-d', strtotime("+3 days"));
@@ -1444,6 +1440,10 @@ class Web
 
                 if ($license->fail()) {
                     $neighborhood->destroy();
+                    if($zone) {
+                        $zone->quantidade_ambulantes--;
+                        $zone->save();
+                    }
                     var_dump($license->fail()->getMessage());
                 } else {
                     /**
@@ -1518,7 +1518,6 @@ class Web
                                             $valueToPayment[] = 80.00;
                                         }
                                     } else if ($product == 7) {
-                                        $productDescription = $data['productDescription'];
                                         if ($area <= 1.50) {
                                             $valueToPayment[] = 72.00;
                                         } else {
@@ -1538,7 +1537,7 @@ class Web
                                 $salesman->id_bairro = $neighborhoodId;
                                 $salesman->id_licenca = $license->id;
 
-                                if ($data['companyId']) {
+                                if (isset($data['companyId'])) {
                                     $company = (new Company)->findById($data['companyId']);
                                     if ($company) {
                                         $salesman->id_empresa = $company->id_licenca;
@@ -1552,7 +1551,7 @@ class Web
                                 $salesman->atendimento_dias = $workedDays;
                                 $salesman->atendimento_hora_inicio = $data['initHour'];
                                 $salesman->atendimento_hora_fim = $data['endHour'];
-                                $salesman->relato_atividade = $productDescription;
+                                $salesman->relato_atividade = $data['productDescription'];
                                 $salesman->area_equipamento = $data['width'] . " x " . $data['length'];
                                 $salesman->tipo_equipamento = $data['howWillSell'];
                                 $salesman->save();
@@ -3304,6 +3303,30 @@ class Web
         }
     }
 
+    public function validateAuxiliary($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $salesman = (new Salesman())->find('MD5(id) = :id', 'id='. $data['licenseId'], 'id')
+            ->fetch(false);
+
+        if ($salesman) {
+            $auxiliary = new Auxiliary();
+            $auxiliary->id_ambulante = $salesman->id;
+            $auxiliary->nome = $data['auxiliaryName'];
+            $auxiliary->cpf = $data['auxiliaryIdentity'];
+            $auxiliary->save();
+
+            if($auxiliary->fail()) {
+                var_dump($auxiliary->fail()->getMessage());
+            } else {
+                echo 1;
+            }
+        } else {
+            echo 0;
+        }
+    }
+
     public function zoneConfirm($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
@@ -3451,8 +3474,7 @@ class Web
         }
     }
 
-    public
-    function videos(): void
+    public function videos(): void
     {
         echo $this->view->render('videos', [
             'title' => "Vídeos | " . SITE
@@ -3463,8 +3485,7 @@ class Web
      * Return from PagSeguro
      * @return void
      */
-    public
-    function securePayment(): void
+    public function securePayment(): void
     {
         if (isset($_POST['notificationType']) && $_POST['notificationType'] == 'transaction') {
             $PagSeguro = new PagSeguro();
@@ -3564,11 +3585,21 @@ class Web
                 $license = (new License())->findById($salesman->id_licenca);
                 if ($license) {
                     $user = (new User())->findById($license->id_usuario);
+                    $auxiliaries = '';
+                    $auxs = (new Auxiliary())
+                        ->find('id_ambulante = :id', 'id='. $salesman->id, 'nome')
+                        ->fetch(true);
+                    if ($auxs) {
+                        foreach ($auxs as $aux) {
+                            $auxiliaries .= $aux->nome . ', ';
+                        }
+                    }
+
                     $template = file_get_contents(THEMES . "/assets/orders/salesmanOrder.php");
                     $variables = array("%qrcode%", "%process%", "%name%", "%identity%", "%ativity%", "%equipaments%", "%width%",
                         "%street%", "%aux%", "%day%", "%month%", "%year%", "%day2%", "%month2%", "%year2%");
                     $dataReplace = array($qrUrl, "", $user->nome, $user->cpf, $salesman->relato_atividade,
-                        $salesman->tipo_equipamento, $salesman->area_equipamento, $salesman->local_endereco, "",
+                        $salesman->tipo_equipamento, $salesman->area_equipamento, $salesman->local_endereco, $auxiliaries,
                         date('d', strtotime($license->data_inicio)), date('m', strtotime($license->data_inicio)),
                         date('Y', strtotime($license->data_inicio)),
                         date('d', strtotime($license->data_fim)), date('m', strtotime($license->data_fim)),

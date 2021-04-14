@@ -77,9 +77,9 @@
 
                                     <div class="col-xl-12">
                                         <div class="form-group">
-                                            <label>Descreva outro produto ofertado: <span class="spanAlert">(Se não encontrado na lista acima)</span>:</label>
+                                            <label>Descreva outro produto ofertado:</label>
                                             <textarea type="text" class="form-input" id="productDescription" name="productDescription"
-                                                      placeholder="Ex.: Trabalho com a venda de produtos para cabelo."></textarea>
+                                                      placeholder="Ex.: Trabalho com a venda de produtos para cabelo." required></textarea>
                                         </div>
                                     </div>
                                 <?php else: ?>

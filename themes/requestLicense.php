@@ -56,7 +56,6 @@
                         <p class="subtitle-section-p">Para vendedores que atuam em um local fixo.</p>
                     </div>
                 </div>
-                <?php endif; ?>
 
                 <div class="row m-0 mt-3 p-4 div-request-license" onclick="newLicense(6)">
                     <div class="col-2 text-center mt-4">
@@ -67,6 +66,7 @@
                         <p class="subtitle-section-p">Para foodtrucks na cidade.</p>
                     </div>
                 </div>
+                <?php endif; ?>
 
                 <?php if((isset($_SESSION['user']['team']) && $_SESSION['user']['team'] == 2) || !isset($_SESSION['user']['team'])): ?>
                 <div class="row m-0 mt-3 p-4 div-request-license" onclick="newLicense(7)">

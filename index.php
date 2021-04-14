@@ -56,6 +56,7 @@ $router->get("/salesmanList", "Web:salesmanList", "web.salesmanList");
 $router->get("/salesmanMap", "Web:salesmanMap", "web.salesmanMap");
 $router->post("/createNotification", "Web:createNotification", "web.createNotification");
 $router->post("/removeSuspension", "Web:removeSuspension", "web.removeSuspension");
+$router->post("/validateAuxiliary", "Web:validateAuxiliary", "web.validateAuxiliary");
 
 $router->get("/createSalesman", "Web:createSalesman", "web.createSalesman");
 $router->post("/zoneConfirm", "Web:zoneConfirm", "web.zoneConfirm");

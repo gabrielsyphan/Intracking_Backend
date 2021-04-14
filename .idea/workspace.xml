@@ -76,7 +76,8 @@
       <workItem from="1617585585406" duration="1562000" />
       <workItem from="1617622243539" duration="15845000" />
       <workItem from="1617976826108" duration="3439000" />
-      <workItem from="1618329346793" duration="5092000" />
+      <workItem from="1618329346793" duration="5471000" />
+      <workItem from="1618398814887" duration="6786000" />
     </task>
     <servers />
   </component>
@@ -89,13 +90,14 @@
     </state>
     <state x="2364" y="130" key="FileChooserDialogImpl/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1617977538056" />
     <state x="2375" y="130" key="FileChooserDialogImpl/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617389291357" />
-    <state x="2406" y="206" key="NewPhpClassDialog" timestamp="1618331721272">
-      <screen x="1920" y="0" width="1413" height="864" />
+    <state x="2448" y="206" key="NewPhpClassDialog" timestamp="1618400408708">
+      <screen x="1920" y="0" width="1536" height="864" />
     </state>
     <state x="2406" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1618331721272" />
     <state x="577" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1413.864@74.0.1462.864" timestamp="1617981458739" />
     <state x="2418" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617104553049" />
     <state x="577" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1447.864@74.0.1462.864" timestamp="1617163446865" />
+    <state x="2448" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1536.864@1920.0.1536.864" timestamp="1618400408708" />
     <state x="2457" y="341" key="NewPhpFileDialog" timestamp="1617585722193">
       <screen x="1920" y="0" width="1447" height="864" />
     </state>
@@ -104,17 +106,18 @@
       <screen x="1920" y="0" width="1413" height="864" />
     </state>
     <state x="2020" y="0" key="SettingsEditor/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1617979376166" />
-    <state x="2272" y="215" key="com.intellij.ide.util.TipDialog" timestamp="1618329346212">
+    <state x="2272" y="215" key="com.intellij.ide.util.TipDialog" timestamp="1618398824323">
       <screen x="1920" y="0" width="1413" height="864" />
     </state>
-    <state x="2272" y="215" key="com.intellij.ide.util.TipDialog/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1618329346212" />
+    <state x="2272" y="215" key="com.intellij.ide.util.TipDialog/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1618398824323" />
     <state x="2280" y="215" key="com.intellij.ide.util.TipDialog/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617622299476" />
     <state x="2280" y="215" key="com.intellij.ide.util.TipDialog/74.0.1462.864/1920.0.1447.864@74.0.1462.864" timestamp="1617385912953" />
-    <state x="2221" y="193" key="run.anything.popup" timestamp="1617585798189">
-      <screen x="1920" y="0" width="1447" height="864" />
+    <state x="2240" y="193" key="run.anything.popup" timestamp="1618401672002">
+      <screen x="1920" y="0" width="1536" height="864" />
     </state>
     <state x="2221" y="193" key="run.anything.popup/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617585798189" />
     <state x="378" y="193" key="run.anything.popup/74.0.1462.864/1920.0.1447.864@74.0.1462.864" timestamp="1617156912268" />
+    <state x="2240" y="193" key="run.anything.popup/74.0.1462.864/1920.0.1536.864@1920.0.1536.864" timestamp="1618401672002" />
     <state x="380" y="-1" width="849" height="1034" key="search.everywhere.popup" timestamp="1617162435342">
       <screen x="74" y="0" width="1462" height="864" />
     </state>

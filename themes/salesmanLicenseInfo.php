@@ -55,7 +55,7 @@
     </div>
 </div>
 
-<div id="modal-4" class="div-modal">
+<div id="modal-2" class="div-modal">
     <div class="container pt-5">
         <div class="row mt-5 p-5 justify-content-center">
             <div class="col-xl-10 p-5 modal-overflow container-white">
@@ -64,12 +64,46 @@
                         <h3 class="black-title-section">Geolocalização da licença</h3>
                     </div>
                     <div class="col-4 text-right mt-3">
-                        <span class="icon-close" onclick="closeModal(4)"></span>
+                        <span class="icon-close" onclick="closeModal(2)"></span>
                     </div>
                 </div>
                 <p class="subtitle-section-p">Localização da licença no mapa.</p>
                 <hr>
                 <div id="mapProfile"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-3" class="div-modal">
+    <div class="container pt-5">
+        <div class="row mt-5 p-5 justify-content-center">
+            <div class="col-xl-10 p-5 modal-overflow container-white">
+                <div class="row">
+                    <div class="col-8">
+                        <h3 class="black-title-section">Cadastro de auxiliares</h3>
+                    </div>
+                    <div class="col-4 text-right mt-3">
+                        <span class="icon-close" onclick="closeModal(3)"></span>
+                    </div>
+                </div>
+                <form id="formAuxiliary" method="post" action="<?= $router->route("web.validateAuxiliary") ?>">
+                    <fieldset>
+                        <input type="hidden" name="licenseId" value="<?= md5($license->id) ?>">
+                        <div class="form-group">
+                            <label for="auxiliaryName">Nome:</label>
+                            <input id="auxiliaryName" class="form-input" name="auxiliaryName" type="text" placeholder="Nome do auxiliar">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="auxiliaryIdentity">CPF:</label>
+                            <input id="auxiliaryIdentity" class="form-input" name="auxiliaryIdentity" type="text" placeholder="CPF do auxiliar">
+                        </div>
+
+                        <hr>
+                        <button type="submit" class="btn-3 primary c-white">Cadastrar</button>
+                    </fieldset>
+                </form>
             </div>
         </div>
     </div>
@@ -178,7 +212,7 @@ endswitch;?>
             </div>
 
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-3" onclick="openModal(3)">
                     <div class="row mt-3 justify-content-center">
                         <div class="col-md-10 p-0 mb-5 cursor-pointer">
                             <div class="p-4 text-center background-green b-radius-top">
@@ -558,7 +592,7 @@ endswitch;?>
                                 <h4 class="black-title-section">Cadastrar nova notificação</h4>
                                 <hr>
                             </div>
-                            <form id="form-create-notification" action="<?= $router->route("web.createNotification"); ?>"
+                            <form id="formCreateNotification" action="<?= $router->route("web.createNotification"); ?>"
                                   method="POST">
                                 <fieldset>
                                     <div class="row">
@@ -678,6 +712,8 @@ endswitch;?>
     let ctrLayers = {};
 
     $(function () {
+        $("#auxiliaryIdentity").mask("999.999.999-99");
+
         let paid = L.icon({
             iconUrl: "<?= url("themes/assets/img/marker-user-green.png"); ?>",
             shadowUrl: "<?= url("themes/assets/img/marker-shadow.png"); ?>",
@@ -798,7 +834,7 @@ endswitch;?>
         });
     });
 
-    $('#form-create-notification').on('submit', function (e) {
+    $('#formCreateNotification, #formAuxiliary').on('submit', function (e) {
         e.preventDefault();
         $("#loader-div").show();
 
@@ -820,7 +856,7 @@ endswitch;?>
                     swal({
                         icon: "success",
                         title: "Sucesso!",
-                        text: "A notificação foi cadastrada.",
+                        text: "Cadastro realizado.",
                     }).then((value) => {
                         location.reload();
                     });
@@ -828,7 +864,7 @@ endswitch;?>
                     swal({
                         icon: "error",
                         title: "Erro!",
-                        text: "Não foi possível cadastrar a notificação. Tente novamente mais tarde.",
+                        text: "Não foi possível realizar o cadastro. Tente novamente mais tarde.",
                     });
                 }
                 console.log(returnData);
@@ -851,7 +887,7 @@ endswitch;?>
             map.invalidateSize();
         }, 500);
 
-        openModal(4);
+        openModal(2);
     }
 
     function openOrder() {

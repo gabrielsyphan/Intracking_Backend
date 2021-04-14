@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 13-Abr-2021 às 19:25
+-- Tempo de geração: 14-Abr-2021 às 15:57
 -- Versão do servidor: 10.4.13-MariaDB
 -- versão do PHP: 7.4.8
 
@@ -44,6 +44,13 @@ CREATE TABLE `ambulantes` (
   `longitude` varchar(25) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Extraindo dados da tabela `ambulantes`
+--
+
+INSERT INTO `ambulantes` (`id`, `id_licenca`, `id_bairro`, `id_zona`, `local_endereco`, `produto`, `atendimento_dias`, `atendimento_hora_inicio`, `atendimento_hora_fim`, `relato_atividade`, `area_equipamento`, `tipo_equipamento`, `latitude`, `longitude`) VALUES
+(26, 52, 13, NULL, 'Edifício Jambeiro, 555, Rua José de Alencar, Farol, Maceió, Região Geográfica Imediata de Maceió, Região Geográfica Intermediária de Maceió, Alagoas, Região Nordeste, 57051-565, Brasil', 25, 124, '19:02', '21:59', 'vendo produto x e y', '10 x 5', 'Barraca', '-9.649106390874152', '-35.739883116900614');
+
 -- --------------------------------------------------------
 
 --
@@ -65,7 +72,34 @@ INSERT INTO `anexos` (`id`, `nome`, `tipo_usuario`, `id_usuario`) VALUES
 (15, 'userImage.jpeg', '3', 1),
 (97, 'userImage.jpeg', '0', 42),
 (98, 'identityImage.jpeg', '0', 42),
-(99, 'proofAddress.jpeg', '0', 42);
+(99, 'proofAddress.jpeg', '0', 42),
+(100, 'equipmentImage.jpg', '1', 47),
+(101, 'equipmentImage.jpg', '1', 48),
+(102, 'equipmentImage.jpg', '1', 49),
+(103, 'equipmentImage.jpg', '1', 50),
+(104, 'equipmentImage.jpg', '1', 51),
+(105, 'equipmentImage.jpg', '1', 52);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `auxiliares`
+--
+
+CREATE TABLE `auxiliares` (
+  `id` int(11) NOT NULL,
+  `id_ambulante` int(11) NOT NULL,
+  `nome` varchar(50) NOT NULL,
+  `cpf` varchar(18) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Extraindo dados da tabela `auxiliares`
+--
+
+INSERT INTO `auxiliares` (`id`, `id_ambulante`, `nome`, `cpf`) VALUES
+(1, 26, 'Ruan ramirez', '034.325.347-01'),
+(2, 26, 'Ian Jairo', '283.424.914-32');
 
 -- --------------------------------------------------------
 
@@ -184,6 +218,13 @@ CREATE TABLE `boletos` (
   `pago_em` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Extraindo dados da tabela `boletos`
+--
+
+INSERT INTO `boletos` (`id`, `id_licenca`, `id_usuario`, `cod_referencia`, `cod_pagamento`, `valor`, `status`, `tipo`, `pagar_em`, `pago_em`) VALUES
+(173, 52, 1, '15123', 'teste', 144, 3, 1, '2021-04-17 03:00:00', '2021-04-14 11:31:07');
+
 -- --------------------------------------------------------
 
 --
@@ -256,7 +297,7 @@ CREATE TABLE `fiscais` (
 --
 
 INSERT INTO `fiscais` (`id`, `id_orgao`, `matricula`, `nome`, `email`, `senha`, `cpf`, `telefone`, `tipo_fiscal`, `situacao`) VALUES
-(1, 1, '111111-1', 'Lucas Gabriel Peixoto de Oliveira', 'lucasgabrielpdoliveira@gmail.com', '698d51a19d8a121ce581499d7b701668', '111.657.194-36', '82 9 8718-0470', 4, 1);
+(1, 2, '111111-1', 'Lucas Gabriel Peixoto de Oliveira', 'lucasgabrielpdoliveira@gmail.com', '698d51a19d8a121ce581499d7b701668', '111.657.194-36', '82 9 8718-0470', 4, 1);
 
 -- --------------------------------------------------------
 
@@ -309,6 +350,13 @@ CREATE TABLE `licencas` (
   `status` int(11) NOT NULL DEFAULT 0,
   `id_usuario` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Extraindo dados da tabela `licencas`
+--
+
+INSERT INTO `licencas` (`id`, `id_orgao`, `cmc`, `tipo`, `data_inicio`, `data_fim`, `status`, `id_usuario`) VALUES
+(52, 1, '0', '1', '2021-04-14', '2021-04-17', 3, 42);
 
 -- --------------------------------------------------------
 
@@ -589,6 +637,12 @@ ALTER TABLE `anexos`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Índices para tabela `auxiliares`
+--
+ALTER TABLE `auxiliares`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Índices para tabela `bairros`
 --
 ALTER TABLE `bairros`
@@ -710,19 +764,25 @@ ALTER TABLE `zonas`
 -- AUTO_INCREMENT de tabela `ambulantes`
 --
 ALTER TABLE `ambulantes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de tabela `anexos`
 --
 ALTER TABLE `anexos`
-  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
+  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
+
+--
+-- AUTO_INCREMENT de tabela `auxiliares`
+--
+ALTER TABLE `auxiliares`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de tabela `boletos`
 --
 ALTER TABLE `boletos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=168;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=174;
 
 --
 -- AUTO_INCREMENT de tabela `eventos`
@@ -752,7 +812,7 @@ ALTER TABLE `food_trucks`
 -- AUTO_INCREMENT de tabela `licencas`
 --
 ALTER TABLE `licencas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT de tabela `mercado`
