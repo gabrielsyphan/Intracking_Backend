@@ -488,6 +488,54 @@ function formatedCPF(e) {
     return cpf;
 }
 
+function checkCnpj(e) {
+    e = $('#' + e.id).val();
+    let cnpj = e.replace(/\D+/g, '');
+
+    if (!cnpj || cnpj.length != 14
+        || cnpj == "00000000000000"
+        || cnpj == "11111111111111"
+        || cnpj == "22222222222222"
+        || cnpj == "33333333333333"
+        || cnpj == "44444444444444"
+        || cnpj == "55555555555555"
+        || cnpj == "66666666666666"
+        || cnpj == "77777777777777"
+        || cnpj == "88888888888888"
+        || cnpj == "99999999999999")
+        return false;
+
+    let size = cnpj.length - 2
+    let num = cnpj.substring(0, size)
+    let digits = cnpj.substring(size)
+    let sum = 0
+    let pos = size - 7
+
+    for (var i = size; i >= 1; i--) {
+        sum += num.charAt(size - i) * pos--
+        if (pos < 2) pos = 9
+    }
+    let resul = sum % 11 < 2 ? 0 : 11 - sum % 11
+
+    if (resul != digits.charAt(0)) return false;
+
+    size = size + 1
+    num = cnpj.substring(0, size)
+    sum = 0
+    pos = size - 7
+
+    for (var i = size; i >= 1; i--) {
+        sum += num.charAt(size - i) * pos--
+        if (pos < 2) pos = 9
+    }
+    resul = sum % 11 < 2 ? 0 : 11 - sum % 11
+
+    if (resul != digits.charAt(1)) return false;
+
+    return true;
+}
+
+
 function nextPage(current, next) {
     $("#page-" + current).hide();
     $(".box-" + current).removeClass("active");
@@ -572,5 +620,5 @@ function closeModal(e) {
 }
 
 function openFile(url) {
-    window.open('https://localhost/orditi/themes/assets/uploads/' + url, '_blank');
+    window.open('https://localhost/OrditiWeb/themes/assets/uploads/' + url, '_blank');
 }
