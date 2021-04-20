@@ -32,7 +32,9 @@
                                     <div class="form-group">
                                         <label>CNPJ:</label>
                                         <input type="text" class="form-input" id="cnpj" name="cnpj"
-                                               placeholder="Ex.: 00.000.000/0000-00">
+                                               placeholder="Ex.: 00.000.000/0000-00"
+                                               onfocusout="validateCnpj(this)"
+                                               required>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -41,7 +43,7 @@
                                     <div class="form-group">
                                         <label>CMC:</label>
                                         <input type="text" class="form-input" id="cmc" name="cmc"
-                                               placeholder="Ex.: 0000000000">
+                                               placeholder="Ex.: 0000000000" required>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -50,7 +52,7 @@
                                     <div class="form-group">
                                         <label>Nome de fantasia:</label>
                                         <input type="text" class="form-input" id="fantasyName" name="fantasyName"
-                                               placeholder="Digite o nome de fantasia da empresa">
+                                               placeholder="Digite o nome de fantasia da empresa" required>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -63,7 +65,7 @@
                                     <div class="form-group">
                                         <label>Produto e/ou serviços:</label>
                                         <select id="productSelect" class="form-input" name="productSelect[]"
-                                                multiple="multiple">
+                                                multiple="multiple" required>
                                             <option value="0">Gêneros e produtos alimentícios em geral</option>
                                             <option value="1">Bebidas não alcoólicas</option>
                                             <option value="2">Bebidas alcoólicas</option>
@@ -86,7 +88,7 @@
                                         <label>Descreva os equipamentos:</label>
                                         <textarea type="text" class="form-input" id="equipmentDescription"
                                                   name="equipmentDescription"
-                                                  placeholder="Ex.: algum texto de apoio."></textarea>
+                                                  placeholder="Ex.: algum texto de apoio." required></textarea>
                                     </div>
                                 </div>
 
@@ -96,6 +98,7 @@
                                         <textarea type="text" class="form-input" id="infoDescription"
                                                   name="infoDescription"
                                                   placeholder="Ex.: Toldos, retráteis, mesas, bancos e/ou cadeiras."
+                                                  required
                                         ></textarea>
                                         <div class="invalid-feedback"></div>
                                     </div>
@@ -124,7 +127,7 @@
                                             <input class="hidden-input-file" type="file"
                                                    onchange="uploadImage(this)"
                                                    id="proofAddress" name="proofAddress"
-                                                   accept="image/png, image/jpg, image/jpeg">
+                                                   accept="image/png, image/jpg, image/jpeg" required>
                                             <div class="invalid-feedback"></div>
                                             <div class="proofAddress-file-uploaded file-uploaded-container">
                                                 <div class="card-content-upload text-center p-3">
@@ -160,7 +163,7 @@
                                                         class="icon-plus mr-2"></span> Selecionar </label>
                                             <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
                                                    id="equipmentImage" name="equipmentImage"
-                                                   accept="image/png, image/jpg, image/jpeg">
+                                                   accept="image/png, image/jpg, image/jpeg" required>
                                             <div class="invalid-feedback"></div>
                                             <div class="equipmentImage-file-uploaded file-uploaded-container">
                                                 <div class="card-content-upload text-center p-3">
@@ -197,7 +200,7 @@
                                             <input class="hidden-input-file" type="file"
                                                    onchange="uploadImage(this)"
                                                    id="cnpjRegistration" name="cnpjRegistration"
-                                                   accept="image/png, image/jpg, image/jpeg">
+                                                   accept="image/png, image/jpg, image/jpeg" required>
                                             <div class="invalid-feedback"></div>
                                             <div class="cnpjRegistration-file-uploaded file-uploaded-container">
                                                 <div class="card-content-upload text-center p-3">
@@ -234,7 +237,7 @@
                                             <input class="hidden-input-file" type="file"
                                                    onchange="uploadImage(this)"
                                                    id="socialContract" name="socialContract"
-                                                   accept="image/png, image/jpg, image/jpeg">
+                                                   accept="image/png, image/jpg, image/jpeg" required>
                                             <div class="invalid-feedback"></div>
                                             <div class="socialContract-file-uploaded file-uploaded-container">
                                                 <div class="card-content-upload text-center p-3">
@@ -271,7 +274,7 @@
                                             <input class="hidden-input-file" type="file"
                                                    onchange="uploadImage(this)"
                                                    id="businessLicense" name="businessLicense"
-                                                   accept="image/png, image/jpg, image/jpeg">
+                                                   accept="image/png, image/jpg, image/jpeg" required>
                                             <div class="invalid-feedback"></div>
                                             <div class="businessLicense-file-uploaded file-uploaded-container">
                                                 <div class="card-content-upload text-center p-3">
@@ -308,7 +311,7 @@
                                             <input class="hidden-input-file" type="file"
                                                    onchange="uploadImage(this)"
                                                    id="driverLicense" name="driverLicense"
-                                                   accept="image/png, image/jpg, image/jpeg">
+                                                   accept="image/png, image/jpg, image/jpeg" required>
                                             <div class="invalid-feedback"></div>
                                             <div class="driverLicense-file-uploaded file-uploaded-container">
                                                 <div class="card-content-upload text-center p-3">
@@ -345,7 +348,7 @@
                                             <input class="hidden-input-file" type="file"
                                                    onchange="uploadImage(this)"
                                                    id="carLicense" name="carLicense"
-                                                   accept="image/png, image/jpg, image/jpeg">
+                                                   accept="image/png, image/jpg, image/jpeg" required>
                                             <div class="invalid-feedback"></div>
                                             <div class="carLicense-file-uploaded file-uploaded-container">
                                                 <div class="card-content-upload text-center p-3">
@@ -384,7 +387,7 @@
                                             <input class="hidden-input-file" type="file"
                                                    onchange="uploadImage(this)"
                                                    id="practiceCertification" name="practiceCertification"
-                                                   accept="image/png, image/jpg, image/jpeg">
+                                                   accept="image/png, image/jpg, image/jpeg" required>
                                             <div class="invalid-feedback"></div>
                                             <div class="practiceCertification-file-uploaded file-uploaded-container">
                                                 <div class="card-content-upload text-center p-3">
@@ -559,6 +562,8 @@
         const _thisForm = $(this);
         const data = new FormData(this);
 
+
+
         $.ajax({
             type: _thisForm.attr('method'),
             url: _thisForm.attr('action'),
@@ -597,6 +602,22 @@
             $("#loader-div").hide();
         });
     });
+
+    function validateCnpj(e) {
+        $("#loader-div").show();
+        let cnpj = e;
+
+        if (checkCnpj(cnpj) == false) {
+            $("#loader-div").hide();
+            swal({
+                icon: "error",
+                title: "Erro",
+                text: "O CNPJ digitado não é válido. Por favor, insira um CNPJ válido e tente novamente.",
+            });
+        }else{
+            $("#loader-div").hide();
+        }
+    }
 
 </script>
 <?php $v->end(); ?>
