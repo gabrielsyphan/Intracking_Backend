@@ -2,7 +2,7 @@
 
 <div class="container-fluid mt-5">
     <div class="row">
-        <div class="col-6 col-xl-3 mb-4">
+        <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
@@ -22,7 +22,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-xl-3 mb-4">
+        <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
@@ -42,7 +42,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-xl-3 mb-4">
+        <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
@@ -62,7 +62,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-xl-3 mb-4">
+        <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
@@ -85,19 +85,19 @@
     </div>
 </div>
 
-<div class="container-fluid mt-3 container-white border-bottom-gray">
-    <div class="row mt-5">
+<div class="container-fluid mt-3 order-bottom-gray">
+    <div class="row">
         <div class="col-xl-12 mb-5">
             <div class="web-div-box">
-                <div class="box-div-info" style="max-height: 60vh;">
+                <div class="box-div-info">
                     <div>
-                        <h3 class="ml-3 title-section">Lista de fiscais</h3>
-                        <p class="ml-3 subtitle-section-p">Todos os fiscais e empresas cadastrados no Orditi</p>
+                        <h3 class="ml-3 title-section">Lista de agentes</h3>
+                        <p class="ml-3 subtitle-section-p">Todos os agentes cadastrados no Orditi</p>
 
-                        <div class="div-box-span-icon mt-3">
+                        <div class="div-box-span-icon mt-4">
                             <div class="div-table-search">
                                 <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
-                                       placeholder="Filtrar pelo nome...">
+                                       placeholder="Filtrar pela matrícula...">
                                 <div class="circle-button primary search">
                                     <span class="icon-search"></span>
                                 </div>
@@ -116,18 +116,12 @@
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
-                                    <th scope="col" class="table-col-4">Matrícula <span
-                                                class="icon-arrow_downward"></span></th>
-                                    <th scope="col" class="table-col-2">CPF <span class="icon-arrow_downward"></span>
-                                    </th>
-                                    <th scope="col" class="table-col-1">Nome <span class="icon-arrow_upward"></span>
-                                    </th>
-                                    <th scope="col" class="table-col-1">Email <span class="icon-arrow_downward"></span>
-                                    </th>
-                                    <th scope="col" class="table-col-4">Status <span class="icon-arrow_downward"></span>
-                                    </th>
-                                    <th scope="col" class="table-col-4">Ações <span class="icon-arrow_downward"></span>
-                                    </th>
+                                    <th scope="col" class="table-col-6">Agente</th>
+                                    <th scope="col">Matrícula</th>
+                                    <th scope="col">Cargo</th>
+                                    <th scope="col">Secretaria</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Ações</th>
                                 </tr>
                                 </thead>
                                 <tbody id="table-data">
@@ -143,18 +137,29 @@
                                             $trClass = 'border-left-red';
                                             break;
                                     endswitch; ?>
-                                    <tr class="<?= $trClass ?>">
+                                    <tr class="<?= $trClass ?> custom-table">
+                                        <td>
+                                            <div class="d-flex">
+                                                <img class="image-table" src="<?= $agent->image ?>">
+                                                <div class="ml-4">
+                                                    <h5><?= $agent->nome ?></h5>
+                                                    <h5 class="table-contact"><?= $agent->email ?></h5>
+                                                </div>
+                                            </div>
+                                        </td>
                                         <td><?= $agent->matricula ?></td>
-                                        <td><?= $agent->cpf ?></td>
-                                        <td><?= $agent->nome ?></td>
-                                        <td><?= $agent->email ?></td>
+                                        <td><?= $agent->role ?></td>
+                                        <td><?= $agent->team ?></td>
                                         <td>
                                             <?php switch ($agent->situacao):
                                             case 0: ?>
-                                            <div class="status-button tertiary">Pendente</div>
+                                            <div class="d-flex">
+                                                <div class="status-circle tertiary"></div>
+                                                Pendente
+                                            </div>
                                         </td>
                                         <td>
-                                            <a class="btn secondary-color status-button-change"
+                                            <a class="btn secondary-color status-circle-change"
                                                href="<?= $router->route('web.changeAgentStatus/' . $agent->id) ?>">
                                                 <span class="icon-check"></span>
                                                 Permitir
@@ -162,24 +167,28 @@
                                         </td>
                                         <?php break;
                                         case 1: ?>
-                                            <div class="status-button primary">Ativo</div>
+                                                <div class="d-flex">
+                                                    <div class="status-circle primary"></div>
+                                                    Ativo
+                                                </div>
                                             </td>
                                             <td>
-                                                <a class="btn quartenary-color status-button-change"
+                                                <a class="status-circle-change"
                                                    href="<?= ($agent->id == $_SESSION['user']['id'] ? '#' : url('changeAgentStatus/' . $agent->id)) ?>" <?= ($agent->id == $_SESSION['user']['id'] ? 'disabled onclick="sameUser()"' : ''); ?>>
-                                                    <span class="icon-delete_forever"></span>
-                                                    Bloquear
+                                                    <span class="icon-block"></span>
                                                 </a>
                                             </td>
                                             <?php break;
                                         default: ?>
-                                            <div class="status-button secondary">Bloqueado</div>
+                                                <div class="d-flex">
+                                                    <div class="status-circle secondary"></div>
+                                                    Bloqueado
+                                                </div>
                                             </td>
                                             <td>
-                                                <a class="btn secondary-color status-button-change"
+                                                <a class="status-circle-change"
                                                    href="<?= url('changeAgentStatus/' . $agent->id) ?>">
                                                     <span class="icon-check"></span>
-                                                    Permitir
                                                 </a>
                                             </td>
                                             <?php break; endswitch; ?>
@@ -205,7 +214,7 @@
 <script src="<?= url("themes/assets/vendor/bootstrap/js/popper.js"); ?>"></script>
 <script src="<?= url("themes/assets/vendor/bootstrap/js/bootstrap.min.js"); ?>"></script>
 <script>
-    let filterValue = 2;
+    let filterValue = 1;
 
     function alterFilter(e) {
         filterValue = e;

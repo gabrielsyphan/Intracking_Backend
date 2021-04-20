@@ -17,7 +17,7 @@ define("DATA_LAYER_CONFIG", [
     "driver" => "mysql",
     "host" => "localhost",
     "port" => "3306",
-    "dbname" => "teste2",
+    "dbname" => "orditi1",
     "username" => "root",
     "passwd" => "",
     "options" => [

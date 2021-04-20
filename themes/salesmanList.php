@@ -2,7 +2,7 @@
 
 <div class="container-fluid mt-5">
     <div class="row">
-        <div class="col-6 col-xl-3 mb-4">
+        <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
@@ -22,7 +22,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-xl-3 mb-4">
+        <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
@@ -42,7 +42,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-xl-3 mb-4">
+        <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
@@ -62,7 +62,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-xl-3 mb-4">
+        <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
@@ -85,93 +85,96 @@
     </div>
 </div>
 
-<div class="container-fluid mt-5 container-white border-bottom-gray">
+<div class="container-fluid mt-3">
     <div class="row">
-        <div class="col-xl-12 mb-5 p-5">
-            <h3 class="ml-3 title-section">Lista de licenças</h3>
-            <p class="ml-3 subtitle-section-p">Todas licenças cadastradas no Orditi</p>
+        <div class="col-xl-12 mb-5">
+            <div class="web-div-box">
+                <div class="box-div-info">
+                    <h3 class="ml-3 title-section">Lista de licenças</h3>
+                    <p class="ml-3 subtitle-section-p">Todas licenças cadastradas no Orditi</p>
 
-            <div class="div-box-span-icon mt-3">
-                <div class="div-table-search">
-                    <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
-                           placeholder="Filtrar pelo nome...">
-                    <div class="circle-button primary search">
-                        <span class="icon-search"></span>
+                    <div class="div-box-span-icon mt-4">
+                        <div class="div-table-search">
+                            <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
+                                   placeholder="Filtrar pelo nome...">
+                            <div class="circle-button primary search">
+                                <span class="icon-search"></span>
+                            </div>
+                        </div>
+                        <div class="dropleft">
+                            <div class="ml-3 circle-button secondary" id="dropdownMenuButton"
+                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                 title="Exportar tabela">
+                                <span class="icon-download"></span>
+                            </div>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="<?= url('exportData/1') ?>">
+                                    Exportar tabela em xls
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="mb-0">
+                    <div class="box-div-info-overflow-x">
+                        <?php if (!$licenses): ?>
+                            <div class="p-5 mt-5 text-center">
+                                <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
+                                <p class="mt-5 subtitle-section-p">Ops! Não encontramos nenhuma licença para exibir.
+                                    😥</p>
+                            </div>
+                        <?php else: ?>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Cpf</th>
+                                    <th>Proprietário</th>
+                                    <th>Início</th>
+                                    <th>Fim</th>
+                                    <th>Status</th>
+                                </tr>
+                                </thead>
+                                <tbody id="table-data">
+                                <?php foreach ($licenses as $license):
+                                    switch ($license->status):
+                                        case 1:
+                                            $divStatus = 'primary';
+                                            $textStatus = 'Ativo';
+                                            $trClass = 'border-left-green';
+                                            break;
+                                        case 2:
+                                            $divStatus = 'secondary';
+                                            $textStatus = 'Bloqueado';
+                                            $trClass = 'border-left-red';
+                                            break;
+                                        default:
+                                            $divStatus = 'tertiary';
+                                            $textStatus = 'Pendente';
+                                            $trClass = 'border-left-yellow';
+                                            break;
+                                    endswitch; ?>
+                                    <tr class="<?= $trClass ?>"
+                                        onclick="licenseInfo(<?= $license->tipo ?>, '<?= md5($license->id) ?>')">
+                                        <td><?= $types[$license->tipo - 1]->nome ?></td>
+                                        <td><?= $users[$license->id_usuario]->cpf ?></td>
+                                        <td><?= $users[$license->id_usuario]->nome ?></td>
+                                        <td><?= $license->data_inicio ?></td>
+                                        <td><?= $license->data_fim ?></td>
+                                        <td>
+                                            <div class="status-button <?= $divStatus ?>"><?= $textStatus ?></div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                            <div class="text-center p-4 empty-table">
+                                <img style="width: 20%" src="<?= url('themes/assets/img/empty.svg') ?>">
+                                <h4 class="black-title-section">Ops.......!</h4>
+                                <p class="subtitle-section-p">Nenhum dado foi encontrado</p>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
-
-                <div class="dropleft">
-                    <div class="ml-3 circle-button secondary" id="dropdownMenuButton"
-                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                         title="Exportar tabela">
-                        <span class="icon-download"></span>
-                    </div>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="<?= url('exportData/1') ?>">
-                            Exportar tabela em xls
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <hr class="mb-0">
-            <div class="box-div-info-overflow-x">
-                <?php if (!$licenses): ?>
-                    <div class="p-5 mt-5 text-center">
-                        <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
-                        <p class="mt-5 subtitle-section-p">Ops! Não encontramos nenhum ambulante ou empresa.
-                            😥</p>
-                    </div>
-                <?php else: ?>
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>Tipo</th>
-                            <th>Cpf</th>
-                            <th>Proprietário</th>
-                            <th>Início</th>
-                            <th>Fim</th>
-                            <th>Status</th>
-                        </tr>
-                        </thead>
-                        <tbody id="table-data">
-                        <?php foreach ($licenses as $license):
-                            switch ($license->status):
-                                case 0:
-                                    $divStatus = 'tertiary';
-                                    $textStatus = 'Pendente';
-                                    $trClass = 'border-left-yellow';
-                                    break;
-                                case 1:
-                                    $divStatus = 'primary';
-                                    $textStatus = 'Ativa';
-                                    $trClass = 'border-left-green';
-                                    break;
-                                default:
-                                    $divStatus = 'secondary';
-                                    $textStatus = 'Suspensa';
-                                    $trClass = 'border-left-red';
-                                    break;
-                            endswitch; ?>
-                            <tr class="<?= $trClass ?>"
-                                onclick="licenseInfo(<?= $license->tipo ?>, '<?= md5($license->id) ?>')">
-                                <td><?= $types[$license->tipo - 1]->nome ?></td>
-                                <td><?= $users[$license->id_usuario]->cpf ?></td>
-                                <td><?= $users[$license->id_usuario]->nome ?></td>
-                                <td><?= $license->data_inicio ?></td>
-                                <td><?= $license->data_fim ?></td>
-                                <td>
-                                    <div class="status-button <?= $divStatus ?>"><?= $textStatus ?></div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                    <div class="text-center p-4 empty-table">
-                        <img style="width: 20%" src="<?= url('themes/assets/img/empty.svg') ?>">
-                        <h4 class="black-title-section">Ops.......!</h4>
-                        <p class="subtitle-section-p">Nenhum dado foi encontrado</p>
-                    </div>
-                <?php endif; ?>
             </div>
         </div>
     </div>

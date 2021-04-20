@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="569a43d1-da8c-4d19-a6dd-0ce78908e169" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution>
+      <executable path="composer" />
+    </execution>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/league/plates" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/stonks/router" />
+      <path value="$PROJECT_DIR$/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/vendor/paragonie/constant_time_encoding" />
+      <path value="$PROJECT_DIR$/vendor/phpseclib/mcrypt_compat" />
+      <path value="$PROJECT_DIR$/vendor/phpseclib/phpseclib" />
+      <path value="$PROJECT_DIR$/vendor/coffeecode/datalayer" />
+      <path value="$PROJECT_DIR$/vendor/phpmailer/phpmailer" />
+      <path value="$PROJECT_DIR$/vendor/bootstrap/js" />
+      <path value="$PROJECT_DIR$/vendor/bootstrap/css" />
+    </include_path>
+  </component>
+  <component name="ProjectId" id="1qQhD6pbKJx3ty3kclKsB1YCOei" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/themes/assets/orders" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\orditi\themes\assets\orders" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\orditi\themes" />
+      <recent name="C:\xampp\htdocs\orditi\themes\assets\img" />
+      <recent name="C:\xampp\htdocs\orditi\source\Models" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="composer require firebase/php-jwt" />
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="569a43d1-da8c-4d19-a6dd-0ce78908e169" name="Default Changelist" comment="" />
+      <created>1617017598831</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1617017598831</updated>
+      <workItem from="1617017601120" duration="8571000" />
+      <workItem from="1617103183527" duration="27336000" />
+      <workItem from="1617153793595" duration="10943000" />
+      <workItem from="1617199130018" duration="1308000" />
+      <workItem from="1617200703869" duration="503000" />
+      <workItem from="1617201286053" duration="326000" />
+      <workItem from="1617214584042" duration="25000" />
+      <workItem from="1617385887410" duration="106000" />
+      <workItem from="1617389280211" duration="13000" />
+      <workItem from="1617585585406" duration="1562000" />
+      <workItem from="1617622243539" duration="15845000" />
+      <workItem from="1617976826108" duration="3439000" />
+      <workItem from="1618329346793" duration="5471000" />
+      <workItem from="1618398814887" duration="7421000" />
+      <workItem from="1618843266010" duration="1372000" />
+      <workItem from="1618848068645" duration="9875000" />
+      <workItem from="1618920007748" duration="597000" />
+      <workItem from="1618927605424" duration="292000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="2372" y="332" key="ComposerInitDialogKey" timestamp="1618848149499">
+      <screen x="1920" y="0" width="1413" height="864" />
+    </state>
+    <state x="2372" y="332" key="ComposerInitDialogKey/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1618848149499" />
+    <state x="2364" y="130" key="FileChooserDialogImpl" timestamp="1617977538056">
+      <screen x="1920" y="0" width="1413" height="864" />
+    </state>
+    <state x="2364" y="130" key="FileChooserDialogImpl/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1617977538056" />
+    <state x="2375" y="130" key="FileChooserDialogImpl/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617389291357" />
+    <state x="2406" y="206" key="NewPhpClassDialog" timestamp="1618841753233">
+      <screen x="1920" y="0" width="1413" height="864" />
+    </state>
+    <state x="2406" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1618841753233" />
+    <state x="577" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1413.864@74.0.1462.864" timestamp="1617981458739" />
+    <state x="2418" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617104553049" />
+    <state x="577" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1447.864@74.0.1462.864" timestamp="1617163446865" />
+    <state x="2448" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1536.864@1920.0.1536.864" timestamp="1618400408708" />
+    <state x="2457" y="341" key="NewPhpFileDialog" timestamp="1617585722193">
+      <screen x="1920" y="0" width="1447" height="864" />
+    </state>
+    <state x="2457" y="341" key="NewPhpFileDialog/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617585722193" />
+    <state x="2020" y="0" key="SettingsEditor" timestamp="1617979376166">
+      <screen x="1920" y="0" width="1413" height="864" />
+    </state>
+    <state x="2020" y="0" key="SettingsEditor/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1617979376166" />
+    <state x="2272" y="215" key="com.intellij.ide.util.TipDialog" timestamp="1618927608828">
+      <screen x="1920" y="0" width="1413" height="864" />
+    </state>
+    <state x="2272" y="215" key="com.intellij.ide.util.TipDialog/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1618927608828" />
+    <state x="438" y="215" key="com.intellij.ide.util.TipDialog/74.0.1462.864/1920.0.1413.864@74.0.1462.864" timestamp="1618843307305" />
+    <state x="2280" y="215" key="com.intellij.ide.util.TipDialog/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617622299476" />
+    <state x="2280" y="215" key="com.intellij.ide.util.TipDialog/74.0.1462.864/1920.0.1447.864@74.0.1462.864" timestamp="1617385912953" />
+    <state x="378" y="193" width="870" height="1034" key="run.anything.popup" timestamp="1618927842749">
+      <screen x="74" y="0" width="1462" height="864" />
+    </state>
+    <state x="2214" y="193" width="840" height="1034" key="run.anything.popup/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1618848119695" />
+    <state x="378" y="193" width="870" height="1034" key="run.anything.popup/74.0.1462.864/1920.0.1413.864@74.0.1462.864" timestamp="1618927842749" />
+    <state x="2221" y="193" key="run.anything.popup/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617585798189" />
+    <state x="378" y="193" key="run.anything.popup/74.0.1462.864/1920.0.1447.864@74.0.1462.864" timestamp="1617156912268" />
+    <state x="2240" y="193" key="run.anything.popup/74.0.1462.864/1920.0.1536.864@1920.0.1536.864" timestamp="1618401672002" />
+    <state x="380" y="-1" width="849" height="1034" key="search.everywhere.popup" timestamp="1617162435342">
+      <screen x="74" y="0" width="1462" height="864" />
+    </state>
+    <state x="2223" y="-1" width="840" height="1034" key="search.everywhere.popup/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617111989673" />
+    <state x="380" y="-1" width="849" height="1034" key="search.everywhere.popup/74.0.1462.864/1920.0.1447.864@74.0.1462.864" timestamp="1617162435342" />
+  </component>
+</project>

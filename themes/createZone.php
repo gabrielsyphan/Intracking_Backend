@@ -12,12 +12,12 @@
             <fieldset class="row">
                 <div id="inputHidden"></div>
                 <div class="col-xl-12">
-                    <h2 class="black-title-section">Cadastrar nova Zona</h2>
-                    <p class="subtitle-section-p">Descreva todos os dados da zona desenhada acima.</p>
+                    <h2 class="black-title-section">Cadastrar nova área</h2>
+                    <p class="subtitle-section-p">Descreva todos os dados da área desenhada acima.</p>
                 </div>
                 <div class="col-xl-6 mt-5">
                     <div class="div-gray-bg border-top-green p-5">
-                        <h4 class="black-title-section">Informações da zona</h4>
+                        <h4 class="black-title-section">Informações da área</h4>
                         <hr>
                         <div class="row">
                             <div class="col-xl-12">
@@ -59,12 +59,19 @@
                                     <div class="invalidate-feedback"></div>
                                 </div>
                             </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <input type="number" class="form-input" id="fixed" name="fixed" title="Vagas fixas" min="0" placeholder="Insira a quantidade de vagas fixas">
+                                    <div class="invalidate-feedback"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-xl-6 mt-5">
                     <div class="div-gray-bg border-top-green p-5">
-                        <h4 class="black-title-section">Realize o desenho da zona no mapa</h4>
+                        <h4 class="black-title-section">Realize o desenho da área no mapa</h4>
                         <hr>
                         <div class="row">
                             <div id="map"></div>
@@ -115,20 +122,21 @@
                         swal({
                             icon: "success",
                             title: "Sucesso!",
-                            text: "A zona foi cadastrada!"
+                            text: "A área foi cadastrada!"
                         }).then((element) => {
-                            $("#zoneName").val('');
-                            $("#description").val('');
-                            $("#localImage").val('');
-                            $("#occupied").val('');
-                            $("#available").val('');
+                            $('#zoneName').val('');
+                            $('#description').val('');
+                            $('#localImage').val('');
+                            $('#occupied').val('');
+                            $('#available').val('');
+                            $('#fixed').val('');
                         });
                         $("#form").trigger("reset");
                     } else {
                         swal({
                             icon: "error",
                             title: "Erro!",
-                            text: "Não foi possível cadastrar a zona.",
+                            text: "Não foi possível cadastrar a área.",
                         });
                     }
                     console.log(returnData);
@@ -238,7 +246,7 @@
                 drawnItems.removeLayer(layer);
             }
 
-            layer = e.layer
+            layer = e.layer;
             drawnItems.addLayer(layer);
 
             let points = e.layer.editing.latlngs[0][0];
@@ -251,7 +259,7 @@
 
         map.on('draw:deleted', function(e) {
             $("#inputHidden").empty();
-        })
+        });
     });
 </script>
 <?php $v->end(); ?>

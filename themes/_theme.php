@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-        <link rel="shortcut icon" href="<?= url("themes/assets/img/icon.png"); ?>" type="image/x-icon">
+        <link rel="shortcut icon" href="<?= url("themes/assets/img/marker-1.png"); ?>" type="image/x-icon">
         <link rel="stylesheet" href="<?= url("themes/assets/fonts/icomoon/style.css"); ?>">
         <link rel="stylesheet" href="<?= url("vendor/bootstrap/css/bootstrap.min.css"); ?>">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -91,7 +91,7 @@
 
                 <div class="container-fluid" style="padding-left: 0; padding-right: 0;">
                     <div class="dash-main-header">
-                        <button id="sidebarCollapse" class="btn btn-style-5" type="button">
+                        <button id="sidebarCollapse" class="btn button-menu" type="button">
                             <span class="icon-list"></span>
                         </button>
 
@@ -131,6 +131,8 @@
             $(document).ready(function () {
                 $('#sidebarCollapse').on('click', function () {
                     $('#sidebar').toggleClass('active');
+                    $('.sidebar-text').toggleClass('active');
+                    $('#icon-sidebar').toggleClass('active');
                 });
 
                 if($('.chat-messages').children().length == 0) {

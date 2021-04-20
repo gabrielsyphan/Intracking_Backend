@@ -1,53 +1,57 @@
 <?php $v->layout("_theme.php") ?>
 
-<div class="container-fluid container-white border-bottom-gray mt-5">
-    <div class="p-5">
-        <div class="row">
-            <div class="col-xl-6">
-                <h2 class="black-title-section">Bem-vindo ao Orditi!</h2>
-                <p class="subtitle-section-p">Este é um sistema de ordenamento intinerante que busca solucionar os problemas de organização e
-                    distribuição dos ambulantes de sua cidade.</p>
+<div class="container-fluid mt-5">
+    <div class="web-div-box">
+        <div class="box-div-info p-5">
+            <div class="row">
+                <div class="col-xl-6">
+                    <h2 class="black-title-section">Bem-vindo ao Orditi!</h2>
+                    <p class="subtitle-section-p">Este é um sistema de ordenamento intinerante que busca solucionar os problemas de organização e
+                        distribuição dos ambulantes de sua cidade.</p>
 
-                <p class="subtitle-section-p">Esperamos que aproveite ao máximo o nosso sistema e não hesite em nos comunicar caso se depare
-                    com algum problema.</p>
+                    <p class="subtitle-section-p">Esperamos que aproveite ao máximo o nosso sistema e não hesite em nos comunicar caso se depare
+                        com algum problema.</p>
 
-                <p class="subtitle-section-p" style="font-size: 12px">
-                    Feito com <span style="color:red;">❤</span>  por Orditi ©
-                </p>
-            </div>
-            <div class="col-xl-6 text-center">
-                <img style="width: 60%" src="<?= url('themes/assets/img/locale.svg') ?>">
+                    <p class="subtitle-section-p" style="font-size: 12px">
+                        Feito com <span style="color:red;">❤</span>  por Orditi ©
+                    </p>
+                </div>
+                <div class="col-xl-6 text-center">
+                    <img style="width: 60%" src="<?= url('themes/assets/img/locale.svg') ?>">
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="container-fluid container-white border-bottom-gray mt-5 mb-5">
-    <div class="p-5 mb-5">
-        <div class="row">
-            <div class="col-xl-6 pt-5 text-center">
-                <img class="mt-5 align-middle" style="width: 60%" src="<?= url('themes/assets/img/contact-us.svg') ?>">
-            </div>
-            <div class="col-xl-6">
-                <h3 class="black-title-section">Contate-nos</h3>
-                <p class="subtitle-section-p">Nos envie um email para tirar dúvidas, sugestões ou resolver
-                    algum problema encontrado no sistema.</p>
-                <hr>
-                <form id="form-contact">
-                    <div class="form-group">
-                        <label>Fone:</label>
-                        <input type="text" id="phone" class="form-input" name="phone"
-                               placeholder="Whatsapp com DDD:" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Mensagem:</label>
-                        <textarea class="form-input" name="description"
-                                  placeholder="Descreva seu problema:" required></textarea>
-                    </div>
-                    <button type="submit" class="btn-3 primary w-100">
-                        Enviar mensagem
-                    </button>
-                </form>
+<div class="container-fluid mt-5 mb-5">
+    <div class="web-div-box">
+        <div class="box-div-info p-5">
+            <div class="row">
+                <div class="col-xl-6 pt-5 text-center">
+                    <img class="mt-5 align-middle" style="width: 60%" src="<?= url('themes/assets/img/contact-us.svg') ?>">
+                </div>
+                <div class="col-xl-6">
+                    <h3 class="black-title-section">Contate-nos</h3>
+                    <p class="subtitle-section-p">Nos envie um email para tirar dúvidas, sugestões ou resolver
+                        algum problema encontrado no sistema.</p>
+                    <hr>
+                    <form id="form-contact">
+                        <div class="form-group">
+                            <label>Fone:</label>
+                            <input type="text" id="phone" class="form-input" name="phone"
+                                   placeholder="Whatsapp com DDD:" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mensagem:</label>
+                            <textarea class="form-input" name="description"
+                                      placeholder="Descreva seu problema:" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-3 primary float-right">
+                            Enviar
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

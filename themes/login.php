@@ -116,6 +116,12 @@
                     window.location.href = "<?= $router->route('web.home'); ?>";
                 } else if (returnData == 2) {
                     $("#newPassword").modal('show');
+                } else if (returnData == 3) {
+                    swal({
+                        icon: "warning",
+                        title: "Ops..!",
+                        text: "Sua conta foi suspensa. Caso tenha alguma dúvida, contate um administrador.",
+                    });
                 } else if (returnData == 'pswSuccess'){
                     swal({
                         icon: "success",

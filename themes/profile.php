@@ -1,6 +1,6 @@
 <?php $v->layout("_theme.php") ?>
 
-<?php if($_SESSION['user']['login'] == 3): ?>
+<?php if($type !== 2): ?>
 <div id="modal-1" class="div-modal">
     <div class="container pt-5">
         <div class="row mt-5 p-5 justify-content-center">
@@ -22,7 +22,7 @@
                                 <div class="row div-gray-bg mb-5 p-5">
                                     <div class="col-xl-3 p-0 text-center">
                                         <img style="width: 150px;"
-                                             src="<?= url('/themes/assets/uploads/') ?><?= $upload['groupName'] . '/' .
+                                             src="<?= url('themes/assets/uploads/') ?><?= $upload['groupName'] . '/' .
                                              $upload['userId'] . '/' . $upload['fileName'] ?>">
                                     </div>
                                     <div class="col-xl-9 text-sm-center text-md-left">
@@ -79,11 +79,18 @@
                                         <input type="text" class="form-input disabled-input" value="<?= $user->nome ?>">
                                     </div>
                                 </div>
-                                <div class="col-xl-6">
+                                <div class="col-xl-3">
                                     <div class="form-group">
                                         <label>Cargo:</label>
                                         <input type="text" class="form-input disabled-input"
                                                value="<?= $role->nome ?>">
+                                    </div>
+                                </div>
+                                <div class="col-xl-3">
+                                    <div class="form-group">
+                                        <label>Orgão:</label>
+                                        <input type="text" class="form-input disabled-input"
+                                               value="<?= $team->sigla ?>">
                                     </div>
                                 </div>
                                 <div class="col-xl-6">
@@ -335,37 +342,70 @@
                                         class="icon-edit"></span> Enviar
                             </button>
                         </div>
-                        <div class="col-xl-12 mt-4 mb-5">
-                            <h3 class="black-title-section">Ações</h3>
-                            <p class="subtitle-section-p">Informações recorrentes</p>
-                            <hr>
-                            <div class="row">
-                                <div class="col-xl-6" onclick="openModal(1)">
-                                    <div class="row m-0 mt-3 p-4 div-request-license border-left-yellow">
-                                        <div class="col-2 mt-5 mt-md-3 text-center mt-4">
-                                            <img src="<?= url('themes/assets/img/files.png') ?>">
-                                        </div>
-                                        <div class="col-10">
-                                            <h4>Meus anexos</h4>
-                                            <p class="subtitle-section-p">Arquivos enviados por você durante seu
-                                                cadastro.</p>
+                        <?php if($_SESSION['user']['login'] === 3 && $type == 2): ?>
+                            <div class="col-xl-12 mt-4 mb-5">
+                                <h3 class="black-title-section">Ações</h3>
+                                <p class="subtitle-section-p">Informações recorrentes</p>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-xl-6" onclick="requestLicense('<?= md5($user->id); ?>')">
+                                        <div class="row m-0 mt-3 p-4 div-request-license border-left-green">
+                                            <div class="col-2 mt-5 mt-md-3 text-center mt-4">
+                                                <img src="<?= url('themes/assets/img/salesman.png') ?>">
+                                            </div>
+                                            <div class="col-10">
+                                                <h4>Solicitar licença</h4>
+                                                <p class="subtitle-section-p">Solicite uma licença para o usuário selecionado.</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-xl-6" onclick="openModal(2)">
-                                    <div class="row m-0 mt-3 p-4 div-request-license border-left-green">
-                                        <div class="col-2 mt-5 mt-md-3 text-center mt-4">
-                                            <img src="<?= url('themes/assets/img/cash-payment.png') ?>">
-                                        </div>
-                                        <div class="col-10">
-                                            <h4>Meus boletos</h4>
-                                            <p class="subtitle-section-p">Todos os pagamentos referente às suas
-                                                licenças.</p>
+                                    <div class="col-xl-6" onclick="openModal(1)">
+                                        <div class="row m-0 mt-3 p-4 div-request-license border-left-yellow">
+                                            <div class="col-2 mt-5 mt-md-3 text-center mt-4">
+                                                <img src="<?= url('themes/assets/img/files.png') ?>">
+                                            </div>
+                                            <div class="col-10">
+                                                <h4>Anexos</h4>
+                                                <p class="subtitle-section-p">Arquivos enviados por você durante seu
+                                                    cadastro.</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        <?php else:?>
+                            <div class="col-xl-12 mt-4 mb-5">
+                                <h3 class="black-title-section">Ações</h3>
+                                <p class="subtitle-section-p">Informações recorrentes</p>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-xl-6" onclick="openModal(1)">
+                                        <div class="row m-0 mt-3 p-4 div-request-license border-left-yellow">
+                                            <div class="col-2 mt-5 mt-md-3 text-center mt-4">
+                                                <img src="<?= url('themes/assets/img/files.png') ?>">
+                                            </div>
+                                            <div class="col-10">
+                                                <h4>Meus anexos</h4>
+                                                <p class="subtitle-section-p">Arquivos enviados por você durante seu
+                                                    cadastro.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6" onclick="openModal(2)">
+                                        <div class="row m-0 mt-3 p-4 div-request-license border-left-green">
+                                            <div class="col-2 mt-5 mt-md-3 text-center mt-4">
+                                                <img src="<?= url('themes/assets/img/cash-payment.png') ?>">
+                                            </div>
+                                            <div class="col-10">
+                                                <h4>Meus boletos</h4>
+                                                <p class="subtitle-section-p">Todos os pagamentos referente às suas
+                                                    licenças.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -420,5 +460,9 @@
             })
         });
     });
+
+    function requestLicense(userId){
+        window.location.href = '<?= url('requestLicenseUser') ?>' + '/' + userId;
+    }
 </script>
 <?php $v->end(); ?>

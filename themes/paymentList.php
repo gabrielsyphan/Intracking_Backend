@@ -2,7 +2,7 @@
 
 <div class="container-fluid mt-5">
     <div class="row">
-        <div class="col-6 col-xl-3 mb-4">
+        <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
@@ -22,7 +22,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-xl-3 mb-4">
+        <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
@@ -42,7 +42,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-xl-3 mb-4">
+        <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
@@ -62,7 +62,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-xl-3 mb-4">
+        <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box border-bottom-gray">
                 <div class="box-div-info p-5">
                     <div class="row">
@@ -85,103 +85,107 @@
     </div>
 </div>
 
-<div class="container-fluid mt-5 container-white border-bottom-gray">
+<div class="container-fluid mt-3">
     <div class="row">
-        <div class="col-xl-12 mb-5 p-5">
-            <h3 class="ml-3 title-section">Lista de pagamentos</h3>
-            <p class="ml-3 subtitle-section-p">Todos os pagamentos cadastrados no Orditi</p>
+        <div class="col-xl-12 mb-5">
+            <div class="web-div-box">
+                <div class="box-div-info">
+                    <h3 class="ml-3 title-section">Lista de pagamentos</h3>
+                    <p class="ml-3 subtitle-section-p">Todos os pagamentos cadastrados no Orditi</p>
 
-            <div class="div-box-span-icon mt-3">
-                <div class="div-table-search">
-                    <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
-                           placeholder="Filtrar pelo ambulante...">
-                    <div class="circle-button primary search">
-                        <span class="icon-search"></span>
-                    </div>
-                </div>
+                    <div class="div-box-span-icon mt-4">
+                        <div class="div-table-search">
+                            <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
+                                   placeholder="Filtrar pelo ambulante...">
+                            <div class="circle-button primary search">
+                                <span class="icon-search"></span>
+                            </div>
+                        </div>
 
-                <div class="dropleft">
-                    <div class="ml-3 circle-button secondary" id="dropdownMenuButton"
-                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                         title="Exportar tabela">
-                        <span class="icon-download"></span>
+                        <div class="dropleft">
+                            <div class="ml-3 circle-button secondary" id="dropdownMenuButton"
+                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                 title="Exportar tabela">
+                                <span class="icon-download"></span>
+                            </div>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="<?= url('exportData/2') ?>">
+                                    Exportar tabela em xls
+                                </a>
+                            </div>
+                            <hr>
+                        </div>
                     </div>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="<?= url('exportData/2') ?>">
-                            Exportar tabela em xls
-                        </a>
-                    </div>
-                    <hr>
-                </div>
-            </div>
-            <hr class="mb-0">
-            <div class="box-div-info-overflow-x">
-                <?php if (!$payments): ?>
-                    <div class="p-5 mt-5 text-center">
-                        <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
-                        <p class="mt-5 subtitle-section-p">Ops! Não encontramos nenhum pagamento para exibir
-                            aqui. 😥</p>
-                    </div>
-                <?php else: ?>
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th scope="col" class="table-col-2">Valor</th>
-                            <th scope="col" class="table-col-2">Vencimento</th>
-                            <th scope="col" class="table-col-1">Cod Referência</th>
-                            <th scope="col" class="table-col-2">Tipo</th>
-                            <th scope="col" class="table-col-2">Status</th>
-                            <th scope="col">Proprietário</th>
-                        </tr>
-                        </thead>
-                        <tbody id="table-data">
-                        <?php
-                        if ($payments !== NULL):
-                            foreach ($payments as $payment):
-                                switch ($payment->status):
-                                    case 1:
-                                        $divStatus = 'primary';
-                                        $textStatus = 'Pago';
-                                        $trClass = 'border-left-green';
-                                        break;
-                                    case 2:
-                                        $divStatus = 'secondary';
-                                        $textStatus = 'Vencido';
-                                        $trClass = 'border-left-red';
-                                        break;
-                                    default:
-                                        $divStatus = 'tertiary';
-                                        $textStatus = 'Pendente';
-                                        $trClass = 'border-left-yellow';
-                                        break;
-                                endswitch; ?>
-                                <tr class="<?= $trClass ?>" onclick="openPage('<?= $payment->cod_referencia ?>')">
-                                    <td>R$ <?= $payment->valor ?>,00</td>
-                                    <td><?= date('d-m-Y', strtotime($payment->pagar_em)); ?></td>
-                                    <td><?= $payment->cod_referencia ?></td>
-                                    <td>
-                                        <?php switch ($payment->tipo):
-                                            case 1: ?>
-                                                Recorrente
-                                                <?php break;
-                                            default: ?>
-                                                Vencido
-                                                <?php break; endswitch; ?>
-                                    </td>
-                                    <td>
-                                        <div class="status-button <?= $divStatus; ?>"><?= $textStatus ?></div>
-                                    </td>
-                                    <td><?= $payment->name ?></td>
+                    <hr class="mb-0">
+                    <div class="box-div-info-overflow-x">
+                        <?php if (!$payments): ?>
+                            <div class="p-5 mt-5 text-center">
+                                <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
+                                <p class="mt-5 subtitle-section-p">Ops! Não encontramos nenhum pagamento para exibir
+                                    aqui. 😥</p>
+                            </div>
+                        <?php else: ?>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col" class="table-col-2">Valor</th>
+                                    <th scope="col" class="table-col-2">Vencimento</th>
+                                    <th scope="col" class="table-col-1">Cod Referência</th>
+                                    <th scope="col" class="table-col-2">Tipo</th>
+                                    <th scope="col" class="table-col-2">Status</th>
+                                    <th scope="col">Proprietário</th>
                                 </tr>
-                            <?php endforeach; endif; ?>
-                        </tbody>
-                    </table>
-                    <div class="text-center p-4 empty-table">
-                        <img style="width: 20%" src="<?= url('themes/assets/img/empty.svg') ?>">
-                        <h4 class="black-title-section">Ops.......!</h4>
-                        <p class="subtitle-section-p">Nenhum dado foi encontrado</p>
+                                </thead>
+                                <tbody id="table-data">
+                                <?php
+                                if ($payments !== NULL):
+                                    foreach ($payments as $payment):
+                                        switch ($payment->status):
+                                            case 1:
+                                                $divStatus = 'primary';
+                                                $textStatus = 'Pago';
+                                                $trClass = 'border-left-green';
+                                                break;
+                                            case 2:
+                                                $divStatus = 'secondary';
+                                                $textStatus = 'Vencido';
+                                                $trClass = 'border-left-red';
+                                                break;
+                                            default:
+                                                $divStatus = 'tertiary';
+                                                $textStatus = 'Pendente';
+                                                $trClass = 'border-left-yellow';
+                                                break;
+                                        endswitch; ?>
+                                        <tr class="<?= $trClass ?>" onclick="openPage('<?= $payment->cod_referencia ?>')">
+                                            <td>R$ <?= $payment->valor ?>,00</td>
+                                            <td><?= date('d-m-Y', strtotime($payment->pagar_em)); ?></td>
+                                            <td><?= $payment->cod_referencia ?></td>
+                                            <td>
+                                                <?php switch ($payment->tipo):
+                                                    case 1: ?>
+                                                        Recorrente
+                                                        <?php break;
+                                                    default: ?>
+                                                        Vencido
+                                                        <?php break; endswitch; ?>
+                                            </td>
+                                            <td>
+                                                <div class="status-button <?= $divStatus; ?>"><?= $textStatus ?></div>
+                                            </td>
+                                            <td><?= $payment->name ?></td>
+                                        </tr>
+                                    <?php endforeach; endif; ?>
+                                </tbody>
+                            </table>
+                            <div class="text-center p-4 empty-table">
+                                <img style="width: 20%" src="<?= url('themes/assets/img/empty.svg') ?>">
+                                <h4 class="black-title-section">Ops.......!</h4>
+                                <p class="subtitle-section-p">Nenhum dado foi encontrado</p>
+                            </div>
+                        <?php endif; ?>
                     </div>
-                <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>

@@ -14,7 +14,10 @@
     <div class="p-5">
         <form id="form-license-salesman" method="POST" action="<?= $router->route('web.validateSalesmanLicense'); ?>">
             <fieldset>
-                <input type="hidden" name="companyId" value="<?= ($company)? $company->id : null ?>">
+                <?php if ($company): ?>
+                    <input type="hidden" name="companyId" value="<?= $company->id ?>">
+                <?php endif; ?>
+                <input type="hidden" name="userId" value="<?= $userId ?>">
                 <div id="inputHidden"></div>
                 <div class="row mb-5">
                     <div class="col-xl-12 pb-3">
@@ -74,9 +77,9 @@
 
                                     <div class="col-xl-12">
                                         <div class="form-group">
-                                            <label>Descreva outro produto ofertado: <span class="spanAlert">(Se não encontrado na lista acima)</span>:</label>
+                                            <label>Descreva outro produto ofertado:</label>
                                             <textarea type="text" class="form-input" id="productDescription" name="productDescription"
-                                                      placeholder="Ex.: Trabalho com a venda de produtos para cabelo."></textarea>
+                                                      placeholder="Ex.: Trabalho com a venda de produtos para cabelo." required></textarea>
                                         </div>
                                     </div>
                                 <?php else: ?>
