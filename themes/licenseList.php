@@ -43,20 +43,20 @@
                             $aux = 1;
                             foreach ($licenses as $license):
                                 switch ($license->status):
-                                    case 0:
-                                        $divStatus = 'tertiary';
-                                        $textStatus = 'Pendente';
-                                        $trClass = 'border-left-yellow';
-                                        break;
                                     case 1:
                                         $divStatus = 'primary';
                                         $textStatus = 'Ativo';
                                         $trClass = 'border-left-green';
                                         break;
-                                    default:
+                                    case 2:
                                         $divStatus = 'secondary';
                                         $textStatus = 'Bloqueado';
                                         $trClass = 'border-left-red';
+                                        break;
+                                    default:
+                                        $divStatus = 'tertiary';
+                                        $textStatus = 'Pendente';
+                                        $trClass = 'border-left-yellow';
                                         break;
                                 endswitch; ?>
                                 <tr class="<?= $trClass ?>"

@@ -30,6 +30,7 @@
     "league/plates": "v4.0.0-alpha",
     "phpmailer/phpmailer": "~6.1",
     "phpseclib/mcrypt_compat": "*",
+    "firebase/php-jwt": "*",
     "ext-json": "*",
     "ext-curl": "*"
   }

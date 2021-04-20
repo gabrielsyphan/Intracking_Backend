@@ -100,7 +100,7 @@ endif; ?>
         <div class="col-md-4 p-0" id="sidebar-inter">
             <iframe src="https://www.google.com/maps/embed?pb=!4v1617115456065!6m8!1m7!1sh2uwEPd3HSSwcRMfhM_hRQ!2m2!1d<?= $zone->centroide[1] ?>!2d<?= $zone->centroide[0] ?>!3f343.7!4f3.739999999999995!5f0.7820865974627469" width="403" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             <div class="m-5">
-                <h3 class="black-div-zone-info-text font-weight-normal"><?= $zone->nome; ?></h3>
+                <h4 class="black-div-zone-info-text font-weight-normal"><?= $zone->nome; ?></h4>
                 <p class="subdiv-zone-info-text-p-black"><?= $zone->descricao ?></p>
                 <hr>
             </div>
@@ -111,10 +111,10 @@ endif; ?>
                         <span class="icon-all_inclusive zone-info-icons"></span>
                     </div>
                     <div class="ml-3">
-                        <h4 class="m-0 mt-4 div-zone-info-text">
+                        <h5 class="m-0 mt-4 div-zone-info-text">
                             <span class="font-weight-normal">Vagas totais:</span>
                             <?= $zone->limite_ambulantes; ?>
-                        </h4>
+                        </h5>
                     </div>
                 </div>
 
@@ -123,10 +123,10 @@ endif; ?>
                         <span class="icon-lock_open zone-info-icons"></span>
                     </div>
                     <div class="ml-3">
-                        <h4 class="m-0 mt-4 div-zone-info-text">
+                        <h5 class="m-0 mt-4 div-zone-info-text">
                             <span class="font-weight-normal">Vagas disponíveis:</span>
                             <?= ($zone->limite_ambulantes - $zone->quantidade_ambulantes); ?>
-                        </h4>
+                        </h5>
                     </div>
                 </div>
 
@@ -135,10 +135,10 @@ endif; ?>
                         <span class="icon-flag zone-info-icons"></span>
                     </div>
                     <div class="ml-3">
-                        <h4 class="m-0 mt-4 div-zone-info-text">
+                        <h5 class="m-0 mt-4 div-zone-info-text">
                             <span class="font-weight-normal">Vagas ocupadas:</span>
                             <?= $zone->quantidade_ambulantes; ?>
-                        </h4>
+                        </h5>
                     </div>
                 </div>
 
@@ -147,10 +147,10 @@ endif; ?>
                         <span class="icon-map-pin zone-info-icons"></span>
                     </div>
                     <div class="ml-3">
-                        <h4 class="m-0 mt-4 div-zone-info-text">
+                        <h5 class="m-0 mt-4 div-zone-info-text">
                             <span class="font-weight-normal">Vagas fixas:</span>
                             <?= $zone->vagas_fixas; ?>
-                        </h4>
+                        </h5>
                     </div>
                     <a href="<?= url('/editFixedZones/'). md5($zone->id) ?>" class="float-right ml-5 mt-4">
                         <span class="icon-edit"></span>
@@ -205,13 +205,13 @@ endif; ?>
             zoomControl: true,
             maxZoom: 20,
             minZoom: 10,
-            zoom: 18
+            zoom: 20
         });
 
         L.control.layers(ctr_tiles, ctr_layers).addTo(map);
 
         let paid = L.icon({
-            iconUrl: "<?= url("themes/assets/img/marker-1.png"); ?>",
+            iconUrl: "<?= url("themes/assets/img/marker-zone-green.png"); ?>",
             shadowUrl: "<?= url("themes/assets/img/marker-shadow.png"); ?>",
 
             iconSize: [31, 40],
@@ -222,7 +222,7 @@ endif; ?>
         });
 
         let pending = L.icon({
-            iconUrl: "<?= url("themes/assets/img/marker-0.png"); ?>",
+            iconUrl: "<?= url("themes/assets/img/marker-zone-yellow.png"); ?>",
             shadowUrl: "<?= url("themes/assets/img/marker-shadow.png"); ?>",
 
             iconSize: [31, 40],
@@ -233,7 +233,7 @@ endif; ?>
         });
 
         let expired = L.icon({
-            iconUrl: "<?= url("themes/assets/img/marker-2.png"); ?>",
+            iconUrl: "<?= url("themes/assets/img/marker-zone-red.png"); ?>",
             shadowUrl: "<?= url("themes/assets/img/marker-shadow.png"); ?>",
 
             iconSize: [31, 40],

@@ -57,23 +57,25 @@
         });
         ctrTiles["Satelite 2"] = mapTiles["Satelite 2"];
 
-        mapLayers["Desenho das Áreas"] = L.layerGroup();
-        ctrLayers["Desenho das Áreas"] = mapLayers["Desenho das Áreas"];
+        <?php if($zones): ?>
+            mapLayers["Áreas"] = L.layerGroup();
+            ctrLayers["Áreas"] = mapLayers["Áreas"];
+
+            mapLayers["Desenho das Áreas"] = L.layerGroup();
+            ctrLayers["Desenho das Áreas"] = mapLayers["Desenho das Áreas"];
+        <?php endif; ?>
 
         mapLayers["Bairros"] = L.layerGroup();
         ctrLayers["Bairros"] = mapLayers["Bairros"];
 
-        mapLayers["Áreas"] = L.layerGroup();
-        ctrLayers["Áreas"] = mapLayers["Áreas"];
+        mapLayers["Licença de Ambulante - Em dia"] = L.layerGroup();
+        ctrLayers["Licença de Ambulante - Em dia"] = mapLayers["Licença de Ambulante - Em dia"];
 
-        mapLayers["Ambulantes - Em dia"] = L.layerGroup();
-        ctrLayers["Ambulantes - Em dia"] = mapLayers["Ambulantes - Em dia"];
+        mapLayers["Licença de Ambulante - Pendentes"] = L.layerGroup();
+        ctrLayers["Licença de Ambulante - Pendentes"] = mapLayers["Licença de Ambulante - Pendentes"];
 
-        mapLayers["Ambulantes - Pendentes"] = L.layerGroup();
-        ctrLayers["Ambulantes - Pendentes"] = mapLayers["Ambulantes - Pendentes"];
-
-        mapLayers["Ambulantes - Vencidos"] = L.layerGroup();
-        ctrLayers["Ambulantes - Vencidos"] = mapLayers["Ambulantes - Vencidos"];
+        mapLayers["Licença de Ambulante - Vencidos"] = L.layerGroup();
+        ctrLayers["Licença de Ambulante - Vencidos"] = mapLayers["Licença de Ambulante - Vencidos"];
 
         map = L.map('salesmanMap', {
             center: [-9.663136558749533, -35.71422457695007],
@@ -174,7 +176,7 @@
                 spiderfyOnMaxZoom: true
             });
             
-            if (e.name == "Ambulantes - Em dia") {
+            if (e.name == "Licença de Ambulante - Em dia") {
                 <?php if($paids):
                 foreach ($paids as $paid):
                 if ($paid->status == 1): ?>
@@ -187,7 +189,7 @@
                         '<div class="textPopup mt-4"><a href="<?= url('licenseInfo/1/') . $paid->id_licenca ?>">' +
                         'Visualizar</a></div></div></div></div>').addTo(groupMarker);
                 <?php endif; endforeach; endif; ?>
-            } else if (e.name == "Ambulantes - Pendentes") {
+            } else if (e.name == "Licença de Ambulante - Pendentes") {
                 <?php if($pendings):
                 foreach ($pendings as $pending):
                 if($pending->status == 0 || $pending->status == 3): ?>
@@ -200,7 +202,7 @@
                         '<div class="textPopup mt-4"><a href="<?= url('licenseInfo/1/') . $pending->id_licenca ?>">' +
                         'Visualizar</a></div></div></div></div>').addTo(groupMarker);
                 <?php endif; endforeach; endif; ?>
-            } else if (e.name == "Ambulantes - Vencidos") {
+            } else if (e.name == "Licença de Ambulante - Vencidos") {
                 <?php if($expireds):
                 foreach ($expireds as $expired):
                 if ($expired->status == 2): ?>
@@ -216,7 +218,7 @@
             } else if (e.name == "Desenho das Áreas") {
                 let area = [];
                 let aux = [];
-                <?php if($zones != NULL):
+                <?php if($zones):
                 foreach ($zones as $zone):
                 $aux = $zone->limite_ambulantes - $zone->quantidade_ambulantes;
                 $aux = intval(($zone->quantidade_ambulantes * 100) / $zone->limite_ambulantes);

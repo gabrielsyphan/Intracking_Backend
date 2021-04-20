@@ -47,7 +47,7 @@ $router->post("/validateEditFixedZone", "Web:validateEditFixedZone", "web.valida
 $router->post("/newFixedArea", "Web:newFixedArea", "web.newFixedArea");
 
 $router->get("/createAgent", "Web:createAgent", "web.createAgent");
-$router->post("/validateNewAgent", "Web:validateNewAgent", "web.validateNewAgent");
+$router->post("/validateAgent", "Web:validateNgent", "web.validateAgent");
 
 $router->get("/profile", "Web:profile", "web.profile");
 $router->get("/profileUser/{id}", "Web:profileUser", "web.profileUser");
@@ -56,6 +56,7 @@ $router->get("/salesmanList", "Web:salesmanList", "web.salesmanList");
 $router->get("/salesmanMap", "Web:salesmanMap", "web.salesmanMap");
 $router->post("/createNotification", "Web:createNotification", "web.createNotification");
 $router->post("/removeSuspension", "Web:removeSuspension", "web.removeSuspension");
+$router->post("/validateAuxiliary", "Web:validateAuxiliary", "web.validateAuxiliary");
 
 $router->get("/createSalesman", "Web:createSalesman", "web.createSalesman");
 $router->post("/zoneConfirm", "Web:zoneConfirm", "web.zoneConfirm");

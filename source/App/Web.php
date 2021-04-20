@@ -2,7 +2,9 @@
 
 namespace Source\App;
 
+use Source\Models\AgentType;
 use Source\Models\Attach;
+use Source\Models\Auxiliary;
 use Source\Models\Fixed;
 use Source\Models\FoodTruck;
 use Source\Models\License;
@@ -11,6 +13,7 @@ use Source\Models\Market;
 use Source\Models\Neighborhood;
 use Source\Models\Punishment;
 use Source\Models\Role;
+use Source\Models\Team;
 use Source\Models\User;
 use Stonks\Router\Router;
 use League\Plates\Engine;
@@ -141,6 +144,7 @@ class Web
                         $_SESSION['user']['role'] = $agent->tipo_fiscal;
                         $_SESSION['user']['id'] = $agent->id;
                         $_SESSION['user']['name'] = $agent->nome;
+                        $_SESSION['user']['team'] = $agent->id_orgao;
                         $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/agents/' . $attach->id_usuario
                             . '/' . $attach->nome;
                         $_SESSION['user']['email'] = $agent->email;
@@ -153,7 +157,6 @@ class Web
 
         echo $validate;
     }
-
 
     /**
      * @return void
@@ -737,6 +740,7 @@ class Web
         $license->data_inicio = date('Y-m-d');
         $license->data_fim = date('Y-m-d', strtotime("+3 days"));
         $license->status = 0;
+        $license->id_orgao = 2;
         $license->save();
 
         if ($license->fail()) {
@@ -883,6 +887,7 @@ class Web
             $license->data_inicio = date('Y-m-d');
             $license->data_fim = date('Y-m-d', strtotime("+3 days"));
             $license->cmc = '';
+            $license->id_orgao = 1;
             $license->save();
 
             if ($license->fail()) {
@@ -1121,7 +1126,7 @@ class Web
 
                     }
 
-                    if ($data['licenseType'] == 6) {
+                    if ($data['licenseType'] == 7) {
                         $validate = true;
                     }
                 }
@@ -1180,6 +1185,7 @@ class Web
             $license->id_usuario = $_SESSION['user']['id'];
             $license->data_inicio = date('Y-m-d');
             $license->data_fim = date('Y-m-d', strtotime("+3 days"));
+            $license->id_orgao = 1;
             $license->save();
 
             if ($license->fail()) {
@@ -1333,7 +1339,14 @@ class Web
         $response = 'fail';
 
         if ($_FILES) {
-            $user = (new User())->findById($_SESSION['user']['id']);
+            if ($data['userId']) {
+                $user =  (new User())->find('MD5(id)=:id', 'id=' . $data['userId'])->fetch(false);
+                $userId = $user->id;
+            } else {
+                $user = (new User())->findById($_SESSION['user']['id']);
+                $userId = $_SESSION['user']['id'];
+            }
+
             $cpf = preg_replace('/[^0-9]/is', '', $user->cpf);
             $soap_input =
                 '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:e="e-Agata_18.11">
@@ -1405,40 +1418,33 @@ class Web
                 if ($salesmans) {
                     $response = 'somebodySameLocation';
                     $zoneId = null;
-                    $zone->quantidade_ambulantes--;
-                    $zone->save();
+
+                    if($zone) {
+                        $zone->quantidade_ambulantes--;
+                        $zone->save();
+                    }
                 } else {
                     $zoneId = "";
                 }
             }
 
-            if ($zoneId || $zoneId == "") {
+            if (($zoneId || $zoneId == "") && $zoneId != null) {
                 $license = new License();
                 $license->tipo = 1;
-
-                if ($data['companyId']) {
-                    $company = (new Company)->findById($data['companyId']);
-                    if ($company) {
-                        $license->status = 3;
-                    }
-                } else {
-                    $license->status = 0;
-                }
-
-                if ($data['userId']) {
-                    $userId =  (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id')->fetch(false);
-                    $userId = $userId->id;
-                } else {
-                    $userId = $_SESSION['user']['id'];
-                }
+                $license->status = 2;
                 $license->id_usuario = $userId;
                 $license->data_inicio = date('Y-m-d');
                 $license->data_fim = date('Y-m-d', strtotime("+3 days"));
                 $license->cmc = $companyAux;
+                $license->id_orgao = 1;
                 $license->save();
 
                 if ($license->fail()) {
                     $neighborhood->destroy();
+                    if($zone) {
+                        $zone->quantidade_ambulantes--;
+                        $zone->save();
+                    }
                     var_dump($license->fail()->getMessage());
                 } else {
                     /**
@@ -1513,7 +1519,6 @@ class Web
                                             $valueToPayment[] = 80.00;
                                         }
                                     } else if ($product == 7) {
-                                        $productDescription = $data['productDescription'];
                                         if ($area <= 1.50) {
                                             $valueToPayment[] = 72.00;
                                         } else {
@@ -1533,7 +1538,7 @@ class Web
                                 $salesman->id_bairro = $neighborhoodId;
                                 $salesman->id_licenca = $license->id;
 
-                                if ($data['companyId']) {
+                                if (isset($data['companyId'])) {
                                     $company = (new Company)->findById($data['companyId']);
                                     if ($company) {
                                         $salesman->id_empresa = $company->id_licenca;
@@ -1547,7 +1552,7 @@ class Web
                                 $salesman->atendimento_dias = $workedDays;
                                 $salesman->atendimento_hora_inicio = $data['initHour'];
                                 $salesman->atendimento_hora_fim = $data['endHour'];
-                                $salesman->relato_atividade = $productDescription;
+                                $salesman->relato_atividade = $data['productDescription'];
                                 $salesman->area_equipamento = $data['width'] . " x " . $data['length'];
                                 $salesman->tipo_equipamento = $data['howWillSell'];
                                 $salesman->save();
@@ -1810,6 +1815,7 @@ class Web
                 $license->data_inicio = date('Y-m-d');
                 $license->data_fim = date('Y-m-d', strtotime("+3 days"));
                 $license->cmc = $data['cmc'];
+                $license->id_orgao = 1;
                 $license->save();
 
                 if ($license->fail()) {
@@ -1930,7 +1936,8 @@ class Web
         $license_type = (new LicenseType())->find()->fetch(true);
         $users = array();
         if ($_SESSION['user']['login'] == 3) {
-            $licenses = (new License())->find()->fetch(true);
+            $licenses = (new License())->find('id_orgao = :id', 'id='. $_SESSION['user']['team'])
+                ->fetch(true);
 
             $auxPaid = 0;
             $auxPending = 0;
@@ -2142,6 +2149,7 @@ class Web
                     ->fetch(true);
 
                 $role = (new Role())->findById($agent->tipo_fiscal);
+                $team = (new Team())->findById($agent->id_orgao);
 
                 if ($attachments) {
                     foreach ($attachments as $attach) {
@@ -2165,6 +2173,7 @@ class Web
                     'uploads' => $uploads,
                     'userImage' => $userImage,
                     'role' => $role,
+                    'team' => $team,
                     'type' => 1
                 ]);
             }
@@ -2198,7 +2207,7 @@ class Web
                 $uploads[] = [
                     'fileName' => $attach->nome,
                     'groupName' => 'users',
-                    'userId' => $data['id']
+                    'userId' => $user->id
                 ];
             }
         }
@@ -2326,21 +2335,21 @@ class Web
         if ($payments) {
             foreach ($payments as $payment) {
                 $license = (new License())->findById($payment->id_licenca);
-                if ($license) {
+                if (($license != null) && ($license->id_orgao == $_SESSION['user']['team'])) {
                     $user = (new User())->findById($license->id_usuario);
                     $payment->name = $user->nome;
                     $paymentArray[] = $payment;
-                }
 
-                if ($payment->status == 0 || $payment->status == 3) {
-                    $auxPendent++;
-                } else if ($payment->status == 1) {
-                    $auxPaid++;
-                } else {
-                    $auxExpired++;
+                    if ($payment->status == 0 || $payment->status == 3) {
+                        $auxPendent++;
+                    } else if ($payment->status == 1) {
+                        $auxPaid++;
+                    } else {
+                        $auxExpired++;
+                    }
+                    $paymentCount++;
                 }
             }
-            $paymentCount = count($payments);
         } else {
             $paymentArray = null;
         }
@@ -2360,17 +2369,27 @@ class Web
      */
     public function agentList(): void
     {
-        $agents = (new Agent)->find('', '', 'id, matricula, cpf, email, nome, situacao')->fetch(true);
+        $agents = (new Agent)->find('id_orgao = :team', 'team='. $_SESSION['user']['team'])->fetch(true);
         $apporved = 0;
         $blocked = 0;
         $pendding = 0;
         foreach ($agents as $agent) {
-            if ($agent->situacao == 1) {
-                $apporved++;
-            } else if ($agent->situacao == 0) {
-                $pendding++;
-            } else {
-                $blocked++;
+            $attach = (new Attach())->find('tipo_usuario = 3 AND id_usuario = :id', 'id='. $agent->id)
+                ->fetch(false);
+            $team = (new Team())->findById($agent->id_orgao);
+            $agentType = (new AgentType())->findById($agent->tipo_fiscal);
+
+            if ($attach) {
+                $agent->image = ROOT . '/themes/assets/uploads/agents/' . $attach->id_usuario . '/' . $attach->nome;
+                $agent->team = $team->sigla;
+                $agent->role = $agentType->nome;
+                if ($agent->situacao == 1) {
+                    $apporved++;
+                } else if ($agent->situacao == 0) {
+                    $pendding++;
+                } else {
+                    $blocked++;
+                }
             }
         }
 
@@ -2414,28 +2433,41 @@ class Web
      */
     public function userList(): void
     {
-        $users = (new User)->find('', '', 'id, cpf, email, nome')->fetch(true);
-        $approved = 0;
-        $blocked = 0;
-        $pendding = 0;
-        foreach ($users as $user) {
-            if ($user->situacao == 1) {
-                $approved++;
-            } else if ($user->situacao == 0) {
-                $pendding++;
-            } else {
-                $blocked++;
+        $users = (new User)->find('', '', 'id, cpf, email, nome, telefone')
+            ->fetch(true);
+
+        $userCount = 0;
+
+        if ($users) {
+            foreach ($users as $user) {
+                $attachs = (new Attach())->find('tipo_usuario = 0 AND id_usuario = :id', 'id='. $user->id)
+                    ->fetch(true);
+
+                if ($attachs) {
+                    foreach ($attachs as $attach) {
+                        $attachName = explode('.', $attach->nome);
+                        if ($attachName[0] == 'userImage') {
+                            $user->image = ROOT . '/themes/assets/uploads/users/' . $attach->id_usuario . '/' . $attach->nome;
+                        }
+                    }
+                }
+
+                $licenses = (new License())->find('id_usuario = :id', 'id='. $user->id, 'id')
+                    ->fetch(true);
+                if ($licenses) {
+                    $user->licenses = count($licenses);
+                } else {
+                    $user->licenses = 0;
+                }
             }
+
+            $userCount = count($users);
         }
 
         echo $this->view->render('userList', [
             'title' => 'Usuários | ' . SITE,
-            'user' => $user,
             'users' => $users,
-            'userCount' => count($users),
-            'approved' => $approved,
-            'blocked' => $blocked,
-            'pendding' => $pendding
+            'userCount' => $userCount
         ]);
     }
 
@@ -2648,16 +2680,20 @@ class Web
      */
     public function salesmanMap(): void
     {
-        $zoneData = array();
-        $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, 
-        ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes, vagas_fixas')
-            ->fetch(true);
-
         $pending = array();
         $expired = array();
         $paid = array();
+        $zoneData = null;
 
         if ($_SESSION['user']['login'] == 3) {
+            $zoneData = array();
+            $zones = (new Zone())->find('id_orgao = :team', 'team='. $_SESSION['user']['team'],
+        'id, 
+                ST_AsText(coordenadas) as poligono, 
+                ST_AsText(ST_Centroid(coordenadas)) as centroide, 
+                nome, limite_ambulantes, quantidade_ambulantes, vagas_fixas')
+            ->fetch(true);
+
             $salesmans = (new Salesman())->find('', '', 'id_licenca, latitude, longitude')
                 ->fetch(true);
             if ($salesmans) {
@@ -2681,33 +2717,31 @@ class Web
                     }
                 }
             }
-        }
 
-        if ($zones) {
-            foreach ($zones as $zone) {
-                $centroid = explode("POINT(", $zone->centroide);
-                $centroid = explode(")", $centroid[1]);
-                $centroid = explode(" ", $centroid[0]);
+            if ($zones) {
+                foreach ($zones as $zone) {
+                    $centroid = explode("POINT(", $zone->centroide);
+                    $centroid = explode(")", $centroid[1]);
+                    $centroid = explode(" ", $centroid[0]);
 
-                $polygon = explode("POLYGON((", $zone->poligono);
-                $polygon = explode("))", $polygon[1]);
-                $polygon = explode(",", $polygon[0]);
+                    $polygon = explode("POLYGON((", $zone->poligono);
+                    $polygon = explode("))", $polygon[1]);
+                    $polygon = explode(",", $polygon[0]);
 
-                $aux = array();
-                foreach ($polygon as $polig) {
-                    $polig = explode(" ", $polig);
-                    $aux[] = $polig;
+                    $aux = array();
+                    foreach ($polygon as $polig) {
+                        $polig = explode(" ", $polig);
+                        $aux[] = $polig;
+                    }
+
+                    $polygon = $aux;
+
+                    $zone->centroide = $centroid;
+                    $zone->poligono = $polygon;
+                    unset($zone->detalhes, $zone->foto);
+                    $zoneData[] = $zone;
                 }
-
-                $polygon = $aux;
-
-                $zone->centroide = $centroid;
-                $zone->poligono = $polygon;
-                unset($zone->detalhes, $zone->foto);
-                $zoneData[] = $zone;
             }
-        } else {
-            $zoneData = null;
         }
 
         echo $this->view->render('salesmanMap', [
@@ -2759,7 +2793,7 @@ class Web
     /**
      * @return void
      */
-    public function validateNewAgent($data): void
+    public function validateAgent($data): void
     {
         /**
          * Filter all form data
@@ -2802,6 +2836,7 @@ class Web
             $agent->nome = $data['name'];
             $agent->tipo_fiscal = 3;
             $agent->situacao = 0;
+            $agent->id_orgao = $_SESSION['user']['team'];
             $agent->telefone = $data['phone'];
             $agent->tipo_fiscal = $data['jobRole'];
             $agent->save();
@@ -2892,8 +2927,7 @@ class Web
     /**
      * @return void
      */
-    public
-    function validateZone($data)
+    public function validateZone($data): void
     {
         $image = null;
         if (is_uploaded_file($_FILES['zoneImage']['tmp_name'])) {
@@ -2940,6 +2974,7 @@ class Web
             $zone->quantidade_ambulantes = $data['occupied'];
             $zone->coordenadas = $polygon;
             $zone->vagas_fixas = $data['fixed'];
+            $zone->id_orgao = $_SESSION['user']['team'];
             $zone->save(['polygon']);
 
             if ($zone->fail()) {
@@ -3301,6 +3336,30 @@ class Web
         }
     }
 
+    public function validateAuxiliary($data): void
+    {
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $salesman = (new Salesman())->find('MD5(id) = :id', 'id='. $data['licenseId'], 'id')
+            ->fetch(false);
+
+        if ($salesman) {
+            $auxiliary = new Auxiliary();
+            $auxiliary->id_ambulante = $salesman->id;
+            $auxiliary->nome = $data['auxiliaryName'];
+            $auxiliary->cpf = $data['auxiliaryIdentity'];
+            $auxiliary->save();
+
+            if($auxiliary->fail()) {
+                var_dump($auxiliary->fail()->getMessage());
+            } else {
+                echo 1;
+            }
+        } else {
+            echo 0;
+        }
+    }
+
     public function zoneConfirm($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
@@ -3448,8 +3507,7 @@ class Web
         }
     }
 
-    public
-    function videos(): void
+    public function videos(): void
     {
         echo $this->view->render('videos', [
             'title' => "Vídeos | " . SITE
@@ -3460,8 +3518,7 @@ class Web
      * Return from PagSeguro
      * @return void
      */
-    public
-    function securePayment(): void
+    public function securePayment(): void
     {
         if (isset($_POST['notificationType']) && $_POST['notificationType'] == 'transaction') {
             $PagSeguro = new PagSeguro();
@@ -3561,11 +3618,21 @@ class Web
                 $license = (new License())->findById($salesman->id_licenca);
                 if ($license) {
                     $user = (new User())->findById($license->id_usuario);
+                    $auxiliaries = '';
+                    $auxs = (new Auxiliary())
+                        ->find('id_ambulante = :id', 'id='. $salesman->id, 'nome')
+                        ->fetch(true);
+                    if ($auxs) {
+                        foreach ($auxs as $aux) {
+                            $auxiliaries .= $aux->nome . ', ';
+                        }
+                    }
+
                     $template = file_get_contents(THEMES . "/assets/orders/salesmanOrder.php");
                     $variables = array("%qrcode%", "%process%", "%name%", "%identity%", "%ativity%", "%equipaments%", "%width%",
                         "%street%", "%aux%", "%day%", "%month%", "%year%", "%day2%", "%month2%", "%year2%");
                     $dataReplace = array($qrUrl, "", $user->nome, $user->cpf, $salesman->relato_atividade,
-                        $salesman->tipo_equipamento, $salesman->area_equipamento, $salesman->local_endereco, "",
+                        $salesman->tipo_equipamento, $salesman->area_equipamento, $salesman->local_endereco, $auxiliaries,
                         date('d', strtotime($license->data_inicio)), date('m', strtotime($license->data_inicio)),
                         date('Y', strtotime($license->data_inicio)),
                         date('d', strtotime($license->data_fim)), date('m', strtotime($license->data_fim)),
