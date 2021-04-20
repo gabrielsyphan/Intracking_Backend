@@ -1,21 +1,19 @@
 <?php $v->layout("_theme.php") ?>
 
-<div class="container-fluid mt-5 container-white border-bottom-gray">
-    <div class="row mt-5">
+<div class="container-fluid mt-5">
+    <div class="row">
         <div class="col-xl-12 mb-5">
             <div class="web-div-box">
                 <div class="box-div-info">
-                    <div>
-                        <h3 class="ml-3 title-section">Lista de usuários</h3>
-                        <p class="ml-3 subtitle-section-p">Todos os usuários cadastrados no Orditi</p>
+                    <h3 class="ml-3 title-section">Lista de usuários</h3>
+                    <p class="ml-3 subtitle-section-p">Todos os usuários cadastrados no Orditi</p>
 
-                        <div class="div-box-span-icon mt-3">
-                            <div class="div-table-search">
-                                <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
-                                       placeholder="Filtrar pelo nome...">
-                                <div class="circle-button primary search">
-                                    <span class="icon-search"></span>
-                                </div>
+                    <div class="div-box-span-icon mt-4">
+                        <div class="div-table-search">
+                            <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
+                                   placeholder="Filtrar pelo nome...">
+                            <div class="circle-button primary search">
+                                <span class="icon-search"></span>
                             </div>
                         </div>
                     </div>
@@ -31,23 +29,32 @@
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
-                                    <th scope="col" class="table-col-2">CPF <span class="icon-arrow_downward"></span>
-                                    </th>
-                                    <th scope="col" class="table-col-1">Nome <span class="icon-arrow_upward"></span>
-                                    </th>
-                                    <th scope="col" class="table-col-1">Email <span class="icon-arrow_downward"></span>
-                                    </th>
-                                    <th scope="col" class="table-col-1">Telefone <span class="icon-arrow_downward"></span>
-                                    </th>
+                                    <th scope="col">Usuário</th>
+                                    <th scope="col">Contato</th>
+                                    <th scope="col">Licenças</th>
                                 </tr>
                                 </thead>
                                 <tbody id="table-data">
                                 <?php foreach ($users as $user): ?>
                                     <tr class="border-left-green" onclick="profile('<?= md5($user->id) ;?>')">
-                                        <td><?= $user->cpf ?></td>
-                                        <td><?= $user->nome ?></td>
-                                        <td><?= $user->email ?></td>
-                                        <td><?= $user->telefone ?></td>
+                                        <td>
+                                            <div class="d-flex">
+                                                <img class="image-table" src="<?= $user->image ?>">
+                                                <div class="ml-4">
+                                                    <h5><?= $user->nome ?></h5>
+                                                    <h5 class="table-contact"><?= $user->cpf ?></h5>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <h5><?= $user->email ?></h5>
+                                            <h5 class="table-contact"><?= $user->telefone ?></h5>
+                                        </td>
+                                        <td>
+                                            <h5 class="table-contact">
+                                                <?= $user->licenses ?>
+                                                licenças</h5>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                                 </tbody>

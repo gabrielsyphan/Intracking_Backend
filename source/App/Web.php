@@ -2,6 +2,7 @@
 
 namespace Source\App;
 
+use Source\Models\AgentType;
 use Source\Models\Attach;
 use Source\Models\Auxiliary;
 use Source\Models\Fixed;
@@ -1125,7 +1126,7 @@ class Web
 
                     }
 
-                    if ($data['licenseType'] == 6) {
+                    if ($data['licenseType'] == 7) {
                         $validate = true;
                     }
                 }
@@ -1935,7 +1936,8 @@ class Web
         $license_type = (new LicenseType())->find()->fetch(true);
         $users = array();
         if ($_SESSION['user']['login'] == 3) {
-            $licenses = (new License())->find()->fetch(true);
+            $licenses = (new License())->find('id_orgao = :id', 'id='. $_SESSION['user']['team'])
+                ->fetch(true);
 
             $auxPaid = 0;
             $auxPending = 0;
@@ -2333,7 +2335,7 @@ class Web
         if ($payments) {
             foreach ($payments as $payment) {
                 $license = (new License())->findById($payment->id_licenca);
-                if ($license && $license->id_orgao = $_SESSION['user']['team']) {
+                if (($license != null) && ($license->id_orgao == $_SESSION['user']['team'])) {
                     $user = (new User())->findById($license->id_usuario);
                     $payment->name = $user->nome;
                     $paymentArray[] = $payment;
@@ -2345,9 +2347,9 @@ class Web
                     } else {
                         $auxExpired++;
                     }
+                    $paymentCount++;
                 }
             }
-            $paymentCount = count($payments);
         } else {
             $paymentArray = null;
         }
@@ -2367,18 +2369,27 @@ class Web
      */
     public function agentList(): void
     {
-        $agents = (new Agent)->find('id_orgao = :team', 'team='. $_SESSION['user']['team'],
-            'id, matricula, cpf, email, nome, situacao')->fetch(true);
+        $agents = (new Agent)->find('id_orgao = :team', 'team='. $_SESSION['user']['team'])->fetch(true);
         $apporved = 0;
         $blocked = 0;
         $pendding = 0;
         foreach ($agents as $agent) {
-            if ($agent->situacao == 1) {
-                $apporved++;
-            } else if ($agent->situacao == 0) {
-                $pendding++;
-            } else {
-                $blocked++;
+            $attach = (new Attach())->find('tipo_usuario = 3 AND id_usuario = :id', 'id='. $agent->id)
+                ->fetch(false);
+            $team = (new Team())->findById($agent->id_orgao);
+            $agentType = (new AgentType())->findById($agent->tipo_fiscal);
+
+            if ($attach) {
+                $agent->image = ROOT . '/themes/assets/uploads/agents/' . $attach->id_usuario . '/' . $attach->nome;
+                $agent->team = $team->sigla;
+                $agent->role = $agentType->nome;
+                if ($agent->situacao == 1) {
+                    $apporved++;
+                } else if ($agent->situacao == 0) {
+                    $pendding++;
+                } else {
+                    $blocked++;
+                }
             }
         }
 
@@ -2428,6 +2439,28 @@ class Web
         $userCount = 0;
 
         if ($users) {
+            foreach ($users as $user) {
+                $attachs = (new Attach())->find('tipo_usuario = 0 AND id_usuario = :id', 'id='. $user->id)
+                    ->fetch(true);
+
+                if ($attachs) {
+                    foreach ($attachs as $attach) {
+                        $attachName = explode('.', $attach->nome);
+                        if ($attachName[0] == 'userImage') {
+                            $user->image = ROOT . '/themes/assets/uploads/users/' . $attach->id_usuario . '/' . $attach->nome;
+                        }
+                    }
+                }
+
+                $licenses = (new License())->find('id_usuario = :id', 'id='. $user->id, 'id')
+                    ->fetch(true);
+                if ($licenses) {
+                    $user->licenses = count($licenses);
+                } else {
+                    $user->licenses = 0;
+                }
+            }
+
             $userCount = count($users);
         }
 

@@ -59,7 +59,7 @@
                     <li class="<?= ($router->isCurrentRoute("web.agentList") ? 'active' : ''); ?>">
                         <a href="<?= url("agentList"); ?>">
                             <span class="icon-users"></span>
-                            Fiscais
+                            Agentes
                         </a>
                     </li>
                 <?php endif; ?>

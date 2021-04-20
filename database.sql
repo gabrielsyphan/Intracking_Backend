@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 14-Abr-2021 às 15:57
+-- Tempo de geração: 20-Abr-2021 às 16:36
 -- Versão do servidor: 10.4.13-MariaDB
 -- versão do PHP: 7.4.8
 
@@ -44,13 +44,6 @@ CREATE TABLE `ambulantes` (
   `longitude` varchar(25) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Extraindo dados da tabela `ambulantes`
---
-
-INSERT INTO `ambulantes` (`id`, `id_licenca`, `id_bairro`, `id_zona`, `local_endereco`, `produto`, `atendimento_dias`, `atendimento_hora_inicio`, `atendimento_hora_fim`, `relato_atividade`, `area_equipamento`, `tipo_equipamento`, `latitude`, `longitude`) VALUES
-(26, 52, 13, NULL, 'Edifício Jambeiro, 555, Rua José de Alencar, Farol, Maceió, Região Geográfica Imediata de Maceió, Região Geográfica Intermediária de Maceió, Alagoas, Região Nordeste, 57051-565, Brasil', 25, 124, '19:02', '21:59', 'vendo produto x e y', '10 x 5', 'Barraca', '-9.649106390874152', '-35.739883116900614');
-
 -- --------------------------------------------------------
 
 --
@@ -69,16 +62,10 @@ CREATE TABLE `anexos` (
 --
 
 INSERT INTO `anexos` (`id`, `nome`, `tipo_usuario`, `id_usuario`) VALUES
-(15, 'userImage.jpeg', '3', 1),
-(97, 'userImage.jpeg', '0', 42),
-(98, 'identityImage.jpeg', '0', 42),
-(99, 'proofAddress.jpeg', '0', 42),
-(100, 'equipmentImage.jpg', '1', 47),
-(101, 'equipmentImage.jpg', '1', 48),
-(102, 'equipmentImage.jpg', '1', 49),
-(103, 'equipmentImage.jpg', '1', 50),
-(104, 'equipmentImage.jpg', '1', 51),
-(105, 'equipmentImage.jpg', '1', 52);
+(15, 'userImage.png', '3', 1),
+(109, 'userImage.png', '0', 44),
+(110, 'identityImage.jpg', '0', 44),
+(111, 'proofAddress.png', '0', 44);
 
 -- --------------------------------------------------------
 
@@ -223,7 +210,7 @@ CREATE TABLE `boletos` (
 --
 
 INSERT INTO `boletos` (`id`, `id_licenca`, `id_usuario`, `cod_referencia`, `cod_pagamento`, `valor`, `status`, `tipo`, `pagar_em`, `pago_em`) VALUES
-(173, 52, 1, '15123', 'teste', 144, 3, 1, '2021-04-17 03:00:00', '2021-04-14 11:31:07');
+(175, 54, 44, '15123', 'teste', 35, 3, 1, '2021-04-23 03:00:00', '2021-04-20 13:34:21');
 
 -- --------------------------------------------------------
 
@@ -297,7 +284,7 @@ CREATE TABLE `fiscais` (
 --
 
 INSERT INTO `fiscais` (`id`, `id_orgao`, `matricula`, `nome`, `email`, `senha`, `cpf`, `telefone`, `tipo_fiscal`, `situacao`) VALUES
-(1, 2, '111111-1', 'Lucas Gabriel Peixoto de Oliveira', 'lucasgabrielpdoliveira@gmail.com', '698d51a19d8a121ce581499d7b701668', '111.657.194-36', '82 9 8718-0470', 4, 1);
+(1, 2, '952714-1', 'Lucas Gabriel Peixoto de Oliveira', 'lucasgabrielpdoliveira@gmail.com', '698d51a19d8a121ce581499d7b701668', '111.657.194-36', '82 9 8718-0470', 4, 1);
 
 -- --------------------------------------------------------
 
@@ -356,7 +343,7 @@ CREATE TABLE `licencas` (
 --
 
 INSERT INTO `licencas` (`id`, `id_orgao`, `cmc`, `tipo`, `data_inicio`, `data_fim`, `status`, `id_usuario`) VALUES
-(52, 1, '0', '1', '2021-04-14', '2021-04-17', 3, 42);
+(54, 2, '99000279', '7', '2021-04-20', '2021-04-23', 0, 44);
 
 -- --------------------------------------------------------
 
@@ -375,6 +362,13 @@ CREATE TABLE `mercado` (
   `atendimento_hora_inicio` varchar(15) NOT NULL,
   `atendimento_hora_fim` varchar(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Extraindo dados da tabela `mercado`
+--
+
+INSERT INTO `mercado` (`id`, `produtos`, `relato_atividade`, `id_zona`, `id_licenca`, `id_vaga`, `atendimento_dias`, `atendimento_hora_inicio`, `atendimento_hora_fim`) VALUES
+(7, 245, 'Produtos diversos', 145, 54, 96, '12345', '08:00', '18:00');
 
 -- --------------------------------------------------------
 
@@ -550,7 +544,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `cpf`, `nome`, `endereco`, `telefone`, `email`, `rg`, `nome_mae`, `senha`) VALUES
-(42, '034.325.347-01', 'Lucas Gabriel Peixoto de Oliveira', 'Rua Doutor Batista Acioly, Rio Largo, Centro, 294', '82 98718-0470', 'lucasgabrielpdoliveira@gmail.com', '3651746-1', 'Izabel Cristina Barros Peixoto', '202cb962ac59075b964b07152d234b70');
+(44, '111.657.194-36', 'Lucas Gabriel Peixoto de Oliveira', 'Rua Doutor Batista Acioly, Rio Largo, Centro, 294', '82 98718-0470', 'lucasgabrielpdoliveira@gmail.com', '3651746-1', 'Izabel Cristina Barros Peixoto', NULL);
 
 -- --------------------------------------------------------
 
@@ -570,6 +564,22 @@ CREATE TABLE `vagas_fixas` (
   `inicio` timestamp NULL DEFAULT NULL,
   `fim` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Extraindo dados da tabela `vagas_fixas`
+--
+
+INSERT INTO `vagas_fixas` (`id`, `cod_identificador`, `id_licenca`, `id_zona`, `coordenadas`, `nome`, `descricao`, `valor`, `inicio`, `fim`) VALUES
+(96, 'ODTF-16189255850', 54, 145, 0x0000000001030000000100000005000000d32c2083dbdc41c06861000a395623c0b787edc8dcdc41c0b1434f3e475623c0a982c102d9dc41c00c8224ab495623c03bc3004fd8dc41c0855140ad3c5623c0d32c2083dbdc41c06861000a395623c0, 'Box 01', 'Descrição box 01', '35,50', NULL, NULL),
+(97, 'ODTF-16189255851', NULL, 145, NULL, NULL, NULL, NULL, NULL, NULL),
+(98, 'ODTF-16189255852', NULL, 145, NULL, NULL, NULL, NULL, NULL, NULL),
+(99, 'ODTF-16189255853', NULL, 145, NULL, NULL, NULL, NULL, NULL, NULL),
+(100, 'ODTF-16189255854', NULL, 145, NULL, NULL, NULL, NULL, NULL, NULL),
+(101, 'ODTF-16189255855', NULL, 145, NULL, NULL, NULL, NULL, NULL, NULL),
+(102, 'ODTF-16189255856', NULL, 145, NULL, NULL, NULL, NULL, NULL, NULL),
+(103, 'ODTF-16189255857', NULL, 145, NULL, NULL, NULL, NULL, NULL, NULL),
+(104, 'ODTF-16189255858', NULL, 145, NULL, NULL, NULL, NULL, NULL, NULL),
+(105, 'ODTF-16189255859', NULL, 145, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -618,7 +628,7 @@ INSERT INTO `zonas` (`id`, `id_orgao`, `coordenadas`, `descricao`, `nome`, `foto
 (83, 0, 0x00000000010300000001000000080000000d00007cd0dd41c0d6644eb1765323c01c0000c2d5dd41c038051ff1855323c0caffff4bd3dd41c025ed0ace935323c01e0000c8cfdd41c0bbc580bc9a5323c0c8ffff7ecddd41c0bbc580bc9a5323c0f2ffffbccbdd41c025ed0ace935323c0e5ffff43ccdd41c0f638cc198a5323c00d00007cd0dd41c0d6644eb1765323c0, 'Area cadastrada', 'Mirante São Gonçalo (Rosalvo Ribeiro)', '', 3, 1, 0),
 (89, 0, 0x00000000010300000001000000090000002a00006456d941c0e2da0d39b65123c02f0000ee26d941c0bc5a8bb5055323c0d2ffff3d13d941c009facf56905323c01f00001a0ad941c0395f84f9a05323c023000026fed841c0353407918d5323c0c8ffff9119d941c0fade9707d15223c0fbffff032fd941c0e10346ac2a5223c0dbfffff947d941c09a7e28d6b45123c02a00006456d941c0e2da0d39b65123c0, 'Proximo ao banco do Brasil', 'Faixa de areia ponta verde', NULL, 10, 8, 0),
 (90, 1, 0x0000000001030000000100000005000000c4ffffc1cad941c099a078a3794c23c0c4ffffc1cad941c0c7a17351654d23c0d8ffff0389d941c0825ba48b624d23c0450000faa1d941c0311fa3a3ff4b23c0c4ffffc1cad941c099a078a3794c23c0, 'Zona cadastrada', 'Praia da jatiuca', NULL, 10, 10, 0),
-(142, 0, 0x0000000001030000000100000005000000d33ff6d0e8dc41c0d844dcfc495623c0330f3c24dadc41c03adb0081575623c087a44ce9d8dc41c0e8fb9c9e375623c0f3910b3ce7dc41c0557b6aad275623c0d33ff6d0e8dc41c0d844dcfc495623c0, 'Mercado público', 'Mercado público do jaraguá', NULL, 5, 0, 6);
+(145, 2, 0x0000000001030000000100000005000000bc69dc0be8dc41c021bf9a0e4a5623c0b95530efd9dc41c08bb21bbf575623c0bd194438d8dc41c0efa12ee33c5623c0960e80f2e6dc41c005d9f69c285623c0bc69dc0be8dc41c021bf9a0e4a5623c0, 'Zona cadastrada', 'Mercado público do jaraguá', NULL, 10, 0, 10);
 
 --
 -- Índices para tabelas despejadas
@@ -770,7 +780,7 @@ ALTER TABLE `ambulantes`
 -- AUTO_INCREMENT de tabela `anexos`
 --
 ALTER TABLE `anexos`
-  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
+  MODIFY `id` int(45) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
 
 --
 -- AUTO_INCREMENT de tabela `auxiliares`
@@ -782,7 +792,7 @@ ALTER TABLE `auxiliares`
 -- AUTO_INCREMENT de tabela `boletos`
 --
 ALTER TABLE `boletos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=174;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=176;
 
 --
 -- AUTO_INCREMENT de tabela `eventos`
@@ -812,13 +822,13 @@ ALTER TABLE `food_trucks`
 -- AUTO_INCREMENT de tabela `licencas`
 --
 ALTER TABLE `licencas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT de tabela `mercado`
 --
 ALTER TABLE `mercado`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de tabela `notificacoes`
@@ -866,19 +876,19 @@ ALTER TABLE `uso_de_solo`
 -- AUTO_INCREMENT de tabela `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT de tabela `vagas_fixas`
 --
 ALTER TABLE `vagas_fixas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
 
 --
 -- AUTO_INCREMENT de tabela `zonas`
 --
 ALTER TABLE `zonas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=143;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

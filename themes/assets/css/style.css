@@ -75,7 +75,7 @@ a, a:hover {
 
 #sidebar {
     /*background: url('../img/sidebarwallpaper.png') center;*/
-    background: #42b0bb;
+    background: #4bc2ce;
     color: #fff;
     transition: 0.3s;
 }
@@ -113,7 +113,7 @@ a, a:hover {
 
 #sidebar ul li:hover {
     color: #7386D5;
-    background: #33a0aa;
+    background: #38bcc9;
 }
 
 #sidebar ul li.active {
@@ -123,7 +123,7 @@ a, a:hover {
 
 #sidebar ul li.active {
     border-left: 4px solid #f05977;
-    background: #4fb6bf;
+    background: #38bcc9;
 }
 
 .sidebar-image {
@@ -132,6 +132,7 @@ a, a:hover {
     border: 1px solid white;
     padding: 1px;
     height: 125px;
+    object-fit: cover;
 }
 
 .sidebar-image:hover {
@@ -343,13 +344,14 @@ a[data-toggle="collapse"] {
         width: auto;
     }
 
+    .table-col-6 {
+        width: 35%;
+    }
+
     .div-box-span-icon{
         top: 10px;
         position: absolute;
         right: 40px;
-    }
-
-    .circle-card-option{
     }
 
     .only-desktop {
@@ -399,6 +401,26 @@ a[data-toggle="collapse"] {
     box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
     text-align: center;
     color: white;
+}
+
+.status-circle {
+    width: 7px;
+    border-radius: 100%;
+    height: 7px;
+    top: 20px;
+    position: relative;
+    margin-right: 5px;
+}
+
+.status-circle-change {
+    font-size: 28px;
+    padding: 0;
+    margin: 0;
+    color: #c0c0c0fa;
+}
+
+.status-circle-change:hover {
+    color: #9b9b9bfa;
 }
 
 .primary {
@@ -498,7 +520,6 @@ a[data-toggle="collapse"] {
 
 .secondary-color {
     color: #33a0aa !important;
-    border: 1px solid #33a0aa;
     background: transparent;
 }
 
@@ -970,7 +991,7 @@ a[data-toggle="collapse"] {
 .web-div-box {
     width: 100%;
     background-color: #fff;
-    border-radius: 10px;
+    border-radius: 6px;
 }
 
 .web-div{
@@ -1787,12 +1808,12 @@ border-left-red {
 
 .zone-info-icons {
     color: #fff;
-    font-size: 32px;
+    font-size: 20px;
 }
 
 .div-circle {
     border-radius: 50%;
-    width: 60px;
+    width: 45px;
 }
 
 .div-zone-info-data {
@@ -1808,4 +1829,20 @@ border-left-red {
 #editFixMap {
     width: 100%;
     height: 85vh;
+}
+
+.image-table {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.table-contact {
+    color: #7f7f7f;
+    font-weight: 300;
+}
+
+.custom-table > td {
+    line-height: 50px !important;
 }
