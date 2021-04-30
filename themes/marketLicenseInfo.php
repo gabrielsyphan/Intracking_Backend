@@ -301,17 +301,19 @@
                         </div>
                     </div>
                 </div>
+                <?php if ($licenseStatus == 1): ?>
                 <div class="col-sm-6">
                     <div class="row m-0 mt-3 p-4 border-left-green-light div-request-license mb-5" onclick="openOrder()">
                         <div class="col-2 text-center mt-4">
                             <img src="<?= url('themes/assets/img/order.png') ?>">
                         </div>
                         <div class="col-10">
-                            <h4 class="black-title-section">Alvará</h4>
-                            <p class="subtitle-section-p">Acessar alvará.</p>
+                            <h4 class="black-title-section">Permissão</h4>
+                            <p class="subtitle-section-p">Gerar permissão.</p>
                         </div>
                     </div>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

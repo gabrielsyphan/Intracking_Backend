@@ -3,7 +3,7 @@
 <div class="container-fluid mt-5">
     <div class="row">
         <div class="col-md-6 col-xl-3 mb-4">
-            <div class="web-div-box border-bottom-gray">
+            <div class="web-div-box">
                 <div class="box-div-info p-5">
                     <div class="row">
                         <div class="col-8">
@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="col-md-6 col-xl-3 mb-4">
-            <div class="web-div-box border-bottom-gray">
+            <div class="web-div-box">
                 <div class="box-div-info p-5">
                     <div class="row">
                         <div class="col-8">
@@ -43,7 +43,7 @@
             </div>
         </div>
         <div class="col-md-6 col-xl-3 mb-4">
-            <div class="web-div-box border-bottom-gray">
+            <div class="web-div-box">
                 <div class="box-div-info p-5">
                     <div class="row">
                         <div class="col-8">
@@ -63,7 +63,7 @@
             </div>
         </div>
         <div class="col-md-6 col-xl-3 mb-4">
-            <div class="web-div-box border-bottom-gray">
+            <div class="web-div-box">
                 <div class="box-div-info p-5">
                     <div class="row">
                         <div class="col-8">
@@ -97,7 +97,7 @@
                         <div class="div-box-span-icon mt-4">
                             <div class="div-table-search">
                                 <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
-                                       placeholder="Filtrar pela matrícula...">
+                                       placeholder="Filtrar pelo nome...">
                                 <div class="circle-button primary search">
                                     <span class="icon-search"></span>
                                 </div>
@@ -168,7 +168,7 @@
                                         <?php break;
                                         case 1: ?>
                                                 <div class="d-flex">
-                                                    <div class="status-circle primary"></div>
+                                                    <div class="status-circle primary t-20"></div>
                                                     Ativo
                                                 </div>
                                             </td>
@@ -181,7 +181,7 @@
                                             <?php break;
                                         default: ?>
                                                 <div class="d-flex">
-                                                    <div class="status-circle secondary"></div>
+                                                    <div class="status-circle secondary t-20"></div>
                                                     Bloqueado
                                                 </div>
                                             </td>
@@ -214,7 +214,7 @@
 <script src="<?= url("themes/assets/vendor/bootstrap/js/popper.js"); ?>"></script>
 <script src="<?= url("themes/assets/vendor/bootstrap/js/bootstrap.min.js"); ?>"></script>
 <script>
-    let filterValue = 1;
+    let filterValue = 0;
 
     function alterFilter(e) {
         filterValue = e;
