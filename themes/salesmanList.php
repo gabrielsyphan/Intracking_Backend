@@ -3,7 +3,7 @@
 <div class="container-fluid mt-5">
     <div class="row">
         <div class="col-md-6 col-xl-3 mb-4">
-            <div class="web-div-box border-bottom-gray">
+            <div class="web-div-box">
                 <div class="box-div-info p-5">
                     <div class="row">
                         <div class="col-8">
@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="col-md-6 col-xl-3 mb-4">
-            <div class="web-div-box border-bottom-gray">
+            <div class="web-div-box">
                 <div class="box-div-info p-5">
                     <div class="row">
                         <div class="col-8">
@@ -43,7 +43,7 @@
             </div>
         </div>
         <div class="col-md-6 col-xl-3 mb-4">
-            <div class="web-div-box border-bottom-gray">
+            <div class="web-div-box">
                 <div class="box-div-info p-5">
                     <div class="row">
                         <div class="col-8">
@@ -63,7 +63,7 @@
             </div>
         </div>
         <div class="col-md-6 col-xl-3 mb-4">
-            <div class="web-div-box border-bottom-gray">
+            <div class="web-div-box">
                 <div class="box-div-info p-5">
                     <div class="row">
                         <div class="col-8">
@@ -161,7 +161,10 @@
                                         <td><?= $license->data_inicio ?></td>
                                         <td><?= $license->data_fim ?></td>
                                         <td>
-                                            <div class="status-button <?= $divStatus ?>"><?= $textStatus ?></div>
+                                            <div class="d-flex">
+                                                <div class="status-circle <?= $divStatus; ?> t-5"></div>
+                                                <?= $textStatus; ?>
+                                            </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
