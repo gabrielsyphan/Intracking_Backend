@@ -1,92 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="569a43d1-da8c-4d19-a6dd-0ce78908e169" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/themes/assets/orders/marketOrder.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.htaccess" beforeDir="false" afterPath="$PROJECT_DIR$/.htaccess" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/OrditiWeb.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/OrditiWeb.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/orditi.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/orditi.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/App/Api.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/App/Api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/App/Web.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/App/Web.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/App/WebServiceSIAT.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/App/WebServiceSIAT.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Config.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/Config.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Models/AgentType.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/Models/AgentType.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Models/Auxiliary.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/Models/Auxiliary.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Models/Email.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/Models/Email.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Models/Fixed.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/Models/Fixed.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Models/FoodTruck.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/Models/FoodTruck.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Models/Market.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/Models/Market.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Models/Occupation.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/Models/Occupation.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Models/Team.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/Models/Team.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/.htaccess" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/.htaccess" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/Api.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/Api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/atualizarAmbulante.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/atualizarAmbulante.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/atualizarFoto.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/atualizarFoto.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/atualizarUsuario.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/atualizarUsuario.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/base.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/base.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/cadastrarAmbulante.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/cadastrarAmbulante.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/cadastrarDenuncia.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/cadastrarDenuncia.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/cadastrarEmpresa.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/cadastrarEmpresa.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/cadastrarNotificacao.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/cadastrarNotificacao.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/cadastrarUsuario.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/cadastrarUsuario.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/cadastrarZona.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/cadastrarZona.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/connection.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/connection.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/error_log" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/error_log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/filtrarAmbulante.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/filtrarAmbulante.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/filtrarBoletosLicenca.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/filtrarBoletosLicenca.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/filtrarLicencaAmbulante.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/filtrarLicencaAmbulante.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/filtrarUsuario.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/filtrarUsuario.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/listarAmbulantes.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/listarAmbulantes.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/listarAnexos.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/listarAnexos.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/listarDenuncias.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/listarDenuncias.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/listarEmpresas.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/listarEmpresas.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/listarFiscais.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/listarFiscais.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/listarFuncionarios.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/listarFuncionarios.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/listarLicencas.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/listarLicencas.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/listarNotificacoes.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/listarNotificacoes.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/listarUsuarios.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/listarUsuarios.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/listarZonas.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/listarZonas.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/teste.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/teste.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/services/validaLogin.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/services/validaLogin.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/_navbar.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/_navbar.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/_theme.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/_theme.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/_websocket.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/_websocket.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/agentList.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/agentList.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/themes/assets/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/assets/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/themes/assets/js/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/createAgent.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/createAgent.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/createUser.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/createUser.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/createZone.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/createZone.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/editZoneFixed.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/editZoneFixed.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/foodTrucksLicense.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/foodTrucksLicense.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/foodTrucksLicenseInfo.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/foodTrucksLicenseInfo.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/home.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/home.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/licenseList.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/licenseList.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/login.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/login.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/marketLicense.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/marketLicense.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/marketLicenseInfo.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/marketLicenseInfo.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/occupationLicense.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/occupationLicense.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/occupationLicenseInfo.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/occupationLicenseInfo.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/paymentList.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/paymentList.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/profile.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/profile.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/requestLicense.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/requestLicense.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/salesmanLicense.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/salesmanLicense.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/salesmanLicenseInfo.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/salesmanLicenseInfo.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/salesmanList.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/salesmanList.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/salesmanMap.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/salesmanMap.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/userList.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/userList.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/zone.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/zone.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/coffeecode/datalayer/src/CrudTrait.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/coffeecode/datalayer/src/CrudTrait.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/coffeecode/datalayer/src/DataLayer.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/coffeecode/datalayer/src/DataLayer.php" afterDir="false" />
-    </list>
+    <list default="true" id="569a43d1-da8c-4d19-a6dd-0ce78908e169" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -203,6 +118,7 @@
       <workItem from="1620050420299" duration="1960000" />
       <workItem from="1620064940535" duration="9108000" />
       <workItem from="1619701108840" duration="3702000" />
+      <workItem from="1620076989539" duration="116000" />
     </task>
     <servers />
   </component>
@@ -219,80 +135,14 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="php">
-          <url>file://$PROJECT_DIR$/source/Config.php</url>
-          <line>18</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="php">
-          <url>file://$PROJECT_DIR$/themes/_navbar.php</url>
-          <line>13</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="2372" y="332" key="ComposerInitDialogKey" timestamp="1618848149499">
-      <screen x="1920" y="0" width="1413" height="864" />
-    </state>
-    <state x="2372" y="332" key="ComposerInitDialogKey/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1618848149499" />
-    <state x="2364" y="130" key="FileChooserDialogImpl" timestamp="1617977538056">
-      <screen x="1920" y="0" width="1413" height="864" />
-    </state>
-    <state x="2364" y="130" key="FileChooserDialogImpl/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1617977538056" />
-    <state x="2375" y="130" key="FileChooserDialogImpl/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617389291357" />
-    <state x="2406" y="206" key="NewPhpClassDialog" timestamp="1618841753233">
-      <screen x="1920" y="0" width="1413" height="864" />
-    </state>
-    <state x="2406" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1618841753233" />
-    <state x="577" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1413.864@74.0.1462.864" timestamp="1617981458739" />
-    <state x="2418" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617104553049" />
-    <state x="577" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1447.864@74.0.1462.864" timestamp="1617163446865" />
-    <state x="2448" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1536.864@1920.0.1536.864" timestamp="1618400408708" />
-    <state x="2457" y="341" key="NewPhpFileDialog" timestamp="1617585722193">
-      <screen x="1920" y="0" width="1447" height="864" />
-    </state>
-    <state x="2457" y="341" key="NewPhpFileDialog/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617585722193" />
-    <state x="2020" y="0" key="SettingsEditor" timestamp="1617979376166">
-      <screen x="1920" y="0" width="1413" height="864" />
-    </state>
-    <state x="2020" y="0" key="SettingsEditor/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1617979376166" />
-    <state x="2272" y="215" key="com.intellij.ide.util.TipDialog" timestamp="1619701566835">
-      <screen x="1920" y="0" width="1413" height="864" />
-    </state>
-    <state x="2272" y="215" key="com.intellij.ide.util.TipDialog/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1619701566835" />
-    <state x="438" y="215" key="com.intellij.ide.util.TipDialog/74.0.1462.864/1920.0.1413.864@74.0.1462.864" timestamp="1618843307305" />
-    <state x="2280" y="215" key="com.intellij.ide.util.TipDialog/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617622299476" />
-    <state x="2280" y="215" key="com.intellij.ide.util.TipDialog/74.0.1462.864/1920.0.1447.864@74.0.1462.864" timestamp="1617385912953" />
-    <state x="411" y="80" width="714" height="664" key="find.popup" timestamp="1619710511147">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="411" y="80" width="714" height="664" key="find.popup/0.-1080.1920.1030/0.0.1536.824@0.0.1536.824" timestamp="1619710511147" />
-    <state x="378" y="193" width="870" height="1034" key="run.anything.popup" timestamp="1618927842749">
-      <screen x="74" y="0" width="1462" height="864" />
-    </state>
-    <state x="2214" y="193" width="840" height="1034" key="run.anything.popup/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1618848119695" />
-    <state x="378" y="193" width="870" height="1034" key="run.anything.popup/74.0.1462.864/1920.0.1413.864@74.0.1462.864" timestamp="1618927842749" />
-    <state x="2221" y="193" key="run.anything.popup/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617585798189" />
-    <state x="378" y="193" key="run.anything.popup/74.0.1462.864/1920.0.1447.864@74.0.1462.864" timestamp="1617156912268" />
-    <state x="2240" y="193" key="run.anything.popup/74.0.1462.864/1920.0.1536.864@1920.0.1536.864" timestamp="1618401672002" />
-    <state x="380" y="-1" width="849" height="1034" key="search.everywhere.popup" timestamp="1617162435342">
-      <screen x="74" y="0" width="1462" height="864" />
-    </state>
-    <state x="2223" y="-1" width="840" height="1034" key="search.everywhere.popup/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617111989673" />
-    <state x="380" y="-1" width="849" height="1034" key="search.everywhere.popup/74.0.1462.864/1920.0.1447.864@74.0.1462.864" timestamp="1617162435342" />
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/source/App/Web.php</url>
-          <line>3687</line>
+          <line>3683</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>

@@ -2791,8 +2791,8 @@ class Web
         $agentTeam = $_SESSION['user']['team'];
 
         echo $this->view->render("createAgent", [
-            "title" => "Cadastrar agente | " . SITE
-            "agentTeam" => $agentTeam,
+            "title" => "Cadastrar agente | " . SITE,
+            "agentTeam" => $agentTeam
         ]);
     }
 
