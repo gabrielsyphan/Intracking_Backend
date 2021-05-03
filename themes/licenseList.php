@@ -66,7 +66,10 @@
                                     <td><?= $license->data_inicio ?></td>
                                     <td><?= $license->data_fim ?></td>
                                     <td>
-                                        <div class="status-button <?= $divStatus ?>"><?= $textStatus ?></div>
+                                        <div class="d-flex">
+                                            <div class="status-circle primary t-5"></div>
+                                            <?= $textStatus; ?>
+                                        </div>
                                     </td>
                                 </tr>
                                 <?php $aux++; endforeach; ?>

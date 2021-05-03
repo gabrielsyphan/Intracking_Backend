@@ -84,7 +84,7 @@
                     <li class="<?= ($router->isCurrentRoute("web.createAgent") ? 'active' : ''); ?>">
                         <a href="<?= url("createAgent"); ?>">
                             <span class="icon-user-secret"></span>
-                            Novo fiscal
+                            Novo agente
                         </a>
                     </li>
                     <li class="<?= ($router->isCurrentRoute("web.createUser") ? 'active' : ''); ?>">

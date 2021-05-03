@@ -407,9 +407,16 @@ a[data-toggle="collapse"] {
     width: 7px;
     border-radius: 100%;
     height: 7px;
-    top: 20px;
     position: relative;
     margin-right: 5px;
+}
+
+.t-20 {
+    top: 20px;
+}
+
+.t-5 {
+    top: 5px;
 }
 
 .status-circle-change {
@@ -1845,4 +1852,11 @@ border-left-red {
 
 .custom-table > td {
     line-height: 50px !important;
+}
+
+.marker.active{
+    height: 5px;
+    width: 5px;
+    border-radius: 50%;
+    background-color: #0f6674;
 }
