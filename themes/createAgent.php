@@ -50,7 +50,7 @@
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Confirmar E-mail:</label>
+                            <label>E-mail</label>
                             <input type="email" class="form-input" id="confirm_email"
                                    name="confirm_email"
                                    title="Email do fiscal" placeholder="Confirme Seu E-mail">
@@ -71,10 +71,16 @@
                         <div class="form-group">
                             <label>Cargo:</label>
                             <select class="form-input" name="jobRole">
-                                <option value="1">Estagiário</option>
-                                <option value="2" selected>Fiscal</option>
-                                <option value="3">Finanças</option>
-                                <option value="4">Gestor</option>
+                                <?php if ($agentTeam == 2): ?>
+                                    <option value="1">Estagiário</option>
+                                    <option value="4" selected>Gestor</option>
+                                <?php else: ; ?>
+
+                                    <option value="1">Estagiário</option>
+                                    <option value="2" selected>Fiscal</option>
+                                    <option value="3">Finanças</option>
+                                    <option value="4">Gestor</option>
+                                <?php endif; ?>
                             </select>
                         </div>
                     </div>

@@ -20,6 +20,17 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
   <component name="PhpWorkspaceProjectConfiguration">
     <include_path>
       <path value="$PROJECT_DIR$/vendor/league/plates" />
@@ -38,14 +49,16 @@
   <component name="ProjectId" id="1qQhD6pbKJx3ty3kclKsB1YCOei" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/themes/assets/orders" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
+    <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -62,6 +75,7 @@
       <command value="composer require firebase/php-jwt" />
     </option>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -90,57 +104,47 @@
       <workItem from="1618848068645" duration="9875000" />
       <workItem from="1618920007748" duration="597000" />
       <workItem from="1618927605424" duration="292000" />
+      <workItem from="1619182745790" duration="2863000" />
+      <workItem from="1619189814281" duration="1423000" />
+      <workItem from="1619725470449" duration="84000" />
+      <workItem from="1619743464941" duration="493000" />
+      <workItem from="1619900171089" duration="35000" />
+      <workItem from="1619904611734" duration="1232000" />
+      <workItem from="1619980009305" duration="787000" />
+      <workItem from="1619997029387" duration="27000" />
+      <workItem from="1620050420299" duration="1960000" />
+      <workItem from="1620064940535" duration="9108000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="version" value="3" />
   </component>
-  <component name="WindowStateProjectService">
-    <state x="2372" y="332" key="ComposerInitDialogKey" timestamp="1618848149499">
-      <screen x="1920" y="0" width="1413" height="864" />
-    </state>
-    <state x="2372" y="332" key="ComposerInitDialogKey/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1618848149499" />
-    <state x="2364" y="130" key="FileChooserDialogImpl" timestamp="1617977538056">
-      <screen x="1920" y="0" width="1413" height="864" />
-    </state>
-    <state x="2364" y="130" key="FileChooserDialogImpl/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1617977538056" />
-    <state x="2375" y="130" key="FileChooserDialogImpl/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617389291357" />
-    <state x="2406" y="206" key="NewPhpClassDialog" timestamp="1618841753233">
-      <screen x="1920" y="0" width="1413" height="864" />
-    </state>
-    <state x="2406" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1618841753233" />
-    <state x="577" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1413.864@74.0.1462.864" timestamp="1617981458739" />
-    <state x="2418" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617104553049" />
-    <state x="577" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1447.864@74.0.1462.864" timestamp="1617163446865" />
-    <state x="2448" y="206" key="NewPhpClassDialog/74.0.1462.864/1920.0.1536.864@1920.0.1536.864" timestamp="1618400408708" />
-    <state x="2457" y="341" key="NewPhpFileDialog" timestamp="1617585722193">
-      <screen x="1920" y="0" width="1447" height="864" />
-    </state>
-    <state x="2457" y="341" key="NewPhpFileDialog/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617585722193" />
-    <state x="2020" y="0" key="SettingsEditor" timestamp="1617979376166">
-      <screen x="1920" y="0" width="1413" height="864" />
-    </state>
-    <state x="2020" y="0" key="SettingsEditor/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1617979376166" />
-    <state x="2272" y="215" key="com.intellij.ide.util.TipDialog" timestamp="1618927608828">
-      <screen x="1920" y="0" width="1413" height="864" />
-    </state>
-    <state x="2272" y="215" key="com.intellij.ide.util.TipDialog/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1618927608828" />
-    <state x="438" y="215" key="com.intellij.ide.util.TipDialog/74.0.1462.864/1920.0.1413.864@74.0.1462.864" timestamp="1618843307305" />
-    <state x="2280" y="215" key="com.intellij.ide.util.TipDialog/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617622299476" />
-    <state x="2280" y="215" key="com.intellij.ide.util.TipDialog/74.0.1462.864/1920.0.1447.864@74.0.1462.864" timestamp="1617385912953" />
-    <state x="378" y="193" width="870" height="1034" key="run.anything.popup" timestamp="1618927842749">
-      <screen x="74" y="0" width="1462" height="864" />
-    </state>
-    <state x="2214" y="193" width="840" height="1034" key="run.anything.popup/74.0.1462.864/1920.0.1413.864@1920.0.1413.864" timestamp="1618848119695" />
-    <state x="378" y="193" width="870" height="1034" key="run.anything.popup/74.0.1462.864/1920.0.1413.864@74.0.1462.864" timestamp="1618927842749" />
-    <state x="2221" y="193" key="run.anything.popup/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617585798189" />
-    <state x="378" y="193" key="run.anything.popup/74.0.1462.864/1920.0.1447.864@74.0.1462.864" timestamp="1617156912268" />
-    <state x="2240" y="193" key="run.anything.popup/74.0.1462.864/1920.0.1536.864@1920.0.1536.864" timestamp="1618401672002" />
-    <state x="380" y="-1" width="849" height="1034" key="search.everywhere.popup" timestamp="1617162435342">
-      <screen x="74" y="0" width="1462" height="864" />
-    </state>
-    <state x="2223" y="-1" width="840" height="1034" key="search.everywhere.popup/74.0.1462.864/1920.0.1447.864@1920.0.1447.864" timestamp="1617111989673" />
-    <state x="380" y="-1" width="849" height="1034" key="search.everywhere.popup/74.0.1462.864/1920.0.1447.864@74.0.1462.864" timestamp="1617162435342" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/source/Config.php</url>
+          <line>18</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/themes/_navbar.php</url>
+          <line>13</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

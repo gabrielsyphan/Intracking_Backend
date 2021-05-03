@@ -37,7 +37,8 @@
                         Licenças
                     </a>
                 </li>
-                <?php if ($_SESSION['user']['role'] == 3 ||  $_SESSION['user']['role'] == 4): ?>
+                <?php if ($_SESSION['user']['role'] == 3 ||  $_SESSION['user']['role'] == 4
+                    || ($_SESSION['user']['team'] == 2 && $_SESSION['user']['role'] == 1)): ?>
                     <li class="<?= ($router->isCurrentRoute("web.paymentList") ? 'active' : ''); ?>">
                         <a href="<?= url("paymentList"); ?>">
                             <span class="icon-money"></span>

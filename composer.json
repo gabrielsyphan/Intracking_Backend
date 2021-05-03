@@ -1,6 +1,6 @@
 {
-  "name": "lucaswtk/phptips",
-  "description": "Sistema de gerenciamento de ambulantes",
+  "name": "orditi/orditiweb",
+  "description": "Sistema de gerenciamento e manutenção de serviços de prefeituras dos estados",
   "minimum-stability": "stable",
   "license": "MIT",
   "authors": [
@@ -9,6 +9,12 @@
       "email": "gabriel@syphan.com.br",
       "role": "Developer",
       "homepage": "https://www.syphan.com.br"
+    },
+
+    {
+      "name": "Ian Jairo Torrez Gonzales",
+      "email": "ian@orditi.com",
+      "role": "Developer"
     }
   ],
   "config": {
