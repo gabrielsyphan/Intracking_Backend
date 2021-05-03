@@ -77,7 +77,7 @@
 <script src="<?= url("themes/assets/vendor/bootstrap/js/popper.js"); ?>"></script>
 <script src="<?= url("themes/assets/vendor/bootstrap/js/bootstrap.min.js"); ?>"></script>
 <script>
-    let filterValue = 1;
+    let filterValue = 0;
 
     function alterFilter(e) {
         filterValue = e;

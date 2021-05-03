@@ -2774,7 +2774,7 @@ class Web
         $this->checkAgent();
 
         echo $this->view->render("createAgent", [
-            "title" => "Cadastrar fiscal | " . SITE
+            "title" => "Cadastrar agente | " . SITE
         ]);
     }
 
