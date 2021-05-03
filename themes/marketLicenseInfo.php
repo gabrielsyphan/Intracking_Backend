@@ -320,7 +320,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
 <script>
     function openOrder() {
-        window.open('<?= url() ?>/themes/assets/orders/marketOrder.pdf', '_blank')
+        window.open('<?= url() ?>/order/<?= $license->tipo ?>/<?= $license->id ?>', '_blank')
     }
 </script>
 <?php $v->end(); ?>

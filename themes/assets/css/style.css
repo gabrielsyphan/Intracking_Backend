@@ -1846,3 +1846,10 @@ border-left-red {
 .custom-table > td {
     line-height: 50px !important;
 }
+
+.marker.active{
+    height: 5px;
+    width: 5px;
+    border-radius: 50%;
+    background-color: #0f6674;
+}

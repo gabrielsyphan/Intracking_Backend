@@ -221,7 +221,12 @@
                 <?php if($zones):
                 foreach ($zones as $zone):
                 $aux = $zone->limite_ambulantes - $zone->quantidade_ambulantes;
-                $aux = intval(($zone->quantidade_ambulantes * 100) / $zone->limite_ambulantes);
+                if($zone->limite_ambulantes == 0 ){
+                    $aux = 0;
+                } else {
+                    $aux = intval(($zone->quantidade_ambulantes * 100) / $zone->limite_ambulantes);
+                }
+
                 if ($aux <= 49):
                     $color = "#5ea9a4";
                 elseif ($aux >= 50 && $aux <= 99):
@@ -299,7 +304,12 @@
             } else {
                 <?php if($zones !== NULL): foreach ($zones as $zone) :
                 $aux = $zone->limite_ambulantes - $zone->quantidade_ambulantes;
-                $aux = intval(($zone->quantidade_ambulantes * 100) / $zone->limite_ambulantes);
+                if($zone->limite_ambulantes == 0 ){
+                    $aux = 0;
+                } else {
+                    $aux = intval(($zone->quantidade_ambulantes * 100) / $zone->limite_ambulantes);
+                }
+
                 if($aux <= 49): ?>
                 L.marker([<?= $zone->centroide[1] ?>, <?= $zone->centroide[0] ?>], {icon: zone_green})
                     .bindPopup('' +
