@@ -322,7 +322,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
 <script>
     function openOrder() {
-        window.open('<?= url() ?>/order/<?= $license->tipo ?>/<?= $license->id ?>', '_blank')
+        window.open('<?= url() ?>/order/<?= $licenseValidate->tipo ?>/<?= md5($licenseValidate->id) ?>', '_blank')
     }
 </script>
 <?php $v->end(); ?>

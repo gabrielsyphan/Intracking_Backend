@@ -190,7 +190,7 @@
                                         <tr class="<?= $trClass ?>"
                                             onclick="openPage('<?= $payment->cod_referencia ?>')">
                                             <td>R$ <?= $payment->valor ?>,00</td>
-                                            <td><?= date('d-m-Y', strtotime($payment->pagar_em)); ?></td>
+                                            <td><?= date('d/m/Y', strtotime($payment->pagar_em)); ?></td>
                                             <?php if ($_SESSION['user']['team'] == 2): ?>
                                                 <td><?= $payment->name_zone; ?></td>
                                                 <td><?= $payment->name_box ?></td>

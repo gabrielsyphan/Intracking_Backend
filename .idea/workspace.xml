@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="569a43d1-da8c-4d19-a6dd-0ce78908e169" name="Default Changelist" comment="" />
+    <list default="true" id="569a43d1-da8c-4d19-a6dd-0ce78908e169" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/App/Web.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/App/Web.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Config.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/Config.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Models/License.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/Models/License.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/_navbar.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/_navbar.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/createAgent.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/createAgent.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/marketLicenseInfo.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/marketLicenseInfo.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/paymentList.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/paymentList.php" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -136,16 +145,5 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="php">
-          <url>file://$PROJECT_DIR$/source/App/Web.php</url>
-          <line>3683</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

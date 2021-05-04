@@ -2344,9 +2344,9 @@ class Web
                             $zone = (new Zone())->find("id = :izon", "izon=" . $market->id_zona)->fetch();
                             $box = (new Fixed())->find("id = :ivag", "ivag=" . $market->id_vaga)->fetch();
                             $payment->name_zone = $zone->nome;
-                            if($box->nome != NULL){
+                            if ($box->nome != NULL) {
                                 $payment->name_box = $box->nome;
-                            } else{
+                            } else {
                                 $payment->name_box = $box->cod_identificador;
                             }
                             break;
@@ -3630,26 +3630,7 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
         $validate = false;
-        if ($data['type']==7){
-            $license = (new License())->findById($data['licenseId']);
-            $user = (new User())->findById($license->id_usuario);
-            $market = (new Market())->find("id_licenca = :lid", "lid=" . $data['licenseId'])->fetch();
-            $box = (new Fixed())->findById($market->id_vaga);
-            $zone = (new Zone())->findById($market->id_zona);
-            $template = file_get_contents(THEMES . "/assets/orders/marketOrder.html");
-            $variables = array("%cpf%", "%rg%", "%residencia%", "%box%", "%market%", "%valor%", "%valorextenso%");
-            if ($box->nome == NULL){
-                $box_nome = $box->cod_identificador;
-            } else{
-                $box_nome = $box->nome;
-            }
-            $dataReplace = array($user->cpf, $user->rg, $user->endereco, $box_nome, $zone->nome, $box->valor, $box->valor);
-            $template = str_replace($variables, $dataReplace, $template);
 
-            if ($template) {
-                $validate = true;
-            }
-        }
         if ($data['type'] == 1) {
             $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" .
                 url("order") . "/1/" . $data['licenseId'];
@@ -3683,6 +3664,25 @@ class Web
                         $validate = true;
                     }
                 }
+            }
+        } else if ($data['type'] == 7) {
+            $license = (new License())->find("MD5(id) = :id", "id=" . $data['licenseId'])->fetch(false);
+            $user = (new User())->findById($license->id_usuario);
+            $market = (new Market())->find("MD5(id_licenca) = :lid", "lid=" . $data['licenseId'])->fetch();
+            $box = (new Fixed())->findById($market->id_vaga);
+            $zone = (new Zone())->findById($market->id_zona);
+            $template = file_get_contents(THEMES . "/assets/orders/marketOrder.html");
+            $variables = array("%cpf%", "%rg%", "%residencia%", "%box%", "%market%", "%valor%", "%valorextenso%");
+            if ($box->nome == NULL) {
+                $box_nome = $box->cod_identificador;
+            } else {
+                $box_nome = $box->nome;
+            }
+            $dataReplace = array($user->cpf, $user->rg, $user->endereco, $box_nome, $zone->nome, $box->valor, $box->valor);
+            $template = str_replace($variables, $dataReplace, $template);
+
+            if ($template) {
+                $validate = true;
             }
         } else {
             $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" .
