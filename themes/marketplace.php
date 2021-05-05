@@ -24,7 +24,210 @@ else:
     $backgroundClass = "background-red";
 
 endif; ?>
+<div id="modal-3" class="div-modal">
+    <div class="container pt-5">
+        <div class="row mt-5 p-5 justify-content-center">
+            <div class="col-xl-10 p-5 modal-overflow container-white">
+                <div class="row">
+                    <div class="col-8">
+                        <h3 class="black-title-section">Geolocalização da licença</h3>
+                    </div>
+                    <div class="col-4 text-right mt-3">
+                        <span class="icon-close" onclick="closeModal(3)"></span>
+                    </div>
+                </div>
+                <p class="subtitle-section-p">Localização da licença no mapa.</p>
+                <hr>
+                <div id="mapProfile">
+                    <div id="mapZone" class="<?= $salesmans ? 'mapInfo' : 'mapMarketPlace'; ?>"></div>
 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt-5 ">
+    <div class="row">
+        <div class="col-xl-12 mb-5">
+            <div class="web-div-box">
+
+                <div class="box-div-info">
+                    <div>
+                        <h2 class="ml-3 title-section"><?= $zone->nome; ?></h2>
+                        <p class="ml-3 subtitle-section-p"><?= $zone->descricao ?></p>
+                    </div>
+                    <hr class="mb-0">
+
+                    <div class="mt-1">
+
+                        <div class="col-md-6 col-xl-3 mb-4">
+                            <div class="box-div-info p-5">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <h4 class="title-section">
+                                            Total de Vagas
+                                        </h4>
+                                        <hr>
+                                        <h2 class="title-section"> <?= $zone->limite_ambulantes; ?></h2>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="text-center mt-4">
+                                            <span class="title-section icon-all_inclusive card-icon registered-icon"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-xl-3 mb-4">
+                            <div class="box-div-info p-5">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <h4 class="title-section">
+                                            Vagas Disponíveis
+                                        </h4>
+                                        <hr>
+                                        <h2 class="title-section">
+                                            <?= ($zone->limite_ambulantes - $zone->quantidade_ambulantes); ?>
+                                        </h2>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="text-center mt-4">
+                                            <span class="title-section icon-lock_open card-icon paid-icon"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-xl-3 mb-4">
+
+                            <div class="box-div-info p-5">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <h4 class="title-section">
+                                            Vagas Ocupadas
+                                        </h4>
+                                        <hr>
+                                        <h2 class="title-section">    <?= $zone->quantidade_ambulantes; ?></h2>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="text-center mt-4">
+                                            <span class="title-section icon-flag card-icon pending-icon"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6 col-xl-3 mb-4">
+                            <div class="box-div-info p-5">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <h4 class="title-section">
+                                            Vagas Fixas
+                                        </h4>
+                                        <hr>
+                                        <h2 class="title-section"><?= $zone->vagas_fixas; ?></h2>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="text-center mt-4">
+                                            <span class="title-section icon-map-pin card-icon expired-icon"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid ">
+    <div class="row">
+        <div class="col-xl-12 mb-5">
+            <div class="web-div-box">
+                <div class="box-div-info">
+                    <h3 class="ml-3 title-section">Lista de Vagas Fixas</h3>
+                    <p class="ml-3 subtitle-section-p">Todas as vagas fixas do mercado</p>
+
+                    <div class="box-div-info-overflow-x">
+                        <hr class="mb-0">
+                        <?php if (!$fixed): ?>
+                            <div class="p-5 mt-5 text-center">
+                                <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
+                                <p class="mt-5 subtitle-section-p">Ops! Não encontramos nenhuma licença para exibir.
+                                    😥</p>
+                            </div>
+                        <?php else: ?>
+                            <div class="mb-2" style="height: 50vh; overflow-y: auto;">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Identificador</th>
+                                        <th scope="col">Nome</th>
+                                        <th>Valor</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="table-data">
+                                    <?php foreach ($fixed as $fix):
+                                        is_null($fix->valor) ? $fix_valor = '-' : $fix_valor = 'R$ ' . $fix->valor;
+                                        is_null($fix->nome) ? $fix_nome = '-' : $fix_nome = $fix->nome;
+
+                                        if (is_null($fix->id_licenca)):
+                                            $divStatus = 'primary';
+                                            $textStatus = 'Disponível';
+                                            $trClass = 'border-left-green';
+                                        else:
+                                            $divStatus = 'secondary';
+                                            $textStatus = 'Ocupado';
+                                            $trClass = 'border-left-red';
+                                        endif; ?>
+
+                                        <tr class="<?= $trClass ?>" onclick="editZoneFixed('<?= md5($zone->id); ?>')">
+                                            <td><?= $fix->cod_identificador ?></td>
+                                            <td><?= $fix_nome ?></td>
+                                            <td> <?= $fix_valor ?></td>
+                                            <td>
+                                                <div class="d-flex">
+                                                    <div class="status-circle <?= $divStatus; ?> t-5"></div>
+                                                    <?= $textStatus; ?>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php endif; ?>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-6 mb-5" onclick="debugMap()">
+    <div class="row m-0 mt-3 p-4 border-left-gray web-div-box">
+        <div class="col-2 text-center mt-4">
+            <img src="<?= url('themes/assets/img/flag.png') ?>">
+        </div>
+        <div class="col-10">
+            <h4 class="black-title-section">Geolocalização</h4>
+            <p class="subtitle-section-p">Acessar mapa.</p>
+        </div>
+    </div>
+</div>
+
+<!--
 <div class="container-fluid mt-5 container-white">
     <div class="row">
         <div class="col-md-8 p-0">
@@ -56,17 +259,17 @@ endif; ?>
                                     </thead>
                                     <tbody id="table-data">
                                     <?php foreach ($salesmans as $salesman):
-                                        switch ($salesman->situacao):
-                                            case 0:
-                                                $trClass = 'border-left-yellow';
-                                                break;
-                                            case 1:
-                                                $trClass = 'border-left-green';
-                                                break;
-                                            default:
-                                                $trClass = 'border-left-red';
-                                                break;
-                                        endswitch; ?>
+    switch ($salesman->situacao):
+        case 0:
+            $trClass = 'border-left-yellow';
+            break;
+        case 1:
+            $trClass = 'border-left-green';
+            break;
+        default:
+            $trClass = 'border-left-red';
+            break;
+    endswitch; ?>
                                         <tr class="<?= $trClass ?>">
                                             <td><?= $salesman->cpf ?></td>
                                             <td><?= $salesman->nome ?></td>
@@ -74,15 +277,15 @@ endif; ?>
                                             <td><?= $salesman->email ?></td>
                                             <td>
                                                 <?php switch ($salesman->situacao):
-                                                case 0: ?>
+    case 0: ?>
                                                 <div class="status-button tertiary">Pendente</div>
                                             </td>
                                             <?php break;
-                                            case 1: ?>
+    case 1: ?>
                                                 <div class="status-button primary">Ativo</div>
                                                 </td>
                                                 <?php break;
-                                            default: ?>
+    default: ?>
                                                 <div class="status-button secondary">Bloqueado</div>
                                                 </td>
                                                 <?php break; endswitch; ?>
@@ -98,7 +301,8 @@ endif; ?>
         </div>
 
         <div class="col-md-4 p-0" id="sidebar-inter">
-            <iframe src="https://www.google.com/maps/embed?pb=!4v1617115456065!6m8!1m7!1sh2uwEPd3HSSwcRMfhM_hRQ!2m2!1d<?= $zone->centroide[1] ?>!2d<?= $zone->centroide[0] ?>!3f343.7!4f3.739999999999995!5f0.7820865974627469" width="403" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!4v1617115456065!6m8!1m7!1sh2uwEPd3HSSwcRMfhM_hRQ!2m2!1d<?= $zone->centroide[1] ?>!2d<?= $zone->centroide[0] ?>!3f343.7!4f3.739999999999995!5f0.7820865974627469"
+                    width="403" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             <div class="m-5">
                 <h4 class="black-div-zone-info-text font-weight-normal"><?= $zone->nome; ?></h4>
                 <p class="subdiv-zone-info-text-p-black"><?= $zone->descricao ?></p>
@@ -152,7 +356,7 @@ endif; ?>
                             <?= $zone->vagas_fixas; ?>
                         </h5>
                     </div>
-                    <a href="<?= url('editFixedZones/'). md5($zone->id) ?>" class="float-right ml-5 mt-4">
+                    <a href="<?= url('editFixedZones/') . md5($zone->id) ?>" class="float-right ml-5 mt-4">
                         <span class="icon-edit"></span>
                         Editar
                     </a>
@@ -162,11 +366,17 @@ endif; ?>
         </div>
     </div>
 </div>
-
+-->
 <?php $v->start("scripts"); ?>
 <script src="<?= url("themes/assets/js/leaflet.markercluster-src.js"); ?>"></script>
 <script src="<?= url("themes/assets/js/Leaflet.LinearMeasurement.js"); ?>"></script>
 <script>
+
+
+    function editZoneFixed(zoneId) {
+        window.location.href = '<?= url('editFixedZones/') ?>' + '/' + zoneId;
+    }
+
     function openPage(data) {
         window.open("<?= $router->route('web.salesman'); ?>/" + data, '_blank');
     }
@@ -280,6 +490,18 @@ endif; ?>
         });
 
         map.addLayer(map_layers["Zona"]);
+
     });
+
+
+    function debugMap() {
+        setTimeout(function () {
+            map.invalidateSize();
+        }, 500);
+
+        openModal(3);
+    }
 </script>
 <?php $v->end(); ?>
+
+

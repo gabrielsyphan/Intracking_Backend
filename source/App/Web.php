@@ -3038,6 +3038,7 @@ class Web
             $salesmans = (new Salesman())->find('id_zona = :zoneId', 'zoneId=' . $data['id'], 'id_licenca')->fetch(true);
             $users = array();
 
+
             if ($salesmans) {
                 foreach ($salesmans as $salesman) {
                     $license = (new License())->findById($salesman->id_licenca);
@@ -3070,6 +3071,20 @@ class Web
                         'title' => 'Área | ' . SITE,
                         'salesmans' => null,
                         'zone' => $zone
+                    ]);
+                } else if ((isset($_SESSION['user']['login'])) &&
+                    ($_SESSION['user']['login'] === 3) &&
+                    ($_SESSION['user']['team'] == 2)) {
+
+                    $fixed = (new Fixed())->find('MD5(id_zona) = :id_zone', 'id_zone=' . $data['id'],
+                        'cod_identificador,id_licenca, nome, valor')->fetch(true);
+
+
+                    echo $this->view->render('marketplace', [
+                        'title' => 'Área | ' . SITE,
+                        'salesmans' => $users,
+                        'zone' => $zone,
+                        'fixed' => $fixed
                     ]);
                 } else {
                     echo $this->view->render('zone', [

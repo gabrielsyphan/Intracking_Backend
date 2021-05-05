@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="569a43d1-da8c-4d19-a6dd-0ce78908e169" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/App/Web.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/App/Web.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Config.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/Config.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Models/License.php" beforeDir="false" afterPath="$PROJECT_DIR$/source/Models/License.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/themes/_navbar.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/_navbar.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/themes/createAgent.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/createAgent.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/marketLicenseInfo.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/marketLicenseInfo.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/paymentList.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/paymentList.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +36,12 @@
       <filtered-out-file-type name="TAG" />
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/vendor/composer/autoload_psr4.php" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/vendor/composer/autoload_namespaces.php" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/vendor/composer/autoload_files.php" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/vendor/coffeecode/datalayer/src/DataLayer.php" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration">
     <include_path>
@@ -72,14 +75,14 @@
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Codigos\Xampp\htdocs\OrditiWeb\themes\assets\orders" />
+      <recent name="C:\xampp\htdocs\orditi\themes\assets\orders" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\xampp\htdocs\orditi\themes" />
       <recent name="C:\xampp\htdocs\orditi\themes\assets\img" />
       <recent name="C:\xampp\htdocs\orditi\source\Models" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Codigos\Xampp\htdocs\OrditiWeb\themes\assets\orders" />
-      <recent name="C:\xampp\htdocs\orditi\themes\assets\orders" />
     </key>
   </component>
   <component name="RunAnythingCache">
@@ -127,7 +130,9 @@
       <workItem from="1620050420299" duration="1960000" />
       <workItem from="1620064940535" duration="9108000" />
       <workItem from="1619701108840" duration="3702000" />
-      <workItem from="1620076989539" duration="116000" />
+      <workItem from="1620076989539" duration="290000" />
+      <workItem from="1620087128444" duration="1855000" />
+      <workItem from="1620170458326" duration="20495000" />
     </task>
     <servers />
   </component>

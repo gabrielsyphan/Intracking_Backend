@@ -749,6 +749,12 @@ a[data-toggle="collapse"] {
     border: 1px solid #ddd;
 }
 
+.mapMarketPlace {
+    width: 100%;
+    height: 40vh;
+    border: 1px solid #ddd;
+}
+
 .mapInfo {
     width: 100%;
     height: 50vh;
@@ -1466,6 +1472,7 @@ input[type=file].hidden-input-file {
     cursor: pointer;
 }
 
+
 .div-request-license:first-letter {
     text-transform: capitalize;
 }
@@ -1531,7 +1538,7 @@ input[type=file].hidden-input-file {
 }
 
 .border-left-green {
-    border-left: 2px solid ;
+    border-left: 2px solid #00efd1;
 }
 
 .border-left-green-light {
