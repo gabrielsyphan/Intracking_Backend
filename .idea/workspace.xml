@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="569a43d1-da8c-4d19-a6dd-0ce78908e169" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/themes/_navbar.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/_navbar.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/createAgent.php" beforeDir="false" afterPath="$PROJECT_DIR$/themes/createAgent.php" afterDir="false" />
-    </list>
+    <list default="true" id="569a43d1-da8c-4d19-a6dd-0ce78908e169" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -132,7 +129,9 @@
       <workItem from="1619701108840" duration="3702000" />
       <workItem from="1620076989539" duration="290000" />
       <workItem from="1620087128444" duration="1855000" />
-      <workItem from="1620170458326" duration="20495000" />
+      <workItem from="1620170458326" duration="21310000" />
+      <workItem from="1620309092512" duration="1386000" />
+      <workItem from="1620389708140" duration="2064000" />
     </task>
     <servers />
   </component>
@@ -150,5 +149,21 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/themes/marketplace.php</url>
+          <line>103</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/themes/marketplace.php</url>
+          <line>60</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

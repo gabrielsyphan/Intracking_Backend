@@ -3081,7 +3081,7 @@ class Web
 
 
                     echo $this->view->render('marketplace', [
-                        'title' => 'Área | ' . SITE,
+                        'title' => $zone->nome . ' | ' . SITE,
                         'salesmans' => $users,
                         'zone' => $zone,
                         'fixed' => $fixed
