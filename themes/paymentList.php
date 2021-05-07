@@ -96,7 +96,7 @@
                     <div class="div-box-span-icon mt-4">
                         <div class="div-table-search">
                             <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
-                                   placeholder="Filtrar pelo ambulante...">
+                                   placeholder="Filtrar por proprietário...">
                             <div class="circle-button primary search">
                                 <span class="icon-search"></span>
                             </div>
@@ -128,12 +128,42 @@
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
-                                    <th scope="col" class="table-col-2">Valor</th>
-                                    <th scope="col" class="table-col-2">Vencimento</th>
-                                    <th scope="col" class="table-col-1">Cod Referência</th>
-                                    <th scope="col" class="table-col-2">Tipo</th>
-                                    <th scope="col" class="table-col-2">Status</th>
-                                    <th scope="col">Proprietário</th>
+
+                                    <th scope="col" class="table-col-2" onclick="changeFilter(0)">
+                                        <div class="marker" id="0"></div>
+                                        Valor
+                                    </th>
+                                    <th scope="col" class="table-col-2" onclick="changeFilter(1)">
+                                        <div class="marker" id="1"></div>
+                                        Vencimento
+                                    </th>
+                                    <?php if ($_SESSION['user']['team'] == 2): ?>
+                                        <th scope="col" class="table-col-2" onclick="changeFilter(2)">
+                                            <div class="marker active" id="2"></div>
+                                            Mercado
+                                        </th>
+                                        <th scope="col" class="table-col-1" onclick="changeFilter(3)">
+                                            <div class="marker" id="3"></div>
+                                            Box
+                                        </th>
+                                    <?php else: ?>
+                                        <th scope="col" class="table-col-1" onclick="changeFilter(2)">
+                                            <div class="marker " id="2"></div>
+                                            Cod Referência
+                                        </th>
+                                        <th scope="col" class="table-col-2" onclick="changeFilter(3)">
+                                            <div class="marker" id="3"></div>
+                                            Tipo
+                                        </th>
+                                    <?php endif; ?>
+                                    <th scope="col" class="table-col-2" onclick="changeFilter(4)">
+                                        <div class="marker" id="4"></div>
+                                        Status
+                                    </th>
+                                    <th scope="col" onclick="changeFilter(5)">
+                                        <div class="marker active" id="5"></div>
+                                        Proprietário
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody id="table-data">
@@ -157,19 +187,25 @@
                                                 $trClass = 'border-left-yellow';
                                                 break;
                                         endswitch; ?>
-                                        <tr class="<?= $trClass ?>" onclick="openPage('<?= $payment->cod_referencia ?>')">
+                                        <tr class="<?= $trClass ?>"
+                                            onclick="openPage('<?= $payment->cod_referencia ?>')">
                                             <td>R$ <?= $payment->valor ?>,00</td>
-                                            <td><?= date('d-m-Y', strtotime($payment->pagar_em)); ?></td>
-                                            <td><?= $payment->cod_referencia ?></td>
-                                            <td>
-                                                <?php switch ($payment->tipo):
-                                                    case 1: ?>
-                                                        Recorrente
-                                                        <?php break;
-                                                    default: ?>
-                                                        Vencido
-                                                        <?php break; endswitch; ?>
-                                            </td>
+                                            <td><?= date('d/m/Y', strtotime($payment->pagar_em)); ?></td>
+                                            <?php if ($_SESSION['user']['team'] == 2): ?>
+                                                <td><?= $payment->name_zone; ?></td>
+                                                <td><?= $payment->name_box ?></td>
+                                            <?php else: ?>
+                                                <td>
+                                                    <?php switch ($payment->tipo):
+                                                        case 1: ?>
+                                                            Recorrente
+                                                            <?php break;
+                                                        default: ?>
+                                                            Vencido
+                                                            <?php break; endswitch; ?>
+                                                </td>
+                                                <td><?= $payment->cod_referencia ?></td>
+                                            <?php endif; ?>
                                             <td>
                                                 <div class="d-flex">
                                                     <div class="status-circle <?= $divStatus; ?> t-5"></div>
@@ -198,13 +234,31 @@
     <script src="<?= url("themes/assets/vendor/bootstrap/js/popper.js"); ?>"></script>
     <script src="<?= url("themes/assets/vendor/bootstrap/js/bootstrap.min.js"); ?>"></script>
     <script>
+        let selectedOption = 5;
+        <?php if($_SESSION['user']['team'] == 2): ?>
+        let options = ['valor', 'vencimento', 'mercado', 'box', 'status', 'proprietário'];
+        <?php else: ?>
+        let options = ['valor', 'vencimento', 'Referência', 'tipo', 'status', 'proprietário'];
+        <?php endif; ?>
+
         function openPage(data) {
             window.open("http://www.smf.maceio.al.gov.br:8090/e-agata/servlet/hwmemitedamqrcode?" + data, '_blank');
         }
 
+        function changeFilter(num) {
+            selectedOption = num;
+            input = document.getElementById("text");
+            input.placeholder = "Filtrar por " + options[num] + "...";
+            mark = document.getElementById(num);
+            markers = document.getElementsByClassName("marker");
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].className = "marker"
+            }
+            mark.className = "marker active";
+        }
+
         function tableFilter() {
             let input, filter, table, tr, td, i, txtValue;
-            let selectedOption = 5;
 
             input = document.getElementById("text");
             filter = input.value.toUpperCase();

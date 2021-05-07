@@ -47,7 +47,7 @@ $router->post("/validateEditFixedZone", "Web:validateEditFixedZone", "web.valida
 $router->post("/newFixedArea", "Web:newFixedArea", "web.newFixedArea");
 
 $router->get("/createAgent", "Web:createAgent", "web.createAgent");
-$router->post("/validateAgent", "Web:validateNgent", "web.validateAgent");
+$router->post("/validateAgent", "Web:validateAgent", "web.validateAgent");
 
 $router->get("/profile", "Web:profile", "web.profile");
 $router->get("/profileUser/{id}", "Web:profileUser", "web.profileUser");
@@ -104,9 +104,6 @@ $router->get("/marketLicenseUser/{id}", "Web:marketLicenseUser", "web.marketLice
 $router->post("/marketData", "Web:marketData", "web.marketData");
 $router->post("/validateMarketLicense", "Web:validateMarketLicense", "web.validateMarketLicense");
 
-$router->get("/consulta", "WebServiceSIAT:consulta", "WebServiceSIAT.consulta");
-
-$router->get("/response", "WebServiceSIAT:consultaPessoa");
 $router->post("/neighborhoodPolygon", "Web:neighborhoodPolygon", "web.neighborhoodPolygon");
 $router->get("/neighborhood/{id}", "Web:neighborhood", "web.neighborhood");
 $router->post("/findNeighborhood", "Web:findNeighborhood", "web.findNeighborhood");

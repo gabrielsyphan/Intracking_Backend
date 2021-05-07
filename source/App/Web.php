@@ -597,7 +597,7 @@ class Web
         ]);
     }
 
-   public function salesmanLicenseUser($data): void
+    public function salesmanLicenseUser($data): void
     {
         $this->checkLogin();
 
@@ -638,7 +638,7 @@ class Web
         $zones = (new Zone())->find('vagas_fixas > 0', '', 'id, nome')->fetch(true);
 
         echo $this->view->render('marketLicense', [
-            'title' => 'Licença - Mercado | '. SITE,
+            'title' => 'Licença - Mercado | ' . SITE,
             'zones' => $zones,
             'userId' => null
         ]);
@@ -651,22 +651,22 @@ class Web
         $zones = (new Zone())->find('vagas_fixas > 0', '', 'id, nome')->fetch(true);
 
         echo $this->view->render('marketLicense', [
-            'title' => 'Licença - Mercado | '. SITE,
+            'title' => 'Licença - Mercado | ' . SITE,
             'zones' => $zones,
             'userId' => $data['id']
         ]);
     }
 
-    public function marketData($data):void
+    public function marketData($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $response = array();
 
         $zone = (new Zone())
             ->find(
-            'md5(id) = :id',
-            'id='. $data['referenceCode'],
-            'id, ST_AsText(coordenadas) as polygon, ST_AsText(ST_Centroid(coordenadas)) as centroid, nome'
+                'md5(id) = :id',
+                'id=' . $data['referenceCode'],
+                'id, ST_AsText(coordenadas) as polygon, ST_AsText(ST_Centroid(coordenadas)) as centroid, nome'
             )->fetch(false);
         if ($zone) {
             $centroid = explode("POINT(", $zone->centroid);
@@ -686,7 +686,7 @@ class Web
             $fixeds = (new Fixed())
                 ->find(
                     'id_zona = :id',
-                    'id='. $zone->id,
+                    'id=' . $zone->id,
                     'cod_identificador, nome'
                 )->fetch(true);
 
@@ -719,12 +719,12 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
         $zone = (new Zone())
-            ->find('MD5(id) = :id', 'id='. $data['marketSelect'], 'id')
+            ->find('MD5(id) = :id', 'id=' . $data['marketSelect'], 'id')
             ->fetch(false);
 
         if ($data['userId']) {
-            $userId =  (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id')->fetch(false);
-            if($userId) {
+            $userId = (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id')->fetch(false);
+            if ($userId) {
                 $userId = $userId->id;
             } else {
                 $userId = $_SESSION['user']['id'];
@@ -748,7 +748,7 @@ class Web
         }
 
         $fixed = (new Fixed())
-            ->find('cod_identificador = :code', 'code='. $data['fixedSelect'])
+            ->find('cod_identificador = :code', 'code=' . $data['fixedSelect'])
             ->fetch(false);
         if ($fixed) {
             $fixed->id_licenca = $license->id;
@@ -1340,7 +1340,7 @@ class Web
 
         if ($_FILES) {
             if ($data['userId']) {
-                $user =  (new User())->find('MD5(id)=:id', 'id=' . $data['userId'])->fetch(false);
+                $user = (new User())->find('MD5(id)=:id', 'id=' . $data['userId'])->fetch(false);
                 $userId = $user->id;
             } else {
                 $user = (new User())->findById($_SESSION['user']['id']);
@@ -1419,7 +1419,7 @@ class Web
                     $response = 'somebodySameLocation';
                     $zoneId = null;
 
-                    if($zone) {
+                    if ($zone) {
                         $zone->quantidade_ambulantes--;
                         $zone->save();
                     }
@@ -1441,7 +1441,7 @@ class Web
 
                 if ($license->fail()) {
                     $neighborhood->destroy();
-                    if($zone) {
+                    if ($zone) {
                         $zone->quantidade_ambulantes--;
                         $zone->save();
                     }
@@ -1936,7 +1936,7 @@ class Web
         $license_type = (new LicenseType())->find()->fetch(true);
         $users = array();
         if ($_SESSION['user']['login'] == 3) {
-            $licenses = (new License())->find('id_orgao = :id', 'id='. $_SESSION['user']['team'])
+            $licenses = (new License())->find('id_orgao = :id', 'id=' . $_SESSION['user']['team'])
                 ->fetch(true);
 
             $auxPaid = 0;
@@ -2189,7 +2189,7 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
         $user = (new User())->find('MD5(id) = :id', 'id=' . $data['id'])->fetch(false);
-        $payments = (new Payment())->find('id_usuario = :id', 'id=' . $data['id'] )
+        $payments = (new Payment())->find('id_usuario = :id', 'id=' . $data['id'])
             ->fetch(true);
 
         $folder = ROOT . '/themes/assets/uploads';
@@ -2337,6 +2337,23 @@ class Web
                 $license = (new License())->findById($payment->id_licenca);
                 if (($license != null) && ($license->id_orgao == $_SESSION['user']['team'])) {
                     $user = (new User())->findById($license->id_usuario);
+                    $market = "fo";
+                    switch ($license->tipo):
+                        case 7:
+                            $market = (new Market())->find("id_licenca = :ilic", "ilic=" . $license->id)->fetch();
+                            $zone = (new Zone())->find("id = :izon", "izon=" . $market->id_zona)->fetch();
+                            $box = (new Fixed())->find("id = :ivag", "ivag=" . $market->id_vaga)->fetch();
+                            $payment->name_zone = $zone->nome;
+                            if ($box->nome != NULL) {
+                                $payment->name_box = $box->nome;
+                            } else {
+                                $payment->name_box = $box->cod_identificador;
+                            }
+                            break;
+                        default:
+                            break;
+                    endswitch;
+
                     $payment->name = $user->nome;
                     $paymentArray[] = $payment;
 
@@ -2369,12 +2386,12 @@ class Web
      */
     public function agentList(): void
     {
-        $agents = (new Agent)->find('id_orgao = :team', 'team='. $_SESSION['user']['team'])->fetch(true);
+        $agents = (new Agent)->find('id_orgao = :team', 'team=' . $_SESSION['user']['team'])->fetch(true);
         $apporved = 0;
         $blocked = 0;
         $pendding = 0;
         foreach ($agents as $agent) {
-            $attach = (new Attach())->find('tipo_usuario = 3 AND id_usuario = :id', 'id='. $agent->id)
+            $attach = (new Attach())->find('tipo_usuario = 3 AND id_usuario = :id', 'id=' . $agent->id)
                 ->fetch(false);
             $team = (new Team())->findById($agent->id_orgao);
             $agentType = (new AgentType())->findById($agent->tipo_fiscal);
@@ -2433,14 +2450,13 @@ class Web
      */
     public function userList(): void
     {
-        $users = (new User)->find('', '', 'id, cpf, email, nome, telefone')
-            ->fetch(true);
+        $users = (new User)->find('', '', 'id, cpf, email, nome, telefone')->fetch(true);
 
         $userCount = 0;
 
         if ($users) {
             foreach ($users as $user) {
-                $attachs = (new Attach())->find('tipo_usuario = 0 AND id_usuario = :id', 'id='. $user->id)
+                $attachs = (new Attach())->find('tipo_usuario = 0 AND id_usuario = :id', 'id=' . $user->id)
                     ->fetch(true);
 
                 if ($attachs) {
@@ -2452,7 +2468,7 @@ class Web
                     }
                 }
 
-                $licenses = (new License())->find('id_usuario = :id', 'id='. $user->id, 'id')
+                $licenses = (new License())->find('id_usuario = :id', 'id=' . $user->id, 'id')
                     ->fetch(true);
                 if ($licenses) {
                     $user->licenses = count($licenses);
@@ -2687,12 +2703,12 @@ class Web
 
         if ($_SESSION['user']['login'] == 3) {
             $zoneData = array();
-            $zones = (new Zone())->find('id_orgao = :team', 'team='. $_SESSION['user']['team'],
-        'id, 
+            $zones = (new Zone())->find('id_orgao = :team', 'team=' . $_SESSION['user']['team'],
+                'id, 
                 ST_AsText(coordenadas) as poligono, 
                 ST_AsText(ST_Centroid(coordenadas)) as centroide, 
                 nome, limite_ambulantes, quantidade_ambulantes, vagas_fixas')
-            ->fetch(true);
+                ->fetch(true);
 
             $salesmans = (new Salesman())->find('', '', 'id_licenca, latitude, longitude')
                 ->fetch(true);
@@ -2772,9 +2788,11 @@ class Web
     public function createAgent(): void
     {
         $this->checkAgent();
+        $agentTeam = $_SESSION['user']['team'];
 
         echo $this->view->render("createAgent", [
-            "title" => "Cadastrar agente | " . SITE
+            "title" => "Cadastrar agente | " . SITE,
+            "agentTeam" => $agentTeam
         ]);
     }
 
@@ -2800,8 +2818,11 @@ class Web
          */
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
-        $agent = (new Agent())->find('matricula = :matricula', 'matricula=' . $data['registration'])
+        $agent = (new Agent())->find(
+            'matricula = :matricula',
+            'matricula=' . $data['registration'])
             ->fetch();
+
         $folder = THEMES . '/assets/uploads';
         $aux = 0;
 
@@ -2983,8 +3004,8 @@ class Web
                 if ($data['fixed'] > 0) {
                     for ($i = 0; $i < $data['fixed']; $i++) {
                         $fixed = new Fixed();
-                        $fixed->cod_identificador = 'ODTF-'. (new \DateTime('' . date('d-m-Y H:i:s')))
-                            ->getTimestamp() . $i;
+                        $fixed->cod_identificador = 'ODTF-' . (new \DateTime('' . date('d-m-Y H:i:s')))
+                                ->getTimestamp() . $i;
                         $fixed->id_zona = $zone->id;
                         $fixed->save();
 
@@ -3010,12 +3031,13 @@ class Web
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
-        $zone = (new Zone())->find('MD5(id) = :id', 'id='. $data['id'], 'id, ST_AsText(coordenadas) as poligono, 
+        $zone = (new Zone())->find('MD5(id) = :id', 'id=' . $data['id'], 'id, ST_AsText(coordenadas) as poligono, 
             ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes,
              vagas_fixas, foto, descricao')->fetch(false);
         if ($zone) {
             $salesmans = (new Salesman())->find('id_zona = :zoneId', 'zoneId=' . $data['id'], 'id_licenca')->fetch(true);
             $users = array();
+
 
             if ($salesmans) {
                 foreach ($salesmans as $salesman) {
@@ -3050,6 +3072,20 @@ class Web
                         'salesmans' => null,
                         'zone' => $zone
                     ]);
+                } else if ((isset($_SESSION['user']['login'])) &&
+                    ($_SESSION['user']['login'] === 3) &&
+                    ($_SESSION['user']['team'] == 2)) {
+
+                    $fixed = (new Fixed())->find('MD5(id_zona) = :id_zone', 'id_zone=' . $data['id'],
+                        'cod_identificador,id_licenca, nome, valor')->fetch(true);
+
+
+                    echo $this->view->render('marketplace', [
+                        'title' => 'Área | ' . SITE,
+                        'salesmans' => $users,
+                        'zone' => $zone,
+                        'fixed' => $fixed
+                    ]);
                 } else {
                     echo $this->view->render('zone', [
                         'title' => 'Área | ' . SITE,
@@ -3073,13 +3109,13 @@ class Web
         $zone = (new Zone())
             ->find(
                 'MD5(id) = :id AND vagas_fixas > 0',
-                'id='. $data['id'],
+                'id=' . $data['id'],
                 'id, nome, descricao, vagas_fixas,
                         ST_AsText(coordenadas) as polygon, 
                         ST_AsText(ST_Centroid(coordenadas)) as centroid,
                         quantidade_ambulantes, limite_ambulantes'
             )->fetch(false);
-        $fixed = (new Fixed())->find('id_zona = :id', 'id='. $zone->id, 'cod_identificador')
+        $fixed = (new Fixed())->find('id_zona = :id', 'id=' . $zone->id, 'cod_identificador')
             ->fetch(true);
 
         if ($zone) {
@@ -3099,7 +3135,7 @@ class Web
 
 
             echo $this->view->render('editZoneFixed', [
-                'title' => 'Editar vagas fixas | '. SITE,
+                'title' => 'Editar vagas fixas | ' . SITE,
                 'fixed' => $fixed,
                 'zone' => $zone,
                 'centroid' => $centroid,
@@ -3119,7 +3155,7 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $response = array();
 
-        $fixed = (new Fixed())->find('cod_identificador = :cod', 'cod='. $data['referenceCode'],
+        $fixed = (new Fixed())->find('cod_identificador = :cod', 'cod=' . $data['referenceCode'],
             'ST_AsText(coordenadas) as polygon, id_zona, id_licenca, nome, descricao, valor')->fetch(false);
 
         $aux = array();
@@ -3139,13 +3175,13 @@ class Web
             }
 
             $response['success'] = [
-                    'zoneId' => $fixed->id_zona,
-                    'license' => $fixed->id_licenca,
-                    'name' => $fixed->nome,
-                    'description' => $fixed->descricao,
-                    'value' => $fixed->valor,
-                    'polygon' => $aux
-                ];
+                'zoneId' => $fixed->id_zona,
+                'license' => $fixed->id_licenca,
+                'name' => $fixed->nome,
+                'description' => $fixed->descricao,
+                'value' => $fixed->valor,
+                'polygon' => $aux
+            ];
         } else {
             $response['fail'] = 'Reference code not found';
         }
@@ -3159,7 +3195,7 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $response = array();
 
-        $fixed = (new Fixed())->find('cod_identificador = :cod', 'cod='. $data['fixedSelect'])->fetch(false);
+        $fixed = (new Fixed())->find('cod_identificador = :cod', 'cod=' . $data['fixedSelect'])->fetch(false);
         if ($fixed) {
             $uFixed = (new Fixed())->findById($fixed->id);
             $coodinates = json_decode($geojson);
@@ -3195,14 +3231,14 @@ class Web
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
         $response = false;
-        $zone = (new Zone())->find('MD5(id) = :id', 'id='. $data['zone'], 'id, vagas_fixas')->fetch(false);
+        $zone = (new Zone())->find('MD5(id) = :id', 'id=' . $data['zone'], 'id, vagas_fixas')->fetch(false);
         if ($zone) {
             $zone->vagas_fixas = $zone->vagas_fixas + 1;
             $zone->save();
 
             if (!$zone->fail) {
                 $fixed = (new Fixed())
-                    ->find('id_zona = :id', 'id='. $zone->id, 'id, cod_identificador')
+                    ->find('id_zona = :id', 'id=' . $zone->id, 'id, cod_identificador')
                     ->order('id DESC')->fetch(false);
 
                 $nFixed = new Fixed();
@@ -3340,7 +3376,7 @@ class Web
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
-        $salesman = (new Salesman())->find('MD5(id) = :id', 'id='. $data['licenseId'], 'id')
+        $salesman = (new Salesman())->find('MD5(id) = :id', 'id=' . $data['licenseId'], 'id')
             ->fetch(false);
 
         if ($salesman) {
@@ -3350,7 +3386,7 @@ class Web
             $auxiliary->cpf = $data['auxiliaryIdentity'];
             $auxiliary->save();
 
-            if($auxiliary->fail()) {
+            if ($auxiliary->fail()) {
                 var_dump($auxiliary->fail()->getMessage());
             } else {
                 echo 1;
@@ -3620,7 +3656,7 @@ class Web
                     $user = (new User())->findById($license->id_usuario);
                     $auxiliaries = '';
                     $auxs = (new Auxiliary())
-                        ->find('id_ambulante = :id', 'id='. $salesman->id, 'nome')
+                        ->find('id_ambulante = :id', 'id=' . $salesman->id, 'nome')
                         ->fetch(true);
                     if ($auxs) {
                         foreach ($auxs as $aux) {
@@ -3643,6 +3679,25 @@ class Web
                         $validate = true;
                     }
                 }
+            }
+        } else if ($data['type'] == 7) {
+            $license = (new License())->find("MD5(id) = :id", "id=" . $data['licenseId'])->fetch(false);
+            $user = (new User())->findById($license->id_usuario);
+            $market = (new Market())->find("MD5(id_licenca) = :lid", "lid=" . $data['licenseId'])->fetch();
+            $box = (new Fixed())->findById($market->id_vaga);
+            $zone = (new Zone())->findById($market->id_zona);
+            $template = file_get_contents(THEMES . "/assets/orders/marketOrder.html");
+            $variables = array("%cpf%", "%rg%", "%residencia%", "%box%", "%market%", "%valor%", "%valorextenso%");
+            if ($box->nome == NULL) {
+                $box_nome = $box->cod_identificador;
+            } else {
+                $box_nome = $box->nome;
+            }
+            $dataReplace = array($user->cpf, $user->rg, $user->endereco, $box_nome, $zone->nome, $box->valor, $box->valor);
+            $template = str_replace($variables, $dataReplace, $template);
+
+            if ($template) {
+                $validate = true;
             }
         } else {
             $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" .

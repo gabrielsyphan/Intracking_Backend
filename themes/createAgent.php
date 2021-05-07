@@ -19,9 +19,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Nome:</label>
-                                            <input type="text" class="form-input" id="name"
-                                                   name="name"
-                                                   title="Nome do fiscal" placeholder="Seu Nome">
+                                            <input type="text" class="form-input" id="name" name="name" title="Nome do fiscal" placeholder="Seu Nome">
                                             <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
@@ -29,47 +27,29 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>CPF:</label>
-                                            <input type="text" class="form-input" id="identity"
-                                                   onfocusout="validateCpf(this)" name="identity"
-                                                   title="CPF do fiscal" placeholder="Seu CPF">
+                                            <input type="text" class="form-input" id="identity" onfocusout="validateCpf(this)" name="identity" title="CPF do fiscal" placeholder="Seu CPF">
                                             <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Matrícula:</label>
-                                            <input type="text" class="form-input" id="registration"
-                                                   name="registration"
-                                                   title="Matrícula do fiscal" placeholder="Sua Matrícula"
-                                            >
+                                            <input type="text" class="form-input" id="registration" name="registration" title="Matrícula do fiscal" placeholder="Sua Matrícula">
                                             <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
 
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>E-mail:</label>
-                                            <input type="email" class="form-input" id="email" name="email"
-                                                   title="Email do fiscal" placeholder="Seu E-mail">
-                                            <div class="invalid-feedback"></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Confirmar E-mail:</label>
-                                            <input type="email" class="form-input" id="confirm_email"
-                                                   name="confirm_email"
-                                                   title="Email do fiscal" placeholder="Confirme Seu E-mail">
+                                            <label>E-mail</label>
+                                            <input type="email" class="form-input" id="confirm_email" name="confirm_email" title="Email do fiscal" placeholder="Confirme Seu E-mail">
                                             <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Telefone:</label>
-                                            <input type="text" class="form-input" id="phone"
-                                                   name="phone"
-                                                   title="Telefone" placeholder="Seu Telefone">
+                                            <input type="text" class="form-input" id="phone" name="phone" title="Telefone" placeholder="Seu Telefone">
                                             <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
@@ -78,26 +58,29 @@
                                         <div class="form-group">
                                             <label>Cargo:</label>
                                             <select class="form-input" name="jobRole">
-                                                <option value="1">Estagiário</option>
-                                                <option value="2" selected>Fiscal</option>
-                                                <option value="3">Finanças</option>
-                                                <option value="4">Gestor</option>
+                                                <?php if ($agentTeam == 2) : ?>
+                                                    <option value="1">Estagiário</option>
+                                                    <option value="4" selected>Gestor</option>
+                                                <?php else :; ?>
+
+                                                    <option value="1">Estagiário</option>
+                                                    <option value="2" selected>Fiscal</option>
+                                                    <option value="3">Finanças</option>
+                                                    <option value="4">Gestor</option>
+                                                <?php endif; ?>
                                             </select>
                                         </div>
                                     </div>
+
+                             
 
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Foto de perfil: <span class="spanAlert">(Opcional)</span></label>
                                             <div class="form-group">
-                                                <label for="agentImage"
-                                                       class="label-file text-center item-max-width agentImage-file"><span
-                                                            class="icon-plus mr-2"></span> Selecionar
+                                                <label for="agentImage" class="label-file text-center item-max-width agentImage-file"><span class="icon-plus mr-2"></span> Selecionar
                                                     Arquivo</label>
-                                                <input type="file" class="hidden-input-file" id="agentImage"
-                                                       name="agentImage"
-                                                       accept="image/png, image/jpg, image/jpeg"
-                                                       onchange="uploadImage(this)">
+                                                <input type="file" class="hidden-input-file" id="agentImage" name="agentImage" accept="image/png, image/jpg, image/jpeg" onchange="uploadImage(this)">
                                                 <div class="agentImage-file-uploaded file-uploaded-container">
                                                     <div class="card-content-upload text-center p-3">
                                                         <div class="card-content-type-upload">
@@ -107,9 +90,7 @@
                                                     <div class="ml-3 text-left">
                                                         <div class="d-flex">
                                                             <p class="agentImage-name"></p>
-                                                            <span id="agentImage-span-close"
-                                                                  class="icon-close ml-3 card-close-file"
-                                                                  onclick="changeFile(this)"></span>
+                                                            <span id="agentImage-span-close" class="icon-close ml-3 card-close-file" onclick="changeFile(this)"></span>
                                                         </div>
                                                         <div class="card-content-progress"></div>
                                                     </div>
@@ -142,7 +123,7 @@
     $("#registration").mask('000000-0');
     $("#phone").mask('00 0 0000-0000');
 
-    $('#form').on('submit', function (e) {
+    $('#form').on('submit', function(e) {
         e.preventDefault();
         $("#loader-div").show();
 
@@ -159,7 +140,7 @@
                 cache: false,
                 contentType: false,
                 processData: false,
-            }).done(function (returnData) {
+            }).done(function(returnData) {
                 if (returnData == 'success') {
                     swal({
                         icon: "success",
@@ -196,14 +177,14 @@
                     });
                 }
                 console.log(returnData);
-            }).fail(function (e) {
+            }).fail(function(e) {
                 swal({
                     icon: "error",
                     title: "Erro!",
                     text: "Erro ao processar requisição",
                 });
                 console.log(e);
-            }).always(function () {
+            }).always(function() {
                 $("#loader-div").hide();
                 fieldsetDisable.removeAttr("disabled");
             });
