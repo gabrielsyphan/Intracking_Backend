@@ -1,4 +1,5 @@
 <?php
+
 header('Access-Control-Allow-Origin: *');
 session_start();
 
@@ -11,7 +12,6 @@ $router = new Router(ROOT);
 /*
  * Contorllers
  */
-
 $router->namespace("Source\App");
 
 /*
@@ -117,6 +117,8 @@ $router->get("/occupationLicenseUser/{id}", "Web:occupationLicenseUser", "web.oc
 $router->post("/validateOccupationLicense", "Web:validateOccupationLicense", "web.validateOccupationLicense");
 
 $router->post("/licenseCancel", "Web:licenseCancel", "web.licenseCancel");
+
+$router->get("/test", "SupeController:supeAuthentication", "supeController.supeAuthentication");
 
 /*
  * ERROS
