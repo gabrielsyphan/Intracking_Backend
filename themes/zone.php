@@ -152,7 +152,7 @@ endif; ?>
                             <?= $zone->vagas_fixas; ?>
                         </h5>
                     </div>
-                    <a href="<?= url('/editFixedZones/'). md5($zone->id) ?>" class="float-right ml-5 mt-4">
+                    <a href="<?= url('editFixedZones/'). md5($zone->id) ?>" class="float-right ml-5 mt-4">
                         <span class="icon-edit"></span>
                         Editar
                     </a>
