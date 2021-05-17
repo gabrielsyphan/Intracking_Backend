@@ -45,7 +45,7 @@ class Email
         return $this;
     }
 
-    public function attach(string $filePath, string $fileName): Email
+    public function attach(string $filePath, string $fileName): void
     {
         $this->data->attach[$filePath] = $fileName;
     }

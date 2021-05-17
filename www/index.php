@@ -12,7 +12,6 @@ $router = new Router(ROOT);
 /*
  * Contorllers
  */
-
 $router->namespace("Source\App");
 
 /*
@@ -105,9 +104,6 @@ $router->get("/marketLicenseUser/{id}", "Web:marketLicenseUser", "web.marketLice
 $router->post("/marketData", "Web:marketData", "web.marketData");
 $router->post("/validateMarketLicense", "Web:validateMarketLicense", "web.validateMarketLicense");
 
-$router->get("/consulta", "WebServiceSIAT:consulta", "WebServiceSIAT.consulta");
-
-$router->get("/response", "WebServiceSIAT:consultaPessoa");
 $router->post("/neighborhoodPolygon", "Web:neighborhoodPolygon", "web.neighborhoodPolygon");
 $router->get("/neighborhood/{id}", "Web:neighborhood", "web.neighborhood");
 $router->post("/findNeighborhood", "Web:findNeighborhood", "web.findNeighborhood");
@@ -122,8 +118,7 @@ $router->post("/validateOccupationLicense", "Web:validateOccupationLicense", "we
 
 $router->post("/licenseCancel", "Web:licenseCancel", "web.licenseCancel");
 
-$router->get("/testJwt", "Web:jwt", "web.jwt");
-
+$router->get("/test", "SupeController:supeAuthentication", "supeController.supeAuthentication");
 
 /*
  * ERROS
