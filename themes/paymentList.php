@@ -1,6 +1,58 @@
 <?php $v->layout("_theme.php") ?>
+<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLongTitle"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Filtrar Dados</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="p-5 text-center">
+                    <form id="form-create-account" method="POST" action="<?= $router->route("web.validateAccount"); ?>">
+                        <fieldset class="row">
+                            <div class="col-12">
+                                <input id="marketInput" list="market" placeholder="mercado">
+                                <datalist id="market">
+                                    <option value="Internet Explorer">
+                                    <option value="Firefox">
+                                    <option value="Chrome">
+                                    <option value="Opera">
+                                    <option value="Safari">
+                                </datalist>
+                                <input id="sectorInput" list="sector" onkeyup="dashFilter()">
+                                <datalist id="sector">
+                                    <option value="Internet Explorer">
+                                    <option value="Firefox">
+                                    <option value="Chrome">
+                                    <option value="Opera">
+                                    <option value="Safari">
+                                </datalist>
+                                <input id="boxInput" list="box">
+                                <datalist id="box" onkeyup="dashFilter()">
+                                    <option value="Internet Explorer">
+                                    <option value="Firefox">
+                                    <option value="Chrome">
+                                    <option value="Opera">
+                                    <option value="Safari">
+                                </datalist>
+                            </div>
+                            <div class="col-xl-12 text-right mb-5 mt-5">
+                                <button type="button" class="btn-3 primary" onclick="dashFilter()">Filtrar</button>
+                            </div>
+                            <hr class="">
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="container-fluid mt-5">
+    <a data-toggle="modal" data-target="#filterModal">filtrar</a>
     <div class="row">
         <div class="col-md-6 col-xl-3 mb-4">
             <div class="web-div-box">
@@ -11,7 +63,7 @@
                                 Pagamentos cadastrados
                             </h4>
                             <hr>
-                            <h2 class="title-section"><?= $amount ?></h2>
+                            <h2 class="title-section" id="paymentCount"><?= $amount ?></h2>
                         </div>
                         <div class="col-4">
                             <div class="text-center mt-4">
@@ -128,23 +180,30 @@
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
-
                                     <th scope="col" class="table-col-2" onclick="changeFilter(0)">
-                                        <div class="marker" id="0"></div>
-                                        Valor
+                                        <div class="d-flex">
+                                            <div class="marker" id="0"></div>
+                                            Valor
+                                        </div>
                                     </th>
                                     <th scope="col" class="table-col-2" onclick="changeFilter(1)">
-                                        <div class="marker" id="1"></div>
-                                        Vencimento
+                                        <div class="d-flex">
+                                            <div class="marker" id="1"></div>
+                                            Vencimento
+                                        </div>
                                     </th>
                                     <?php if ($_SESSION['user']['team'] == 2): ?>
                                         <th scope="col" class="table-col-2" onclick="changeFilter(2)">
-                                            <div class="marker active" id="2"></div>
-                                            Mercado
+                                            <div class="d-flex">
+                                                <div class="marker" id="2"></div>
+                                                Mercado
+                                            </div>
                                         </th>
                                         <th scope="col" class="table-col-1" onclick="changeFilter(3)">
-                                            <div class="marker" id="3"></div>
-                                            Box
+                                            <div class="d-flex">
+                                                <div class="marker" id="3"></div>
+                                                Box
+                                            </div>
                                         </th>
                                     <?php else: ?>
                                         <th scope="col" class="table-col-1" onclick="changeFilter(2)">
@@ -240,6 +299,8 @@
         <?php else: ?>
         let options = ['valor', 'vencimento', 'Referência', 'tipo', 'status', 'proprietário'];
         <?php endif; ?>
+        let market = ""
+        let sector = ""
 
         function openPage(data) {
             window.open("http://www.smf.maceio.al.gov.br:8090/e-agata/servlet/hwmemitedamqrcode?" + data, '_blank');
@@ -257,7 +318,53 @@
             mark.className = "marker active";
         }
 
+        function dashFilter() {
+
+            let market, sector, filterSector, filterMarket, table, tr, td, i, txtValue, paymentCount, countField;
+
+            market = document.getElementById("marketInput");
+            sector = document.getElementById("sectorInput");
+            countField = document.getElementById("paymentCount");
+            filterMarket = market.value.toUpperCase();
+            filterSector = sector.value.toUpperCase();
+            table = document.getElementById("table-data");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[2];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filterMarket) > -1) {
+                        td = tr[i].getElementsByTagName("td")[3];
+                        if (td) {
+                            txtValue = td.textContent || td.innerText;
+                            if (txtValue.toUpperCase().indexOf(filterSector) > -1) {
+                                tr[i].style.display = "";
+                            } else {
+                                tr[i].style.display = "none";
+                            }
+                            console.log(txtValue);
+                        }
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                    console.log(txtValue);
+                }
+            }
+            if ($('tr:visible').length === 1) {
+                $('.empty-table').show();
+                paymentCount = table.getElementsByTagName("tr");
+                countField.innerText = paymentCount;
+            } else {
+                if ($('.empty-table').show()) {
+                    $('.empty-table').hide()
+                }
+            }
+        }
+
         function tableFilter() {
+
+            dashFilter();
+
             let input, filter, table, tr, td, i, txtValue;
 
             input = document.getElementById("text");

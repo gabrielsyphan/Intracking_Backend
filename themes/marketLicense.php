@@ -118,7 +118,7 @@
                     <div class="col-xl-12 mt-5">
                         <div class="div-gray-bg border-top-green p-5">
                             <h4 class="black-title-section">Local de trabalho</h4>
-                            <p class="subtitle-section-p">Marque no mapa o local em que deseja trabalhar.</p>
+                            <p class="subtitle-section-p">Veja o mercado e o box selecionado no mapa.</p>
                             <hr>
                             <div id="map"></div>
                         </div>

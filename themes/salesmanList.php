@@ -126,12 +126,38 @@
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
-                                    <th>Tipo</th>
-                                    <th>Cpf</th>
-                                    <th>Proprietário</th>
-                                    <th>Início</th>
-                                    <th>Fim</th>
-                                    <th>Status</th>
+                                    <th onclick="changeFilter(0)">
+                                        <div class="d-flex">
+                                            <div class="marker" id="0"></div>Tipo
+                                        </div>
+                                    </th>
+                                    <th onclick="changeFilter(1)">
+                                        <div class="d-flex">
+                                            <div class="marker" id="1"></div>Cpf
+                                        </div>
+                                    </th>
+                                    <th onclick="changeFilter(2)">
+                                        <div class="d-flex">
+                                            <div class="marker" id="2"></div>Proprietário
+                                        </div>
+                                    </th>
+                                    <th onclick="changeFilter(3)">
+                                        <div class="d-flex">
+                                            <div class="marker" id="3"></div>Início
+                                        </div>
+                                    </th>
+                                    <th onclick="changeFilter(4)">
+                                        <div class="d-flex">
+                                            <div class="marker" id="4"></div>
+                                            Fim
+                                        </div>
+                                    </th>
+                                    <th onclick="changeFilter(5)">
+                                        <div class="d-flex">
+                                            <div class="marker active" id="5"></div>
+                                            Status
+                                        </div>
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody id="table-data">
@@ -187,6 +213,8 @@
 <script src="<?= url("themes/assets/vendor/bootstrap/js/popper.js"); ?>"></script>
 <script src="<?= url("themes/assets/vendor/bootstrap/js/bootstrap.min.js"); ?>"></script>
 <script>
+    let selectedOption = 5;
+    let options = ['tipo', 'CPF', 'Proprietário', 'Início', 'Fim', 'Status'];
     $('.js-pscroll').each(function () {
         var ps = new PerfectScrollbar(this);
 
@@ -197,6 +225,18 @@
 
     function licenseInfo(licenseType, licenseId) {
         window.location.href = '<?= url('licenseInfo') ?>/' + licenseType + '/' + licenseId;
+    }
+
+    function changeFilter(num) {
+        selectedOption = num;
+        input = document.getElementById("text");
+        input.placeholder = "Filtrar por " + options[num] + "...";
+        mark = document.getElementById(num);
+        markers = document.getElementsByClassName("marker");
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].className = "marker"
+        }
+        mark.className = "marker active";
     }
 
     function tableFilter() {

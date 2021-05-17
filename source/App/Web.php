@@ -2337,7 +2337,6 @@ class Web
                 $license = (new License())->findById($payment->id_licenca);
                 if (($license != null) && ($license->id_orgao == $_SESSION['user']['team'])) {
                     $user = (new User())->findById($license->id_usuario);
-                    $market = "fo";
                     switch ($license->tipo):
                         case 7:
                             $market = (new Market())->find("id_licenca = :ilic", "ilic=" . $license->id)->fetch();
@@ -2370,6 +2369,7 @@ class Web
         } else {
             $paymentArray = null;
         }
+        $zones = (new Zone())->find('id_orgao = :id', 'id=' . $_SESSION['user']['team'])->fetch(true);
 
         echo $this->view->render('paymentList', [
             'title' => 'Pagamentos | ' . SITE,
@@ -2377,7 +2377,8 @@ class Web
             'amount' => $paymentCount,
             'paid' => $auxPaid,
             'pendent' => $auxPendent,
-            'expired' => $auxExpired
+            'expired' => $auxExpired,
+            'zones' => $zones
         ]);
     }
 
