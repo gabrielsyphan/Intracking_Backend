@@ -29,6 +29,9 @@ use Source\Models\Salesman;
 use Source\Models\Zone;
 use Source\Models\Occupation;
 
+use \Firebase\JWT\JWT;
+
+
 /**
  * Class Web
  *
@@ -71,6 +74,8 @@ class Web
         if (empty($_SESSION['user'])) {
             $this->login();
         } else {
+            $this->validateToken($_SESSION['user']['token'], HASH);
+
             echo $this->view->render('home', [
                 'title' => 'Início | ' . SITE
             ]);
@@ -112,6 +117,7 @@ class Web
         $validate = 0;
 
         if ($user) {
+
             $attachs = (new Attach())->find('id_usuario = :id', 'id=' . $user->id)->fetch(true);
             if ($attachs) {
                 foreach ($attachs as $attach) {
@@ -125,6 +131,16 @@ class Web
                         $_SESSION['user']['email'] = $user->email;
                         $_SESSION['user']['identity'] = $user->cpf;
                         $_SESSION['user']['role'] = 0;
+
+                        $payload = array(
+                            "identity" => $user->cpf,
+                            "typeUser" => 0,
+                            "dateTime" => new \DateTime('' . date('d-m-Y H:i:s'))
+                        );
+                        $jwt = JWT::encode($payload, HASH);
+                        $_SESSION['user']['token'] = $jwt;
+                        $user->token = $jwt;
+                        $user->save();
 
                         $validate = 1;
                     }
@@ -148,6 +164,16 @@ class Web
                         $_SESSION['user']['image'] = ROOT . '/themes/assets/uploads/agents/' . $attach->id_usuario
                             . '/' . $attach->nome;
                         $_SESSION['user']['email'] = $agent->email;
+
+                        $payload = array(
+                            "identity" => $agent->cpf,
+                            "typeUser" => 3,
+                            "dateTime" => new \DateTime('' . date('d-m-Y H:i:s'))
+                        );
+                        $jwt = JWT::encode($payload, HASH);
+                        $_SESSION['user']['token'] = $jwt;
+                        $agent->token = $jwt;
+                        $agent->save();
 
                         $validate = 1;
                     }
@@ -1933,6 +1959,7 @@ class Web
     {
         $this->checkLogin();
 
+
         $license_type = (new LicenseType())->find()->fetch(true);
         $users = array();
         if ($_SESSION['user']['login'] == 3) {
@@ -2386,6 +2413,7 @@ class Web
      */
     public function agentList(): void
     {
+        $this->checkAgent();
         $agents = (new Agent)->find('id_orgao = :team', 'team=' . $_SESSION['user']['team'])->fetch(true);
         $apporved = 0;
         $blocked = 0;
@@ -2450,6 +2478,8 @@ class Web
      */
     public function userList(): void
     {
+        $this->validateToken($_SESSION['user']['token'], HASH);
+
         $users = (new User)->find('', '', 'id, cpf, email, nome, telefone')->fetch(true);
 
         $userCount = 0;
@@ -2696,6 +2726,8 @@ class Web
      */
     public function salesmanMap(): void
     {
+        $this->validateToken($_SESSION['user']['token'], HASH);
+
         $pending = array();
         $expired = array();
         $paid = array();
@@ -3029,6 +3061,8 @@ class Web
      */
     public function zone(array $data): void
     {
+        $this->validateToken($_SESSION['user']['token'], HASH);
+
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
 
         $zone = (new Zone())->find('MD5(id) = :id', 'id=' . $data['id'], 'id, ST_AsText(coordenadas) as poligono, 
@@ -3081,7 +3115,7 @@ class Web
 
 
                     echo $this->view->render('marketplace', [
-                        'title' => 'Área | ' . SITE,
+                        'title' => $zone->nome . ' | ' . SITE,
                         'salesmans' => $users,
                         'zone' => $zone,
                         'fixed' => $fixed
@@ -3105,6 +3139,8 @@ class Web
      */
     public function editFixedZones($data): void
     {
+        $this->validateToken($_SESSION['user']['token'], HASH);
+
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
         $zone = (new Zone())
             ->find(
@@ -3265,6 +3301,8 @@ class Web
      */
     public function checkLogin(): void
     {
+        $this->validateToken($_SESSION['user']['token'], HASH);
+
         if (!isset($_SESSION['user']['login'])) {
             $this->router->redirect('web.home');
         }
@@ -3275,6 +3313,8 @@ class Web
      */
     public function checkAgent(): void
     {
+        $this->validateToken($_SESSION['user']['token'], HASH);
+
         if (!isset($_SESSION['user']['login']) || (isset($_SESSION['user']['login']) && !($_SESSION['user']['login'] === 3))) {
             $this->router->redirect('web.home');
         }
@@ -3545,6 +3585,8 @@ class Web
 
     public function videos(): void
     {
+        $this->validateToken($_SESSION['user']['token'], HASH);
+
         echo $this->view->render('videos', [
             'title' => "Vídeos | " . SITE
         ]);
@@ -4028,5 +4070,33 @@ class Web
             'title' => 'Bairros | ' . SITE,
             'neighborhoods' => $neighborhoods
         ]);
+    }
+
+    public function validateToken($token, string $hash): void
+    {
+        if(!$token or $token === null) {
+            $this->router->redirect('web.home');
+        }
+
+        $verification = false;
+        $user = "";
+
+        $user = (new Agent())->find('cpf = :identity', 'identity=' . $_SESSION['user']['identity'])->fetch();
+
+        if ($_SESSION['user']['role'] == 0) {
+            $user = (new User())->find('cpf = :identity', 'identity=' . $_SESSION['user']['identity'])->fetch();
+        }
+
+        try {
+            $decoded = (array)JWT::decode($token, $hash, array('HS256'));
+            ($user->token == $token) ? $verification = true : $verification = false;
+        } catch (\Exception $e) {
+            $verification = false;
+        } finally {
+            if (!$verification) {
+                session_destroy();
+                $this->router->redirect('web.home');
+            }
+        }
     }
 }

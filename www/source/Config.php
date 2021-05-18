@@ -9,6 +9,7 @@ define("BOLETOS", "http://www.smf.maceio.al.gov.br:8090/e-agata/servlet/hwmemite
 define("SITE", "#Orditi");
 define("EMAIL", "contato@orditi.com");
 define("COMPANY", "Orditi");
+define("HASH", "d515a913784793bf43697f45836d3538");
 
 /**
  * Database config
