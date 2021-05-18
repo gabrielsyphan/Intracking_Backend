@@ -6,6 +6,7 @@ use SimpleXMLElement;
 use League\Plates\Engine;
 use Stonks\Router\Router;
 use PHPMailer\PHPMailer\Exception;
+use stdClass;
 
 class SupeController
 {
@@ -45,23 +46,21 @@ class SupeController
     public function supeAuthentication(): void
     {
         $data = '{"login": "gmeister", "senha": "123456", "hashSistema": "'. $this->hash .'"}';
-        $authentication = json_decode($this->postSupe($data, 'autenticar'));
+        $authentication = json_decode($this->postSupe($data, 'http://integracao.homologacao.maceio.al.gov.br/autenticacao-api/api/autenticar', true));
         
         if (isset($authentication->stacktrace)) {
             throw new Exception($authentication->stacktrace);
         } else {
             $this->token = 'Authorization: Bearer '. $authentication->token;
         }
-
-        var_dump ($this->openProcess('111.657.194-36', 'Teste abrir processo'));
     }
 
     /**
      * Open new process
      */
-    public function openProcess($identity, $userName): string
+    public function openProcess($identity, $userName): stdClass
     {
-        $response = false;
+
         $data = '{
             "assunto": "Cadastro de nova licença - Orditi",
             "cpfCnpjInteressado": "'. $identity .'",
@@ -75,22 +74,22 @@ class SupeController
             "tipoInteressado": "F"
         }';
 
-        $soap = json_decode($this->postSupe($data, 'processo'));
-        if (isset($soap->numero)) {
-            $response = true;
-        }
-
-        return json_encode($soap);
+        return json_decode($this->postSupe($data, 'processo'));
     }
 
     /**
      * Post request to Supe
      */
-    public function postSupe($data, $url): string
+    public function postSupe($data, $url, $authentication = false): string
     {
+
+        if ($authentication == false) {
+            $url = "http://integracao.homologacao.maceio.al.gov.br/protocolo-api/api/". $url;
+        }
+
         try {
             $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, 'http://integracao.homologacao.maceio.al.gov.br/autenticacao-api/api/'. $url);
+            curl_setopt($curl, CURLOPT_URL, $url);
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
             curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json', $this->token));

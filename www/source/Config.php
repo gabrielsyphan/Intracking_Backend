@@ -1,6 +1,6 @@
 <?php
 
-define("ROOT", "http://localhost");
+define("ROOT", "http://localhost:81");
 define("THEMES", __DIR__."/../themes");
 define("SERVICES", __DIR__."/../themes/services");
 define("EAGATA", "http://www.smf.maceio.al.gov.br:8090/e-agata/servlet/awstaxaexternas");
