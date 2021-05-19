@@ -2454,6 +2454,7 @@ class Web
     public function agentList(): void
     {
         $this->checkAgent();
+        
         $agents = (new Agent)->find('id_orgao = :team', 'team=' . $_SESSION['user']['team'])->fetch(true);
         $apporved = 0;
         $blocked = 0;
