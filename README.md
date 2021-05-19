@@ -1,4 +1,4 @@
-# Sistema de ordenamento e soluções tecnológicas #
+# Sistema de ordenamento e inovações tecnológicas #
 Versão web do sistema que realiza o gerênciamento das licenças públicas de ambulantes, uso de solo, foodtrucks, mercados e feiras públicas.
 
 ## 1 - Estrutura do projeto ##
