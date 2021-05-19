@@ -106,6 +106,17 @@ abstract class DataLayer
         return ($this->data->$name ?? null);
     }
 
+    /*
+    * @return PDO mode
+    */
+    public function columns($mode = PDO::FETCH_OBJ)
+    {
+        $stmt = Connect::getInstance()->prepare("DESCRIBE {$this->entity}");
+        $stmt->execute($this->params);
+        return $stmt->fetchAll($mode);
+    }
+
+
     /**
      * @return object|null
      */
@@ -228,7 +239,7 @@ abstract class DataLayer
     /**
      * @return bool
      */
-    public function save($options = []): bool
+    public function save(): bool
     {
         $primary = $this->primary;
         $id = null;
@@ -241,12 +252,12 @@ abstract class DataLayer
             /** Update */
             if (!empty($this->data->$primary)) {
                 $id = $this->data->$primary;
-                $this->update($this->safe(), "{$this->primary} = :id", "id={$id}", $options);
+                $this->update($this->safe(), "{$this->primary} = :id", "id={$id}");
             }
 
             /** Create */
             if (empty($this->data->$primary)) {
-                $id = $this->create($this->safe(), $options);
+                $id = $this->create($this->safe());
             }
 
             if (!$id) {
@@ -284,7 +295,9 @@ abstract class DataLayer
         $data = (array)$this->data();
         foreach ($this->required as $field) {
             if (empty($data[$field])) {
-                return false;
+                if(!is_int($data[$field])){
+                    return false;
+                }
             }
         }
         return true;

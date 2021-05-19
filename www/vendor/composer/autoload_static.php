@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit5ed45f9d155e4fa2716587f63faa4de1
+class ComposerStaticInit3c26f69d5b5a26906682109648a34af8
 {
     public static $files = array (
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
@@ -17,7 +17,7 @@ class ComposerStaticInit5ed45f9d155e4fa2716587f63faa4de1
         'afa76803f24616d7599be3b7b0846adc' => __DIR__ . '/..' . '/league/plates/src/Extension/Folders/folders.php',
         '16c5be35e32c6cf916d875518b909210' => __DIR__ . '/..' . '/league/plates/src/Util/util.php',
         'aa75ea0761a2f40c1f3b32ad314f86c4' => __DIR__ . '/..' . '/phpseclib/mcrypt_compat/lib/mcrypt.php',
-        '18e41c63ecfc080aba1c7ae709f5b972' => __DIR__ . '/../..' . '/source/Config.php',
+        '624d21c8a5fc533028ad57a349e8a45b' => __DIR__ . '/../..' . '/source/Config.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -38,6 +38,10 @@ class ComposerStaticInit5ed45f9d155e4fa2716587f63faa4de1
         'L' => 
         array (
             'League\\Plates\\' => 14,
+        ),
+        'F' => 
+        array (
+            'Firebase\\JWT\\' => 13,
         ),
         'C' => 
         array (
@@ -70,17 +74,26 @@ class ComposerStaticInit5ed45f9d155e4fa2716587f63faa4de1
         array (
             0 => __DIR__ . '/..' . '/league/plates/src',
         ),
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
+        ),
         'CoffeeCode\\DataLayer\\' => 
         array (
             0 => __DIR__ . '/..' . '/coffeecode/datalayer/src',
         ),
     );
 
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit5ed45f9d155e4fa2716587f63faa4de1::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit5ed45f9d155e4fa2716587f63faa4de1::$prefixDirsPsr4;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit3c26f69d5b5a26906682109648a34af8::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit3c26f69d5b5a26906682109648a34af8::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit3c26f69d5b5a26906682109648a34af8::$classMap;
 
         }, null, ClassLoader::class);
     }

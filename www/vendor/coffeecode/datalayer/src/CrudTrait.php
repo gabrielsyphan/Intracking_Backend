@@ -17,30 +17,18 @@ trait CrudTrait
      * @return int|null
      * @throws Exception
      */
-    protected function create(array $data, $options): ?int
+    protected function create(array $data): ?int
     {
         if ($this->timestamps) {
             $data["created_at"] = (new DateTime("now"))->format("Y-m-d H:i:s");
             $data["updated_at"] = $data["created_at"];
         }
 
-        if(array_keys($options, "polygon")){
-            $coordinates = $data['coordenadas'];
-            unset($data['coordenadas']);
-        }
-
         try {
             $columns = implode(", ", array_keys($data));
             $values = ":" . implode(", :", array_keys($data));
 
-            if(array_keys($options, "polygon")){
-                $stmt = Connect::getInstance()->prepare("INSERT INTO {$this->entity} ({$columns},
-                    coordenadas) VALUES ({$values}, PolygonFromText('{$coordinates}'))");
-            }else {
-                $stmt = Connect::getInstance()->prepare("INSERT INTO {$this->entity} ({$columns}) 
-                VALUES ({$values})");
-            }
-
+            $stmt = Connect::getInstance()->prepare("INSERT INTO {$this->entity} ({$columns}) VALUES ({$values})");
             $stmt->execute($this->filter($data));
 
             return Connect::getInstance()->lastInsertId();
@@ -57,15 +45,10 @@ trait CrudTrait
      * @return int|null
      * @throws Exception
      */
-    protected function update(array $data, string $terms, string $params, $options): ?int
+    protected function update(array $data, string $terms, string $params): ?int
     {
         if ($this->timestamps) {
             $data["updated_at"] = (new DateTime("now"))->format("Y-m-d H:i:s");
-        }
-
-        if(array_keys($options, "polygon")){
-            $coordinates = $data['coordenadas'];
-            unset($data['coordenadas']);
         }
 
         try {
@@ -73,11 +56,6 @@ trait CrudTrait
             foreach ($data as $bind => $value) {
                 $dateSet[] = "{$bind} = :{$bind}";
             }
-
-            if (isset($coordinates)) {
-                $dateSet[] = "coordenadas = PolygonFromText('{$coordinates}')";
-            }
-
             $dateSet = implode(", ", $dateSet);
             parse_str($params, $params);
 

@@ -1,6 +1,6 @@
 {
   "name": "orditi/orditiweb",
-  "description": "Sistema de gerenciamento e manutenção de serviços de prefeituras dos estados",
+  "description": "sistema de gerenciamento e manutenção de serviços de prefeituras dos estados",
   "minimum-stability": "stable",
   "license": "MIT",
   "authors": [
