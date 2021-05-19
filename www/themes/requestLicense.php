@@ -29,7 +29,7 @@
                         <p class="subtitle-section-p">Para empresas com funcionários ambulantes.</p>
                     </div>
                 </div>
-                <div class="row m-0 mt-3 p-4 div-request-license" onclick="newLicense(3)">
+                <!-- <div class="row m-0 mt-3 p-4 div-request-license" onclick="newLicense(3)">
                     <div class="col-2 text-center mt-4">
                         <img src="<?= url('themes/assets/img/calendar.png') ?>">
                     </div>
@@ -37,7 +37,7 @@
                         <h4>Eventuais</h4>
                         <p class="subtitle-section-p">Para atuar como ambulante em algum evento.</p>
                     </div>
-                </div>
+                </div> -->
                 <div class="row m-0 mt-3 p-4 div-request-license" onclick="newLicense(4)">
                     <div class="col-2 text-center mt-4">
                         <img src="<?= url('themes/assets/img/sale.png') ?>">

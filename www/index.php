@@ -110,10 +110,11 @@ $router->post("/findNeighborhood", "Web:findNeighborhood", "web.findNeighborhood
 $router->get("/exportNeighborhood/{neighborhoodId}", "Web:exportNeighborhood", "web.exportNeighborhood");
 
 $router->get("/foodTruckLicense", "Web:foodTruckLicense", "web.foodTruckLicense");
+$router->get("/foodTruckLicenseUser/{id}", "Web:foodTruckLicense", "web.foodTruckLicense");
 $router->post("/validateFoodTruckLicense", "Web:validateFoodTruckLicense", "web.validateFoodTruckLicense");
 
 $router->get("/occupationLicense", "Web:occupationLicense", "web.occupationLicense");
-$router->get("/occupationLicenseUser/{id}", "Web:occupationLicenseUser", "web.occupationLicenseUser");
+$router->get("/occupationLicenseUser/{id}", "Web:occupationLicense", "web.occupationLicense");
 $router->post("/validateOccupationLicense", "Web:validateOccupationLicense", "web.validateOccupationLicense");
 
 $router->post("/licenseCancel", "Web:licenseCancel", "web.licenseCancel");

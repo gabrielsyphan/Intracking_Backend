@@ -813,9 +813,20 @@ class Web
      * @return void
      * @var $data
      */
-    public function occupationLicense($companyId = null): void
+    public function occupationLicense($data = null): void
     {
         $this->checkLogin();
+
+        $userId = null;
+        if ($data != null) {
+            $user = (new User())->find('MD5(id) = :id', 'id=' . $data['id'])->fetch(false);
+
+            if (!$user) {
+                $this->router->redirect('web.home');
+            } else {
+               $userId = $data['id'];
+            }
+        }
 
         $zones = (new Zone())->find('', '', 'id, ST_AsText(coordenadas) as poligono, ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes')->fetch(true);
 
@@ -840,7 +851,7 @@ class Web
 
         echo $this->view->render('occupationLicense', [
             'title' => 'Licença de Uso de Solo | ' . SITE,
-            'userId' => null,
+            'userId' => $userId,
             'zones' => $zones,
         ]);
     }
@@ -879,10 +890,16 @@ class Web
 
             if ($data['userId']) {
                 $userId = (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id')->fetch(false);
-                $userId = $userId->id;
+                
+                if ($userId) {
+                    $userId = $userId->id;
+                } else {
+                    $userId = $_SESSION['user']['id'];
+                }
             } else {
                 $userId = $_SESSION['user']['id'];
             }
+            
             $license->id_usuario = $userId;
             $license->data_inicio = date('Y-m-d');
             $license->data_fim = date('Y-m-d', strtotime("+3 days"));
@@ -1157,11 +1174,22 @@ class Web
      * @return void
      * @var $data
      */
-
-    public function foodTruckLicense(): void
+    public function foodTruckLicense($data = null): void
     {
+        $userId = null;
+        if ($data != null) {
+            $user = (new User())->find('MD5(id) = :id', 'id=' . $data['id'])->fetch(false);
+
+            if (!$user) {
+                $this->router->redirect('web.home');
+            } else {
+               $userId = $data['id'];
+            }
+        }
+
         echo $this->view->render('foodTrucksLicense', [
-            'title' => 'Licença de FoodTrucks | ' . SITE
+            'title' => 'Licença de FoodTrucks | ' . SITE,
+            'userId' => $userId
         ]);
     }
 
@@ -1179,10 +1207,22 @@ class Web
                 $products = $products . "" . $product;
             }
 
+            if ($data['userId']) {
+                $userId = (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id')->fetch(false);
+                
+                if ($userId) {
+                    $userId = $userId->id;
+                } else {
+                    $userId = $_SESSION['user']['id'];
+                }
+            } else {
+                $userId = $_SESSION['user']['id'];
+            }
+
             $license = new License();
             $license->tipo = 6;
             $license->status = 3;
-            $license->id_usuario = $_SESSION['user']['id'];
+            $license->id_usuario = $userId;
             $license->data_inicio = date('Y-m-d');
             $license->data_fim = date('Y-m-d', strtotime("+3 days"));
             $license->id_orgao = 1;
