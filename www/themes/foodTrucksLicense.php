@@ -14,6 +14,7 @@
     <div class="p-5">
         <form id="form-license-foodTrucks" method="POST" action="<?= $router->route('web.validateFoodTruckLicense') ?>">
             <fieldset>
+                <input type='hidden' name='userId' value='<?= $userId ?>'>
                 <div id="inputHidden"></div>
                 <div class="row mb-5">
                     <div class="col-xl-12 pb-3">
