@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="569a43d1-da8c-4d19-a6dd-0ce78908e169" name="Default Changelist" comment="" />
+    <list default="true" id="569a43d1-da8c-4d19-a6dd-0ce78908e169" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/source/App/Web.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/source/App/Web.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/themes/marketplace.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/marketplace.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/themes/paymentList.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/paymentList.php" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -34,14 +39,20 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/vendor/composer/autoload_psr4.php" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/vendor/composer/autoload_namespaces.php" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/vendor/composer/autoload_files.php" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/vendor/coffeecode/datalayer/src/DataLayer.php" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
-  </component>
   <component name="PhpWorkspaceProjectConfiguration">
     <include_path>
+      <path value="$PROJECT_DIR$/www/vendor/league/plates" />
+      <path value="$PROJECT_DIR$/www/vendor/bootstrap/css" />
+      <path value="$PROJECT_DIR$/www/vendor/stonks/router" />
+      <path value="$PROJECT_DIR$/www/vendor/bootstrap/js" />
+      <path value="$PROJECT_DIR$/www/vendor/paragonie/constant_time_encoding" />
+      <path value="$PROJECT_DIR$/www/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/www/vendor/phpmailer/phpmailer" />
+      <path value="$PROJECT_DIR$/www/vendor/phpseclib/mcrypt_compat" />
+      <path value="$PROJECT_DIR$/www/vendor/phpseclib/phpseclib" />
+      <path value="$PROJECT_DIR$/www/vendor/coffeecode/datalayer" />
+      <path value="$PROJECT_DIR$/www/vendor/composer" />
+      <path value="$PROJECT_DIR$/www/vendor/firebase/php-jwt" />
       <path value="$PROJECT_DIR$/vendor/league/plates" />
       <path value="$PROJECT_DIR$/vendor/composer" />
       <path value="$PROJECT_DIR$/vendor/stonks/router" />
@@ -72,14 +83,15 @@
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Codigos\Xampp\htdocs\OrditiWeb\themes\assets\orders" />
-      <recent name="C:\xampp\htdocs\orditi\themes\assets\orders" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Codigos\Xampp\htdocs\OrditiWeb\www\source\Models" />
       <recent name="C:\xampp\htdocs\orditi\themes" />
       <recent name="C:\xampp\htdocs\orditi\themes\assets\img" />
       <recent name="C:\xampp\htdocs\orditi\source\Models" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Codigos\Xampp\htdocs\OrditiWeb\themes\assets\orders" />
+      <recent name="C:\xampp\htdocs\orditi\themes\assets\orders" />
     </key>
   </component>
   <component name="RunAnythingCache">
@@ -132,6 +144,9 @@
       <workItem from="1620170458326" duration="21310000" />
       <workItem from="1620309092512" duration="1386000" />
       <workItem from="1620389708140" duration="2064000" />
+      <workItem from="1621346057708" duration="9139000" />
+      <workItem from="1621358688695" duration="21000" />
+      <workItem from="1621459115372" duration="1143000" />
     </task>
     <servers />
   </component>

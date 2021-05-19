@@ -33,7 +33,7 @@ endif; ?>
                     <div class="row">
                         <div class="col-8">
                             <h4 class="title-section">
-                            Total de Vagas Ofertadas
+                                Total de Vagas Ofertadas
                             </h4>
                             <hr>
                             <h2 class="title-section"> <?= $zone->limite_ambulantes; ?></h2>
@@ -122,8 +122,33 @@ endif; ?>
                 <div class="box-div-info">
                     <h3 class="ml-3 title-section">Lista de Vagas Fixas</h3>
                     <p class="ml-3 subtitle-section-p">Todas as vagas fixas do mercado</p>
+
+                    <div class="div-box-span-icon mt-4">
+                        <div class="div-table-search">
+                            <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
+                                   placeholder="Filtrar por identificador...">
+                            <div class="circle-button primary search">
+                                <span class="icon-search"></span>
+                            </div>
+                        </div>
+
+                        <div class="dropleft">
+                            <div class="ml-3 circle-button secondary" id="dropdownMenuButton"
+                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                 title="Exportar tabela">
+                                <span class="icon-download"></span>
+                            </div>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="<?= url('exportData/2') ?>">
+                                    Exportar tabela em xls
+                                </a>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+
+                    <hr class="mb-0">
                     <div class="box-div-info-overflow-x">
-                        <hr class="mb-0">
                         <?php if (!$fixed): ?>
                             <div class="p-5 mt-5 text-center">
                                 <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
@@ -135,10 +160,30 @@ endif; ?>
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
-                                        <th scope="col">Identificador</th>
-                                        <th scope="col">Nome</th>
-                                        <th>Valor</th>
-                                        <th>Status</th>
+                                        <th scope="col" onclick="changeFilter(0)">
+                                            <div class="d-flex">
+                                                <div class="marker active" id="0"></div>
+                                                Identificador
+                                            </div>
+                                        </th>
+                                        <th scope="col" onclick="changeFilter(1)">
+                                            <div class="d-flex">
+                                                <div class="marker" id="1"></div>
+                                                Nome
+                                            </div>
+                                        </th>
+                                        <th onclick="changeFilter(2)">
+                                            <div class="d-flex">
+                                                <div class="marker" id="2"></div>
+                                                Valor
+                                            </div>
+                                        </th>
+                                        <th onclick="changeFilter(3)">
+                                            <div class="d-flex">
+                                                <div class="marker" id="3"></div>
+                                                Status
+                                            </div>
+                                        </th>
                                     </tr>
                                     </thead>
                                     <tbody id="table-data">
@@ -179,6 +224,127 @@ endif; ?>
     </div>
 </div>
 
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-xl-12 mb-5">
+            <div class="web-div-box">
+                <div class="box-div-info">
+                    <h3 class="ml-3 title-section">Lista de pagamentos</h3>
+                    <p class="ml-3 subtitle-section-p">Todos os pagamentos referentes a licenças nesse mercado</p>
+
+                    <div class="div-box-span-icon mt-4">
+                        <div class="div-table-search">
+                            <input id="text2" onkeyup="tableFilter2()" class="input-table-search" type="text"
+                                   placeholder="Filtrar por proprietário...">
+                            <div class="circle-button primary search">
+                                <span class="icon-search"></span>
+                            </div>
+                        </div>
+
+                        <div class="dropleft">
+                            <div class="ml-3 circle-button secondary" id="dropdownMenuButton"
+                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                 title="Exportar tabela">
+                                <span class="icon-download"></span>
+                            </div>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="<?= url('exportData/2') ?>">
+                                    Exportar tabela em xls
+                                </a>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                    <hr class="mb-0">
+                    <div class="box-div-info-overflow-x">
+                        <?php if (!$payments): ?>
+                            <div class="p-5 mt-5 text-center">
+                                <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
+                                <p class="mt-5 subtitle-section-p">Ops! Não encontramos nenhum pagamento para exibir
+                                    aqui. 😥</p>
+                            </div>
+                        <?php else: ?>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col" class="table-col-2" onclick="changeFilter2(0)">
+                                        <div class="d-flex">
+                                            <div class="marker" id="00"></div>
+                                            Valor
+                                        </div>
+                                    </th>
+                                    <th scope="col" class="table-col-2" onclick="changeFilter2(1)">
+                                        <div class="d-flex">
+                                            <div class="marker" id="01"></div>
+                                            Vencimento
+                                        </div>
+                                    </th>
+                                    <th scope="col" class="table-col-1" onclick="changeFilter2(3)">
+                                        <div class="d-flex">
+                                            <div class="marker" id="03"></div>
+                                            Box
+                                        </div>
+                                    </th>
+                                    <th scope="col" class="table-col-2" onclick="changeFilter2(4)">
+                                        <div class="marker" id="04"></div>
+                                        Status
+                                    </th>
+                                    <th scope="col" onclick="changeFilter(5)">
+                                        <div class="marker active" id="05"></div>
+                                        Proprietário
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody id="table-data2">
+                                <?php
+                                if ($payments !== NULL):
+                                    foreach ($payments as $payment):
+                                        switch ($payment->status):
+                                            case 1:
+                                                $divStatus = 'primary';
+                                                $textStatus = 'Pago';
+                                                $trClass = 'border-left-green';
+                                                break;
+                                            case 2:
+                                                $divStatus = 'secondary';
+                                                $textStatus = 'Vencido';
+                                                $trClass = 'border-left-red';
+                                                break;
+                                            default:
+                                                $divStatus = 'tertiary';
+                                                $textStatus = 'Pendente';
+                                                $trClass = 'border-left-yellow';
+                                                break;
+                                        endswitch; ?>
+                                        <tr class="<?= $trClass ?>"
+                                            onclick="openPage('<?= $payment->cod_referencia ?>')">
+                                            <td>R$ <?= $payment->valor ?>,00</td>
+                                            <td><?= date('d/m/Y', strtotime($payment->pagar_em)); ?></td>
+                                            <td><?= $payment->name_box ?></td>
+                                            <td>
+                                                <div class="d-flex">
+                                                    <div class="status-circle <?= $divStatus; ?> t-5"></div>
+                                                    <?= $textStatus; ?>
+                                                </div>
+                                            </td>
+                                            <td><?= $payment->name ?></td>
+                                        </tr>
+                                    <?php endforeach; endif; ?>
+                                </tbody>
+                            </table>
+                            <div class="text-center p-4 empty-table">
+                                <img style="width: 20%" src="<?= url('themes/assets/img/empty.svg') ?>">
+                                <h4 class="black-title-section">Ops.......!</h4>
+                                <p class="subtitle-section-p">Nenhum dado foi encontrado</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container-fluid mt-5 mb-2">
     <div class="row">
         <div class="col-sm-6 mb-5" onclick="debugMap()">
@@ -188,7 +354,8 @@ endif; ?>
         </div>
 
         <div class="col-sm-6 mb-5">
-            <iframe src="https://www.google.com/maps/embed?pb=!4v1617115456065!6m8!1m7!1sh2uwEPd3HSSwcRMfhM_hRQ!2m2!1d<?= $zone->centroide[1] ?>!2d<?= $zone->centroide[0] ?>!3f343.7!4f3.739999999999995!5f0.7820865974627469" class="mapMarketPlace" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!4v1617115456065!6m8!1m7!1sh2uwEPd3HSSwcRMfhM_hRQ!2m2!1d<?= $zone->centroide[1] ?>!2d<?= $zone->centroide[0] ?>!3f343.7!4f3.739999999999995!5f0.7820865974627469"
+                    class="mapMarketPlace" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
         </div>
     </div>
 </div>
@@ -197,12 +364,98 @@ endif; ?>
 <script src="<?= url("themes/assets/js/leaflet.markercluster-src.js"); ?>"></script>
 <script src="<?= url("themes/assets/js/Leaflet.LinearMeasurement.js"); ?>"></script>
 <script>
+    let options = ['identificador', 'nome', 'valor', 'status'];
+    let selectedOption = 0;
+
+    let options2 = ['valor', 'vencimento', 'box', 'status', 'proprietário'];
+    let selectedOption2 = 0;
+
     function editZoneFixed(zoneId) {
         window.location.href = '<?= url('editFixedZones/') ?>' + '/' + zoneId;
     }
 
     function openPage(data) {
         window.open("<?= $router->route('web.salesman'); ?>/" + data, '_blank');
+    }
+
+    function changeFilter(num) {
+        selectedOption = num;
+        input = document.getElementById("text");
+        input.placeholder = "Filtrar por " + options[num] + "...";
+        mark = document.getElementById(num);
+        markers = document.getElementsByClassName("marker");
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].className = "marker"
+        }
+        mark.className = "marker active";
+    }
+
+    function tableFilter() {
+        let input, filter, table, tr, td, i, txtValue;
+
+        input = document.getElementById("text");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("table-data");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[selectedOption];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+                console.log(txtValue);
+            }
+        }
+        if ($('tr:visible').length === 1) {
+            $('.empty-table').show();
+        } else {
+            if ($('.empty-table').show()) {
+                $('.empty-table').hide()
+            }
+        }
+    }
+
+    function changeFilter2(num) {
+        selectedOption2 = num;
+        input = document.getElementById("text2");
+        input.placeholder = "Filtrar por " + options2[num] + "...";
+        mark = document.getElementById("0"+num);
+        markers = document.getElementsByClassName("marker");
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].className = "marker"
+        }
+        mark.className = "marker active";
+    }
+
+    function tableFilter2() {
+        let input, filter, table, tr, td, i, txtValue;
+
+        input = document.getElementById("text2");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("table-data2");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[selectedOption];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+                console.log(txtValue);
+            }
+        }
+        if ($('tr:visible').length === 1) {
+            $('.empty-table').show();
+        } else {
+            if ($('.empty-table').show()) {
+                $('.empty-table').hide()
+            }
+        }
     }
 
     $(function () {

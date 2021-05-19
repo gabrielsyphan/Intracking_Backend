@@ -287,7 +287,7 @@
             </div>
         </div>
     </div>
-
+</div>
 
     <?php $v->start("scripts"); ?>
     <script src="<?= url("themes/assets/vendor/bootstrap/js/popper.js"); ?>"></script>
