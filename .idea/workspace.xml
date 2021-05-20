@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b57fc3f1-cc6e-43cf-9dfc-33568b30ec93" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/www/source/Models/Publicity.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/occupation/67/businessLicense.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/occupation/67/cnpjRegistration.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/occupation/67/proofAddress.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/68/businessLicense.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/68/cnpjRegistration.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/68/proofAddress.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/80/businessLicense.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/80/cnpjRegistration.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/80/proofAddress.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/83/businessLicense.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/83/cnpjRegistration.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/83/proofAddress.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/publicityLicense.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/publicityLicenseInfo.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/source/App/Web.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/source/App/Web.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/themes/dashboard.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/dashboard.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/themes/marketplace.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/marketplace.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/themes/paymentList.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/paymentList.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/themes/requestLicense.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/requestLicense.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/themes/salesmanList.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/salesmanList.php" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/www/composer.json</pharConfigPath>
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration">
+    <include_path>
+      <path value="$PROJECT_DIR$/www/vendor/league/plates" />
+      <path value="$PROJECT_DIR$/www/vendor/bootstrap/css" />
+      <path value="$PROJECT_DIR$/www/vendor/stonks/router" />
+      <path value="$PROJECT_DIR$/www/vendor/bootstrap/js" />
+      <path value="$PROJECT_DIR$/www/vendor/paragonie/constant_time_encoding" />
+      <path value="$PROJECT_DIR$/www/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/www/vendor/phpmailer/phpmailer" />
+      <path value="$PROJECT_DIR$/www/vendor/phpseclib/mcrypt_compat" />
+      <path value="$PROJECT_DIR$/www/vendor/phpseclib/phpseclib" />
+      <path value="$PROJECT_DIR$/www/vendor/coffeecode/datalayer" />
+      <path value="$PROJECT_DIR$/www/vendor/composer" />
+      <path value="$PROJECT_DIR$/www/vendor/firebase/php-jwt" />
+      <path value="$PROJECT_DIR$/vendor/league/plates" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/stonks/router" />
+      <path value="$PROJECT_DIR$/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/vendor/paragonie/constant_time_encoding" />
+      <path value="$PROJECT_DIR$/vendor/phpseclib/mcrypt_compat" />
+      <path value="$PROJECT_DIR$/vendor/phpseclib/phpseclib" />
+      <path value="$PROJECT_DIR$/vendor/coffeecode/datalayer" />
+      <path value="$PROJECT_DIR$/vendor/phpmailer/phpmailer" />
+      <path value="$PROJECT_DIR$/vendor/bootstrap/js" />
+      <path value="$PROJECT_DIR$/vendor/bootstrap/css" />
+    </include_path>
+  </component>
+  <component name="ProjectId" id="1slwU1I34mnk6SNYglZV6dGcA91" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b57fc3f1-cc6e-43cf-9dfc-33568b30ec93" name="Default Changelist" comment="" />
+      <created>1621460495108</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1621460495108</updated>
+      <workItem from="1621460496157" duration="14877000" />
+      <workItem from="1621516827594" duration="5198000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="678" y="-892" key="NewPhpClassDialog" timestamp="1621469374129">
+      <screen x="0" y="-1080" width="1920" height="1030" />
+    </state>
+    <state x="678" y="-892" key="NewPhpClassDialog/0.-1080.1920.1030/0.0.1536.824@0.-1080.1920.1030" timestamp="1621469374129" />
+    <state x="1186" y="-817" key="NewPhpFileDialog" timestamp="1621479648008">
+      <screen x="0" y="-1080" width="1920" height="1030" />
+    </state>
+    <state x="1186" y="-817" key="NewPhpFileDialog/0.-1080.1920.1030/0.0.1536.824@0.-1080.1920.1030" timestamp="1621479648008" />
+    <state x="602" y="-892" width="715" height="664" key="find.popup" timestamp="1621477768199">
+      <screen x="0" y="-1080" width="1920" height="1030" />
+    </state>
+    <state x="602" y="-892" width="715" height="664" key="find.popup/0.-1080.1920.1030/0.0.1536.824@0.-1080.1920.1030" timestamp="1621477768199" />
+    <state x="532" y="-303" key="run.anything.popup" timestamp="1621519735432">
+      <screen x="0" y="-1080" width="1920" height="1030" />
+    </state>
+    <state x="532" y="-303" key="run.anything.popup/0.-1080.1920.1030/0.0.1536.824@0.-1080.1920.1030" timestamp="1621519735432" />
+  </component>
+</project>

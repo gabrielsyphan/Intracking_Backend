@@ -11,6 +11,7 @@ use Source\Models\License;
 use Source\Models\LicenseType;
 use Source\Models\Market;
 use Source\Models\Neighborhood;
+use Source\Models\Publicity;
 use Source\Models\Punishment;
 use Source\Models\Role;
 use Source\Models\Team;
@@ -1045,6 +1046,177 @@ class Web
      * @return void
      * @var $data
      */
+    public function publicityLicense($data = null): void
+    {
+        $this->checkLogin();
+
+        $userId = null;
+        if ($data != null) {
+            $user = (new User())->find('MD5(id) = :id', 'id=' . $data['id'])->fetch(false);
+
+            if (!$user) {
+                $this->router->redirect('web.home');
+            } else {
+                $userId = $data['id'];
+            }
+        }
+
+        echo $this->view->render('publicityLicense', [
+            'title' => 'Licença de Publicidade | ' . SITE,
+            'userId' => $userId,
+        ]);
+    }
+
+    public function validatePublicityLicense($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $response = 'fail';
+
+        if ($_FILES) {
+
+            $curl = curl_init();
+
+            curl_setopt($curl, CURLOPT_URL, PERTENCES);
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($curl, CURLOPT_HEADER, false);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+
+            $point = 'POINT(' . $data['latitude'] . " " . $data['longitude'] . ')';
+
+            $license = new License();
+            $license->tipo = 4;
+
+            $license->status = 3;
+
+            if ($data['userId']) {
+                $userId = (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id')->fetch(false);
+
+                if ($userId) {
+                    $userId = $userId->id;
+                } else {
+                    $userId = $_SESSION['user']['id'];
+                }
+            } else {
+                $userId = $_SESSION['user']['id'];
+            }
+
+            $license->id_usuario = $userId;
+            $license->data_inicio = date('Y-m-d');
+            $license->data_fim = date('Y-m-d', strtotime("+3 days"));
+            $license->cmc = '';
+            $license->id_orgao = 1;
+            $license->save();
+
+            if ($license->fail()) {
+                var_dump($license->fail()->getMessage());
+            } else {
+                /**
+                 * Load all images
+                 */
+                $curl = curl_init();
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, True);
+                curl_setopt($curl, CURLOPT_URL, 'https://nominatim.openstreetmap.org/reverse.php?lat=' . $data['latitude'] . '&lon=' . $data['longitude'] . '&zoom=18&format=jsonv2');
+                curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:7.0.1) Gecko/20100101 Firefox/7.0.1');
+                $street = curl_exec($curl);
+                curl_close($curl);
+                $street = json_decode($street);
+                $street = $street->display_name;
+                $valueToPayment = array();
+
+                $publicity = new Publicity();
+                $publicity->cnpj = $data['cnpj'];
+                $publicity->dimensoes = $data['width'] . "x" . $data['length'] . "x" . $data['height'];
+                $publicity->area = floatval($data['width']) * floatval($data['length']);
+                $publicity->tipo = $data['typeSelect'][0];
+                $publicity->descricao = $data['description'];
+                $publicity->id_licenca = $license->id;
+                $publicity->latitude = $data['latitude'];
+                $publicity->longitude = $data['longitude'];
+
+                $publicity->save();
+
+                if ($publicity->fail()) {
+                    $license->destroy();
+                    var_dump($publicity->fail()->getMessage());
+                    exit();
+                } else {
+
+                    $paymentDate = date('Y-m-d', strtotime("+3 days"));
+                    $payment = new Payment();
+                    $payment->id_licenca = $license->id;
+                    $payment->cod_referencia = null;
+                    $payment->cod_pagamento = null;
+                    $payment->valor = 1;
+                    $payment->id_usuario = $_SESSION['user']['id'];
+                    $payment->tipo = 1;
+                    $payment->pagar_em = $paymentDate;
+                    $payment->save();
+                    $extCode = 'ODT' . $payment->id;
+                    $payment->cod_referencia = 15123;
+                    $payment->cod_pagamento = 'teste';
+                    $payment->save();
+
+                    if ($payment->fail()) {
+                        $license->destroy();
+                        $publicity->destroy();
+                        var_dump($payment->fail()->getMessage());
+                        exit();
+                    } else {
+                        foreach ($_FILES as $key => $file) {
+                            $target_file = basename($file['name']);
+
+                            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                            $extensions_arr = array("jpg", "jpeg", "png");
+
+                            if (in_array($imageFileType, $extensions_arr)) {
+                                $folder = THEMES . '/assets/uploads/publicity';
+                                if (!file_exists($folder) || !is_dir($folder)) {
+                                    mkdir($folder, 0755);
+                                }
+                                $fileName = $key . '.' . $imageFileType;
+                                $dir = $folder . '/' . $license->id;
+
+                                if (!file_exists($dir) || !is_dir($dir)) {
+                                    mkdir($dir, 0755);
+                                }
+
+                                $dir = $dir . '/' . $fileName;
+
+                                move_uploaded_file($file['tmp_name'], $dir);
+
+                                $attach = new Attach();
+                                $attach->id_usuario = $license->id;
+                                $attach->tipo_usuario = 4;
+                                $attach->nome = $fileName;
+                                $attach->save();
+
+                                if ($attach->fail()) {
+                                    $license->destroy();
+                                    var_dump($attach->fail()->getMessage());
+                                    exit();
+                                } else {
+                                    $response = 'success';
+                                }
+                            }
+                        }
+
+                        $response = 'success';
+                    }
+                }
+            }
+        }
+        echo $response;
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
     public function licenseInfo($data): void
     {
         $this->checkLogin();
@@ -1097,6 +1269,12 @@ class Web
                         $templateName = 'companyLicenseInfo';
                         $groupName = 'companys';
                         break;
+                    case 4:
+                        $licenseInfo = (new Publicity())->find('id_licenca = :id', 'id=' . $license->id)
+                            ->fetch();
+                        $templateName = 'publicityLicenseInfo';
+                        $groupName = 'publicity';
+                        break;
                     case 5:
                         $licenseInfo = (new Occupation())->find('id_licenca = :id', 'id=' . $license->id)
                             ->fetch();
@@ -1134,7 +1312,6 @@ class Web
                     $salesmans = (new Salesman())->find('id_empresa = :id', 'id=' . $license->id)
                         ->fetch(true);
                     $arrayAux = array();
-
                     if ($salesmans) {
                         foreach ($salesmans as $salesman) {
                             $salesmanLicense = (new License())->findById($salesman->id_licenca);
@@ -1147,9 +1324,7 @@ class Web
                             }
                         }
                     }
-
                     $userImage = '';
-
                     if ($attachments) {
                         foreach ($attachments as $attach) {
                             $uploads[] = [
@@ -1158,23 +1333,21 @@ class Web
                                 'userId' => $license->id
                             ];
                         }
-
                         foreach ($userAttachments as $userAttachment) {
                             if (explode('.', $userAttachment->nome)[0] == 'userImage') {
                                 $userImage = $userAttachment->nome;
                             }
                         }
-
                         $validate = true;
-
                     }
-
                     if ($data['licenseType'] == 7) {
                         $validate = true;
                     }
                 }
             }
         }
+
+        $validate = true;
 
         if ($validate == false) {
             $this->router->redirect('web.home');

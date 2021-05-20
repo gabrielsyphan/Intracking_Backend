@@ -104,6 +104,9 @@
             case 2:
                 window.location.href = '<?= isset($user) ? url('companyLicenseUser/' . md5($user->id)) : url('companyLicense') ?>';
                 break;
+            case 4:
+                window.location.href = '<?= isset($user) ? url('publicityLicenseUser/' . md5($user->id)) : url('publicityLicense') ?>';
+                break;
             case 5:
                 window.location.href = '<?= isset($user) ? url('occupationLicenseUser/' . md5($user->id)) : url('occupationLicense') ?>';
                 break;
