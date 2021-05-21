@@ -851,7 +851,7 @@ class Web
             if (!$user) {
                 $this->router->redirect('web.home');
             } else {
-               $userId = $data['id'];
+                $userId = $data['id'];
             }
         }
 
@@ -917,7 +917,7 @@ class Web
 
             if ($data['userId']) {
                 $userId = (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id')->fetch(false);
-                
+
                 if ($userId) {
                     $userId = $userId->id;
                 } else {
@@ -926,7 +926,7 @@ class Web
             } else {
                 $userId = $_SESSION['user']['id'];
             }
-            
+
             $license->id_usuario = $userId;
             $license->data_inicio = date('Y-m-d');
             $license->data_fim = date('Y-m-d', strtotime("+3 days"));
@@ -1090,11 +1090,10 @@ class Web
             $license = new License();
             $license->tipo = 4;
 
-            $license->status = 3;
+            $license->status = 4;
 
             if ($data['userId']) {
-                $userId = (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id')->fetch(false);
-
+                $userId = (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id,cpf')->fetch(false);
                 if ($userId) {
                     $userId = $userId->id;
                 } else {
@@ -1127,8 +1126,14 @@ class Web
                 $street = $street->display_name;
                 $valueToPayment = array();
 
+                $userCpf = (new User())->find('id=:id', 'id=' . $userId, "cpf")->fetch(false);
+
                 $publicity = new Publicity();
-                $publicity->cnpj = $data['cnpj'];
+                $publicity->cpf = $userCpf->cpf;
+                if ($data['typeRequestSelect'] == '1'){
+                    $publicity->cnpj = $data['cnpj'];
+                    $publicity->cnpj = $data['cmc'];
+                }
                 $publicity->dimensoes = $data['width'] . "x" . $data['length'] . "x" . $data['height'];
                 $publicity->area = floatval($data['width']) * floatval($data['length']);
                 $publicity->tipo = $data['typeSelect'][0];
@@ -1144,64 +1149,71 @@ class Web
                     var_dump($publicity->fail()->getMessage());
                     exit();
                 } else {
+                    //Validação humana necessária aspargo
+                    if ($publicity->area >= 20) {
+                        //Envia email dizendo que o processo está aguardando validação
 
-                    $paymentDate = date('Y-m-d', strtotime("+3 days"));
-                    $payment = new Payment();
-                    $payment->id_licenca = $license->id;
-                    $payment->cod_referencia = null;
-                    $payment->cod_pagamento = null;
-                    $payment->valor = 1;
-                    $payment->id_usuario = $_SESSION['user']['id'];
-                    $payment->tipo = 1;
-                    $payment->pagar_em = $paymentDate;
-                    $payment->save();
-                    $extCode = 'ODT' . $payment->id;
-                    $payment->cod_referencia = 15123;
-                    $payment->cod_pagamento = 'teste';
-                    $payment->save();
-
-                    if ($payment->fail()) {
-                        $license->destroy();
-                        $publicity->destroy();
-                        var_dump($payment->fail()->getMessage());
-                        exit();
                     } else {
-                        foreach ($_FILES as $key => $file) {
-                            $target_file = basename($file['name']);
+                        $license->status = 3;
+                        $license->save();
 
-                            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+                        $paymentDate = date('Y-m-d', strtotime("+3 days"));
+                        $payment = new Payment();
+                        $payment->id_licenca = $license->id;
+                        $payment->cod_referencia = null;
+                        $payment->cod_pagamento = null;
+                        $payment->valor = 1;
+                        $payment->id_usuario = $_SESSION['user']['id'];
+                        $payment->tipo = 1;
+                        $payment->pagar_em = $paymentDate;
+                        $payment->save();
+                        $extCode = 'ODT' . $payment->id;
+                        $payment->cod_referencia = 15123;
+                        $payment->cod_pagamento = 'teste';
+                        $payment->save();
 
-                            $extensions_arr = array("jpg", "jpeg", "png");
+                        if ($payment->fail()) {
+                            $license->destroy();
+                            $publicity->destroy();
+                            var_dump($payment->fail()->getMessage());
+                            exit();
+                        }
+                    }
+                    foreach ($_FILES as $key => $file) {
+                        $target_file = basename($file['name']);
 
-                            if (in_array($imageFileType, $extensions_arr)) {
-                                $folder = THEMES . '/assets/uploads/publicity';
-                                if (!file_exists($folder) || !is_dir($folder)) {
-                                    mkdir($folder, 0755);
-                                }
-                                $fileName = $key . '.' . $imageFileType;
-                                $dir = $folder . '/' . $license->id;
+                        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-                                if (!file_exists($dir) || !is_dir($dir)) {
-                                    mkdir($dir, 0755);
-                                }
+                        $extensions_arr = array("jpg", "jpeg", "png");
 
-                                $dir = $dir . '/' . $fileName;
+                        if (in_array($imageFileType, $extensions_arr)) {
+                            $folder = THEMES . '/assets/uploads/publicity';
+                            if (!file_exists($folder) || !is_dir($folder)) {
+                                mkdir($folder, 0755);
+                            }
+                            $fileName = $key . '.' . $imageFileType;
+                            $dir = $folder . '/' . $license->id;
 
-                                move_uploaded_file($file['tmp_name'], $dir);
+                            if (!file_exists($dir) || !is_dir($dir)) {
+                                mkdir($dir, 0755);
+                            }
 
-                                $attach = new Attach();
-                                $attach->id_usuario = $license->id;
-                                $attach->tipo_usuario = 4;
-                                $attach->nome = $fileName;
-                                $attach->save();
+                            $dir = $dir . '/' . $fileName;
 
-                                if ($attach->fail()) {
-                                    $license->destroy();
-                                    var_dump($attach->fail()->getMessage());
-                                    exit();
-                                } else {
-                                    $response = 'success';
-                                }
+                            move_uploaded_file($file['tmp_name'], $dir);
+
+                            $attach = new Attach();
+                            $attach->id_usuario = $license->id;
+                            $attach->tipo_usuario = 4;
+                            $attach->nome = $fileName;
+                            $attach->save();
+
+                            if ($attach->fail()) {
+                                $license->destroy();
+                                var_dump($attach->fail()->getMessage());
+                                exit();
+                            } else {
+                                $response = 'success';
                             }
                         }
 
@@ -1210,6 +1222,36 @@ class Web
                 }
             }
         }
+        echo $response;
+    }
+
+    public function confirmPublicityLicense($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $response = "fail";
+
+        $license = (new License())->findById($data['licenseId']);
+
+        if ($data['status'] == 'approve') {
+            $license->status = 3;
+            $license->save();
+            if (!$license->fail()) {
+                $response = 'sucess';
+
+                //Envia o email e gera o boleto
+            }
+        } else {
+            $license->status = 2;
+            $license->save();
+            if (!$license->fail()) {
+                $response = 'sucess';
+                //Envia o email com o comentário do motivo da rejeição
+            }
+        }
+
         echo $response;
     }
 
@@ -1272,6 +1314,7 @@ class Web
                     case 4:
                         $licenseInfo = (new Publicity())->find('id_licenca = :id', 'id=' . $license->id)
                             ->fetch();
+                        $licenseInfo->getLicense();
                         $templateName = 'publicityLicenseInfo';
                         $groupName = 'publicity';
                         break;
@@ -1382,7 +1425,7 @@ class Web
             if (!$user) {
                 $this->router->redirect('web.home');
             } else {
-               $userId = $data['id'];
+                $userId = $data['id'];
             }
         }
 
@@ -1408,7 +1451,7 @@ class Web
 
             if ($data['userId']) {
                 $userId = (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id')->fetch(false);
-                
+
                 if ($userId) {
                     $userId = $userId->id;
                 } else {
@@ -2629,7 +2672,7 @@ class Web
     public function agentList(): void
     {
         $this->checkAgent();
-        
+
         $agents = (new Agent)->find('id_orgao = :team', 'team=' . $_SESSION['user']['team'])->fetch(true);
         $apporved = 0;
         $blocked = 0;
@@ -4290,7 +4333,7 @@ class Web
 
     public function validateToken($token, string $hash): void
     {
-        if(!$token or $token === null) {
+        if (!$token or $token === null) {
             $this->router->redirect('web.home');
         }
 

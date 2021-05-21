@@ -120,6 +120,7 @@ $router->post("/validateOccupationLicense", "Web:validateOccupationLicense", "we
 $router->get("/publicityLicense", "Web:publicityLicense", "web.publicityLicense");
 $router->get("/publicityLicenseUser/{id}", "Web:publicityLicense", "web.publicityLicense");
 $router->post("/validatePublicityLicense", "Web:validatePublicityLicense", "web.validatePublicityLicense");
+$router->post("/confirmPublicityLicense", "Web:confirmPublicityLicense", "web.confirmPublicityLicense");
 
 $router->post("/licenseCancel", "Web:licenseCancel", "web.licenseCancel");
 

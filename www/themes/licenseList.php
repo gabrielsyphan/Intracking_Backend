@@ -53,6 +53,11 @@
                                         $textStatus = 'Bloqueado';
                                         $trClass = 'border-left-red';
                                         break;
+                                    case 3:
+                                        $divStatus = 'primary';
+                                        $textStatus = 'Aprovado';
+                                        $trClass = 'border-left-yellow';
+                                        break;
                                     default:
                                         $divStatus = 'tertiary';
                                         $textStatus = 'Pendente';
@@ -67,7 +72,7 @@
                                     <td><?= $license->data_fim ?></td>
                                     <td>
                                         <div class="d-flex">
-                                            <div class="status-circle primary t-5"></div>
+                                            <div class="status-circle <?= $divStatus ?> t-5"></div>
                                             <?= $textStatus; ?>
                                         </div>
                                     </td>

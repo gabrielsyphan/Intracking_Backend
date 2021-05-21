@@ -173,6 +173,11 @@
                                             $textStatus = 'Bloqueado';
                                             $trClass = 'border-left-red';
                                             break;
+                                        case 3:
+                                            $divStatus = 'primary';
+                                            $textStatus = 'Aprovado';
+                                            $trClass = 'border-left-yellow';
+                                            break;
                                         default:
                                             $divStatus = 'tertiary';
                                             $textStatus = 'Pendente';

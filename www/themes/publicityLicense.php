@@ -23,33 +23,15 @@
                         <hr>
                     </div>
 
-                    <div class="col-xl-6">
+                    <div class="col-xl-6 ">
                         <div class="div-gray-bg border-top-green p-5">
-                            <h4 class="black-title-section">Informações de trabalho</h4>
+                            <h4 class="black-title-section">Informações da publicidade/propaganda</h4>
                             <hr>
                             <div class="row">
-                                <div class="col-xl-6">
-                                    <div class="form-group">
-                                        <label>Largura em metros</label>
-                                        <input type="text" class="form-input" id="width" name="width"
-                                               placeholder="Ex.: 10">
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-xl-6">
-                                    <div class="form-group">
-                                        <label>Comprimento em metros:</label>
-                                        <input type="text" class="form-input" id="length" name="length"
-                                               placeholder="Ex.: 5.23">
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-
                                 <div class="col-xl-12">
                                     <div class="form-group">
                                         <label>Tipo de publicidade/propaganda:</label>
-                                        <select id="typeSelect" class="form-input" name="typeSelect[]">
+                                        <select id="typeSelect" class="form-input" name="typeSelect[]" onchange="checkOther()" required>
                                             <option value="Placa">Placa</option>
                                             <option value="Painel">Painel</option>
                                             <option value="Letreiro">Letreiro</option>
@@ -67,18 +49,89 @@
 
                                 <div class="col-xl-12">
                                     <div class="form-group">
-                                        <label>Descreva brevemente a estrutura:</label>
-                                        <textarea type="text" class="form-input" id="productDescription"
-                                                  name="productDescription"
-                                                  placeholder="Ex.: Trabalho com a venda de produtos para cabelo."
-                                                  required></textarea>
+                                        <label>Descreva a estrutura:</label>
+                                        <input type="text" class="form-input" id="other" name="other"
+                                               placeholder="Ex.: Balão, boneco inflável, Outdoor" disabled>
+                                        <div class="invalid-feedback"></div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-12">
+                                    <div class="form-group">
+                                        <label>Onde vai ser instalado:</label>
+                                        <input type="text" class="form-input" id="place" name="place"
+                                               placeholder="Ex.: Próximo à praça" required>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-xl-6">
+                    <div class="col-xl-6 mt-lg-5 mt-xl-0">
+                        <div class="div-gray-bg border-top-green p-5">
+                            <h4 class="black-title-section">Especificações e dimensões</h4>
+                            <hr>
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="form-group">
+                                        <label>Descreva brevemente o projeto:</label>
+                                        <textarea type="text" class="form-input" id="description"
+                                                  name="description"
+                                                  placeholder="Ex.: Trabalho com a venda de produtos para cabelo."
+                                                  required></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-12">
+                                    <input type="hidden" name="licenseId" value="<?=$license->id_licenca ?>">
+                                    <div class="form-group mt-3">
+                                        <label>Possui iluminação (embutida ou externa):</label>
+                                        <div class="row w-100">
+                                            <div class="col-6" class="form-group">
+                                                <input type="radio" id="approve" name="light" value="y" required>
+                                                <label for="approve">Sim</label><br>
+                                            </div>
+                                            <div class="col-6" class="form-group">
+                                                <input type="radio" id="reject" name="light" value="n" required>
+                                                <label for="reject">Não</label><br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-4">
+                                    <div class="form-group">
+                                        <label>Largura:</label>
+                                        <input type="text" class="form-input" id="width" name="width"
+                                               placeholder="Ex.: 10" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-4">
+                                    <div class="form-group">
+                                        <label>Comprimento:</label>
+                                        <input type="text" class="form-input" id="length" name="length"
+                                               placeholder="Ex.: 5.23" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-4">
+                                    <div class="form-group">
+                                        <label>Altura:</label>
+                                        <input type="text" class="form-input" id="height" name="height"
+                                               placeholder="Ex.: 5.23">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-6 mt-5">
                         <div class="div-gray-bg border-top-green p-5">
                             <h4 class="black-title-section">Informações do responsável</h4>
                             <hr>
@@ -86,8 +139,7 @@
                                 <div class="col-xl-12">
                                     <div class="form-group">
                                         <label>Tipo de requerente:</label>
-                                        <select id="typeRequestSelect" class="form-input" name="typeRequestSelect[]"
-                                                multiple="multiple">
+                                        <select id="typeRequestSelect" class="form-input" name="typeRequestSelect[]" onchange="changeRequest()" required>
                                             <option value="0">Pessoa física</option>
                                             <option value="1">Pessoa Jurídica</option>
                                         </select>
@@ -98,8 +150,8 @@
                                     <div class="form-group">
                                         <label>CNPJ:</label>
                                         <input type="text" class="form-input" id="cnpj" name="cnpj"
-                                               placeholder="Ex.: 00.000.000/0000-00">
-                                        <div class="invalid-feedback"></div>
+                                               placeholder="Ex.: 00.000.000/0000-00" disabled>
+                                        <div class="invalid-feedback" ></div>
                                     </div>
                                 </div>
 
@@ -107,61 +159,8 @@
                                     <div class="form-group">
                                         <label>CMC:</label>
                                         <input type="text" class="form-input" id="cmc" name="cmc"
-                                               placeholder="Ex.: 0000000000">
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-xl-12">
-                                    <div class="form-group">
-                                        <label>Nome:</label>
-                                        <input type="text" class="form-input" id="fantasyName" name="fantasyName"
-                                               placeholder="Digite o nome da empresa">
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-6 mt-5">
-                        <div class="div-gray-bg border-top-green p-5">
-                            <h4 class="black-title-section">Especificações e dimensões</h4>
-                            <hr>
-                            <div class="row">
-                                <div class="col-xl-12">
-                                    <div class="form-group">
-                                        <label>Descreva seu equipamento:</label>
-                                        <input type="text" class="form-input" id="description" name="description"
-                                               placeholder="Ex.: Balão, boneco inflável, Outdoor">
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-xl-6">
-                                    <div class="form-group">
-                                        <label>Largura ocupada em metros</label>
-                                        <input type="text" class="form-input" id="width" name="width"
-                                               placeholder="Ex.: 10">
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-xl-6">
-                                    <div class="form-group">
-                                        <label>Comprimento em metros:</label>
-                                        <input type="text" class="form-input" id="length" name="length"
-                                               placeholder="Ex.: 5.23">
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-xl-6">
-                                    <div class="form-group">
-                                        <label>Altura do equipamento:</label>
-                                        <input type="text" class="form-input" id="height" name="height"
-                                               placeholder="Ex.: 5.23">
-                                        <div class="invalid-feedback"></div>
+                                               placeholder="Ex.: 0000000000" disabled="true">
+                                        <div class="invalid-feedback" ></div>
                                     </div>
                                 </div>
                             </div>
@@ -177,7 +176,7 @@
                                     <div class="row">
                                         <div class="col-xl-12">
                                             <div class="form-group">
-                                                <label>Foto do ART do técnico:</label>
+                                                <label>ART do técnico:</label>
                                             </div>
                                         </div>
                                         <div class="col-xl-12 text-left">
@@ -212,7 +211,7 @@
                                     <div class="row form-group">
                                         <div class="col-xl-12">
                                             <div class="form-group">
-                                                <label>Alvará de Localização e Funcionamento:</label>
+                                                <label>Alvará de Localização:</label>
                                             </div>
                                         </div>
                                         <div class="col-xl-12 text-left">
@@ -283,7 +282,7 @@
                                     <div class="row form-group">
                                         <div class="col-xl-12">
                                             <div class="form-group">
-                                                <label>Alvará de funcionamento:</label>
+                                                <label>Autorização do proprietário:</label>
                                             </div>
                                         </div>
 
@@ -292,7 +291,7 @@
                                                    for="businessLicense"><span
                                                         class="icon-plus mr-2"></span> Selecionar</label>
                                             <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
-                                                   id="businessLicense" name="businessLicense"
+                                                   id="businessLicense" name="consentLicense"
                                                    accept="image/png, image/jpg, image/jpeg">
                                             <div class="invalid-feedback"></div>
                                             <div class="businessLicense-file-uploaded file-uploaded-container">
@@ -319,7 +318,7 @@
                                     <div class="row">
                                         <div class="col-xl-12">
                                             <div class="form-group">
-                                                <label>Foto do equipamento:</label>
+                                                <label>Croqui do anúncio:</label>
                                             </div>
                                         </div>
                                         <div class="col-xl-12 text-left">
@@ -354,7 +353,7 @@
                                     <div class="row">
                                         <div class="col-xl-12">
                                             <div class="form-group">
-                                                <label>Foto do equipamento:</label>
+                                                <label>Foto do local de instalação:</label>
                                             </div>
                                         </div>
                                         <div class="col-xl-12 text-left">
@@ -392,7 +391,7 @@
                 <div class="col-xl-12 mt-5">
                     <div class="div-gray-bg border-top-green p-5">
                         <h4 class="black-title-section">Local</h4>
-                        <p class="subtitle-section-p">Marque no mapa o local onde fica o bar/restaurante</p>
+                        <p class="subtitle-section-p">Marque no mapa o local onde pretende instalar o equipamento</p>
                         <hr>
                         <div id="mapCreateAccount"></div>
                     </div>
@@ -429,6 +428,27 @@
         $("#cnpj").mask("99.999.999/9999-99");
         $("#cmc").mask('0000000000', {reverse: true});
     });
+
+    function changeRequest(){
+        console.log(document.getElementById("typeRequestSelect").value);
+        if (document.getElementById("typeRequestSelect").value == '1'){
+            document.getElementById("cnpj").disabled = false;
+            document.getElementById("cmc").disabled = false;
+        } else {
+            document.getElementById("cnpj").disabled = true;
+            document.getElementById("cmc").disabled = true;
+        }
+    }
+
+    function checkOther(){
+        if (document.getElementById("typeSelect").value == 'Outro'){
+            document.getElementById("other").value = "";
+            document.getElementById("other").disabled = false;
+        } else {
+            document.getElementById("other").disabled = true;
+        }
+
+    }
 
     $(function () {
         let theMarker = {};
