@@ -1241,6 +1241,68 @@ class Web
             if (!$license->fail()) {
                 $response = 'sucess';
 
+                if($_FILES){
+                    foreach ($_FILES as $key => $file) {
+                        $target_file = basename($file['name']);
+
+                        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                        $extensions_arr = array("jpg", "jpeg", "png");
+
+                        if (in_array($imageFileType, $extensions_arr)) {
+                            $folder = THEMES . '/assets/uploads/publicity';
+                            if (!file_exists($folder) || !is_dir($folder)) {
+                                mkdir($folder, 0755);
+                            }
+                            $fileName = $key . '.' . $imageFileType;
+                            $dir = $folder . '/' . $license->id;
+
+                            if (!file_exists($dir) || !is_dir($dir)) {
+                                mkdir($dir, 0755);
+                            }
+
+                            $dir = $dir . '/' . $fileName;
+
+                            move_uploaded_file($file['tmp_name'], $dir);
+
+                            $attach = new Attach();
+                            $attach->id_usuario = $license->id;
+                            $attach->tipo_usuario = 4;
+                            $attach->nome = $fileName;
+                            $attach->save();
+
+                            if ($attach->fail()) {
+                                $license->destroy();
+                                var_dump($attach->fail()->getMessage());
+                                exit();
+                            } else {
+                                $response = 'success';
+                            }
+                        }
+                        $response = 'success';
+                    }
+                }
+
+                $paymentDate = date('Y-m-d', strtotime("+3 days"));
+                $payment = new Payment();
+                $payment->id_licenca = $license->id;
+                $payment->cod_referencia = null;
+                $payment->cod_pagamento = null;
+                $payment->valor = 1;
+                $payment->id_usuario = $_SESSION['user']['id'];
+                $payment->tipo = 1;
+                $payment->pagar_em = $paymentDate;
+                $payment->save();
+                $extCode = 'ODT' . $payment->id;
+                $payment->cod_referencia = 15123;
+                $payment->cod_pagamento = 'teste';
+                $payment->save();
+
+                if ($payment->fail()) {
+                    var_dump($payment->fail()->getMessage());
+                    exit();
+                }
+
                 //Envia o email e gera o boleto
             }
         } else {
@@ -1248,6 +1310,48 @@ class Web
             $license->save();
             if (!$license->fail()) {
                 $response = 'sucess';
+
+                if($_FILES){
+                    foreach ($_FILES as $key => $file) {
+                        $target_file = basename($file['name']);
+
+                        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                        $extensions_arr = array("jpg", "jpeg", "png");
+
+                        if (in_array($imageFileType, $extensions_arr)) {
+                            $folder = THEMES . '/assets/uploads/publicity';
+                            if (!file_exists($folder) || !is_dir($folder)) {
+                                mkdir($folder, 0755);
+                            }
+                            $fileName = $key . '.' . $imageFileType;
+                            $dir = $folder . '/' . $license->id;
+
+                            if (!file_exists($dir) || !is_dir($dir)) {
+                                mkdir($dir, 0755);
+                            }
+
+                            $dir = $dir . '/' . $fileName;
+
+                            move_uploaded_file($file['tmp_name'], $dir);
+
+                            $attach = new Attach();
+                            $attach->id_usuario = $license->id;
+                            $attach->tipo_usuario = 4;
+                            $attach->nome = $fileName;
+                            $attach->save();
+
+                            if ($attach->fail()) {
+                                $license->destroy();
+                                var_dump($attach->fail()->getMessage());
+                                exit();
+                            } else {
+                                $response = 'success';
+                            }
+                        }
+                        $response = 'success';
+                    }
+                }
                 //Envia o email com o comentário do motivo da rejeição
             }
         }

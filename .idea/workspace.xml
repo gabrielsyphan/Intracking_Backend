@@ -2,26 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b57fc3f1-cc6e-43cf-9dfc-33568b30ec93" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/93/businessLicense.jpeg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/93/cnpjRegistration.jpeg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/93/proofAddress.jpeg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/94/cnpjRegistration.jpeg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/94/consentLicense.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/94/proofAddress.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/96/proofAddress.jpeg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/97/cnpjRegistration.jpeg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/98/cnpjRegistration.jpeg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/98/consentLicense.jpeg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/98/proofAddress.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/98/foto_vistoria.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/99/cnpjRegistration.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/99/consentLicense.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/99/proofAddress.jpeg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/index.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/www/source/App/Web.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/source/App/Web.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/source/Models/Publicity.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/source/Models/Publicity.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/themes/licenseList.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/licenseList.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/themes/publicityLicense.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/publicityLicense.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/www/themes/publicityLicenseInfo.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/publicityLicenseInfo.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/themes/salesmanLicenseInfo.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/salesmanLicenseInfo.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/themes/salesmanList.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/salesmanList.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +73,8 @@
       <option name="presentableId" value="Default" />
       <updated>1621460495108</updated>
       <workItem from="1621460496157" duration="14877000" />
-      <workItem from="1621516827594" duration="27036000" />
+      <workItem from="1621516827594" duration="27484000" />
+      <workItem from="1621607196891" duration="4255000" />
     </task>
     <servers />
   </component>

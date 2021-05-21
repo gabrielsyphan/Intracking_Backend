@@ -182,24 +182,24 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-12 text-left">
-                                            <label class="label-file equipmentImage-file text-center"
-                                                   for="equipmentImage"><span
+                                            <label class="label-file foto_vistoria-file text-center"
+                                                   for="foto_vistoria"><span
                                                         class="icon-plus mr-2"></span> Selecionar </label>
                                             <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
-                                                   id="artImage" name="ARTImage"
+                                                   id="foto_vistoria" name="foto_vistoria"
                                                    accept="image/png, image/jpg, image/jpeg">
                                             <div class="invalid-feedback"></div>
-                                            <div class="equipmentImage-file-uploaded file-uploaded-container">
+                                            <div class="foto_vistoria-file-uploaded file-uploaded-container">
                                                 <div class="card-content-upload text-center p-3">
                                                     <div class="card-content-type-upload">
-                                                        <span class="equipmentImage-type"></span>
+                                                        <span class="foto_vistoria-type"></span>
                                                     </div>
                                                 </div>
                                                 <div class="ml-3 text-left">
                                                     <div class="d-flex">
-                                                        <p class="equipmentImage-name"></p>
-                                                        <span id="equipmentImage-span-close"
-                                                              class="icon-close ml-3 card-close-file equipmentImage"
+                                                        <p class="foto_vistoria-name"></p>
+                                                        <span id="foto_vistoria-span-close"
+                                                              class="icon-close ml-3 card-close-file foto_vistoria"
                                                               onclick="changeFile(this)"></span>
                                                     </div>
                                                     <div class="card-content-progress"></div>
@@ -247,30 +247,68 @@
     </div>
 </div>
 
+<div id="modal-5" class="div-modal">
+    <div class="container pt-5">
+        <div class="row mt-5 p-5 justify-content-center">
+            <div class="col-xl-10 p-5 modal-overflow container-white">
+                <div class="row">
+                    <div class="col-8">
+                        <h3 class="black-title-section">Geolocalização</h3>
+                    </div>
+                    <div class="col-4 text-right mt-3">
+                        <span class="icon-close" onclick="closeModal(5)"></span>
+                    </div>
+                </div>
+                <p class="subtitle-section-p">Localização da licença no mapa.</p>
+                <hr>
+                <div id="mapProfile"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container-fluid container-white mt-5 p-5">
     <div class="row">
         <div class="col-12">
-            <h3 class="black-title-section">Minha licença</h3>
-            <p class="subtitle-section-p">Informações da licença de publicidade e propaganda</p>
+            <h3 class="black-title-section">Informações da licença</h3>
+            <p class="subtitle-section-p">Licença de publicidade e propaganda</p>
             <hr>
             <div class="row">
                 <?php if ($_SESSION['user']['role'] == 4): ?>
-                <div class="col-md-4" onclick="openModal(3)">
-                    <div class="row mt-3 justify-content-center">
-                        <div class="col-md-10 p-0 mb-5 cursor-pointer">
-                            <div class="p-4 text-center background-green b-radius-top">
-                                <div class="circle-card-option">
-                                    <span class="icon-drivers-license"></span>
+                    <?php if ($license->license->status == 4): ?>
+                        <div class="col-md-4" onclick="openModal(3)">
+                            <div class="row mt-3 justify-content-center">
+                                <div class="col-md-10 p-0 mb-5 cursor-pointer">
+                                    <div class="p-4 text-center background-green b-radius-top">
+                                        <div class="circle-card-option">
+                                            <span class="icon-drivers-license"></span>
+                                        </div>
+                                    </div>
+                                    <hr class="m-0">
+                                    <div class="p-5 text-center gray-box b-radius-bottom">
+                                        Validar licença
+                                    </div>
                                 </div>
                             </div>
-                            <hr class="m-0">
-                            <div class="p-5 text-center gray-box b-radius-bottom">
-                                Validar licença
+                        </div>
+                    <?php else: ?>
+                        <div class="col-md-4" onclick="changeWindow('block')">
+                            <div class="row mt-3 justify-content-center">
+                                <div class="col-md-10 p-0 mb-5 cursor-pointer">
+                                    <div class="p-4 text-center background-red b-radius-top">
+                                        <div class="circle-card-option-red">
+                                            <span class="icon-block"></span>
+                                        </div>
+                                    </div>
+                                    <hr class="m-0">
+                                    <div class="p-5 text-center gray-box b-radius-bottom">
+                                        Multar ou bloquear
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <?php endif;?>
+                    <?php endif; ?>
+                <?php endif; ?>
 
                 <div class="col-md-4" onclick="debugMap()">
                     <div class="row mt-3 justify-content-center">
@@ -309,75 +347,76 @@
                 <h4 class="black-title-section">Informações da licença</h4>
                 <hr>
 
-                <div class="row">
-                    <div class="col-3 subtitle-section-p">
-                        Cpf:
+                <div class="col-8">
+                    <div class="row">
+                        <div class="col-3 subtitle-section-p">
+                            Cpf:
+                        </div>
+                        <div class="col-9 subtitle-section-p text-right">
+                            <?= $user->cpf ?>
+                        </div>
                     </div>
-                    <div class="col-9 subtitle-section-p text-right">
-                        <?= $user->cpf ?>
-                    </div>
-                </div>
 
-                <div class="row mt-5">
-                    <div class="col-3 subtitle-section-p">
-                        Proprietário:
+                    <div class="row mt-5">
+                        <div class="col-3 subtitle-section-p">
+                            Proprietário:
+                        </div>
+                        <div class="col-9 subtitle-section-p text-right">
+                            <?= $user->nome ?>
+                        </div>
                     </div>
-                    <div class="col-9 subtitle-section-p text-right">
-                        <?= $user->nome ?>
-                    </div>
-                </div>
 
-                <div class="row mt-5">
-                    <div class="col-3 subtitle-section-p">
-                        Descrição do equipamento:
+                    <div class="row mt-5">
+                        <div class="col-3 subtitle-section-p">
+                            Descrição do equipamento:
+                        </div>
+                        <div class="col-9 subtitle-section-p text-right">
+                            <?= $license->tipo ?> - <?= $license->descricao ?>
+                        </div>
                     </div>
-                    <div class="col-9 subtitle-section-p text-right">
-                        <?= $license->tipo ?> - <?= $license->descricao ?>
-                    </div>
-                </div>
 
-                <div class="row mt-5">
-                    <div class="col-3 subtitle-section-p">
-                        Dimensões do equipamento:
+                    <div class="row mt-5">
+                        <div class="col-3 subtitle-section-p">
+                            Dimensões do equipamento:
+                        </div>
+                        <div class="col-9 subtitle-section-p text-right">
+                            <?= $license->dimensoes ?>
+                        </div>
                     </div>
-                    <div class="col-9 subtitle-section-p text-right">
-                        <?= $license->dimensoes ?>
-                    </div>
-                </div>
 
-                <div class="row mt-5">
-                    <div class="col-3 subtitle-section-p">
-                        Estado:
-                    </div>
-                    <div class="col-9 subtitle-section-p text-right">
-                        <?php
-                        switch ($license->license->status):
-                            case 1:
-                                $divStatus = 'primary';
-                                $textStatus = 'Ativo';
-                                break;
-                            case 2:
-                                $divStatus = 'secondary';
-                                $textStatus = 'Bloqueado';
-                                break;
-                            case 3:
-                                $divStatus = 'primary';
-                                $textStatus = 'Aprovado';
-                                break;
-                            default:
-                                $divStatus = 'tertiary';
-                                $textStatus = 'Pendente';
-                                $trClass = 'border-left-yellow';
-                                break;
-                        endswitch; ?>
-                        <div class="d-flex">
-                            <div class="status-circle <?= $divStatus; ?> t-5"></div>
-                            <?= $textStatus; ?>
+                    <div class="row mt-5">
+                        <div class="col-3 subtitle-section-p">
+                            Estado:
+                        </div>
+                        <div class="col-9 subtitle-section-p text-right d-flex justify-content-end">
+                            <?php
+                            switch ($license->license->status):
+                                case 1:
+                                    $divStatus = 'primary';
+                                    $textStatus = 'Ativo';
+                                    break;
+                                case 2:
+                                    $divStatus = 'secondary';
+                                    $textStatus = 'Bloqueado';
+                                    break;
+                                case 3:
+                                    $divStatus = 'primary';
+                                    $textStatus = 'Aprovado';
+                                    break;
+                                default:
+                                    $divStatus = 'tertiary';
+                                    $textStatus = 'Pendente';
+                                    $trClass = 'border-left-yellow';
+                                    break;
+                            endswitch; ?>
+                            <div class="d-flex">
+                                <div class="status-circle <?= $divStatus; ?> t-5"></div>
+                                <?= $textStatus; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="row mt-3">
                 <div class="col-sm-6" onclick="openModal(2)">
                     <div class="row m-0 mt-3 p-4 border-left-green div-request-license">
@@ -515,7 +554,7 @@
                 swal({
                     icon: "success",
                     title: "Licença validada com sucesso!",
-                    text: "Acesse o menu 'Minhas Licenças' para visualiza-la.",
+                    text: "O boleto foi gerado e o requerinte foi notificado por email.",
                 })
             } else {
                 swal({
