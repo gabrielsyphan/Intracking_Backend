@@ -31,7 +31,7 @@
                                 Licenças aprovadas
                             </h4>
                             <hr>
-                            <h2 class="title-section"><?= $paid ?></h2>
+                            <h2 class="title-section"><?= $approved ?></h2>
                         </div>
                         <div class="col-4">
                             <div class="text-center mt-4">

@@ -2,13 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b57fc3f1-cc6e-43cf-9dfc-33568b30ec93" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/98/foto_vistoria.jpeg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/99/cnpjRegistration.jpeg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/99/consentLicense.jpeg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/99/proofAddress.jpeg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/www/source/App/Web.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/source/App/Web.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/themes/publicityLicenseInfo.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/publicityLicenseInfo.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/themes/salesmanList.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/salesmanList.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,6 +57,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../ClickEvolue/Casas Jardim" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
@@ -74,7 +71,8 @@
       <updated>1621460495108</updated>
       <workItem from="1621460496157" duration="14877000" />
       <workItem from="1621516827594" duration="27484000" />
-      <workItem from="1621607196891" duration="4255000" />
+      <workItem from="1621607196891" duration="5772000" />
+      <workItem from="1621621841468" duration="28000" />
     </task>
     <servers />
   </component>
@@ -88,6 +86,10 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="687" y="-864" key="FileChooserDialogImpl" timestamp="1621621867639">
+      <screen x="0" y="-1080" width="1920" height="1030" />
+    </state>
+    <state x="687" y="-864" key="FileChooserDialogImpl/0.-1080.1920.1030/0.0.1536.824@0.-1080.1920.1030" timestamp="1621621867639" />
     <state x="678" y="-892" key="NewPhpClassDialog" timestamp="1621469374129">
       <screen x="0" y="-1080" width="1920" height="1030" />
     </state>

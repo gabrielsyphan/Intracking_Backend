@@ -2328,6 +2328,7 @@ class Web
 
             $auxPaid = 0;
             $auxPending = 0;
+            $auxApproved = 0;
             $auxBlocked = 0;
             $countLicense = 0;
 
@@ -2337,6 +2338,8 @@ class Web
                         $auxPaid++;
                     } else if ($license->status == 2) {
                         $auxBlocked++;
+                    } else if($license->status == 3){
+                        $auxApproved++;
                     } else {
                         $auxPending++;
                     }
@@ -2352,6 +2355,7 @@ class Web
                 'licenses' => $licenses,
                 'registered' => $countLicense,
                 'paid' => $auxPaid,
+                'approved' => $auxApproved,
                 'pending' => $auxPending,
                 'blocked' => $auxBlocked,
                 'types' => $license_type,
