@@ -1,4 +1,4 @@
-# Sistema de ordenamento e soluções tecnológicas #
+# Sistema de ordenamento e inovações tecnológicas #
 Versão web do sistema que realiza o gerênciamento das licenças públicas de ambulantes, uso de solo, foodtrucks, mercados e feiras públicas.
 
 ## 1 - Estrutura do projeto ##
@@ -10,7 +10,7 @@ Versão web do sistema que realiza o gerênciamento das licenças públicas de a
 * As classes estão contidas em www/source/models;
 * As views estão contidas em www/themes.
 
-## 2 - Instalalção das dependencias ##
+## 2 - Instalalção das dependências ##
 * Para iniciar o projeto, é necessário possuir o Docker instalado em sua máquina e então rodar o comando 'docker-compose -f "docker-compose.yml" up --build',
 para que assim possam ser instaladas todas as imagens e assim montando todo o ambiente do sistema;
 * Com o Docker instalado, utilize o compando 'docker ps' para visualizar os containers ativos, copie o identificador do container php e então rode o comando

@@ -3131,9 +3131,9 @@ class Web
             ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes,
              vagas_fixas, foto, descricao')->fetch(false);
         if ($zone) {
+
             $salesmans = (new Salesman())->find('id_zona = :zoneId', 'zoneId=' . $data['id'], 'id_licenca')->fetch(true);
             $users = array();
-
 
             if ($salesmans) {
                 foreach ($salesmans as $salesman) {
@@ -3145,6 +3145,52 @@ class Web
             }
 
             if ($zone !== null) {
+
+                $paymentArray = array();
+                $payments = (new Payment())->find()->fetch(true);
+
+                if ($payments) {
+                    foreach ($payments as $payment) {
+                        $license = (new License())->findById($payment->id_licenca);
+
+                        $user = (new User())->findById($license->id_usuario);
+
+                        if (($license != null) && ($license->id_orgao == $_SESSION['user']['team'])) {
+                            $user = (new User())->findById($license->id_usuario);
+                            switch ($license->tipo):
+                                case 7:
+                                    $market = (new Market())->find("id_licenca = :ilic", "ilic=" . $license->id)->fetch();
+                                    if ($market->id_zona == $zone->id){
+                                        $payment->name = $user->nome;
+
+                                        $box = (new Fixed())->find("id = :ivag", "ivag=" . $market->id_vaga)->fetch();
+                                        if ($box->nome != NULL) {
+                                            $payment->name_box = $box->nome;
+                                        } else {
+                                            $payment->name_box = $box->cod_identificador;
+                                        }
+
+                                        $paymentArray[] = $payment;
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            endswitch;
+
+                            if ($payment->status == 0 || $payment->status == 3) {
+                                $auxPendent++;
+                            } else if ($payment->status == 1) {
+                                $auxPaid++;
+                            } else {
+                                $auxExpired++;
+                            }
+                            $paymentCount++;
+                        }
+                    }
+                } else {
+                    $paymentArray = null;
+                }
+
                 $centroid = explode("POINT(", $zone->centroide);
                 $centroid = explode(")", $centroid[1]);
                 $centroid = explode(" ", $centroid[0]);
@@ -3180,7 +3226,8 @@ class Web
                         'title' => $zone->nome . ' | ' . SITE,
                         'salesmans' => $users,
                         'zone' => $zone,
-                        'fixed' => $fixed
+                        'fixed' => $fixed,
+                        'payments' => $paymentArray
                     ]);
                 } else {
                     echo $this->view->render('zone', [
