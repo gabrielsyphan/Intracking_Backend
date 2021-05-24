@@ -3148,6 +3148,10 @@ class Web
 
                 $paymentArray = array();
                 $payments = (new Payment())->find()->fetch(true);
+                $auxPendent = 0;
+                $auxPaid = 0;
+                $auxExpired = 0;
+                $paymentCount = 0;
 
                 if ($payments) {
                     foreach ($payments as $payment) {
