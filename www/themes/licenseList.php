@@ -97,6 +97,7 @@
 <script src="<?= url("themes/assets/vendor/bootstrap/js/popper.js"); ?>"></script>
 <script src="<?= url("themes/assets/vendor/bootstrap/js/bootstrap.min.js"); ?>"></script>
 <script>
+
     function tableFilter() {
         let input, filter, table, tr, td, i, txtValue;
         let selectedOption = 1;

@@ -96,7 +96,7 @@
                     <div class="div-box-span-icon mt-4">
                         <div class="div-table-search">
                             <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
-                                   placeholder="Filtrar pelo nome...">
+                                   placeholder="Filtrar por proprietário...">
                             <div class="circle-button primary search">
                                 <span class="icon-search"></span>
                             </div>
@@ -218,7 +218,7 @@
 <script src="<?= url("themes/assets/vendor/bootstrap/js/popper.js"); ?>"></script>
 <script src="<?= url("themes/assets/vendor/bootstrap/js/bootstrap.min.js"); ?>"></script>
 <script>
-    let selectedOption = 5;
+    let selectedOption = 2;
     let options = ['tipo', 'CPF', 'Proprietário', 'Início', 'Fim', 'Status'];
     $('.js-pscroll').each(function () {
         var ps = new PerfectScrollbar(this);
@@ -246,7 +246,6 @@
 
     function tableFilter() {
         let input, filter, table, tr, td, i, txtValue;
-        let selectedOption = 2;
 
         input = document.getElementById("text");
         filter = input.value.toUpperCase();
