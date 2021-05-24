@@ -6,7 +6,7 @@ services:
          - mysql-server
         build: .
         ports:
-         - "81:80"
+         - "80:80"
          - "443:443"
         volumes:
          - ./www/:/var/www/html
