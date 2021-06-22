@@ -32,16 +32,25 @@
                                     <div class="form-group">
                                         <label>Tipo de publicidade/propaganda:</label>
                                         <select id="typeSelect" class="form-input" name="typeSelect[]" onchange="checkOther()" required>
-                                            <option value="Placa">Placa</option>
-                                            <option value="Painel">Painel</option>
-                                            <option value="Letreiro">Letreiro</option>
-                                            <option value="Toten">Toten</option>
-                                            <option value="Balão">Balão</option>
-                                            <option value="Faixa">Faixa</option>
-                                            <option value="Cartaz">Cartaz</option>
-                                            <option value="Estandarte">Estandarte</option>
-                                            <option value="Banner">Banner</option>
-                                            <option value="Outro">Outro</option>
+                                            <option value="0"> Outdoor fixo para fixação de cartazes substituíveis</option>
+                                            <option value="1">Indicadores de hora ou temperatura</option>
+                                            <option value="2">Indicadores de bairros e locais turísticos</option>
+                                            <option value="3">Anúncios provisórios</option>
+                                            <option value="4">Panfletos e prospectos</option>
+                                            <option value="5">Panfletos e prospectos</option>
+                                            <option value="6">Anúncio em veículos</option>
+                                            <option value="7">Infláveis</option>
+                                            <option value="8">Faixas</option>
+                                            <option value="9"> Bancos, mesas, sombrinhas e protetores de árvores em locais públicos ou de permissionários públicos</option>
+                                            <option value="10"> Postes indicativos de paradas de coletivos</option>
+                                            <option value="11"> Anúncios em abrigos</option>
+                                            <option value="12"> Boias e flutuantes</option>
+                                            <option value="13"> Postes indicadores de logradouros</option>
+                                            <option value="14"> Anúncios indicativos</option>
+                                            <option value="15"> Anúncios publicitários</option>
+                                            <option value="16"> Lixeiras</option>
+                                            <option value="17"> Engenhos publicitários movimentados</option>
+                                            <option value="18"> Engenhos publicitários rígidos</option>
                                         </select>
                                         <div class="invalid-feedback"></div>
                                     </div>
@@ -62,6 +71,15 @@
                                         <label>Onde vai ser instalado:</label>
                                         <input type="text" class="form-input" id="place" name="place"
                                                placeholder="Ex.: Próximo à praça" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-12">
+                                    <div class="form-group">
+                                        <label>Horário para o fim das vendas:</label>
+                                        <input type="text" class="form-input" id="days" name="days">
+                                        <input type="text" class="form-control date" placeholder="Pick the multiple dates">
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -96,6 +114,23 @@
                                             <div class="col-6" class="form-group">
                                                 <input type="radio" id="reject" name="light" value="n" required>
                                                 <label for="reject">Não</label><br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mt-3">
+                                        <label>Tipo de via:</label>
+                                        <div class="row w-100">
+                                            <div class="col-4" class="form-group">
+                                                <input type="radio" id="arterial" name="road" value="arterial" required>
+                                                <label for="arterial">Arterial</label><br>
+                                            </div>
+                                            <div class="col-4" class="form-group">
+                                                <input type="radio" id="regional" name="road" value="regional" required>
+                                                <label for="regional">Regional</label><br>
+                                            </div>
+                                            <div class="col-4" class="form-group">
+                                                <input type="radio" id="orla" name="light" value="orla" required>
+                                                <label for="orla">Orla</label><br>
                                             </div>
                                         </div>
                                     </div>
@@ -420,6 +455,10 @@
         $('#workedDays').multiselect();
         $('#typeSelect').multiselect();
         $('#typeRequestSelect').multiselect();
+        $('#days').datepicker({
+            multidate: true,
+            format: 'dd-mm-yyyy'
+        });
     });
 
     $(document).ready(function () {
@@ -447,7 +486,6 @@
         } else {
             document.getElementById("other").disabled = true;
         }
-
     }
 
     $(function () {

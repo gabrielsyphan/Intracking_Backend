@@ -1130,7 +1130,7 @@ class Web
 
                 $publicity = new Publicity();
                 $publicity->cpf = $userCpf->cpf;
-                if ($data['typeRequestSelect'] == '1'){
+                if ($data['typeRequestSelect'] == '1') {
                     $publicity->cnpj = $data['cnpj'];
                     $publicity->cnpj = $data['cmc'];
                 }
@@ -1241,7 +1241,7 @@ class Web
             if (!$license->fail()) {
                 $response = 'sucess';
 
-                if($_FILES){
+                if ($_FILES) {
                     foreach ($_FILES as $key => $file) {
                         $target_file = basename($file['name']);
 
@@ -1311,7 +1311,7 @@ class Web
             if (!$license->fail()) {
                 $response = 'sucess';
 
-                if($_FILES){
+                if ($_FILES) {
                     foreach ($_FILES as $key => $file) {
                         $target_file = basename($file['name']);
 
@@ -2338,7 +2338,7 @@ class Web
                         $auxPaid++;
                     } else if ($license->status == 2) {
                         $auxBlocked++;
-                    } else if($license->status == 3){
+                    } else if ($license->status == 3) {
                         $auxApproved++;
                     } else {
                         $auxPending++;
@@ -3439,7 +3439,6 @@ class Web
             $salesmans = (new Salesman())->find('id_zona = :zoneId', 'zoneId=' . $data['id'], 'id_licenca')->fetch(true);
             $users = array();
 
-
             if ($salesmans) {
                 foreach ($salesmans as $salesman) {
                     $license = (new License())->findById($salesman->id_licenca);
@@ -3447,6 +3446,39 @@ class Web
                         $users[] = (new User)->findById($license->id_usuario);
                     }
                 }
+            }
+
+            $paymentArray = array();
+            $payments = (new Payment())->find()->fetch(true);
+
+            if ($payments) {
+                foreach ($payments as $payment) {
+                    $license = (new License())->findById($payment->id_licenca);
+                    if (($license != null) && ($license->id_orgao == $_SESSION['user']['team'])) {
+                        $user = (new User())->findById($license->id_usuario);
+                        $market = (new Market())->find("id_licenca = :ilic", "ilic=" . $license->id)->fetch();;
+                        $box = (new Fixed())->find("id = :ivag", "ivag=" . $market->id_vaga)->fetch();
+                        if ($box->nome != NULL) {
+                            $payment->name_box = $box->nome;
+                        } else {
+                            $payment->name_box = $box->cod_identificador;
+                        }
+
+                        $payment->name = $user->nome;
+                        $paymentArray[] = $payment;
+
+                        if ($payment->status == 0 || $payment->status == 3) {
+                            $auxPendent++;
+                        } else if ($payment->status == 1) {
+                            $auxPaid++;
+                        } else {
+                            $auxExpired++;
+                        }
+                        $paymentCount++;
+                    }
+                }
+            } else {
+                $paymentArray = null;
             }
 
             if ($zone !== null) {
@@ -3480,12 +3512,12 @@ class Web
                     $fixed = (new Fixed())->find('MD5(id_zona) = :id_zone', 'id_zone=' . $data['id'],
                         'cod_identificador,id_licenca, nome, valor')->fetch(true);
 
-
                     echo $this->view->render('marketplace', [
                         'title' => $zone->nome . ' | ' . SITE,
                         'salesmans' => $users,
                         'zone' => $zone,
-                        'fixed' => $fixed
+                        'fixed' => $fixed,
+                        'payments' => $paymentArray
                     ]);
                 } else {
                     echo $this->view->render('zone', [

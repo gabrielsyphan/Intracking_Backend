@@ -287,6 +287,7 @@
             </div>
         </div>
     </div>
+</div>
 
 
     <?php $v->start("scripts"); ?>
