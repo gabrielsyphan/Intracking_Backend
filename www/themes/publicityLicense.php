@@ -32,6 +32,7 @@
                                     <div class="form-group">
                                         <label>Tipo de publicidade/propaganda:</label>
                                         <select id="typeSelect" class="form-input" name="typeSelect[]" onchange="checkOther()" required>
+                                            <option>Escolha um tipo</option>
                                             <option value="0"> Outdoor fixo para fixação de cartazes substituíveis</option>
                                             <option value="1">Indicadores de hora ou temperatura</option>
                                             <option value="2">Indicadores de bairros e locais turísticos</option>
@@ -77,9 +78,18 @@
 
                                 <div class="col-xl-12">
                                     <div class="form-group">
+                                        <label>Horário para o Início das vendas:</label>
+                                        <input type="date" class="form-input" id="datePick" name="initHour"
+                                        >
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-12">
+                                    <div class="form-group">
                                         <label>Horário para o fim das vendas:</label>
-                                        <input type="text" class="form-input" id="days" name="days">
-                                        <input type="text" class="form-control date" placeholder="Pick the multiple dates">
+                                        <input type="date" class="form-input" id="endHour" name="endHour"
+                                        >
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -104,7 +114,7 @@
 
                                 <div class="col-xl-12">
                                     <input type="hidden" name="licenseId" value="<?=$license->id_licenca ?>">
-                                    <div class="form-group mt-3">
+                                    <div class="form-group mt-3" id="lights" style="display: none">
                                         <label>Possui iluminação (embutida ou externa):</label>
                                         <div class="row w-100">
                                             <div class="col-6" class="form-group">
@@ -117,19 +127,45 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="form-group mt-3" id="electronic-device" style="display: none">
+                                        <label>Possui dispositivo elétrico na estrutura:</label>
+                                        <div class="row w-100">
+                                            <div class="col-6" class="form-group">
+                                                <input type="radio" id="device" name="device" value="y" required>
+                                                <label for="device">Sim</label><br>
+                                            </div>
+                                            <div class="col-6" class="form-group">
+                                                <input type="radio" id="no-device" name="device" value="n" required>
+                                                <label for="no-device">Não</label><br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mt-3" id="double-face" style="display: none">
+                                        <label>Dupla face:</label>
+                                        <div class="row w-100">
+                                            <div class="col-6" class="form-group">
+                                                <input type="radio" id="doble" name="face" value="y" required>
+                                                <label for="double">Sim</label><br>
+                                            </div>
+                                            <div class="col-6" class="form-group">
+                                                <input type="radio" id="only" name="face" value="n" required>
+                                                <label for="only">Não</label><br>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-group mt-3">
                                         <label>Tipo de via:</label>
                                         <div class="row w-100">
                                             <div class="col-4" class="form-group">
-                                                <input type="radio" id="arterial" name="road" value="arterial" required>
+                                                <input type="radio" id="arterial" name="road" value="1" required>
                                                 <label for="arterial">Arterial</label><br>
                                             </div>
                                             <div class="col-4" class="form-group">
-                                                <input type="radio" id="regional" name="road" value="regional" required>
+                                                <input type="radio" id="regional" name="road" value="2" required>
                                                 <label for="regional">Regional</label><br>
                                             </div>
                                             <div class="col-4" class="form-group">
-                                                <input type="radio" id="orla" name="light" value="orla" required>
+                                                <input type="radio" id="orla" name="road" value="3" required>
                                                 <label for="orla">Orla</label><br>
                                             </div>
                                         </div>
@@ -215,24 +251,24 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-12 text-left">
-                                            <label class="label-file equipmentImage-file text-center"
-                                                   for="equipmentImage"><span
+                                            <label class="label-file ARTImage-file text-center"
+                                                   for="ARTImage"><span
                                                         class="icon-plus mr-2"></span> Selecionar </label>
                                             <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
-                                                   id="artImage" name="ARTImage"
+                                                   id="ARTImage" name="ARTImage"
                                                    accept="image/png, image/jpg, image/jpeg">
                                             <div class="invalid-feedback"></div>
-                                            <div class="equipmentImage-file-uploaded file-uploaded-container">
+                                            <div class="ARTImage-file-uploaded file-uploaded-container">
                                                 <div class="card-content-upload text-center p-3">
                                                     <div class="card-content-type-upload">
-                                                        <span class="equipmentImage-type"></span>
+                                                        <span class="ARTImage-type"></span>
                                                     </div>
                                                 </div>
                                                 <div class="ml-3 text-left">
                                                     <div class="d-flex">
-                                                        <p class="equipmentImage-name"></p>
-                                                        <span id="equipmentImage-span-close"
-                                                              class="icon-close ml-3 card-close-file equipmentImage"
+                                                        <p class="ARTImage-name"></p>
+                                                        <span id="ARTImage-span-close"
+                                                              class="icon-close ml-3 card-close-file ARTImage"
                                                               onclick="changeFile(this)"></span>
                                                     </div>
                                                     <div class="card-content-progress"></div>
@@ -357,24 +393,24 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-12 text-left">
-                                            <label class="label-file equipmentImage-file text-center"
-                                                   for="equipmentImage"><span
+                                            <label class="label-file croquiImage-file text-center"
+                                                   for="croquiImage"><span
                                                         class="icon-plus mr-2"></span> Selecionar </label>
                                             <input class="hidden-input-file" type="file" onchange="uploadImage(this)"
-                                                   id="equipmentImage" name="equipmentImage"
+                                                   id="croquiImage" name="croquiImage"
                                                    accept="image/png, image/jpg, image/jpeg">
                                             <div class="invalid-feedback"></div>
-                                            <div class="equipmentImage-file-uploaded file-uploaded-container">
+                                            <div class="croquiImage-file-uploaded file-uploaded-container">
                                                 <div class="card-content-upload text-center p-3">
                                                     <div class="card-content-type-upload">
-                                                        <span class="equipmentImage-type"></span>
+                                                        <span class="croquiImage-type"></span>
                                                     </div>
                                                 </div>
                                                 <div class="ml-3 text-left">
                                                     <div class="d-flex">
-                                                        <p class="equipmentImage-name"></p>
-                                                        <span id="equipmentImage-span-close"
-                                                              class="icon-close ml-3 card-close-file equipmentImage"
+                                                        <p class="croquiImage-name"></p>
+                                                        <span id="croquiImage-span-close"
+                                                              class="icon-close ml-3 card-close-file croquiImage"
                                                               onclick="changeFile(this)"></span>
                                                     </div>
                                                     <div class="card-content-progress"></div>
@@ -455,6 +491,7 @@
         $('#workedDays').multiselect();
         $('#typeSelect').multiselect();
         $('#typeRequestSelect').multiselect();
+        $('#datePick').multiDatesPicker();
         $('#days').datepicker({
             multidate: true,
             format: 'dd-mm-yyyy'
@@ -480,11 +517,11 @@
     }
 
     function checkOther(){
-        if (document.getElementById("typeSelect").value == 'Outro'){
-            document.getElementById("other").value = "";
-            document.getElementById("other").disabled = false;
+        var selectValue = document.getElementById("typeSelect").value;
+        if (selectValue == '1'){
+            document.getElementById("lights").style.display = "inherit";
         } else {
-            document.getElementById("other").disabled = true;
+            document.getElementById("lights").style.display = "inherit";
         }
     }
 

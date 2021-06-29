@@ -2,15 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b57fc3f1-cc6e-43cf-9dfc-33568b30ec93" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/css/datepicker.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/css/mobiscroll.jquery.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/js/mobiscroll.jquery.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/107/cnpjRegistration.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/107/consentLicense.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/107/proofAddress.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/www/source/App/Web.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/source/App/Web.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/source/services/connection.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/source/services/connection.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/themes/_theme.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/_theme.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/themes/marketplace.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/marketplace.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/themes/paymentList.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/paymentList.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/themes/assets/js/mobiscroll.jquery.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/assets/js/mobiscroll.jquery.min.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/www/themes/publicityLicense.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/publicityLicense.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -96,7 +93,12 @@
       <workItem from="1623796875463" duration="1101000" />
       <workItem from="1623845655871" duration="562000" />
       <workItem from="1624283627381" duration="1316000" />
-      <workItem from="1624323659219" duration="8013000" />
+      <workItem from="1624323659219" duration="8608000" />
+      <workItem from="1624363934111" duration="8000" />
+      <workItem from="1624376789718" duration="1512000" />
+      <workItem from="1624400030643" duration="4651000" />
+      <workItem from="1624455711420" duration="311000" />
+      <workItem from="1624896372397" duration="689000" />
     </task>
     <servers />
   </component>
@@ -130,5 +132,9 @@
       <screen x="0" y="-1080" width="1920" height="1030" />
     </state>
     <state x="532" y="-303" key="run.anything.popup/0.-1080.1920.1030/0.0.1536.824@0.-1080.1920.1030" timestamp="1621566183820" />
+    <state x="539" y="-1080" width="840" height="1034" key="search.everywhere.popup" timestamp="1624402967105">
+      <screen x="0" y="-1080" width="1920" height="1030" />
+    </state>
+    <state x="539" y="-1080" width="840" height="1034" key="search.everywhere.popup/0.-1080.1920.1030/0.0.1536.824@0.-1080.1920.1030" timestamp="1624402967105" />
   </component>
 </project>

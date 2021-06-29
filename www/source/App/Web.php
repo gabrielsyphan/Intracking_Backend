@@ -1070,20 +1070,14 @@ class Web
     public function validatePublicityLicense($data): void
     {
         $this->checkLogin();
-
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
-
         $response = 'fail';
-
         if ($_FILES) {
-
             $curl = curl_init();
-
             curl_setopt($curl, CURLOPT_URL, PERTENCES);
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
             curl_setopt($curl, CURLOPT_HEADER, false);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-
 
             $point = 'POINT(' . $data['latitude'] . " " . $data['longitude'] . ')';
 
@@ -1093,7 +1087,7 @@ class Web
             $license->status = 4;
 
             if ($data['userId']) {
-                $userId = (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id,cpf')->fetch(false);
+                $userId = (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id,cpf,nome,email')->fetch(false);
                 if ($userId) {
                     $userId = $userId->id;
                 } else {
@@ -1141,6 +1135,8 @@ class Web
                 $publicity->id_licenca = $license->id;
                 $publicity->latitude = $data['latitude'];
                 $publicity->longitude = $data['longitude'];
+                $publicity->iluminacao = ($data['light'] == 'y') ? 1 : 0;
+                $publicity->via = $data['road'];
 
                 $publicity->save();
 
@@ -1150,13 +1146,20 @@ class Web
                     exit();
                 } else {
                     //Validação humana necessária aspargo
-                    if ($publicity->area >= 20) {
+                    if ($publicity->area >= 20 || $publicity->iluminacao == 1 || $publicity->via == 1) {
+
                         //Envia email dizendo que o processo está aguardando validação
+                        $email = new Email();
+                        $email->add(
+                            'Sua licença requer vistoria',
+                            'A licença requisitada foi registrada e encontra-se pendente. Aguardando validação dos fiscais',
+                            $userId->nome,
+                            $userId->email
+                        )->send();
 
                     } else {
                         $license->status = 3;
                         $license->save();
-
                         $paymentDate = date('Y-m-d', strtotime("+3 days"));
                         $payment = new Payment();
                         $payment->id_licenca = $license->id;
@@ -1171,7 +1174,6 @@ class Web
                         $payment->cod_referencia = 15123;
                         $payment->cod_pagamento = 'teste';
                         $payment->save();
-
                         if ($payment->fail()) {
                             $license->destroy();
                             $publicity->destroy();
@@ -1216,7 +1218,6 @@ class Web
                                 $response = 'success';
                             }
                         }
-
                         $response = 'success';
                     }
                 }
