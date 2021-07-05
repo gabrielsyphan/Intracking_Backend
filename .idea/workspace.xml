@@ -2,16 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b57fc3f1-cc6e-43cf-9dfc-33568b30ec93" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/www/source/Models/PublicityType.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/122/ARTImage.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/122/cnpjRegistration.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/123/ARTImage.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/123/cnpjRegistration.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/128/cnpjRegistration.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/www/source/App/Web.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/source/App/Web.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/source/Models/Publicity.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/source/Models/Publicity.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/themes/publicityLicense.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/publicityLicense.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +97,7 @@
       <workItem from="1624990763732" duration="1358000" />
       <workItem from="1625358844477" duration="5005000" />
       <workItem from="1625501751783" duration="3852000" />
-      <workItem from="1625509779188" duration="2745000" />
+      <workItem from="1625509779188" duration="3278000" />
     </task>
     <servers />
   </component>

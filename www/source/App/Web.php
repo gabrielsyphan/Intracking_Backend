@@ -1170,9 +1170,6 @@ class Web
                         $unidades = ceil((round($datediff / (60 * 60 * 24)))/$publicityType->unidade);
 
                         $valor = $publicityType->valor * $unidades;
-                        var_dump($valor);
-                        var_dump($publicityType->unidade);
-                        var_dump($publicityType->valor);
                         $license->status = 3;
                         $license->save();
                         $paymentDate = date('Y-m-d', strtotime("+3 days"));
