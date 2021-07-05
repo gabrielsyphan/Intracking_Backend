@@ -10,13 +10,12 @@ class Publicity extends DataLayer
 {
     public function __construct()
     {
-        parent::__construct("publicidade", ['descricao', 'tipo', 'id_licenca', 'latitude', 'longitude', 'dimensoes', 'tipo'], 'id', false);
+        parent::__construct("publicidade", ['descricao'], 'id', false);
     }
 
     public function getLicense()
     {
         $license = (new License())->findById($this->id_licenca);
-
         $this->license = $license;
     }
 }

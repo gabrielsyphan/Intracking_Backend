@@ -2,12 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b57fc3f1-cc6e-43cf-9dfc-33568b30ec93" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/107/cnpjRegistration.jpeg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/107/consentLicense.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/107/proofAddress.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/source/Models/PublicityType.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/122/ARTImage.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/122/cnpjRegistration.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/123/ARTImage.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/123/cnpjRegistration.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/www/themes/assets/uploads/publicity/128/cnpjRegistration.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/www/source/App/Web.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/source/App/Web.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/themes/assets/js/mobiscroll.jquery.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/assets/js/mobiscroll.jquery.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/source/Models/Publicity.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/source/Models/Publicity.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/www/themes/publicityLicense.php" beforeDir="false" afterPath="$PROJECT_DIR$/www/themes/publicityLicense.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -99,6 +102,11 @@
       <workItem from="1624400030643" duration="4651000" />
       <workItem from="1624455711420" duration="311000" />
       <workItem from="1624896372397" duration="689000" />
+      <workItem from="1624985604233" duration="265000" />
+      <workItem from="1624990763732" duration="1358000" />
+      <workItem from="1625358844477" duration="5005000" />
+      <workItem from="1625501751783" duration="3852000" />
+      <workItem from="1625509779188" duration="2745000" />
     </task>
     <servers />
   </component>
@@ -116,10 +124,10 @@
       <screen x="0" y="-1080" width="1920" height="1030" />
     </state>
     <state x="687" y="-864" key="FileChooserDialogImpl/0.-1080.1920.1030/0.0.1536.824@0.-1080.1920.1030" timestamp="1621621867639" />
-    <state x="678" y="-892" key="NewPhpClassDialog" timestamp="1621469374129">
+    <state x="678" y="-892" key="NewPhpClassDialog" timestamp="1625502608687">
       <screen x="0" y="-1080" width="1920" height="1030" />
     </state>
-    <state x="678" y="-892" key="NewPhpClassDialog/0.-1080.1920.1030/0.0.1536.824@0.-1080.1920.1030" timestamp="1621469374129" />
+    <state x="678" y="-892" key="NewPhpClassDialog/0.-1080.1920.1030/0.0.1536.824@0.-1080.1920.1030" timestamp="1625502608687" />
     <state x="1186" y="-817" key="NewPhpFileDialog" timestamp="1621479648008">
       <screen x="0" y="-1080" width="1920" height="1030" />
     </state>
@@ -132,9 +140,9 @@
       <screen x="0" y="-1080" width="1920" height="1030" />
     </state>
     <state x="532" y="-303" key="run.anything.popup/0.-1080.1920.1030/0.0.1536.824@0.-1080.1920.1030" timestamp="1621566183820" />
-    <state x="539" y="-1080" width="840" height="1034" key="search.everywhere.popup" timestamp="1624402967105">
+    <state x="539" y="-1080" width="840" height="1034" key="search.everywhere.popup" timestamp="1625502477765">
       <screen x="0" y="-1080" width="1920" height="1030" />
     </state>
-    <state x="539" y="-1080" width="840" height="1034" key="search.everywhere.popup/0.-1080.1920.1030/0.0.1536.824@0.-1080.1920.1030" timestamp="1624402967105" />
+    <state x="539" y="-1080" width="840" height="1034" key="search.everywhere.popup/0.-1080.1920.1030/0.0.1536.824@0.-1080.1920.1030" timestamp="1625502477765" />
   </component>
 </project>

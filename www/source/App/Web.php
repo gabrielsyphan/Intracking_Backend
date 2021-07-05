@@ -12,6 +12,7 @@ use Source\Models\LicenseType;
 use Source\Models\Market;
 use Source\Models\Neighborhood;
 use Source\Models\Publicity;
+use Source\Models\PublicityType;
 use Source\Models\Punishment;
 use Source\Models\Role;
 use Source\Models\Team;
@@ -1061,9 +1062,12 @@ class Web
             }
         }
 
+        $publicityTypes = (new PublicityType())->find()->fetch(true);
+
         echo $this->view->render('publicityLicense', [
             'title' => 'Licença de Publicidade | ' . SITE,
             'userId' => $userId,
+            'publicityTypes' => $publicityTypes,
         ]);
     }
 
@@ -1083,7 +1087,6 @@ class Web
 
             $license = new License();
             $license->tipo = 4;
-
             $license->status = 4;
 
             if ($data['userId']) {
@@ -1091,15 +1094,15 @@ class Web
                 if ($userId) {
                     $userId = $userId->id;
                 } else {
-                    $userId = $_SESSION['user']['id'];
+                    $userId = $userId = (new User())->find('MD5(id)=:id', 'id=' . $_SESSION['user']['id'], 'id,cpf,nome,email')->fetch(false);;
                 }
             } else {
-                $userId = $_SESSION['user']['id'];
+                $userId = $userId = (new User())->find('MD5(id)=:id', 'id=' . $_SESSION['user']['id'], 'id,cpf,nome,email')->fetch(false);;
             }
 
             $license->id_usuario = $userId;
-            $license->data_inicio = date('Y-m-d');
-            $license->data_fim = date('Y-m-d', strtotime("+3 days"));
+            $license->data_inicio = $data['initDay'];
+            $license->data_fim = $data['endDay'];
             $license->cmc = '';
             $license->id_orgao = 1;
             $license->save();
@@ -1142,12 +1145,12 @@ class Web
 
                 if ($publicity->fail()) {
                     $license->destroy();
+                    var_dump($publicity);
                     var_dump($publicity->fail()->getMessage());
                     exit();
                 } else {
                     //Validação humana necessária aspargo
                     if ($publicity->area >= 20 || $publicity->iluminacao == 1 || $publicity->via == 1) {
-
                         //Envia email dizendo que o processo está aguardando validação
                         $email = new Email();
                         $email->add(
@@ -1156,8 +1159,20 @@ class Web
                             $userId->nome,
                             $userId->email
                         )->send();
-
                     } else {
+                        $publicityType = (new PublicityType())->findById(intval($data['typeSelect'][0]));
+
+                        $date_1 = strtotime($data['endDay']);
+                        $date_2 = strtotime($data['initDay']);
+
+                        $datediff = $date_1 - $date_2;
+
+                        $unidades = ceil((round($datediff / (60 * 60 * 24)))/$publicityType->unidade);
+
+                        $valor = $publicityType->valor * $unidades;
+                        var_dump($valor);
+                        var_dump($publicityType->unidade);
+                        var_dump($publicityType->valor);
                         $license->status = 3;
                         $license->save();
                         $paymentDate = date('Y-m-d', strtotime("+3 days"));
@@ -1165,7 +1180,7 @@ class Web
                         $payment->id_licenca = $license->id;
                         $payment->cod_referencia = null;
                         $payment->cod_pagamento = null;
-                        $payment->valor = 1;
+                        $payment->valor = $valor;
                         $payment->id_usuario = $_SESSION['user']['id'];
                         $payment->tipo = 1;
                         $payment->pagar_em = $paymentDate;

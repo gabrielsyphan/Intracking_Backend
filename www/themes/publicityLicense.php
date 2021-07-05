@@ -33,8 +33,9 @@
                                         <label>Tipo de publicidade/propaganda:</label>
                                         <select id="typeSelect" class="form-input" name="typeSelect[]" onchange="checkOther()" required>
                                             <option>Escolha um tipo</option>
-                                            <option value="0"> Outdoor fixo para fixação de cartazes substituíveis</option>
-                                            <option value="1">Indicadores de hora ou temperatura</option>
+                                            <?php foreach ($publicityTypes as $pubType): ?>
+                                                <option value="<?= $pubType->id?>"> <?= $pubType->nome?></option>
+                                            <?php endforeach; ?>
                                             <option value="2">Indicadores de bairros e locais turísticos</option>
                                             <option value="3">Anúncios provisórios</option>
                                             <option value="4">Panfletos e prospectos</option>
@@ -78,8 +79,8 @@
 
                                 <div class="col-xl-12">
                                     <div class="form-group">
-                                        <label>Horário para o Início das vendas:</label>
-                                        <input type="date" class="form-input" id="datePick" name="initHour"
+                                        <label>Data de Início:</label>
+                                        <input type="date" class="form-input" id="dateDay" name="initDay"
                                         >
                                         <div class="invalid-feedback"></div>
                                     </div>
@@ -87,8 +88,8 @@
 
                                 <div class="col-xl-12">
                                     <div class="form-group">
-                                        <label>Horário para o fim das vendas:</label>
-                                        <input type="date" class="form-input" id="endHour" name="endHour"
+                                        <label>Data de encerramento:</label>
+                                        <input type="date" class="form-input" id="endDay" name="endDay"
                                         >
                                         <div class="invalid-feedback"></div>
                                     </div>
@@ -118,11 +119,11 @@
                                         <label>Possui iluminação (embutida ou externa):</label>
                                         <div class="row w-100">
                                             <div class="col-6" class="form-group">
-                                                <input type="radio" id="approve" name="light" value="y" required>
+                                                <input type="radio" id="approve" name="light" value="y">
                                                 <label for="approve">Sim</label><br>
                                             </div>
                                             <div class="col-6" class="form-group">
-                                                <input type="radio" id="reject" name="light" value="n" required>
+                                                <input type="radio" id="reject" name="light" value="n">
                                                 <label for="reject">Não</label><br>
                                             </div>
                                         </div>
@@ -131,11 +132,11 @@
                                         <label>Possui dispositivo elétrico na estrutura:</label>
                                         <div class="row w-100">
                                             <div class="col-6" class="form-group">
-                                                <input type="radio" id="device" name="device" value="y" required>
+                                                <input type="radio" id="device" name="device" value="y" >
                                                 <label for="device">Sim</label><br>
                                             </div>
                                             <div class="col-6" class="form-group">
-                                                <input type="radio" id="no-device" name="device" value="n" required>
+                                                <input type="radio" id="no-device" name="device" value="n" >
                                                 <label for="no-device">Não</label><br>
                                             </div>
                                         </div>
@@ -144,11 +145,11 @@
                                         <label>Dupla face:</label>
                                         <div class="row w-100">
                                             <div class="col-6" class="form-group">
-                                                <input type="radio" id="doble" name="face" value="y" required>
+                                                <input type="radio" id="doble" name="face" value="y" >
                                                 <label for="double">Sim</label><br>
                                             </div>
                                             <div class="col-6" class="form-group">
-                                                <input type="radio" id="only" name="face" value="n" required>
+                                                <input type="radio" id="only" name="face" value="n" >
                                                 <label for="only">Não</label><br>
                                             </div>
                                         </div>
@@ -491,11 +492,6 @@
         $('#workedDays').multiselect();
         $('#typeSelect').multiselect();
         $('#typeRequestSelect').multiselect();
-        $('#datePick').multiDatesPicker();
-        $('#days').datepicker({
-            multidate: true,
-            format: 'dd-mm-yyyy'
-        });
     });
 
     $(document).ready(function () {
