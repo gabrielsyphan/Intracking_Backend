@@ -122,8 +122,33 @@ endif; ?>
                 <div class="box-div-info">
                     <h3 class="ml-3 title-section">Lista de Vagas Fixas</h3>
                     <p class="ml-3 subtitle-section-p">Todas as vagas fixas do mercado</p>
+
+                    <div class="div-box-span-icon mt-4">
+                        <div class="div-table-search">
+                            <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
+                                   placeholder="Filtrar por identificador...">
+                            <div class="circle-button primary search">
+                                <span class="icon-search"></span>
+                            </div>
+                        </div>
+
+                        <div class="dropleft">
+                            <div class="ml-3 circle-button secondary" id="dropdownMenuButton"
+                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                 title="Exportar tabela">
+                                <span class="icon-download"></span>
+                            </div>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="<?= url('exportData/2') ?>">
+                                    Exportar tabela em xls
+                                </a>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+
+                    <hr class="mb-0">
                     <div class="box-div-info-overflow-x">
-                        <hr class="mb-0">
                         <?php if (!$fixed): ?>
                             <div class="p-5 mt-5 text-center">
                                 <img style="width: 20%" src="<?= url('themes/assets/img/empty-list.svg') ?>">
@@ -135,10 +160,30 @@ endif; ?>
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
-                                        <th scope="col">Identificador</th>
-                                        <th scope="col">Nome</th>
-                                        <th>Valor</th>
-                                        <th>Status</th>
+                                        <th scope="col" onclick="changeFilter(0)">
+                                            <div class="d-flex">
+                                                <div class="marker active" id="0"></div>
+                                                Identificador
+                                            </div>
+                                        </th>
+                                        <th scope="col" onclick="changeFilter(1)">
+                                            <div class="d-flex">
+                                                <div class="marker" id="1"></div>
+                                                Nome
+                                            </div>
+                                        </th>
+                                        <th onclick="changeFilter(2)">
+                                            <div class="d-flex">
+                                                <div class="marker" id="2"></div>
+                                                Valor
+                                            </div>
+                                        </th>
+                                        <th onclick="changeFilter(3)">
+                                            <div class="d-flex">
+                                                <div class="marker" id="3"></div>
+                                                Status
+                                            </div>
+                                        </th>
                                     </tr>
                                     </thead>
                                     <tbody id="table-data">
@@ -185,11 +230,11 @@ endif; ?>
             <div class="web-div-box">
                 <div class="box-div-info">
                     <h3 class="ml-3 title-section">Lista de pagamentos</h3>
-                    <p class="ml-3 subtitle-section-p">Todos os pagamentos cadastrados no Orditi</p>
+                    <p class="ml-3 subtitle-section-p">Todos os pagamentos referentes a licenças nesse mercado</p>
 
                     <div class="div-box-span-icon mt-4">
                         <div class="div-table-search">
-                            <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
+                            <input id="text2" onkeyup="tableFilter2()" class="input-table-search" type="text"
                                    placeholder="Filtrar por proprietário...">
                             <div class="circle-button primary search">
                                 <span class="icon-search"></span>
@@ -222,39 +267,35 @@ endif; ?>
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
-                                    <th scope="col" class="table-col-2" onclick="changeFilter(0)">
+                                    <th scope="col" class="table-col-2" onclick="changeFilter2(0)">
                                         <div class="d-flex">
-                                            <div class="marker" id="0"></div>
+                                            <div class="marker" id="00"></div>
                                             Valor
                                         </div>
                                     </th>
-                                    <th scope="col" class="table-col-2" onclick="changeFilter(1)">
+                                    <th scope="col" class="table-col-2" onclick="changeFilter2(1)">
                                         <div class="d-flex">
-                                            <div class="marker" id="1"></div>
+                                            <div class="marker" id="01"></div>
                                             Vencimento
                                         </div>
                                     </th>
-                                        <th scope="col" class="table-col-1" onclick="changeFilter(2)">
-                                            <div class="d-flex">
-                                                <div class="marker" id="2"></div>
-                                                Box
-                                            </div>
-                                        </th>
-                                        <th scope="col" class="table-col-2" onclick="changeFilter(3)">
-                                            <div class="marker" id="3"></div>
-                                            Tipo
-                                        </th>
-                                    <th scope="col" class="table-col-2" onclick="changeFilter(4)">
-                                        <div class="marker" id="4"></div>
+                                    <th scope="col" class="table-col-1" onclick="changeFilter2(3)">
+                                        <div class="d-flex">
+                                            <div class="marker" id="03"></div>
+                                            Box
+                                        </div>
+                                    </th>
+                                    <th scope="col" class="table-col-2" onclick="changeFilter2(4)">
+                                        <div class="marker" id="04"></div>
                                         Status
                                     </th>
                                     <th scope="col" onclick="changeFilter(5)">
-                                        <div class="marker active" id="5"></div>
+                                        <div class="marker active" id="05"></div>
                                         Proprietário
                                     </th>
                                 </tr>
                                 </thead>
-                                <tbody id="table-data">
+                                <tbody id="table-data2">
                                 <?php
                                 if ($payments !== NULL):
                                     foreach ($payments as $payment):
@@ -279,16 +320,7 @@ endif; ?>
                                             onclick="openPage('<?= $payment->cod_referencia ?>')">
                                             <td>R$ <?= $payment->valor ?>,00</td>
                                             <td><?= date('d/m/Y', strtotime($payment->pagar_em)); ?></td>
-                                                <td><?= $payment->name_box ?></td>
-                                                <td>
-                                                    <?php switch ($payment->tipo):
-                                                        case 1: ?>
-                                                            Recorrente
-                                                            <?php break;
-                                                        default: ?>
-                                                            Vencido
-                                                            <?php break; endswitch; ?>
-                                                </td>
+                                            <td><?= $payment->name_box ?></td>
                                             <td>
                                                 <div class="d-flex">
                                                     <div class="status-circle <?= $divStatus; ?> t-5"></div>
@@ -332,13 +364,18 @@ endif; ?>
 <script src="<?= url("themes/assets/js/leaflet.markercluster-src.js"); ?>"></script>
 <script src="<?= url("themes/assets/js/Leaflet.LinearMeasurement.js"); ?>"></script>
 <script>
-    let selectedOption = 5;
-    let options = ['valor', 'vencimento', 'box', 'tipo', 'status', 'proprietário'];
-    let market = ""
-    let sector = ""
+    let options = ['identificador', 'nome', 'valor', 'status'];
+    let selectedOption = 0;
+
+    let options2 = ['valor', 'vencimento', 'box', 'status', 'proprietário'];
+    let selectedOption2 = 0;
+
+    function editZoneFixed(zoneId) {
+        window.location.href = '<?= url('editFixedZones/') ?>' + '/' + zoneId;
+    }
 
     function openPage(data) {
-        window.open("http://www.smf.maceio.al.gov.br:8090/e-agata/servlet/hwmemitedamqrcode?" + data, '_blank');
+        window.open("<?= $router->route('web.salesman'); ?>/" + data, '_blank');
     }
 
     function changeFilter(num) {
@@ -354,7 +391,6 @@ endif; ?>
     }
 
     function tableFilter() {
-
         let input, filter, table, tr, td, i, txtValue;
 
         input = document.getElementById("text");
@@ -381,14 +417,45 @@ endif; ?>
             }
         }
     }
-</script>
-<script>
-    function editZoneFixed(zoneId) {
-        window.location.href = '<?= url('editFixedZones/') ?>' + '/' + zoneId;
+
+    function changeFilter2(num) {
+        selectedOption2 = num;
+        input = document.getElementById("text2");
+        input.placeholder = "Filtrar por " + options2[num] + "...";
+        mark = document.getElementById("0"+num);
+        markers = document.getElementsByClassName("marker");
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].className = "marker"
+        }
+        mark.className = "marker active";
     }
 
-    function openPage(data) {
-        window.open("<?= $router->route('web.salesman'); ?>/" + data, '_blank');
+    function tableFilter2() {
+        let input, filter, table, tr, td, i, txtValue;
+
+        input = document.getElementById("text2");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("table-data2");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[selectedOption];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+                console.log(txtValue);
+            }
+        }
+        if ($('tr:visible').length === 1) {
+            $('.empty-table').show();
+        } else {
+            if ($('.empty-table').show()) {
+                $('.empty-table').hide()
+            }
+        }
     }
 
     $(function () {

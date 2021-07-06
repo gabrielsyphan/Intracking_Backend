@@ -473,27 +473,34 @@ class Web
                     }
                 }
 
-                $email = new Email();
-
-                $message = file_get_contents(THEMES . "/assets/emails/confirmRegisterEmail.php");
-
-                $url = ROOT . "/confirmAccount/" . md5($user->id);
-
-                $template = array("%title", "%textBody", "%button", "%link", "%name");
-                $dataReplace = array("Confirmação de Cadastro", "Para confirmar seu cadastro", "Confirmar", $url, $user->nome);
-                $message = str_replace($template, $dataReplace, $message);
-
-                $email->add(
-                    "Confirmação de cadastro",
-                    $message,
-                    $user->nome,
-                    $user->email
-                )->send();
-                if ($email->error()) {
-                    $attach->destroy();
-                    $user->destroy();
-                    var_dump($email->error()->getMessage());
-                } else {
+                $fail = false;
+                if ($user->email) {
+                    $email = new Email();
+    
+                    $message = file_get_contents(THEMES . "/assets/emails/confirmRegisterEmail.php");
+    
+                    $url = ROOT . "/confirmAccount/" . md5($user->id);
+    
+                    $template = array("%title", "%textBody", "%button", "%link", "%name");
+                    $dataReplace = array("Confirmação de Cadastro", "Para confirmar seu cadastro", "Confirmar", $url, $user->nome);
+                    $message = str_replace($template, $dataReplace, $message);
+    
+                    $email->add(
+                        "Confirmação de cadastro",
+                        $message,
+                        $user->nome,
+                        $user->email
+                    )->send();
+                    
+                    if ($email->error()) {
+                        $attach->destroy();
+                        $user->destroy();
+                        $fail = true;
+                        var_dump($email->error()->getMessage());
+                    }
+                }
+                
+                 if ($fail == false) {
                     echo "success";
                 }
             }
@@ -2080,24 +2087,29 @@ class Web
 
                 if (!$punishment->fail()) {
                     if ($license->status == 2 && $data['punishmentStatus'] == 0) {
-                        $email = new Email();
-                        $email->add(
-                            'Licença desbloqueada',
-                            'Você teve sua licença desbloqueada no orditi. Acesse seu perfil para saber mais.',
-                            $user->nome,
-                            $user->email
-                        )->send();
+                        if ($user->email) {
+                            $email = new Email();
+                            $email->add(
+                                'Licença desbloqueada',
+                                'Você teve sua licença desbloqueada no orditi. Acesse seu perfil para saber mais.',
+                                $user->nome,
+                                $user->email
+                            )->send();
+                        }
                         $license->status = 0;
                     }
 
                     if ($data['punishmentStatus'] == 1) {
-                        $email = new Email();
-                        $email->add(
-                            'Licença bloqueada',
-                            'Você teve sua licença bloqueada no orditi. Acesse seu perfil para saber mais.',
-                            $user->nome,
-                            $user->email
-                        )->send();
+                        if ($user->email) {
+                            $email = new Email();
+                            $email->add(
+                                'Licença bloqueada',
+                                'Você teve sua licença bloqueada no orditi. Acesse seu perfil para saber mais.',
+                                $user->nome,
+                                $user->email
+                            )->send();
+                        }
+                        
                         $license->status = 2;
                     }
 
@@ -2118,6 +2130,7 @@ class Web
             echo json_encode(['success' => 'Update success']);
         }
     }
+
 
     public function licenseUser($data): void
     {
@@ -2474,33 +2487,39 @@ class Web
                 exit;
             }
 
-            /**
-             * Send email with new temporary recovery password
-             */
-            $email = new Email();
-
-            $message = file_get_contents(THEMES . "/assets/emails/confirmRegisterEmail.php");
-
-            $url = ROOT . "/confirmAccount/" . md5($user->id);
-            $template = array("%title", "%textBody", "%button", "%link", "%name");
-            $dataReplace = array("Recuperação de senha", "Para recuperar sua senha", "Recuperar", $url, $user->nome);
-            $message = str_replace($template, $dataReplace, $message);
-
-            $email->add(
-                "Recuperação de senha",
-                $message,
-                $user->nome,
-                $user->email
-            )->send();
-
-            if ($email->error()) {
-                var_dump($email->error()->getMessage());
-                exit;
+            if ($user->email) {
+                /**
+                 * Send email with new temporary recovery password
+                 */
+                $email = new Email();
+    
+                $message = file_get_contents(THEMES . "/assets/emails/confirmRegisterEmail.php");
+    
+                $url = ROOT . "/confirmAccount/" . md5($user->id);
+                $template = array("%title", "%textBody", "%button", "%link", "%name");
+                $dataReplace = array("Recuperação de senha", "Para recuperar sua senha", "Recuperar", $url, $user->nome);
+                $message = str_replace($template, $dataReplace, $message);
+    
+                $email->add(
+                    "Recuperação de senha",
+                    $message,
+                    $user->nome,
+                    $user->email
+                )->send();
+    
+                if ($email->error()) {
+                    var_dump($email->error()->getMessage());
+                    exit;
+                } else {
+                    echo 'pswSuccess';
+                }                
             } else {
-                echo 'pswSuccess';
+                echo 'emailNotExist';
             }
+
         }
     }
+
 
 
     /**
@@ -3449,6 +3468,7 @@ class Web
             ST_AsText(ST_Centroid(coordenadas)) as centroide, nome, limite_ambulantes, quantidade_ambulantes,
              vagas_fixas, foto, descricao')->fetch(false);
         if ($zone) {
+
             $salesmans = (new Salesman())->find('id_zona = :zoneId', 'zoneId=' . $data['id'], 'id_licenca')->fetch(true);
             $users = array();
 
@@ -3495,6 +3515,56 @@ class Web
             }
 
             if ($zone !== null) {
+
+                $paymentArray = array();
+                $payments = (new Payment())->find()->fetch(true);
+                $auxPendent = 0;
+                $auxPaid = 0;
+                $auxExpired = 0;
+                $paymentCount = 0;
+
+                if ($payments) {
+                    foreach ($payments as $payment) {
+                        $license = (new License())->findById($payment->id_licenca);
+
+                        $user = (new User())->findById($license->id_usuario);
+
+                        if (($license != null) && ($license->id_orgao == $_SESSION['user']['team'])) {
+                            $user = (new User())->findById($license->id_usuario);
+                            switch ($license->tipo):
+                                case 7:
+                                    $market = (new Market())->find("id_licenca = :ilic", "ilic=" . $license->id)->fetch();
+                                    if ($market->id_zona == $zone->id){
+                                        $payment->name = $user->nome;
+
+                                        $box = (new Fixed())->find("id = :ivag", "ivag=" . $market->id_vaga)->fetch();
+                                        if ($box->nome != NULL) {
+                                            $payment->name_box = $box->nome;
+                                        } else {
+                                            $payment->name_box = $box->cod_identificador;
+                                        }
+
+                                        $paymentArray[] = $payment;
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            endswitch;
+
+                            if ($payment->status == 0 || $payment->status == 3) {
+                                $auxPendent++;
+                            } else if ($payment->status == 1) {
+                                $auxPaid++;
+                            } else {
+                                $auxExpired++;
+                            }
+                            $paymentCount++;
+                        }
+                    }
+                } else {
+                    $paymentArray = null;
+                }
+
                 $centroid = explode("POINT(", $zone->centroide);
                 $centroid = explode(")", $centroid[1]);
                 $centroid = explode(" ", $centroid[0]);
@@ -3783,7 +3853,7 @@ class Web
     public function removeSuspension($data): void
     {
         $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
-        $salesman = (new Salesman())->findById($data['id'], 'id, suspenso');
+        $salesman = (new Salesman())->findById($data['id'], 'id, id_licenca, suspenso');
         if ($salesman) {
             $payments = (new Payment())->find('id_ambulante = :id', 'id=' . $data['id'])->fetch(true);
             $aux = 0;
@@ -3802,23 +3872,29 @@ class Web
             $salesman->suspenso = 0;
             $salesman->save();
 
-            $email = new Email();
-
-            $message = file_get_contents(THEMES . "/assets/emails/removeNotificationEmail.php");
-
-            $url = "https://www.google.com";
-            $template = array("%title", "%status", "%textBody", "%button", "%link", "%name");
-            $dataReplace = array("Notificação", "MULTA", "foi removida", "Acesse", $url, $salesman->nome);
-            $message = str_replace($template, $dataReplace, $message);
-
-            $email->add(
-                "Notificação",
-                $message,
-                $salesman->nome,
-                $salesman->email
-            )->send();
-
-            echo 1;
+            $license = (new License())->findById($salesman->id_licenca);
+            if ($license) {
+                $user = (new User())->findById($license->id_usuario);
+                 if ($user->email) {
+                    $email = new Email();
+        
+                    $message = file_get_contents(THEMES . "/assets/emails/removeNotificationEmail.php");
+        
+                    $url = "https://www.google.com";
+                    $template = array("%title", "%status", "%textBody", "%button", "%link", "%name");
+                    $dataReplace = array("Notificação", "MULTA", "foi removida", "Acesse", $url, $salesman->nome);
+                    $message = str_replace($template, $dataReplace, $message);
+        
+                    $email->add(
+                        "Notificação",
+                        $message,
+                        $salesman->nome,
+                        $salesman->email
+                    )->send();
+                }   
+                
+                echo 1;
+            }
         } else {
             echo 0;
         }

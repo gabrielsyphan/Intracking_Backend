@@ -391,11 +391,11 @@ function uploadImage(e) {
     let fileName = file.name;
     let ext = fileName.substr(fileName.lastIndexOf('.') + 1);
     if (ext === 'jpg' || ext === 'jpeg' || ext === 'png' || ext === 'JPG' || ext === 'JPEG' || ext === 'PNG') {
-        if (file.size > 1133695) {
+        if (file.size > 7935865) {
             swal({
                 icon: "warning",
                 title: "Atenção",
-                text: "Por favor, insira uma imagem com no máximo 1mb de tamanho.",
+                text: "Por favor, insira uma imagem com no máximo 7mb de tamanho.",
             });
             $('#' + e.id).val('');
         } else {
