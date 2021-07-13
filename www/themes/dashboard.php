@@ -1,5 +1,130 @@
 <?php $v->layout("_theme.php") ?>
 
+<div class="container-fluid mt-5">
+    <div class="row">
+        <div class="col-md-6 col-xl-3 mb-4">
+            <div class="web-div-box">
+                <div class="box-div-info p-5">
+                    <div class="row">
+                        <div class="col-8">
+                            <h4 class="title-section">
+                                Licenças cadastradas
+                            </h4>
+                            <hr>
+                            <h2 class="title-section"><?= $registered ?></h2>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-center mt-4">
+                                <span class="title-section icon-drivers-license card-icon registered-icon"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3 mb-4">
+            <div class="web-div-box">
+                <div class="box-div-info p-5">
+                    <div class="row">
+                        <div class="col-8">
+                            <h4 class="title-section">
+                                Licenças aprovadas
+                            </h4>
+                            <hr>
+                            <h2 class="title-section"><?= $paid ?></h2>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-center mt-4">
+                                <span class="title-section icon-verified_user card-icon paid-icon"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3 mb-4">
+            <div class="web-div-box">
+                <div class="box-div-info p-5">
+                    <div class="row">
+                        <div class="col-8">
+                            <h4 class="title-section">
+                                Licenças pendentes
+                            </h4>
+                            <hr>
+                            <h2 class="title-section"><?= $pending ?></h2>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-center mt-4">
+                                <span class="title-section icon-warning card-icon pending-icon"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3 mb-4">
+            <div class="web-div-box">
+                <div class="box-div-info p-5">
+                    <div class="row">
+                        <div class="col-8">
+                            <h4 class="title-section">
+                                Licenças bloqueados
+                            </h4>
+                            <hr>
+                            <h2 class="title-section"><?= $blocked ?></h2>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-center mt-4">
+                                <span class="title-section icon-block card-icon expired-icon"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3 mb-4">
+            <div class="web-div-box">
+                <div class="box-div-info p-5">
+                    <div class="row">
+                        <div class="col-8">
+                            <h4 class="title-section">
+                                Licenças pendentes
+                            </h4>
+                            <hr>
+                            <h2 class="title-section"><?= $pending ?></h2>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-center mt-4">
+                                <span class="title-section icon-warning card-icon pending-icon"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3 mb-4">
+            <div class="web-div-box">
+                <div class="box-div-info p-5">
+                    <div class="row">
+                        <div class="col-8">
+                            <h4 class="title-section">
+                                Licenças bloqueados
+                            </h4>
+                            <hr>
+                            <h2 class="title-section"><?= $blocked ?></h2>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-center mt-4">
+                                <span class="title-section icon-block card-icon expired-icon"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <div class="row">
         <div class="col-xl-12 mt-5 mb-5">

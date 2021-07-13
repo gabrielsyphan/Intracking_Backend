@@ -31,7 +31,7 @@
                                 Licenças aprovadas
                             </h4>
                             <hr>
-                            <h2 class="title-section"><?= $paid ?></h2>
+                            <h2 class="title-section"><?= $approved ?></h2>
                         </div>
                         <div class="col-4">
                             <div class="text-center mt-4">
@@ -96,7 +96,7 @@
                     <div class="div-box-span-icon mt-4">
                         <div class="div-table-search">
                             <input id="text" onkeyup="tableFilter()" class="input-table-search" type="text"
-                                   placeholder="Filtrar pelo nome...">
+                                   placeholder="Filtrar por proprietário...">
                             <div class="circle-button primary search">
                                 <span class="icon-search"></span>
                             </div>
@@ -173,6 +173,11 @@
                                             $textStatus = 'Bloqueado';
                                             $trClass = 'border-left-red';
                                             break;
+                                        case 3:
+                                            $divStatus = 'primary';
+                                            $textStatus = 'Aprovado';
+                                            $trClass = 'border-left-yellow';
+                                            break;
                                         default:
                                             $divStatus = 'tertiary';
                                             $textStatus = 'Pendente';
@@ -213,7 +218,7 @@
 <script src="<?= url("themes/assets/vendor/bootstrap/js/popper.js"); ?>"></script>
 <script src="<?= url("themes/assets/vendor/bootstrap/js/bootstrap.min.js"); ?>"></script>
 <script>
-    let selectedOption = 5;
+    let selectedOption = 2;
     let options = ['tipo', 'CPF', 'Proprietário', 'Início', 'Fim', 'Status'];
     $('.js-pscroll').each(function () {
         var ps = new PerfectScrollbar(this);
@@ -241,7 +246,6 @@
 
     function tableFilter() {
         let input, filter, table, tr, td, i, txtValue;
-        let selectedOption = 2;
 
         input = document.getElementById("text");
         filter = input.value.toUpperCase();

@@ -5,7 +5,6 @@
 <script src="<?= url("themes/assets/js/leaflet.js"); ?>"></script>
 <?php $v->end(); ?>
 
-
 <div id="modal-1" class="div-modal">
     <div class="container pt-5">
         <div class="row mt-5 p-5 justify-content-center">
@@ -886,7 +885,6 @@ endswitch;?>
         setTimeout(function () {
             map.invalidateSize();
         }, 500);
-
         openModal(2);
     }
 

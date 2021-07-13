@@ -117,6 +117,11 @@ $router->get("/occupationLicense", "Web:occupationLicense", "web.occupationLicen
 $router->get("/occupationLicenseUser/{id}", "Web:occupationLicense", "web.occupationLicense");
 $router->post("/validateOccupationLicense", "Web:validateOccupationLicense", "web.validateOccupationLicense");
 
+$router->get("/publicityLicense", "Web:publicityLicense", "web.publicityLicense");
+$router->get("/publicityLicenseUser/{id}", "Web:publicityLicense", "web.publicityLicense");
+$router->post("/validatePublicityLicense", "Web:validatePublicityLicense", "web.validatePublicityLicense");
+$router->post("/confirmPublicityLicense", "Web:confirmPublicityLicense", "web.confirmPublicityLicense");
+
 $router->post("/licenseCancel", "Web:licenseCancel", "web.licenseCancel");
 
 $router->get("/test", "SupeController:supeAuthentication", "supeController.supeAuthentication");

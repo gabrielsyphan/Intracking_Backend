@@ -11,6 +11,8 @@ use Source\Models\License;
 use Source\Models\LicenseType;
 use Source\Models\Market;
 use Source\Models\Neighborhood;
+use Source\Models\Publicity;
+use Source\Models\PublicityType;
 use Source\Models\Punishment;
 use Source\Models\Role;
 use Source\Models\Team;
@@ -857,7 +859,7 @@ class Web
             if (!$user) {
                 $this->router->redirect('web.home');
             } else {
-               $userId = $data['id'];
+                $userId = $data['id'];
             }
         }
 
@@ -923,7 +925,7 @@ class Web
 
             if ($data['userId']) {
                 $userId = (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id')->fetch(false);
-                
+
                 if ($userId) {
                     $userId = $userId->id;
                 } else {
@@ -932,7 +934,7 @@ class Web
             } else {
                 $userId = $_SESSION['user']['id'];
             }
-            
+
             $license->id_usuario = $userId;
             $license->data_inicio = date('Y-m-d');
             $license->data_fim = date('Y-m-d', strtotime("+3 days"));
@@ -1052,6 +1054,335 @@ class Web
      * @return void
      * @var $data
      */
+    public function publicityLicense($data = null): void
+    {
+        $this->checkLogin();
+
+        $userId = null;
+        if ($data != null) {
+            $user = (new User())->find('MD5(id) = :id', 'id=' . $data['id'])->fetch(false);
+
+            if (!$user) {
+                $this->router->redirect('web.home');
+            } else {
+                $userId = $data['id'];
+            }
+        }
+
+        $publicityTypes = (new PublicityType())->find()->fetch(true);
+
+        echo $this->view->render('publicityLicense', [
+            'title' => 'Licença de Publicidade | ' . SITE,
+            'userId' => $userId,
+            'publicityTypes' => $publicityTypes,
+        ]);
+    }
+
+    public function validatePublicityLicense($data): void
+    {
+        $this->checkLogin();
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+        $response = 'fail';
+        if ($_FILES) {
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, PERTENCES);
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($curl, CURLOPT_HEADER, false);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+            $point = 'POINT(' . $data['latitude'] . " " . $data['longitude'] . ')';
+
+            $license = new License();
+            $license->tipo = 4;
+            $license->status = 4;
+
+            if ($data['userId']) {
+                $userId = (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id,cpf,nome,email')->fetch(false);
+                if ($userId) {
+                    $userId = $userId->id;
+                } else {
+                    $userId = $userId = (new User())->find('MD5(id)=:id', 'id=' . $_SESSION['user']['id'], 'id,cpf,nome,email')->fetch(false);;
+                }
+            } else {
+                $userId = $userId = (new User())->find('MD5(id)=:id', 'id=' . $_SESSION['user']['id'], 'id,cpf,nome,email')->fetch(false);;
+            }
+
+            $license->id_usuario = $userId;
+            $license->data_inicio = $data['initDay'];
+            $license->data_fim = $data['endDay'];
+            $license->cmc = '';
+            $license->id_orgao = 1;
+            $license->save();
+
+            if ($license->fail()) {
+                var_dump($license->fail()->getMessage());
+            } else {
+                /**
+                 * Load all images
+                 */
+                $curl = curl_init();
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, True);
+                curl_setopt($curl, CURLOPT_URL, 'https://nominatim.openstreetmap.org/reverse.php?lat=' . $data['latitude'] . '&lon=' . $data['longitude'] . '&zoom=18&format=jsonv2');
+                curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:7.0.1) Gecko/20100101 Firefox/7.0.1');
+                $street = curl_exec($curl);
+                curl_close($curl);
+                $street = json_decode($street);
+                $street = $street->display_name;
+                $valueToPayment = array();
+
+                $userCpf = (new User())->find('id=:id', 'id=' . $userId, "cpf")->fetch(false);
+
+                $publicity = new Publicity();
+                $publicity->cpf = $userCpf->cpf;
+                if ($data['typeRequestSelect'] == '1') {
+                    $publicity->cnpj = $data['cnpj'];
+                    $publicity->cnpj = $data['cmc'];
+                }
+                $publicity->dimensoes = $data['width'] . "x" . $data['length'] . "x" . $data['height'];
+                $publicity->area = floatval($data['width']) * floatval($data['length']);
+                $publicity->tipo = $data['typeSelect'][0];
+                $publicity->descricao = $data['description'];
+                $publicity->id_licenca = $license->id;
+                $publicity->latitude = $data['latitude'];
+                $publicity->longitude = $data['longitude'];
+                $publicity->iluminacao = ($data['light'] == 'y') ? 1 : 0;
+                $publicity->via = $data['road'];
+
+                $publicity->save();
+
+                if ($publicity->fail()) {
+                    $license->destroy();
+                    var_dump($publicity);
+                    var_dump($publicity->fail()->getMessage());
+                    exit();
+                } else {
+                    //Validação humana necessária aspargo
+                    if ($publicity->area >= 20 || $publicity->iluminacao == 1 || $publicity->via == 1) {
+                        //Envia email dizendo que o processo está aguardando validação
+                        $email = new Email();
+                        $email->add(
+                            'Sua licença requer vistoria',
+                            'A licença requisitada foi registrada e encontra-se pendente. Aguardando validação dos fiscais',
+                            $userId->nome,
+                            $userId->email
+                        )->send();
+                    } else {
+                        $publicityType = (new PublicityType())->findById(intval($data['typeSelect'][0]));
+
+                        $date_1 = strtotime($data['endDay']);
+                        $date_2 = strtotime($data['initDay']);
+
+                        $datediff = $date_1 - $date_2;
+
+                        $unidades = ceil((round($datediff / (60 * 60 * 24)))/$publicityType->unidade);
+
+                        $valor = $publicityType->valor * $unidades;
+                        $license->status = 3;
+                        $license->save();
+                        $paymentDate = date('Y-m-d', strtotime("+3 days"));
+                        $payment = new Payment();
+                        $payment->id_licenca = $license->id;
+                        $payment->cod_referencia = null;
+                        $payment->cod_pagamento = null;
+                        $payment->valor = $valor;
+                        $payment->id_usuario = $_SESSION['user']['id'];
+                        $payment->tipo = 1;
+                        $payment->pagar_em = $paymentDate;
+                        $payment->save();
+                        $extCode = 'ODT' . $payment->id;
+                        $payment->cod_referencia = 15123;
+                        $payment->cod_pagamento = 'teste';
+                        $payment->save();
+                        if ($payment->fail()) {
+                            $license->destroy();
+                            $publicity->destroy();
+                            var_dump($payment->fail()->getMessage());
+                            exit();
+                        }
+                    }
+                    foreach ($_FILES as $key => $file) {
+                        $target_file = basename($file['name']);
+
+                        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                        $extensions_arr = array("jpg", "jpeg", "png");
+
+                        if (in_array($imageFileType, $extensions_arr)) {
+                            $folder = THEMES . '/assets/uploads/publicity';
+                            if (!file_exists($folder) || !is_dir($folder)) {
+                                mkdir($folder, 0755);
+                            }
+                            $fileName = $key . '.' . $imageFileType;
+                            $dir = $folder . '/' . $license->id;
+
+                            if (!file_exists($dir) || !is_dir($dir)) {
+                                mkdir($dir, 0755);
+                            }
+
+                            $dir = $dir . '/' . $fileName;
+
+                            move_uploaded_file($file['tmp_name'], $dir);
+
+                            $attach = new Attach();
+                            $attach->id_usuario = $license->id;
+                            $attach->tipo_usuario = 4;
+                            $attach->nome = $fileName;
+                            $attach->save();
+
+                            if ($attach->fail()) {
+                                $license->destroy();
+                                var_dump($attach->fail()->getMessage());
+                                exit();
+                            } else {
+                                $response = 'success';
+                            }
+                        }
+                        $response = 'success';
+                    }
+                }
+            }
+        }
+        echo $response;
+    }
+
+    public function confirmPublicityLicense($data): void
+    {
+        $this->checkLogin();
+
+        $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+        $response = "fail";
+
+        $license = (new License())->findById($data['licenseId']);
+
+        if ($data['status'] == 'approve') {
+            $license->status = 3;
+            $license->save();
+            if (!$license->fail()) {
+                $response = 'sucess';
+
+                if ($_FILES) {
+                    foreach ($_FILES as $key => $file) {
+                        $target_file = basename($file['name']);
+
+                        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                        $extensions_arr = array("jpg", "jpeg", "png");
+
+                        if (in_array($imageFileType, $extensions_arr)) {
+                            $folder = THEMES . '/assets/uploads/publicity';
+                            if (!file_exists($folder) || !is_dir($folder)) {
+                                mkdir($folder, 0755);
+                            }
+                            $fileName = $key . '.' . $imageFileType;
+                            $dir = $folder . '/' . $license->id;
+
+                            if (!file_exists($dir) || !is_dir($dir)) {
+                                mkdir($dir, 0755);
+                            }
+
+                            $dir = $dir . '/' . $fileName;
+
+                            move_uploaded_file($file['tmp_name'], $dir);
+
+                            $attach = new Attach();
+                            $attach->id_usuario = $license->id;
+                            $attach->tipo_usuario = 4;
+                            $attach->nome = $fileName;
+                            $attach->save();
+
+                            if ($attach->fail()) {
+                                $license->destroy();
+                                var_dump($attach->fail()->getMessage());
+                                exit();
+                            } else {
+                                $response = 'success';
+                            }
+                        }
+                        $response = 'success';
+                    }
+                }
+
+                $paymentDate = date('Y-m-d', strtotime("+3 days"));
+                $payment = new Payment();
+                $payment->id_licenca = $license->id;
+                $payment->cod_referencia = null;
+                $payment->cod_pagamento = null;
+                $payment->valor = 1;
+                $payment->id_usuario = $_SESSION['user']['id'];
+                $payment->tipo = 1;
+                $payment->pagar_em = $paymentDate;
+                $payment->save();
+                $extCode = 'ODT' . $payment->id;
+                $payment->cod_referencia = 15123;
+                $payment->cod_pagamento = 'teste';
+                $payment->save();
+
+                if ($payment->fail()) {
+                    var_dump($payment->fail()->getMessage());
+                    exit();
+                }
+
+                //Envia o email e gera o boleto
+            }
+        } else {
+            $license->status = 2;
+            $license->save();
+            if (!$license->fail()) {
+                $response = 'sucess';
+
+                if ($_FILES) {
+                    foreach ($_FILES as $key => $file) {
+                        $target_file = basename($file['name']);
+
+                        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                        $extensions_arr = array("jpg", "jpeg", "png");
+
+                        if (in_array($imageFileType, $extensions_arr)) {
+                            $folder = THEMES . '/assets/uploads/publicity';
+                            if (!file_exists($folder) || !is_dir($folder)) {
+                                mkdir($folder, 0755);
+                            }
+                            $fileName = $key . '.' . $imageFileType;
+                            $dir = $folder . '/' . $license->id;
+
+                            if (!file_exists($dir) || !is_dir($dir)) {
+                                mkdir($dir, 0755);
+                            }
+
+                            $dir = $dir . '/' . $fileName;
+
+                            move_uploaded_file($file['tmp_name'], $dir);
+
+                            $attach = new Attach();
+                            $attach->id_usuario = $license->id;
+                            $attach->tipo_usuario = 4;
+                            $attach->nome = $fileName;
+                            $attach->save();
+
+                            if ($attach->fail()) {
+                                $license->destroy();
+                                var_dump($attach->fail()->getMessage());
+                                exit();
+                            } else {
+                                $response = 'success';
+                            }
+                        }
+                        $response = 'success';
+                    }
+                }
+                //Envia o email com o comentário do motivo da rejeição
+            }
+        }
+
+        echo $response;
+    }
+
+    /**
+     * @return void
+     * @var $data
+     */
     public function licenseInfo($data): void
     {
         $this->checkLogin();
@@ -1104,6 +1435,13 @@ class Web
                         $templateName = 'companyLicenseInfo';
                         $groupName = 'companys';
                         break;
+                    case 4:
+                        $licenseInfo = (new Publicity())->find('id_licenca = :id', 'id=' . $license->id)
+                            ->fetch();
+                        $licenseInfo->getLicense();
+                        $templateName = 'publicityLicenseInfo';
+                        $groupName = 'publicity';
+                        break;
                     case 5:
                         $licenseInfo = (new Occupation())->find('id_licenca = :id', 'id=' . $license->id)
                             ->fetch();
@@ -1141,7 +1479,6 @@ class Web
                     $salesmans = (new Salesman())->find('id_empresa = :id', 'id=' . $license->id)
                         ->fetch(true);
                     $arrayAux = array();
-
                     if ($salesmans) {
                         foreach ($salesmans as $salesman) {
                             $salesmanLicense = (new License())->findById($salesman->id_licenca);
@@ -1154,9 +1491,7 @@ class Web
                             }
                         }
                     }
-
                     $userImage = '';
-
                     if ($attachments) {
                         foreach ($attachments as $attach) {
                             $uploads[] = [
@@ -1165,23 +1500,21 @@ class Web
                                 'userId' => $license->id
                             ];
                         }
-
                         foreach ($userAttachments as $userAttachment) {
                             if (explode('.', $userAttachment->nome)[0] == 'userImage') {
                                 $userImage = $userAttachment->nome;
                             }
                         }
-
                         $validate = true;
-
                     }
-
                     if ($data['licenseType'] == 7) {
                         $validate = true;
                     }
                 }
             }
         }
+
+        $validate = true;
 
         if ($validate == false) {
             $this->router->redirect('web.home');
@@ -1216,7 +1549,7 @@ class Web
             if (!$user) {
                 $this->router->redirect('web.home');
             } else {
-               $userId = $data['id'];
+                $userId = $data['id'];
             }
         }
 
@@ -1242,7 +1575,7 @@ class Web
 
             if ($data['userId']) {
                 $userId = (new User())->find('MD5(id)=:id', 'id=' . $data['userId'], 'id')->fetch(false);
-                
+
                 if ($userId) {
                     $userId = $userId->id;
                 } else {
@@ -2021,6 +2354,7 @@ class Web
 
             $auxPaid = 0;
             $auxPending = 0;
+            $auxApproved = 0;
             $auxBlocked = 0;
             $countLicense = 0;
 
@@ -2030,6 +2364,8 @@ class Web
                         $auxPaid++;
                     } else if ($license->status == 2) {
                         $auxBlocked++;
+                    } else if ($license->status == 3) {
+                        $auxApproved++;
                     } else {
                         $auxPending++;
                     }
@@ -2045,6 +2381,7 @@ class Web
                 'licenses' => $licenses,
                 'registered' => $countLicense,
                 'paid' => $auxPaid,
+                'approved' => $auxApproved,
                 'pending' => $auxPending,
                 'blocked' => $auxBlocked,
                 'types' => $license_type,
@@ -2475,7 +2812,7 @@ class Web
     public function agentList(): void
     {
         $this->checkAgent();
-        
+
         $agents = (new Agent)->find('id_orgao = :team', 'team=' . $_SESSION['user']['team'])->fetch(true);
         $apporved = 0;
         $blocked = 0;
@@ -3144,6 +3481,39 @@ class Web
                 }
             }
 
+            $paymentArray = array();
+            $payments = (new Payment())->find()->fetch(true);
+
+            if ($payments) {
+                foreach ($payments as $payment) {
+                    $license = (new License())->findById($payment->id_licenca);
+                    if (($license != null) && ($license->id_orgao == $_SESSION['user']['team'])) {
+                        $user = (new User())->findById($license->id_usuario);
+                        $market = (new Market())->find("id_licenca = :ilic", "ilic=" . $license->id)->fetch();;
+                        $box = (new Fixed())->find("id = :ivag", "ivag=" . $market->id_vaga)->fetch();
+                        if ($box->nome != NULL) {
+                            $payment->name_box = $box->nome;
+                        } else {
+                            $payment->name_box = $box->cod_identificador;
+                        }
+
+                        $payment->name = $user->nome;
+                        $paymentArray[] = $payment;
+
+                        if ($payment->status == 0 || $payment->status == 3) {
+                            $auxPendent++;
+                        } else if ($payment->status == 1) {
+                            $auxPaid++;
+                        } else {
+                            $auxExpired++;
+                        }
+                        $paymentCount++;
+                    }
+                }
+            } else {
+                $paymentArray = null;
+            }
+
             if ($zone !== null) {
 
                 $paymentArray = array();
@@ -3224,7 +3594,6 @@ class Web
 
                     $fixed = (new Fixed())->find('MD5(id_zona) = :id_zone', 'id_zone=' . $data['id'],
                         'cod_identificador,id_licenca, nome, valor')->fetch(true);
-
 
                     echo $this->view->render('marketplace', [
                         'title' => $zone->nome . ' | ' . SITE,
@@ -4193,7 +4562,7 @@ class Web
 
     public function validateToken($token, string $hash): void
     {
-        if(!$token or $token === null) {
+        if (!$token or $token === null) {
             $this->router->redirect('web.home');
         }
 
