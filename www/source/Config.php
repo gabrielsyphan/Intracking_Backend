@@ -1,15 +1,8 @@
 <?php
 
-define("ROOT", "http://localhost:81");
+define("ROOT", "https://localhost");
 define("THEMES", __DIR__."/../themes");
-define("SERVICES", __DIR__."/../themes/services");
-define("EAGATA", "http://www.smf.maceio.al.gov.br:8090/e-agata/servlet/awstaxaexternas");
-define("PERTENCES", "http://www3.smf.maceio.al.gov.br/e-agata/servlet/apwsretornopertences");
-define("BOLETOS", "http://www.smf.maceio.al.gov.br:8090/e-agata/servlet/hwmemitedamqrcode?");
-define("SITE", "#Orditi");
-define("EMAIL", "contato@orditi.com");
-define("COMPANY", "Orditi");
-define("HASH", "d515a913784793bf43697f45836d3538");
+define("SITE", "#PROJETO");
 
 /**
  * Database config
@@ -18,7 +11,7 @@ define("DATA_LAYER_CONFIG", [
     "driver" => "mysql",
     "host" => "mysql-server",
     "port" => "3306",
-    "dbname" => "orditi",
+    "dbname" => "taskList",
     "username" => "root",
     "passwd" => "secret",
     "options" => [
@@ -28,19 +21,9 @@ define("DATA_LAYER_CONFIG", [
         PDO::ATTR_CASE => PDO::CASE_NATURAL
     ]
 ]);
-
 /**
  * Email config
  */
-//define("MAIL", [
-//    "host" => "orditi.com",
-//    "port" => "465",
-//    "user" => "contato@orditi.com",
-//    "passwd" => "UU@T@fMn1M-F",
-//    "from_name" => "Orditi",
-//    "from_email" => "contato@orditi.com"
-//]);
-
 define("MAIL", [
     "host" => "smtp.gmail.com",
     "port" => "587",

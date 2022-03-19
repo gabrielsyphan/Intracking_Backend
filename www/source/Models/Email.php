@@ -22,7 +22,7 @@ class Email
         $this->mail = new PHPMailer( true);
         $this->data = new stdClass();
 
-        $this->mail->isSMTP();
+        // $this->mail->isSMTP();
         $this->mail->isHTML();
         $this->mail->setLanguage('br');
 
@@ -45,7 +45,7 @@ class Email
         return $this;
     }
 
-    public function attach(string $filePath, string $fileName): void
+    public function attach(string $filePath, string $fileName): Email
     {
         $this->data->attach[$filePath] = $fileName;
     }

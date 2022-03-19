@@ -4,10 +4,9 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit3c26f69d5b5a26906682109648a34af8
+class ComposerStaticInite22351e6d2aa833fdc5c125cebd5d0a4
 {
     public static $files = array (
-        'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
         'e471bf351add62873bc0289ccd6a937f' => __DIR__ . '/..' . '/league/plates/src/Template/match.php',
         '152c98af9456eeb8f53697d6a7dfd689' => __DIR__ . '/..' . '/league/plates/src/Extension/Data/data.php',
         'e20239a76b73b9912f51f0005956d1db' => __DIR__ . '/..' . '/league/plates/src/Extension/Path/path.php',
@@ -16,23 +15,17 @@ class ComposerStaticInit3c26f69d5b5a26906682109648a34af8
         'bdc465a053da7f7ddb072631f6d41d45' => __DIR__ . '/..' . '/league/plates/src/Extension/LayoutSections/layout-sections.php',
         'afa76803f24616d7599be3b7b0846adc' => __DIR__ . '/..' . '/league/plates/src/Extension/Folders/folders.php',
         '16c5be35e32c6cf916d875518b909210' => __DIR__ . '/..' . '/league/plates/src/Util/util.php',
-        'aa75ea0761a2f40c1f3b32ad314f86c4' => __DIR__ . '/..' . '/phpseclib/mcrypt_compat/lib/mcrypt.php',
-        '624d21c8a5fc533028ad57a349e8a45b' => __DIR__ . '/../..' . '/source/Config.php',
+        '18e41c63ecfc080aba1c7ae709f5b972' => __DIR__ . '/../..' . '/source/Config.php',
     );
 
     public static $prefixLengthsPsr4 = array (
-        'p' => 
-        array (
-            'phpseclib3\\' => 11,
-        ),
         'S' => 
         array (
-            'Stonks\\Router\\' => 14,
+            'Svg\\' => 4,
             'Source\\' => 7,
         ),
         'P' => 
         array (
-            'ParagonIE\\ConstantTime\\' => 23,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
         'L' => 
@@ -41,30 +34,27 @@ class ComposerStaticInit3c26f69d5b5a26906682109648a34af8
         ),
         'F' => 
         array (
-            'Firebase\\JWT\\' => 13,
+            'FontLib\\' => 8,
+        ),
+        'D' => 
+        array (
+            'Dompdf\\' => 7,
         ),
         'C' => 
         array (
+            'CoffeeCode\\Router\\' => 18,
             'CoffeeCode\\DataLayer\\' => 21,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'phpseclib3\\' => 
+        'Svg\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
-        ),
-        'Stonks\\Router\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/stonks/router/src',
+            0 => __DIR__ . '/..' . '/phenx/php-svg-lib/src/Svg',
         ),
         'Source\\' => 
         array (
             0 => __DIR__ . '/../..' . '/source',
-        ),
-        'ParagonIE\\ConstantTime\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
         ),
         'PHPMailer\\PHPMailer\\' => 
         array (
@@ -74,9 +64,17 @@ class ComposerStaticInit3c26f69d5b5a26906682109648a34af8
         array (
             0 => __DIR__ . '/..' . '/league/plates/src',
         ),
-        'Firebase\\JWT\\' => 
+        'FontLib\\' => 
         array (
-            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
+            0 => __DIR__ . '/..' . '/phenx/php-font-lib/src/FontLib',
+        ),
+        'Dompdf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dompdf/dompdf/src',
+        ),
+        'CoffeeCode\\Router\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/coffeecode/router/src',
         ),
         'CoffeeCode\\DataLayer\\' => 
         array (
@@ -84,16 +82,32 @@ class ComposerStaticInit3c26f69d5b5a26906682109648a34af8
         ),
     );
 
+    public static $prefixesPsr0 = array (
+        'S' => 
+        array (
+            'Sabberworm\\CSS' => 
+            array (
+                0 => __DIR__ . '/..' . '/sabberworm/php-css-parser/lib',
+            ),
+        ),
+    );
+
     public static $classMap = array (
-        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Dompdf\\Cpdf' => __DIR__ . '/..' . '/dompdf/dompdf/lib/Cpdf.php',
+        'HTML5_Data' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Data.php',
+        'HTML5_InputStream' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/InputStream.php',
+        'HTML5_Parser' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Parser.php',
+        'HTML5_Tokenizer' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Tokenizer.php',
+        'HTML5_TreeBuilder' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/TreeBuilder.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit3c26f69d5b5a26906682109648a34af8::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit3c26f69d5b5a26906682109648a34af8::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit3c26f69d5b5a26906682109648a34af8::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInite22351e6d2aa833fdc5c125cebd5d0a4::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInite22351e6d2aa833fdc5c125cebd5d0a4::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInite22351e6d2aa833fdc5c125cebd5d0a4::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInite22351e6d2aa833fdc5c125cebd5d0a4::$classMap;
 
         }, null, ClassLoader::class);
     }
