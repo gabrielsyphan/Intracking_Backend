@@ -9,21 +9,18 @@ use CoffeeCode\Router\Router;
 $router = new Router(ROOT);
 
 /*
- * Contorllers
+ * Resources
  */
-$router->namespace("Source\App");
+$router->namespace("Source\Resources");
 
 /*
- * Web
+ * Routes
  */
-$router->group(null);
-$router->get("/", "Web:home", 'web.home');
+$router->group("api/");
+$router->post("/authentication", "AuthenticationResource:login", 'authenticationResource.login');
+$router->post("/create-account", "AuthenticationResource:createAccount", 'authenticationResource.createAccount');
 
 /**
- * PROCESS
+ * Process
  */
 $router->dispatch();
-
-if ($router->error()) {
-	$router->redirect("/ooops/{$router->error()}");
-}
