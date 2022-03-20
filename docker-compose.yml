@@ -6,8 +6,8 @@ services:
          - mysql-server
         build: .
         ports:
-         - "80:80"
-         - "443:443"
+         - "81:80"
+         - "444:443"
         volumes:
          - ./www/:/var/www/html
 
@@ -21,7 +21,7 @@ services:
         volumes:
          - mysql-data:/var/lib/mysql
         ports:
-         - "3306:3306"
+         - "3307:3306"
     
     phpmyadmin:
         image: phpmyadmin/phpmyadmin:5.0.1

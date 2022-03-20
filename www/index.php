@@ -1,7 +1,6 @@
 <?php
 
-# session_start();
-# header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: *');
 
 require __DIR__ . "/vendor/autoload.php";
 
@@ -12,7 +11,6 @@ $router = new Router(ROOT);
 /*
  * Contorllers
  */
-
 $router->namespace("Source\App");
 
 /*

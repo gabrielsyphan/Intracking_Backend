@@ -1,6 +1,6 @@
 <?php
 
-define("ROOT", "https://localhost");
+define("ROOT", "https://http://intracking.space:81");
 define("THEMES", __DIR__."/../themes");
 define("SITE", "#PROJETO");
 
@@ -10,7 +10,7 @@ define("SITE", "#PROJETO");
 define("DATA_LAYER_CONFIG", [
     "driver" => "mysql",
     "host" => "mysql-server",
-    "port" => "3306",
+    "port" => "3307",
     "dbname" => "taskList",
     "username" => "root",
     "passwd" => "secret",
