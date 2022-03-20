@@ -14,13 +14,34 @@ $router = new Router(ROOT);
 $router->namespace("Source\Resources");
 
 /*
- * Routes
+ * Authentication routes
  */
-$router->group("api/");
-$router->post("/authentication", "AuthenticationResource:login", 'authenticationResource.login');
+$router->group("authentication");
+$router->post("/login", "AuthenticationResource:login", 'authenticationResource.login');
 $router->post("/create-account", "AuthenticationResource:createAccount", 'authenticationResource.createAccount');
+
+/*
+ * Tasks routes
+ */
+$router->group("task");
+$router->get("/", "TaskResource:listAll", 'taskResource.listAll');
+$router->post("/", "TaskResource:create", 'taskResource.create');
+$router->delete("/", "TaskResource:delete", 'taskResource.delete');
+$router->update("/", "TaskResource:update", 'taskResource.update');
+$router->get("/user-tasks", "TaskResource:listByUser", 'taskResource.listByUser');
+$router->get("/{taskId}", "TaskResource:listById", 'taskResource.listById');
+
+/*
+ * Error Handler
+ */
+$router->group("error");
+$router->get("/{code}", "AuthenticationResource:errorHandler", "AuthenticationResource.errorHandler");
 
 /**
  * Process
  */
 $router->dispatch();
+
+if ($router->error()) {
+    $router->redirect("/error/{$router->error()}");
+}

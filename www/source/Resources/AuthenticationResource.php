@@ -9,20 +9,30 @@ use Source\Repository\User;
  * Class AuthenticationResource
  *
  * @package Source\Resources
- */
+*/
 class AuthenticationResource {
   /**
-  * @var Router
+   * @var Router
   */
   private $router;
 
   /**
-  * @var Data
+   * @var Data
   */
   private $data;
 
   /**
-  * Web constructor.
+   * @var UserId
+  */
+  private $userId = 0;
+
+  /**
+   * @var IsAuthenticated
+  */
+  private $isAuthenticated = false;
+
+  /**
+   * Class constructor.
   */
   public function __construct($router) {
     $this->router = $router;
@@ -34,9 +44,9 @@ class AuthenticationResource {
   }
 
   /**
-  * @return void
-  * Login method
-  * POST Method /api/authentication
+   * @return void
+   * Login method
+   * POST Method /api/authentication
   */
   public function login(): void {
     $user = (new User())
@@ -64,9 +74,9 @@ class AuthenticationResource {
   }
 
   /**
-  * @return void
-  * Create account
-  * POST Method /api/create-account
+   * @return void
+   * Create account
+   * POST Method /api/create-account
   */
   public function createAccount(): void {
     $user = new User();
@@ -87,7 +97,7 @@ class AuthenticationResource {
   /**
    * @return void
    * Validate session token sent by client
-   */
+  */
   public function validateSessionToken(): void {
     $bearerToken = (trim(apache_request_headers()['Authorization'], "Bearer "));
 
@@ -104,6 +114,36 @@ class AuthenticationResource {
     if(!$user) {
       http_response_code(404);
       echo json_encode(["error" => "Usuário não encontrado"]);
+      return;
     }
+
+    $this->userId = $user->data()->id;
+    $this->isAuthenticated = true;
+  }
+
+  /**
+   * @return void
+   * Error Handler
+   * GET Method /api/error/{errorCode}
+  */
+  public function errorHandler(array $data): void {
+    http_response_code($data['code']);
+    echo json_encode(["error" => "Houve um erro ao processar a requisição. Por favor, tente novamente."]);
+  }
+
+  /**
+   * @return int
+   * Method to get userId
+  */
+  public function getUserId(): int {
+    return $this->userId;
+  }
+
+  /**
+   * @return bool
+   * Method to get isAuthenticated
+  */
+  public function getIsAuthenticated(): bool {
+    return true;
   }
 }
