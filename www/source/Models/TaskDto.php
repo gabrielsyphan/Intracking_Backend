@@ -12,43 +12,53 @@ class TaskDto {
   private $title;
   private $description;
   private $codStatus;
+  private $categoryId;
 
   public function __construct($userId = null, $data) {
     $this->userId = $userId;
     $this->title = $data->title;
     $this->description = $data->description;
     $this->codStatus = $data->codStatus;
+    $this->categoryId = $data->categoryId || null;
   }
 
-  public function getUserId() {
+  public function getUserId(): int {
     return $this->userId;
   }
 
-  public function setUserId($userId) {
+  public function setUserId($userId): void {
     $this->userId = $userId;
   }
 
-  public function getTitle() {
+  public function getTitle(): String {
     return $this->title;
   }
 
-  public function setTitle($title) {
+  public function setTitle($title): void {
     $this->title = $title;
   }
 
-  public function getDescription() {
+  public function getDescription(): String {
     return $this->description;
   }
 
-  public function setDescription($description) {
+  public function setDescription($description): void {
     $this->description = $description;
   }
 
-  public function getCodStatus() {
+  public function getCodStatus(): int {
     return $this->codStatus;
   }
 
-  public function setCodStatus($codStatus) {
+  public function setCodStatus($codStatus): void {
     $this->codStatus = $codStatus;
+  }
+
+  public function getCategoryId(): int {
+    return $this->categoryId;
+  }
+
+  public function setCategoryId($categoryId): void {
+    $this->categoryId = $categoryId;
   }
 }

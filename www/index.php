@@ -27,9 +27,21 @@ $router->group("task");
 $router->get("/", "TaskResource:listAll", 'taskResource.listAll');
 $router->post("/", "TaskResource:create", 'taskResource.create');
 $router->delete("/", "TaskResource:delete", 'taskResource.delete');
-$router->update("/", "TaskResource:update", 'taskResource.update');
-$router->get("/user-tasks", "TaskResource:listByUser", 'taskResource.listByUser');
+$router->delete("/delete-all", "TaskResource:deleteAll", 'taskResource.deleteAll');
+$router->post("/{taskId}", "TaskResource:update", 'taskResource.update');
 $router->get("/{taskId}", "TaskResource:listById", 'taskResource.listById');
+$router->post("/add-task-category", "TaskResource:addTaskCategory", 'taskResource.addTaskCategory');
+
+/*
+ * Category routes
+ */
+$router->group("category");
+$router->get("/", "CategoryResource:listAll", 'categoryResource.listAll');
+$router->post("/", "CategoryResource:create", 'categoryResource.create');
+$router->delete("/", "CategoryResource:delete", 'categoryResource.delete');
+$router->delete("/delete-all", "CategoryResource:deleteAll", 'categoryResource.deleteAll');
+$router->post("/{categoryId}", "CategoryResource:update", 'categoryResource.update');
+$router->get("/{categoryId}", "CategoryResource:listById", 'categoryResource.listById');
 
 /*
  * Error Handler

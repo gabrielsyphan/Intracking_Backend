@@ -52,7 +52,7 @@ class AuthenticationResource {
     $user = (new User())
       ->find(
         "email = :email AND password = :password",
-        "email={$this->data->email}&password={$this->data->password}"
+        "email={$this->data->email}&password=". md5($this->data->password)
       )->fetch(false);
         
     if(!$user) {
@@ -70,7 +70,7 @@ class AuthenticationResource {
       return;
     }
 
-    echo json_encode($user->data()->session_token);
+    echo json_encode(["token" => $user->data()->session_token]);
   }
 
   /**
@@ -79,19 +79,23 @@ class AuthenticationResource {
    * POST Method /api/create-account
   */
   public function createAccount(): void {
-    $user = new User();
-    $user->email = $this->data->email;
-    $user->password = $this->data->password;
-
     try {
+      $user = new User();
+      $user->name = $this->data->name;
+      $user->email = $this->data->email;
+      $user->password = md5($this->data->password);
       $user->save();
-    } catch (\Exception $e) {
-      http_response_code(500);
-      echo json_encode(["error" => $e->getMessage()]);
-      return;
-    }
 
-    echo json_encode(["success" => "Usuário criado com sucesso"]);
+      if ($user->fail()) {
+        $this->setPortInternalServerError();
+        echo json_encode(["error" => $user->fail()->getMessage()]);
+      }
+
+      $this->login();
+    } catch (\Exception $e) {
+      $this->setPortInternalServerError();
+      echo json_encode(["error" => $e->getMessage()]);
+    }
   }
 
   /**
@@ -113,7 +117,7 @@ class AuthenticationResource {
     
     if(!$user) {
       http_response_code(404);
-      echo json_encode(["error" => "Usuário não encontrado"]);
+      echo json_encode(["error" => "Token inválido"]);
       return;
     }
 
@@ -144,6 +148,14 @@ class AuthenticationResource {
    * Method to get isAuthenticated
   */
   public function getIsAuthenticated(): bool {
-    return true;
+    return $this->isAuthenticated;
+  }
+
+  /**
+   * @return void
+   * Method to set http response port to 500
+  */
+  private function setPortInternalServerError(): void {
+    http_response_code(500);
   }
 }
