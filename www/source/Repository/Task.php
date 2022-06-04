@@ -29,15 +29,23 @@ class Task extends DataLayer {
       $this->description = $taskDto->getDescription();
       $this->cod_status = $taskDto->getCodStatus();
       $this->save();
-      $this->checkObjectFail($this);
+      
+      if ($this->fail()) {
+        $this->setPortInternalServerError();
+        echo json_encode(["error" => $this->fail()->getMessage()]);
+      }
 
       if ($taskDto->getCategoryId()) {
         $taskCategory = new TaskCategory();
         $taskCategory->task_id = $this->id;
         $taskCategory->category_id = $taskDto->getCategoryId();
         $taskCategory->save();
+
+        if ($taskCategory->fail()) {
+          $this->setPortInternalServerError();
+          echo json_encode(["error" => $taskCategory->fail()->getMessage()]);
+        }
       }
-      $this->checkObjectFail($taskCategory);
 
     } catch (\Exception $e) {
       $this->setPortInternalServerError();
@@ -60,17 +68,15 @@ class Task extends DataLayer {
       $taskCategory->task_id = $dataTaskCategoryDto->getTaskId();
       $taskCategory->category_id = $dataTaskCategoryDto->getCategoryId();
       $taskCategory->save();
-      $this->checkObjectFail($taskCategory);
+      
+      if ($taskCategory->fail()) {
+        $this->setPortInternalServerError();
+        echo json_encode(["error" => $this->fail()->getMessage()]);
+      }
+
     } catch (\Exception $e) {
       $this->setPortInternalServerError();
       echo json_encode(["error" => $e->getMessage()]);
-    }
-  }
-
-  private function checkObjectFail($obj) {
-    if ($obj->fail()) {
-      $this->setPortInternalServerError();
-      echo json_encode(["error" => $this->fail()->getMessage()]);
     }
   }
 
