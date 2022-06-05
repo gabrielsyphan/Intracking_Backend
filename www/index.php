@@ -1,7 +1,5 @@
 <?php
 
-header('Access-Control-Allow-Origin: *');
-
 require __DIR__ . "/vendor/autoload.php";
 
 use CoffeeCode\Router\Router;
@@ -31,6 +29,12 @@ $router->delete("/delete-all", "TaskResource:deleteAll", 'taskResource.deleteAll
 $router->post("/{taskId}", "TaskResource:update", 'taskResource.update');
 $router->get("/{taskId}", "TaskResource:listById", 'taskResource.listById');
 $router->post("/add-task-category", "TaskResource:addTaskCategory", 'taskResource.addTaskCategory');
+$router->get("/total-registered-tasks", "TaskResource:totalRegisteredTasks", 'taskResource.totalRegisteredTasks');
+$router->get("/total-pending-tasks", "TaskResource:totalPendingTasks", 'taskResource.totalPendingTasks');
+$router->get("/total-overdue-tasks", "TaskResource:totalOverdueTasks", 'taskResource.totalOverdueTasks');
+$router->get("/total-punctual-tasks", "TaskResource:totalPunctualTasks", 'taskResource.totalPunctualTasks');
+$router->get("/total-done-tasks", "TaskResource:totalDoneTasks", 'taskResource.totalDoneTasks');
+$router->get("/standard-time-task", "TaskResource:standardTimeTask", 'taskResource.standardTimeTask');
 
 /*
  * Category routes

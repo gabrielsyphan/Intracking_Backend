@@ -28,6 +28,7 @@ class Task extends DataLayer {
       $this->title = $taskDto->getTitle();
       $this->description = $taskDto->getDescription();
       $this->cod_status = $taskDto->getCodStatus();
+      $this->deadline = $taskDto->getDeadline();
       $this->save();
       
       if ($this->fail()) {

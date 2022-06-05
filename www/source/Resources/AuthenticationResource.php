@@ -36,10 +36,6 @@ class AuthenticationResource {
   */
   public function __construct($router) {
     $this->router = $router;
-
-    setlocale(LC_TIME, "pt_BR", "pt_BR.utf-8", "pt_BR.utf-8", "portuguese");
-    date_default_timezone_set("America/Sao_Paulo");
-
     $this->data = json_decode(file_get_contents("php://input"));
   }
 
@@ -48,13 +44,13 @@ class AuthenticationResource {
    * Login method
    * POST Method /api/authentication
   */
-  public function login(): void {
+  public function login(): void { 
     $user = (new User())
       ->find(
         "email = :email AND password = :password",
         "email={$this->data->email}&password=". md5($this->data->password)
       )->fetch(false);
-        
+
     if(!$user) {
       http_response_code(404);
       echo json_encode(["error" => "Usuário não encontrado"]);

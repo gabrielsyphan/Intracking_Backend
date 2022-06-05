@@ -46,9 +46,6 @@ class TaskResource {
     $this->data = json_decode(file_get_contents("php://input"));
     $this->task = new Task();
 
-    setlocale(LC_TIME, "pt_BR", "pt_BR.utf-8", "pt_BR.utf-8", "portuguese");
-    date_default_timezone_set("America/Sao_Paulo");
-
     $authentication = (new AuthenticationResource($this->router));
     $authentication->validateSessionToken();
 
@@ -129,7 +126,7 @@ class TaskResource {
           }
         }
 
-        $tasksToJson[] = $this->convertTask($task, $categories);
+        $tasksToJson[] = $this->taskConvert($task, $categories);
       }
     }
 
@@ -142,9 +139,9 @@ class TaskResource {
    * GET Method /api/task/{id}
   */
   public function listById($data): void {
-    $task = $this->task->findById($data['taskId']);
+    $task = $this->task->findById($data["taskId"]);
     if ($task) {
-      $task = $this->convertTask($task);
+      $task = $this->taskConvert($task);
     }
     echo json_encode($task);
   }
@@ -158,7 +155,91 @@ class TaskResource {
     $this->task->insertCategory(new TaskCategoryDto($this->data));
   }
 
-  private function convertTask($task, $categories = null): array {
+  /**
+   * @return void
+   * Method to get total tasks by user
+   * GET Method /api/task/total-registered-tasks
+  */
+  public function totalRegisteredTasks(): void {
+    $total = $this->task->find("user_id = :userId", "userId={$this->userId}")->count();
+    echo json_encode(["total" => $total]);
+  }
+
+  /**
+   * @return void
+   * Method to get total pending tasks by user
+   * GET Method /api/task/total-pending-tasks
+  */
+  public function totalPendingTasks(): void {
+    $total = $this->task->find("user_id = :userId AND cod_status != 3", "userId={$this->userId}")->count();
+    echo json_encode(["total" => $total]);
+  }
+
+  /**
+   * @return void
+   * Method to get total overdue tasks by user
+   * GET Method /api/task/total-overdue-tasks
+  */
+  public function totalOverdueTasks(): void {
+    $total = $this->task
+      ->find("user_id = :userId AND cod_status != 3 AND CURRENT_TIMESTAMP > deadline", "userId={$this->userId}")
+      ->count();
+    echo json_encode(["total" => $total]);
+  }
+
+  /**
+   * @return void
+   * Method to get total punctual tasks by user
+   * GET Method /api/task/total-punctual-tasks
+  */
+  public function totalPunctualTasks(): void {
+    $total = $this->task
+      ->find("user_id = 21 AND cod_status != 3 AND deadline > CURRENT_TIMESTAMP OR deadline IS NULL", "userId={$this->userId}")
+      ->count();
+    echo json_encode(["total" => $total]);
+  }
+
+  /**
+   * @return void
+   * Method to get total done tasks by user
+   * GET Method /api/task/total-done-task
+  */
+  public function totalDoneTask() {
+    $total = $this->task
+      ->find("user_id = :userId AND cod_status = 3", "userId={$this->userId}")
+      ->count();
+    echo json_encode(["total" => $total]);
+  }
+
+  /**
+   * @return void
+   * Method to get standard time task by user
+   * GET Method /api/task/standard-time-task
+  */
+  public function standardTimeTask() {
+    $tasks = $this->task->find("user_id = :userId AND cod_status = 3", "userId={$this->userId}")->fetch(true);
+    $dates = [];
+    $standardTime = null;
+    $count = 0;
+
+    foreach($tasks as $task) {
+      $finishingDate = new \DateTime($task->finishing_date);
+      $currentDate = new \DateTime();
+      $dates[] = strtotime($currentDate->diff($finishingDate)->format("%H:%I:%S %Y-%m-%d"));
+    }
+
+    foreach($dates as $date) {
+      $standardTime += $date;
+    }
+
+    echo json_encode(date("H:i:s", $standardTime));
+  }
+
+  /**
+   * @return array
+   * Method to convert a task into a array to be converted to json
+  */
+  private function taskConvert($task, $categories = null): array {
     if ($categories) {
       $tasksToJson = [
         "id" => $task->id,

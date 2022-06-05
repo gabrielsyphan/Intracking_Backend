@@ -4,6 +4,10 @@
 define("ROOT", "http://localhost:81");
 define("THEMES", __DIR__."/../themes");
 
+setlocale(LC_TIME, "pt_BR", "pt_BR.utf-8", "pt_BR.utf-8", "portuguese");
+date_default_timezone_set("America/Sao_Paulo");
+header('Access-Control-Allow-Origin: *');
+
 /**
  * Database config
  */
