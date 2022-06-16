@@ -1,5 +1,9 @@
 <?php
 
+header('Access-Control-Allow-Origin: *');
+setlocale(LC_TIME, "pt_BR", "pt_BR.utf-8", "pt_BR.utf-8", "portuguese");
+date_default_timezone_set("America/Sao_Paulo");
+
 require __DIR__ . "/vendor/autoload.php";
 
 use CoffeeCode\Router\Router;
