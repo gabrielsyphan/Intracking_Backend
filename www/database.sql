@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql-server
--- Tempo de geração: 04/06/2022 às 22:36
+-- Tempo de geração: 19/06/2022 às 23:35
 -- Versão do servidor: 8.0.19
 -- Versão do PHP: 7.4.1
 
@@ -51,9 +51,9 @@ CREATE TABLE `TAB_STATUS` (
 --
 
 INSERT INTO `TAB_STATUS` (`id`, `name`) VALUES
-(1, 'To do'),
-(2, 'In progress'),
-(3, 'Done');
+(1, 'Pendente'),
+(2, 'Em progresso'),
+(3, 'Feito');
 
 -- --------------------------------------------------------
 
@@ -82,6 +82,26 @@ CREATE TABLE `TAB_TASKS_CATEGORIES` (
   `task_id` int NOT NULL,
   `category_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `TAB_TIME`
+--
+
+CREATE TABLE `TAB_TIME` (
+  `id` int NOT NULL,
+  `name` varchar(25) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Despejando dados para a tabela `TAB_TIME`
+--
+
+INSERT INTO `TAB_TIME` (`id`, `name`) VALUES
+(1, 'Hoje'),
+(2, 'Ultima semana'),
+(3, 'Ultimo mês');
 
 -- --------------------------------------------------------
 
@@ -130,6 +150,12 @@ ALTER TABLE `TAB_TASKS_CATEGORIES`
   ADD KEY `FK_CATEGORY` (`category_id`);
 
 --
+-- Índices de tabela `TAB_TIME`
+--
+ALTER TABLE `TAB_TIME`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Índices de tabela `TAB_USERS`
 --
 ALTER TABLE `TAB_USERS`
@@ -144,7 +170,7 @@ ALTER TABLE `TAB_USERS`
 -- AUTO_INCREMENT de tabela `TAB_CATEGORIES`
 --
 ALTER TABLE `TAB_CATEGORIES`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de tabela `TAB_STATUS`
@@ -156,13 +182,19 @@ ALTER TABLE `TAB_STATUS`
 -- AUTO_INCREMENT de tabela `TAB_TASKS`
 --
 ALTER TABLE `TAB_TASKS`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+
+--
+-- AUTO_INCREMENT de tabela `TAB_TIME`
+--
+ALTER TABLE `TAB_TIME`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `TAB_USERS`
 --
 ALTER TABLE `TAB_USERS`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- Restrições para dumps de tabelas

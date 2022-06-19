@@ -89,6 +89,13 @@ class TaskResource {
       echo json_encode(["error" => "Essa task não existe"]);
     }
 
+    $taskCategory = (new TaskCategory)->find("task_id = {$task->id}")->fetch(true);
+    if($taskCategory) {
+      foreach($taskCategory as $tCategory) {
+        $tCategory->destroy();
+      }
+    }
+
     $task->destroy();
 
     if($task->fail()) {
