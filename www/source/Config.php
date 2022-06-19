@@ -14,7 +14,7 @@ header('Access-Control-Allow-Origin: *');
 define("DATA_LAYER_CONFIG", [
   "driver" => "mysql",
   "host" => "mysql-server",
-  "port" => "3306",
+  "port" => "2470",
   "dbname" => "intracking",
   "username" => "root",
   "passwd" => "secret",
