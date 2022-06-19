@@ -67,16 +67,10 @@ class Task extends DataLayer {
   */
   private function taskConvert($task, $category = null): array {
     if ($category) {
-      $tasksToJson = [
-        $task->data(),
-        "categories" => [
-          ["id" => $category->id, "name" => $category->name, "color" => $category->color]
-        ],
-      ];
+      $tasksToJson = $task->data();
+      $tasksToJson["categories"] = ["id" => $category->id, "name" => $category->name, "color" => $category->color];
     } else {
-      $tasksToJson = [
-        $task->data()
-      ];
+      $tasksToJson = $task->data();
     }
 
     return $tasksToJson;

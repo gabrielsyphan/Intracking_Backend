@@ -8,7 +8,9 @@ use Source\Repository\Task;
 use Source\Models\TaskDto;
 use Source\Models\TaskCategoryDto;
 use Source\Repository\Category;
+use Source\Repository\Status;
 use Source\Repository\TaskCategory;
+use Source\Repository\Time;
 use Source\Resources\AuthenticationResource;
 
 /**
@@ -59,7 +61,7 @@ class TaskResource {
   /**
    * @return void
    * Method to create new tasks
-   * POST Method /api/task
+   * POST Method /task
   */
   public function create(): void {
     $this->task->saveByDto(new TaskDto($this->userId, $this->data));
@@ -68,7 +70,7 @@ class TaskResource {
   /**
    * @return void
    * Method to update tasks
-   * PUT Method /api/task
+   * PUT Method /task
   */
   public function update($data): void {
     $this->task->updateByDto($data["taskId"], new TaskDto($this->userId, $this->data));
@@ -77,7 +79,7 @@ class TaskResource {
   /**
    * @return void
    * Method to delete tasks
-   * DELETE Method /api/task
+   * DELETE Method /task
   */
   public function delete($data): void {
     $task = (new Task)->find("id = :id AND user_id = :userId", "id={$data["taskId"]}&userId={$this->userId}")->fetch(false);
@@ -98,7 +100,7 @@ class TaskResource {
   /**
    * @return void
    * Method to delete all tasks
-   * DELETE Method /api/task/delete-all
+   * DELETE Method /task/delete-all
   */
   public function deleteAll(): void {
     $tasks = $this->task->find("user_id = :userId", "userId={$this->userId}")->fetch(true);
@@ -119,7 +121,7 @@ class TaskResource {
   /**
    * @return void
    * Method to list tasks
-   * GET Method /api/task
+   * GET Method /task
   */
   public function listAll(): void {
     $tasks = $this->task->find("user_id = :userId", "userId={$this->userId}")->fetch(true);
@@ -149,7 +151,7 @@ class TaskResource {
   /**
    * @return void
    * Method to list tasks by user
-   * GET Method /api/task/{id}
+   * GET Method /task/{id}
   */
   public function listById($data): void {
     $task = $this->task->findById($data["taskId"]);
@@ -162,7 +164,7 @@ class TaskResource {
   /**
    * @return void
    * Method to insert a category into a task
-   * POST Method /api/task/add-task-category
+   * POST Method /task/add-task-category
   */
   public function addTaskCategory(): void {
     $this->task->insertCategory(new TaskCategoryDto($this->data));
@@ -171,7 +173,7 @@ class TaskResource {
   /**
    * @return void
    * Method to get total tasks by user
-   * GET Method /api/task/total-registered-tasks
+   * GET Method /task/total-registered-tasks
   */
   public function totalRegisteredTasks(): void {
     $total = $this->task->find("user_id = :userId", "userId={$this->userId}")->count();
@@ -181,7 +183,7 @@ class TaskResource {
   /**
    * @return void
    * Method to get total pending tasks by user
-   * GET Method /api/task/total-pending-tasks
+   * GET Method /task/total-pending-tasks
   */
   public function totalPendingTasks(): void {
     $total = $this->task->find("user_id = :userId AND cod_status != 3", "userId={$this->userId}")->count();
@@ -191,7 +193,7 @@ class TaskResource {
   /**
    * @return void
    * Method to get total overdue tasks by user
-   * GET Method /api/task/total-overdue-tasks
+   * GET Method /task/total-overdue-tasks
   */
   public function totalOverdueTasks(): void {
     $total = $this->task
@@ -202,8 +204,29 @@ class TaskResource {
 
   /**
    * @return void
+   * Method to get tasks by a category
+   * GET Method /task/tasks-by-category
+  */
+  public function tasksByCategory($data): void {
+    $taskCategory = (new TaskCategory())->find("category_id = :id", "id={$data["categoryId"]}")->fetch(true);
+    $tasks = [];
+
+    if($taskCategory) {
+      foreach($taskCategory as $tCategory) {
+        $task = (new Task)->findById($tCategory->task_id);
+        if ($task) {
+          $tasks[] = $task->data();
+        }
+      }
+    }
+
+    echo json_encode($tasks);
+  }
+
+  /**
+   * @return void
    * Method to get total punctual tasks by user
-   * GET Method /api/task/total-punctual-tasks
+   * GET Method /task/total-punctual-tasks
   */
   public function totalPunctualTasks(): void {
     $total = $this->task
@@ -215,7 +238,7 @@ class TaskResource {
   /**
    * @return void
    * Method to get total done tasks by user
-   * GET Method /api/task/total-done-task
+   * GET Method /task/total-done-task
   */
   public function totalDoneTask() {
     $total = $this->task
@@ -224,10 +247,132 @@ class TaskResource {
     echo json_encode(["total" => $total]);
   }
 
+
+  /**
+   * @return void
+   * Method to get total tasks by category
+   * GET Method /task/total-tasks-by-category
+  */
+  public function totalTasksByCategory($data) {
+    $total = 0;
+    $taskCategory = (new TaskCategory)->find("category_id = :id", "id={$data["categoryId"]}")->fetch(true);
+    if($taskCategory) {
+      foreach($taskCategory as $tCategory) {
+        $task = (new Task)->find("id = :id AND user_id = :userId", "id={$tCategory->task_id}&userId={$this->userId}");
+        if($task) {
+          $total += 1;
+        }
+      }
+    }
+
+    echo json_encode(["total" => $total]);
+  }
+
+    /**
+   * @return void
+   * Method to get total tasks by time type
+   * GET Method /task/tasks-by-time
+  */
+  public function tasksByTime($data) {
+    $tasksToJson = [];
+    $tasks = [];
+    $timeModel = null;
+
+    $today = date("Y-m-d");
+    $lastWeek = date("Y-m-d", strtotime("-7 day", strtotime(date("Y-m-d"))));
+    $lastMonth = date("Y-m-d", strtotime("-1 month", strtotime(date("Y-m-d"))));
+
+    $time = (new Time)->findById($data["timeId"]);
+    if(!$time) {
+      $this->setPortInternalServerError();
+      echo json_encode(["error" => "O id informado não pertence a um tipo de tempo."]);
+      exit();
+    }
+
+    if($data["timeId"] != 0) {
+      if($data["timeId"] == 1){
+        $timeModel = $today;
+      }
+  
+      if($data["timeId"] == 2){
+        $timeModel = $lastWeek;
+      }
+  
+      if($data["timeId"] == 3){
+        $timeModel = $lastMonth;
+      }
+    }
+
+    if($data["timeId"] == 0 && $data["statusId"] == 0 && $data["categoryId"] == 0) {
+      http_response_code(500);
+      echo json_encode(["error" => "Consulta inválid!"]);
+      exit();
+    }
+
+    if($data["timeId"] != 0 && $data["statusId"] == 0 && $data["categoryId"] == 0) {
+      $tasks = @(new Task)->find("user_id = :userId AND opening_date > '{$timeModel} 00:00:00'", "userId={$this->userId}")->fetch(true);
+    }
+
+    if($data["timeId"] == 0 && $data["statusId"] != 0 && $data["categoryId"] == 0) {
+      $tasks = @(new Task)->find("user_id = :userId AND cod_status = :status", "status={$data["statusId"]}&userId={$this->userId}")->fetch(true);
+    }
+
+    if($data["timeId"] == 0 && $data["statusId"] == 0 && $data["categoryId"] != 0) {
+      $taskCategory = (new TaskCategory)->find("category_id = :id", "id={$data["categoryId"]}")->fetch(true);
+      if($taskCategory) {
+        foreach($taskCategory as $tFind) {
+          $taskToList = @(new Task)->find("id = {$tFind->task_id} AND user_id = :userId", "userId={$this->userId}")->fetch(false);
+
+          if($taskToList) {
+            $tasks[] = $taskToList;
+          }
+        }
+      }
+    }
+
+    if($data["timeId"] == 0 && $data["statusId"] != 0 && $data["categoryId"] != 0) {
+      $taskCategory = (new TaskCategory)->find("category_id = :id", "id={$data["categoryId"]}")->fetch(true);
+      if($taskCategory) {
+        foreach($taskCategory as $tFind) {
+          $taskToList = @(new Task)->find("id = {$tFind->task_id} AND cod_status = {$data["statusId"]} AND user_id = :userId", "userId={$this->userId}")->fetch(false);
+
+          if($taskToList) {
+            $tasks[] = $taskToList;
+          }
+        }
+      }
+    }
+
+    if($data["timeId"] != 0 && $data["statusId"] != 0 && $data["categoryId"] == 0) {
+      $tasks = @(new Task)->find("user_id = :userId AND cod_status = :status AND opening_date > '{$timeModel} 00:00:00'", "status={$data["statusId"]}&userId={$this->userId}")->fetch(true);
+    }
+
+    if($data["timeId"] != 0 && $data["statusId"] != 0 && $data["categoryId"] != 0) {
+      $taskCategory = (new TaskCategory)->find("category_id = :id", "id={$data["categoryId"]}")->fetch(true);
+      if($taskCategory) {
+        foreach($taskCategory as $tFind) {
+          $taskToList = @(new Task)->find("id = :id AND user_id = :userId AND cod_status = :status AND opening_date > '{$timeModel} 00:00:00'", "id={$tFind->task_id}&userId={$this->userId}&status={$data["statusId"]}")->fetch(false);
+
+          if($taskToList) {
+            $tasks[] = $taskToList;
+          }
+        }
+      }
+    }
+
+    if($tasks) {
+      foreach($tasks as $task) {
+        $tasksToJson[] = $task->data();
+      }
+    }
+
+    echo json_encode(["tasks" => $tasksToJson]);
+  }
+
   /**
    * @return void
    * Method to get standard time task by user
-   * GET Method /api/task/standard-time-task
+   * GET Method /task/standard-time-task
   */
   public function standardTimeTask() {
     $tasks = $this->task->find("user_id = :userId AND cod_status = 3", "userId={$this->userId}")->fetch(true);
@@ -255,26 +400,12 @@ class TaskResource {
   private function taskConvert($task, $categories = null): array {
     if ($categories) {
       $tasksToJson = [
-        "id" => $task->id,
-        "user_id" => $task->user_id,
-        "title" => $task->title,
-        "description" => $task->description,
-        "deadline" => $task->deadline,
-        "cod_status" => $task->cod_status,
-        "opening_date" => $task->opening_date,
-        "finishing_date" => $task->finishing_date,
+        $task->data(),
         "categories" => $categories
       ];
     } else {
       $tasksToJson = [
-        "id" => $task->id,
-        "user_id" => $task->user_id,
-        "title" => $task->title,
-        "description" => $task->description,
-        "deadline" => $task->deadline,
-        "cod_status" => $task->cod_status,
-        "opening_date" => $task->opening_date,
-        "finishing_date" => $task->finishing_date
+        $task->data()
       ];
     }
 
@@ -289,16 +420,22 @@ class TaskResource {
     http_response_code(500);
   }
 
+  /**
+   * @return void
+   * Method to get tasks csv
+   * GET Method /task/export-csv
+  */
   public function exportCsv(): void {
     $tableName = "relatorio";
+    $content = "";
 
-    $content = "<tr><td>Total de atividades cadastradas</td><td>". json_decode($this->totalRegisteredTasks())->total ."</td></tr>";
-    $content .= "<tr><td>Total de atividades pendentes</td><td>". json_decode($this->totalPendingTasks())->total ."</td></tr>";
-    $content .= "<tr><td>Total de atividades em atraso;</td><td>". json_decode($this->totalOverdueTasks())->total ."</td></tr>";
-    $content .= "<tr><td>Total de atividades em dia;</td><td>". json_decode($this->totalPendingTasks())->total ."</td></tr>";
-    $content .= "<tr><td>Média de atividades concluídas por mês</td><td></td></tr>";
-    $content .= "<tr><td>Média de atividades concluídas por semana</td><td></td></tr>";
-    $content .= "<tr><td>Tempo médio passado nas atividades</td><td>". json_decode($this->totalRegisteredTasks())->total ."</td></tr>";
+    // $content = "<tr><td>Total de atividades cadastradas</td><td>". json_decode($this->totalRegisteredTasks())->total ."</td></tr>";
+    // $content .= "<tr><td>Total de atividades pendentes</td><td>". json_decode($this->totalPendingTasks())->total ."</td></tr>";
+    // $content .= "<tr><td>Total de atividades em atraso;</td><td>". json_decode($this->totalOverdueTasks())->total ."</td></tr>";
+    // $content .= "<tr><td>Total de atividades em dia;</td><td>". json_decode($this->totalPendingTasks())->total ."</td></tr>";
+    // $content .= "<tr><td>Média de atividades concluídas por mês</td><td></td></tr>";
+    // $content .= "<tr><td>Média de atividades concluídas por semana</td><td></td></tr>";
+    // $content .= "<tr><td>Tempo médio passado nas atividades</td><td>". json_decode($this->totalRegisteredTasks())->total ."</td></tr>";
 
     $file_name = $tableName . ".xls";
 
