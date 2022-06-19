@@ -17,7 +17,7 @@ services:
         environment:
          MYSQL_ROOT_PASSWORD: secret
         ports:
-         - "2470:3306"
+         - "3306:3306"
     
     phpmyadmin:
         image: phpmyadmin/phpmyadmin:5.0.1

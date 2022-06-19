@@ -22,6 +22,7 @@ $router->namespace("Source\Resources");
  */
 $router->group("authentication");
 $router->post("/login", "AuthenticationResource:login", 'authenticationResource.login');
+$router->get("/logout", "AuthenticationResource:logout", 'authenticationResource.logout');
 $router->post("/create-account", "AuthenticationResource:createAccount", 'authenticationResource.createAccount');
 
 /*

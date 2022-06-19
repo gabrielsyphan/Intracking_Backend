@@ -99,7 +99,7 @@ class AuthenticationResource {
    * Validate session token sent by client
   */
   public function validateSessionToken(): void {
-    $bearerToken = (trim(apache_request_headers()['Authorization'], "Bearer "));
+    $bearerToken = (trim(apache_request_headers()["Authorization"], "Bearer "));
 
     if (empty($bearerToken)) {
       http_response_code(401);
@@ -127,7 +127,7 @@ class AuthenticationResource {
    * GET Method /api/error/{errorCode}
   */
   public function errorHandler(array $data): void {
-    http_response_code($data['code']);
+    http_response_code($data["code"]);
     echo json_encode(["error" => "Houve um erro ao processar a requisição. Por favor, tente novamente."]);
   }
 
@@ -153,5 +153,27 @@ class AuthenticationResource {
   */
   private function setPortInternalServerError(): void {
     http_response_code(500);
+  }
+
+  public function logout(): void {
+    $this->validateSessionToken();
+
+    if(!$this->getIsAuthenticated()) {
+      exit();
+    }
+
+    $bearerToken = (trim(apache_request_headers()["Authorization"], "Bearer "));
+
+    $user = (new User())
+      ->find("session_token = :token", "token={$bearerToken}")
+      ->fetch(false);
+
+    $user->session_token = null;
+    $user->save();
+
+    if ($user->fail()) {
+      $this->setPortInternalServerError();
+      echo json_encode(["error" => $user->fail()->getMessage()]);
+    }
   }
 }

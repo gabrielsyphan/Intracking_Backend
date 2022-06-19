@@ -1,12 +1,10 @@
 <?php
 
-# define("ROOT", "https://intracking.space:81");
-define("ROOT", "http://localhost:81");
-define("THEMES", __DIR__."/../themes");
+define("ROOT", "https://intracking.space:81");
+#define("ROOT", "http://localhost:81");
 
 setlocale(LC_TIME, "pt_BR", "pt_BR.utf-8", "pt_BR.utf-8", "portuguese");
 date_default_timezone_set("America/Sao_Paulo");
-header('Access-Control-Allow-Origin: *');
 
 /**
  * Database config
@@ -14,7 +12,7 @@ header('Access-Control-Allow-Origin: *');
 define("DATA_LAYER_CONFIG", [
   "driver" => "mysql",
   "host" => "mysql-server",
-  "port" => "2470",
+  "port" => "3306",
   "dbname" => "intracking",
   "username" => "root",
   "passwd" => "secret",
