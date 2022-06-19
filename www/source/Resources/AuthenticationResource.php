@@ -155,6 +155,11 @@ class AuthenticationResource {
     http_response_code(500);
   }
 
+  /**
+   * @return void
+   * Method used to logout user and revoke his access token
+   * GET Method /authentication/logout
+  */
   public function logout(): void {
     $this->validateSessionToken();
 

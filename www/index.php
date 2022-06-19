@@ -2,7 +2,7 @@
 
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: *');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: *');
 header('Content-Type: application/json');
 header('Accept: application/json');
 
@@ -42,6 +42,7 @@ $router->get("/total-overdue-tasks", "TaskResource:totalOverdueTasks", 'taskReso
 $router->get("/total-punctual-tasks", "TaskResource:totalPunctualTasks", 'taskResource.totalPunctualTasks');
 $router->get("/total-done-tasks", "TaskResource:totalDoneTasks", 'taskResource.totalDoneTasks');
 $router->get("/standard-time-task", "TaskResource:standardTimeTask", 'taskResource.standardTimeTask');
+$router->get("/export-csv", "TaskResource:exportCsv", "taskResource.exportCsv");
 
 /*
  * Category routes

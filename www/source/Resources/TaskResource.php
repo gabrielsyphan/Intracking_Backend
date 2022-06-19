@@ -275,4 +275,36 @@ class TaskResource {
   private function setPortInternalServerError(): void {
     http_response_code(500);
   }
+
+  public function exportCsv(): void {
+    $tableName = "relatorio";
+
+    $content = "<tr><td>Total de atividades cadastradas</td><td>". json_decode($this->totalRegisteredTasks())->total ."</td></tr>";
+    $content .= "<tr><td>Total de atividades pendentes</td><td>". json_decode($this->totalPendingTasks())->total ."</td></tr>";
+    $content .= "<tr><td>Total de atividades em atraso;</td><td>". json_decode($this->totalOverdueTasks())->total ."</td></tr>";
+    $content .= "<tr><td>Total de atividades em dia;</td><td>". json_decode($this->totalPendingTasks())->total ."</td></tr>";
+    $content .= "<tr><td>Média de atividades concluídas por mês</td><td></td></tr>";
+    $content .= "<tr><td>Média de atividades concluídas por semana</td><td></td></tr>";
+    $content .= "<tr><td>Tempo médio passado nas atividades</td><td>". json_decode($this->totalRegisteredTasks())->total ."</td></tr>";
+
+    $file_name = $tableName . ".xls";
+
+    $html = "";
+    $html .= "<table>";
+    $html .= "<tr>";
+    $html .= "<td colspan="5">Planilha de " . $tableName . " - Intracking</td>";
+    $html .= "</tr>";
+    $html .= $content;
+    $html .= "</table>";
+
+    header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+    header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
+    header("Cache-Control: no-cache, must-revalidate");
+    header("Pragma: no-cache");
+    header("Content-type: application/x-msexcel");
+    header("Content-Disposition: attachment; filename=\"{$file_name}\"");
+    header("Content-Description: PHP Generated Data");
+
+    echo $html;
+  }
 }
