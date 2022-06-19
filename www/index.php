@@ -1,8 +1,10 @@
 <?php
 
 header('Access-Control-Allow-Origin: *');
-setlocale(LC_TIME, "pt_BR", "pt_BR.utf-8", "pt_BR.utf-8", "portuguese");
-date_default_timezone_set("America/Sao_Paulo");
+header('Access-Control-Allow-Methods: *');
+header('Access-Control-Allow-Headers: Content-Type');
+header('Content-Type: application/json');
+header('Accept: application/json');
 
 require __DIR__ . "/vendor/autoload.php";
 
@@ -63,5 +65,6 @@ $router->get("/{code}", "AuthenticationResource:errorHandler", "AuthenticationRe
 $router->dispatch();
 
 if ($router->error()) {
-    $router->redirect("/error/{$router->error()}");
+  echo json_encode(["error" => $router->error()]);
+  http_response_code($router->error());
 }
