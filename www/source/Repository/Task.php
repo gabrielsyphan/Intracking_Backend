@@ -14,6 +14,8 @@ class Task extends DataLayer {
 
   public function saveByDto(TaskDto $taskDto) : void {
     try { 
+      $categoryFind = null;
+
       if ($taskDto->getCategoryId()) {
         $category = (new Category())
         ->find("id = :id AND user_id = :userId", "id={$taskDto->getCategoryId()}&userId={$taskDto->getUserId()}")
@@ -21,7 +23,10 @@ class Task extends DataLayer {
 
         if (!$category) {
           echo json_encode(["error" => "Categoria não existe"]);
+          exit();
         }
+
+        $categoryFind = $category;
       }
 
       $this->user_id = $taskDto->getUserId();
@@ -45,13 +50,36 @@ class Task extends DataLayer {
         if ($taskCategory->fail()) {
           $this->setPortInternalServerError();
           echo json_encode(["error" => $taskCategory->fail()->getMessage()]);
+          exit();
         }
       }
 
+      echo json_encode($this->taskConvert($this, $categoryFind));
     } catch (\Exception $e) {
       $this->setPortInternalServerError();
       echo json_encode(["error" => $e->getMessage()]);
     }
+  }
+
+  /**
+   * @return array
+   * Method to convert a task into a array to be converted to json
+  */
+  private function taskConvert($task, $category = null): array {
+    if ($category) {
+      $tasksToJson = [
+        $task->data(),
+        "categories" => [
+          ["id" => $category->id, "name" => $category->name, "color" => $category->color]
+        ],
+      ];
+    } else {
+      $tasksToJson = [
+        $task->data()
+      ];
+    }
+
+    return $tasksToJson;
   }
 
   public function insertCategory(TaskCategoryDto $dataTaskCategoryDto): void {
@@ -73,6 +101,7 @@ class Task extends DataLayer {
       if ($taskCategory->fail()) {
         $this->setPortInternalServerError();
         echo json_encode(["error" => $this->fail()->getMessage()]);
+        exit();
       }
 
     } catch (\Exception $e) {

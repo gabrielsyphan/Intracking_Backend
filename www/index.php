@@ -31,7 +31,7 @@ $router->post("/create-account", "AuthenticationResource:createAccount", 'authen
 $router->group("task");
 $router->get("/", "TaskResource:listAll", 'taskResource.listAll');
 $router->post("/", "TaskResource:create", 'taskResource.create');
-$router->delete("/", "TaskResource:delete", 'taskResource.delete');
+$router->delete("/{taskId}", "TaskResource:delete", 'taskResource.delete');
 $router->delete("/delete-all", "TaskResource:deleteAll", 'taskResource.deleteAll');
 $router->post("/{taskId}", "TaskResource:update", 'taskResource.update');
 $router->get("/{taskId}", "TaskResource:listById", 'taskResource.listById');
@@ -50,10 +50,16 @@ $router->get("/export-csv", "TaskResource:exportCsv", "taskResource.exportCsv");
 $router->group("category");
 $router->get("/", "CategoryResource:listAll", 'categoryResource.listAll');
 $router->post("/", "CategoryResource:create", 'categoryResource.create');
-$router->delete("/", "CategoryResource:delete", 'categoryResource.delete');
+$router->delete("/{categoryId}", "CategoryResource:delete", 'categoryResource.delete');
 $router->delete("/delete-all", "CategoryResource:deleteAll", 'categoryResource.deleteAll');
 $router->post("/{categoryId}", "CategoryResource:update", 'categoryResource.update');
 $router->get("/{categoryId}", "CategoryResource:listById", 'categoryResource.listById');
+
+/*
+ * Status routes
+ */
+$router->group("status");
+$router->get("/", "StatusResource:listAll", 'statusResource.listAll');
 
 /*
  * Error Handler

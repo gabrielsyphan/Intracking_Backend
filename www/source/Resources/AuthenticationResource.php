@@ -85,6 +85,7 @@ class AuthenticationResource {
       if ($user->fail()) {
         $this->setPortInternalServerError();
         echo json_encode(["error" => $user->fail()->getMessage()]);
+        exit();
       }
 
       $this->login();
@@ -129,6 +130,7 @@ class AuthenticationResource {
   public function errorHandler(array $data): void {
     http_response_code($data["code"]);
     echo json_encode(["error" => "Houve um erro ao processar a requisição. Por favor, tente novamente."]);
+    exit();
   }
 
   /**

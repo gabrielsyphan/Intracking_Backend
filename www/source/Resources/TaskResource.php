@@ -79,8 +79,20 @@ class TaskResource {
    * Method to delete tasks
    * DELETE Method /api/task
   */
-  public function delete(): void {
-    $this->task->findById($this->data->id)->destroy();
+  public function delete($data): void {
+    $task = (new Task)->find("id = :id AND user_id = :userId", "id={$data["taskId"]}&userId={$this->userId}")->fetch(false);
+
+    if(!$task) {
+      http_response_code(500);
+      echo json_encode(["error" => "Essa task não existe"]);
+    }
+
+    $task->destroy();
+
+    if($task->fail()) {
+      http_response_code(500);
+      echo json_encode(["error" => $task->fail()->getMessage()]);
+    }
   }
 
   /**
@@ -98,6 +110,7 @@ class TaskResource {
         } catch (\Exception $e) {
           $this->setPortInternalServerError();
           echo json_encode(["error" => $e->getMessage()]);
+          exit();
         }
       }
     }
@@ -292,7 +305,7 @@ class TaskResource {
     $html = "";
     $html .= "<table>";
     $html .= "<tr>";
-    $html .= "<td colspan="5">Planilha de " . $tableName . " - Intracking</td>";
+    $html .= "<td colspan='5'>Planilha de " . $tableName . " - Intracking</td>";
     $html .= "</tr>";
     $html .= $content;
     $html .= "</table>";

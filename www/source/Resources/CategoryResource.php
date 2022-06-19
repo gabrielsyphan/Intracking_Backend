@@ -75,8 +75,16 @@ class CategoryResource {
    * Method to delete categories
    * DELETE Method /api/category
   */
-  public function delete(): void {
-    $this->category->findById($this->data->id)->destroy();
+  public function delete($data): void {
+    $category = (new Category)->find("id = :id AND user_id = :userId", "id={$data["categoryId"]}&userId={$this->userId}")->fetch(false);
+    if($category) {
+      $category->destroy();
+
+      if($category->fail()) {
+        http_response_code(500);
+        echo json_encode(["error" => $category->fail()->getMessage()]);
+      }
+    }
   }
 
   /**
@@ -94,6 +102,7 @@ class CategoryResource {
         } catch (\Exception $e) {
           $this->setPortInternalServerError();
           echo json_encode(["error" => $e->getMessage()]);
+          exit();
         }
       }
     }

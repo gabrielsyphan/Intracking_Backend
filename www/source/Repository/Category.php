@@ -21,8 +21,10 @@ class Category extends DataLayer {
       if($this->fail()){
         $this->setPortInternalServerError();
         echo json_encode(["error" => $this->fail()->getMessage()]);
+        exit();
       }
 
+      echo json_encode($this->data());
     } catch (\Exception $e) {
       $this->setPortInternalServerError();
       echo json_encode(["error" => $e->getMessage()]);
