@@ -55,7 +55,7 @@ class Task extends DataLayer {
         $categories = (new TaskCategory)->find("task_id = :tId", "tId={$this->id}")->fetch(true);
         if ($categories) {
           foreach ($categories as $category) {
-            $category->destroyd();
+            $category->destroy();
           }
         }
 
