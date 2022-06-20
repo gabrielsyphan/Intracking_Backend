@@ -392,7 +392,7 @@ class TaskResource {
         $currentDate = new \DateTime();
 
         $currentDate->diff($finishingDate);
-        $dates[] = ;
+        $dates[] = [];
       }
     }
     
