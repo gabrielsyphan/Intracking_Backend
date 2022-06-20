@@ -367,8 +367,29 @@ class TaskResource {
     }
 
     if($tasks) {
+      $categories = [];
       foreach($tasks as $task) {
-        $tasksToJson[] = $task->data();
+        $taskCategory = (new TaskCategory)->find("task_id = :id", "id={$task->id}")->fetch(true);
+        if($taskCategory) {
+          foreach($taskCategory as $tCategory) {
+            $category = (new Category)->findById($tCategory->category_id);
+            if($category) {
+              $categories[] = ["id" => $category->id, "name" => $category->name, "color" => $category->color];
+            }
+          }
+        }
+
+        $tasksToJson[] = [
+          "id" => $task->id,
+          "user_id" => $task->user_id,
+          "title" => $task->title,
+          "description" => $task->description,
+          "deadline" => $task->deadline,
+          "cod_status" => $task->cod_status,
+          "opening_date" => $task->opening_date,
+          "finishing_date" => $task->finishing_date,
+          "categories" => $categories
+        ];
       }
     }
 
