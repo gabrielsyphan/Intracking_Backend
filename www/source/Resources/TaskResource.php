@@ -405,7 +405,7 @@ class TaskResource {
     $tasks = $this->task->find("user_id = :userId AND cod_status = 3", "userId={$this->userId}")->fetch(true);
     $dates = [];
     $standardTime = null;
-    $count = 0;
+    $count = 1;
 
     if($tasks) {
       foreach($tasks as $task) {
@@ -421,7 +421,7 @@ class TaskResource {
       $standardTime += $date;
     }
 
-    echo json_encode(["total" => date("h:i:s", ($standardTime / $count))]);
+    echo json_encode(["time" => date("h:i:s", ($standardTime / $count)), "days" => date("d", ($standardTime / $count)), "months" => date("m", ($standardTime / $count)), "years" => date("Y", ($standardTime / $count)), "unix" => $standardTime / $count]);
   }
 
   /**
@@ -448,7 +448,7 @@ class TaskResource {
       $standardTime += $date;
     }
 
-    echo json_encode(["total" => date("h:i:s", ($standardTime / 52))]);
+    echo json_encode(["time" => date("h:i:s", ($standardTime / 52)), "days" => date("d", ($standardTime / 52)), "months" => date("m", ($standardTime / 52)), "years" => date("Y", ($standardTime / 52)), "unix" => $standardTime / 52]);
   }
 
   /**
@@ -475,7 +475,7 @@ class TaskResource {
       $standardTime += $date;
     }
 
-    echo json_encode(["total" => date("h:i:s", ($standardTime / 12))]);
+    echo json_encode(["time" => date("h:i:s", ($standardTime / 12)), "days" => date("d", ($standardTime / 12)), "months" => date("m", ($standardTime / 12)), "years" => date("Y", ($standardTime / 12)), "unix" => $standardTime / 12]);
   }
 
   /**
