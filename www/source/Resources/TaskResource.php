@@ -89,7 +89,7 @@ class TaskResource {
       exit();
     }
 
-    $taskCategory = (new TaskCategory)->find("task_id = {$task->id}")->fetch(true);
+    $taskCategory = (new TaskCategory)->find("task_id = {$data["taskId"]}")->fetch(true);
     if($taskCategory) {
       foreach($taskCategory as $tCategory) {
         $tCategory->destroy();
