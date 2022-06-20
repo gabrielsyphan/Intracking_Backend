@@ -44,9 +44,9 @@ $router->get("/total-tasks-by-categories", "TaskResource:totalTasksByCategories"
 $router->get("/total-done-tasks", "TaskResource:totalDoneTasks", "taskResource.totalDoneTasks");
 $router->get("/tasks-by-category/{categoryId}", "TaskResource:tasksByCategory", "taskResource.tasksByCategory");
 $router->get("/tasks-by-time-status-category/{timeId}/{statusId}/{categoryId}", "TaskResource:tasksByTime", "taskResource.tasksByTime");
-
-// Corrigir
 $router->get("/standard-time-task", "TaskResource:standardTimeTask", "taskResource.standardTimeTask");
+$router->get("/standard-week-time-task", "TaskResource:standardWeekTimeTask", "taskResource.standardWeekTimeTask");
+$router->get("/standard-month-time-task", "TaskResource:standardMonthTimeTask", "taskResource.standardMonthTimeTask");
 $router->get("/export-csv/{bearerToken}", "FileResource:exportCsv", "fileResource.exportCsv");
 
 /*

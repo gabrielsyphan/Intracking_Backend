@@ -410,22 +410,72 @@ class TaskResource {
     if($tasks) {
       foreach($tasks as $task) {
         $finishingDate = new \DateTime($task->finishing_date);
-        $currentDate = new \DateTime();
-
-        var_dump($finishingDate);
-        var_dump($currentDate);
-        $currentDate->diff($finishingDate);
-        var_dump($currentDate);
-        $dates[] = $currentDate;
-        exit();
+        $openingDate = new \DateTime($task->opening_date);
+        $unix = strtotime($finishingDate->format("Y-m-d h:i:s")) - strtotime($openingDate->format("Y-m-d h:i:s"));
+        $dates[] = $unix;
       }
     }
     
-    foreach($dates as $date) {  
+    foreach($dates as $date) {
+      $count += 1;
       $standardTime += $date;
     }
 
-    echo date("H:i:s", $standardTime);
+    echo json_encode(["total" => date("h:i:s", ($standardTime / $count))]);
+  }
+
+  /**
+   * @return void
+   * Method to get standard time task by user
+   * GET Method /task/standard--week-time-task
+  */
+  public function standardWeekTimeTask() {
+    $lastYear = date("Y-m-d", strtotime("-1 year", strtotime(date("Y-m-d"))));
+    $tasks = $this->task->find("user_id = :userId AND cod_status = 3 AND finishing_date > {$lastYear}", "userId={$this->userId}")->fetch(true);
+    $dates = [];
+    $standardTime = null;
+
+    if($tasks) {
+      foreach($tasks as $task) {
+        $finishingDate = new \DateTime($task->finishing_date);
+        $openingDate = new \DateTime($task->opening_date);
+        $unix = strtotime($finishingDate->format("Y-m-d h:i:s")) - strtotime($openingDate->format("Y-m-d h:i:s"));
+        $dates[] = $unix;
+      }
+    }
+    
+    foreach($dates as $date) {
+      $standardTime += $date;
+    }
+
+    echo json_encode(["total" => date("h:i:s", ($standardTime / 52))]);
+  }
+
+  /**
+   * @return void
+   * Method to get standard time task by user
+   * GET Method /task/standard--month-time-task
+  */
+  public function standardMonthTimeTask() {
+    $lastYear = date("Y-m-d", strtotime("-1 year", strtotime(date("Y-m-d"))));
+    $tasks = $this->task->find("user_id = :userId AND cod_status = 3 AND finishing_date > {$lastYear}", "userId={$this->userId}")->fetch(true);
+    $dates = [];
+    $standardTime = null;
+
+    if($tasks) {
+      foreach($tasks as $task) {
+        $finishingDate = new \DateTime($task->finishing_date);
+        $openingDate = new \DateTime($task->opening_date);
+        $unix = strtotime($finishingDate->format("Y-m-d h:i:s")) - strtotime($openingDate->format("Y-m-d h:i:s"));
+        $dates[] = $unix;
+      }
+    }
+    
+    foreach($dates as $date) {
+      $standardTime += $date;
+    }
+
+    echo json_encode(["total" => date("h:i:s", ($standardTime / 12))]);
   }
 
   /**
