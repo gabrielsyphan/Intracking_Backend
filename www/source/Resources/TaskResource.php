@@ -266,7 +266,7 @@ class TaskResource {
     if($categories) {
       foreach($categories as $category) {
         $taskCategoryCount = (new TaskCategory)->find("category_id = :id", "id={$category->id}")->count();
-        $total[] = ["name" => $category->name, "total" => $taskCategoryCount];
+        $total[] = ["name" => $category->name, "total" => $taskCategoryCount, "color" => $category->color];
       }
     }
 
@@ -388,12 +388,14 @@ class TaskResource {
     if($tasks) {
       foreach($tasks as $task) {
         $finishingDate = new \DateTime($task->finishing_date);
+        $finishingDate = $finishingDate->format("Y-m-d h:i:s");
         $currentDate = new \DateTime();
-        $dates[] = strtotime($currentDate->diff($finishingDate)->format("%H:%I:%S %Y-%m-%d"));
+        $currentDate = $currentDate->format("Y-m-d h:i:s");
+        $dates[] = strtotime($currentDate->diff($finishingDate));
       }
     }
-
-    foreach($dates as $date) {
+    
+    foreach($dates as $date) {  
       $standardTime += $date;
     }
 
