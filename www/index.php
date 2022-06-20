@@ -47,7 +47,7 @@ $router->get("/tasks-by-time-status-category/{timeId}/{statusId}/{categoryId}", 
 
 // Corrigir
 $router->get("/standard-time-task", "TaskResource:standardTimeTask", "taskResource.standardTimeTask");
-$router->get("/export-csv", "TaskResource:exportCsv", "taskResource.exportCsv");
+$router->get("/export-csv/{bearerToken}", "FileResource:exportCsv", "fileResource.exportCsv");
 
 /*
  * Category routes
