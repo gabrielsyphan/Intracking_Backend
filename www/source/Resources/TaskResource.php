@@ -410,14 +410,16 @@ class TaskResource {
 
     if(!$tasks) {
       http_response_code(500);
-      echo json_encode(["error" => "Não há tasks concluídas"]);
+      echo json_encode(["time" => "Não há tasks concluídas"]);
       exit();
     }
 
     foreach($tasks as $task) {
       $finishingDate = new \DateTime($task->finishing_date);
       $openingDate = new \DateTime($task->opening_date);
-      $unix = strtotime($finishingDate->format("Y-m-d h:i:s")) - strtotime($openingDate->format("Y-m-d h:i:s"));
+      $unix = strtotime($finishingDate->format("Y-m-d G:i:s")) - strtotime($openingDate->format("Y-m-d G:i:s"));
+      var_dump($finishingDate->format("Y-m-d G:i:s"));
+      exit();
       $dates[] = $unix;
     }
 
@@ -426,7 +428,7 @@ class TaskResource {
       $standardTime += $date;
     }
 
-    echo json_encode(["time" => date("h:i:s", ($standardTime / $count)), "days" => date("d", ($standardTime / $count)), "months" => date("m", ($standardTime / $count)), "years" => date("Y", ($standardTime / $count)), "unix" => $standardTime / $count]);
+    echo json_encode(["time" => date("G:i:s", ($standardTime / $count)), "days" => date("d", ($standardTime / $count)), "months" => date("m", ($standardTime / $count)), "years" => date("Y", ($standardTime / $count)), "unix" => $standardTime / $count]);
   }
 
   /**
