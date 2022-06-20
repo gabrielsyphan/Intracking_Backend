@@ -404,9 +404,7 @@ class TaskResource {
   */
   public function standardTimeTask() {
     $tasks = $this->task->find("user_id = :userId AND cod_status = 3", "userId={$this->userId}")->fetch(true);
-    $dates = [];
-    $standardTime = null;
-    $count = 1;
+    $count = 0;
 
     if(!$tasks) {
       http_response_code(500);
@@ -414,21 +412,34 @@ class TaskResource {
       exit();
     }
 
+    $time = 0;
+
     foreach($tasks as $task) {
+      $taskTimeFinishing = 0;
+      $taskTimeOpening = 0;
+
       $finishingDate = new \DateTime($task->finishing_date);
       $openingDate = new \DateTime($task->opening_date);
-      $unix = strtotime($finishingDate->format("Y-m-d G:i:s")) - strtotime($openingDate->format("Y-m-d G:i:s"));
-      var_dump($finishingDate->format("Y-m-d G:i:s"));
-      exit();
-      $dates[] = $unix;
-    }
 
-    foreach($dates as $date) {
+      $taskTimeFinishing += $finishingDate->format("s");
+      $taskTimeFinishing += $finishingDate->format("m") * 60;
+      $taskTimeFinishing += ($finishingDate->format("G") * 60) * 60;
+      $taskTimeFinishing += ($finishingDate->format("d") * 24) * 60 * 60;
+      $taskTimeFinishing += ($finishingDate->format("m") * 30) * 24 * 60 * 60;
+      $taskTimeFinishing += ($finishingDate->format("y") * 365) * 24 * 60 * 60;
+
+      $taskTimeOpening += $openingDate->format("s");
+      $taskTimeOpening += $openingDate->format("m") * 60;
+      $taskTimeOpening += ($openingDate->format("G") * 60) * 60;
+      $taskTimeOpening += ($openingDate->format("d") * 24) * 60 * 60;
+      $taskTimeOpening += ($openingDate->format("m") * 30) * 24 * 60 * 60;
+      $taskTimeOpening += ($openingDate->format("y") * 365) * 24 * 60 * 60;
+
+      $time += $taskTimeFinishing - $taskTimeOpening;
       $count += 1;
-      $standardTime += $date;
     }
 
-    echo json_encode(["time" => date("G:i:s", ($standardTime / $count)), "days" => date("d", ($standardTime / $count)), "months" => date("m", ($standardTime / $count)), "years" => date("Y", ($standardTime / $count)), "unix" => $standardTime / $count]);
+    echo json_encode(["time" => (($time / $count) / 60) / 60]);
   }
 
   /**
@@ -439,8 +450,6 @@ class TaskResource {
   public function standardWeekTimeTask() {
     $lastYear = date("Y-m-d", strtotime("-1 year", strtotime(date("Y-m-d"))));
     $tasks = $this->task->find("user_id = :userId AND cod_status = 3 AND finishing_date > {$lastYear}", "userId={$this->userId}")->fetch(true);
-    $dates = [];
-    $standardTime = null;
 
     if(!$tasks) {
       http_response_code(500);
@@ -448,18 +457,33 @@ class TaskResource {
       exit();
     }
 
+    $time = 0;
+
     foreach($tasks as $task) {
+      $taskTimeFinishing = 0;
+      $taskTimeOpening = 0;
+
       $finishingDate = new \DateTime($task->finishing_date);
       $openingDate = new \DateTime($task->opening_date);
-      $unix = strtotime($finishingDate->format("Y-m-d h:i:s")) - strtotime($openingDate->format("Y-m-d h:i:s"));
-      $dates[] = $unix;
-    }
-    
-    foreach($dates as $date) {
-      $standardTime += $date;
+
+      $taskTimeFinishing += $finishingDate->format("s");
+      $taskTimeFinishing += $finishingDate->format("m") * 60;
+      $taskTimeFinishing += ($finishingDate->format("G") * 60) * 60;
+      $taskTimeFinishing += ($finishingDate->format("d") * 24) * 60 * 60;
+      $taskTimeFinishing += ($finishingDate->format("m") * 30) * 24 * 60 * 60;
+      $taskTimeFinishing += ($finishingDate->format("y") * 365) * 24 * 60 * 60;
+
+      $taskTimeOpening += $openingDate->format("s");
+      $taskTimeOpening += $openingDate->format("m") * 60;
+      $taskTimeOpening += ($openingDate->format("G") * 60) * 60;
+      $taskTimeOpening += ($openingDate->format("d") * 24) * 60 * 60;
+      $taskTimeOpening += ($openingDate->format("m") * 30) * 24 * 60 * 60;
+      $taskTimeOpening += ($openingDate->format("y") * 365) * 24 * 60 * 60;
+
+      $time += $taskTimeFinishing - $taskTimeOpening;
     }
 
-    echo json_encode(["time" => date("h:i:s", ($standardTime / 52)), "days" => date("d", ($standardTime / 52)), "months" => date("m", ($standardTime / 52)), "years" => date("Y", ($standardTime / 52)), "unix" => $standardTime / 52]);
+    echo json_encode(["time" => (($time / 52) / 60) / 60]);
   }
 
   /**
@@ -478,19 +502,33 @@ class TaskResource {
       echo json_encode(["error" => "Não há tasks concluídas"]);
       exit();
     }
+    $time = 0;
 
     foreach($tasks as $task) {
+      $taskTimeFinishing = 0;
+      $taskTimeOpening = 0;
+
       $finishingDate = new \DateTime($task->finishing_date);
       $openingDate = new \DateTime($task->opening_date);
-      $unix = strtotime($finishingDate->format("Y-m-d h:i:s")) - strtotime($openingDate->format("Y-m-d h:i:s"));
-      $dates[] = $unix;
-    }
-    
-    foreach($dates as $date) {
-      $standardTime += $date;
+
+      $taskTimeFinishing += $finishingDate->format("s");
+      $taskTimeFinishing += $finishingDate->format("m") * 60;
+      $taskTimeFinishing += ($finishingDate->format("G") * 60) * 60;
+      $taskTimeFinishing += ($finishingDate->format("d") * 24) * 60 * 60;
+      $taskTimeFinishing += ($finishingDate->format("m") * 30) * 24 * 60 * 60;
+      $taskTimeFinishing += ($finishingDate->format("y") * 365) * 24 * 60 * 60;
+
+      $taskTimeOpening += $openingDate->format("s");
+      $taskTimeOpening += $openingDate->format("m") * 60;
+      $taskTimeOpening += ($openingDate->format("G") * 60) * 60;
+      $taskTimeOpening += ($openingDate->format("d") * 24) * 60 * 60;
+      $taskTimeOpening += ($openingDate->format("m") * 30) * 24 * 60 * 60;
+      $taskTimeOpening += ($openingDate->format("y") * 365) * 24 * 60 * 60;
+
+      $time += $taskTimeFinishing - $taskTimeOpening;
     }
 
-    echo json_encode(["time" => date("h:i:s", ($standardTime / 12)), "days" => date("d", ($standardTime / 12)), "months" => date("m", ($standardTime / 12)), "years" => date("Y", ($standardTime / 12)), "unix" => $standardTime / 12]);
+    echo json_encode(["time" => (($time / 12) / 60) / 60]);
   }
 
   /**
