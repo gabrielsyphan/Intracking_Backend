@@ -34,6 +34,16 @@ class Task extends DataLayer {
       $this->description = $taskDto->getDescription();
       $this->cod_status = $taskDto->getCodStatus();
       $this->deadline = $taskDto->getDeadline();
+
+      if($taskDto->getOpeningDate()) {
+        $this->opening_date = $taskDto->getOpeningDate();
+      }
+
+      if($taskDto->getFiniShingDate()) {
+        $this->finishing_date = $taskDto->getFiniShingDate();
+      }
+
+
       $this->save();
       
       if ($this->fail()) {
@@ -138,6 +148,12 @@ class Task extends DataLayer {
 
   public function updateByDto($taskId, TaskDto $taskDto): void {
     $this->id = $taskId;
+
+    $task = (new Task)->findById($taskId);
+    if($task && $task->cod_status != 3 && $taskDto->getCodStatus() == 3) {
+      $taskDto->setFinishingDate(date("Y-m-d H:i:s"));
+    }
+
     $this->saveByDto($taskDto);
   }
 }

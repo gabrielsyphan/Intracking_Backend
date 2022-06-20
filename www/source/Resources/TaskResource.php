@@ -63,6 +63,7 @@ class TaskResource {
    * POST Method /task
   */
   public function create(): void {
+    $this->data->opening_date = date("Y-m-d H:i:s");
     $this->task->saveByDto(new TaskDto($this->userId, $this->data));
   }
 
@@ -407,15 +408,19 @@ class TaskResource {
     $standardTime = null;
     $count = 1;
 
-    if($tasks) {
-      foreach($tasks as $task) {
-        $finishingDate = new \DateTime($task->finishing_date);
-        $openingDate = new \DateTime($task->opening_date);
-        $unix = strtotime($finishingDate->format("Y-m-d h:i:s")) - strtotime($openingDate->format("Y-m-d h:i:s"));
-        $dates[] = $unix;
-      }
+    if(!$tasks) {
+      http_response_code(500);
+      echo json_encode(["error" => "Não há tasks concluídas"]);
+      exit();
     }
-    
+
+    foreach($tasks as $task) {
+      $finishingDate = new \DateTime($task->finishing_date);
+      $openingDate = new \DateTime($task->opening_date);
+      $unix = strtotime($finishingDate->format("Y-m-d h:i:s")) - strtotime($openingDate->format("Y-m-d h:i:s"));
+      $dates[] = $unix;
+    }
+
     foreach($dates as $date) {
       $count += 1;
       $standardTime += $date;
@@ -435,13 +440,17 @@ class TaskResource {
     $dates = [];
     $standardTime = null;
 
-    if($tasks) {
-      foreach($tasks as $task) {
-        $finishingDate = new \DateTime($task->finishing_date);
-        $openingDate = new \DateTime($task->opening_date);
-        $unix = strtotime($finishingDate->format("Y-m-d h:i:s")) - strtotime($openingDate->format("Y-m-d h:i:s"));
-        $dates[] = $unix;
-      }
+    if(!$tasks) {
+      http_response_code(500);
+      echo json_encode(["error" => "Não há tasks concluídas"]);
+      exit();
+    }
+
+    foreach($tasks as $task) {
+      $finishingDate = new \DateTime($task->finishing_date);
+      $openingDate = new \DateTime($task->opening_date);
+      $unix = strtotime($finishingDate->format("Y-m-d h:i:s")) - strtotime($openingDate->format("Y-m-d h:i:s"));
+      $dates[] = $unix;
     }
     
     foreach($dates as $date) {
@@ -462,13 +471,17 @@ class TaskResource {
     $dates = [];
     $standardTime = null;
 
-    if($tasks) {
-      foreach($tasks as $task) {
-        $finishingDate = new \DateTime($task->finishing_date);
-        $openingDate = new \DateTime($task->opening_date);
-        $unix = strtotime($finishingDate->format("Y-m-d h:i:s")) - strtotime($openingDate->format("Y-m-d h:i:s"));
-        $dates[] = $unix;
-      }
+    if(!$tasks) {
+      http_response_code(500);
+      echo json_encode(["error" => "Não há tasks concluídas"]);
+      exit();
+    }
+
+    foreach($tasks as $task) {
+      $finishingDate = new \DateTime($task->finishing_date);
+      $openingDate = new \DateTime($task->opening_date);
+      $unix = strtotime($finishingDate->format("Y-m-d h:i:s")) - strtotime($openingDate->format("Y-m-d h:i:s"));
+      $dates[] = $unix;
     }
     
     foreach($dates as $date) {

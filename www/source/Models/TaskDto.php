@@ -14,6 +14,8 @@ class TaskDto {
   private $codStatus;
   private $categoryId;
   private $deadline;
+  private $openingDate = null;
+  private $finiShingDate = null;
 
   public function __construct($userId = null, $data) {   
     $this->userId = $userId;
@@ -22,6 +24,14 @@ class TaskDto {
     $this->codStatus = $data->codStatus;
     $this->categoryId = $data->categoryId;
     $this->deadline = $data->deadline;
+
+    if($data->finishing_date) {
+      $this->finiShingDate = $data->finishing_date;
+    }
+
+    if($data->opening_date) {
+      $this->openingDate = $data->opening_date;
+    }
   }
 
   public function getUserId(): int {
@@ -70,5 +80,21 @@ class TaskDto {
 
   public function setDeadline($deadline): void {
     $this->deadline = $deadline;
+  }
+
+  public function getFiniShingDate() {
+    return $this->finiShingDate;
+  }
+
+  public function setFiniShingDate($finiShingDate): void {
+    $this->finiShingDate = $finiShingDate;
+  }
+
+  public function getOpeningDate() {
+    return $this->openingDate;
+  }
+
+  public function setOpeningDate($openingDate): void {
+    $this->openingDate = $openingDate;
   }
 }
