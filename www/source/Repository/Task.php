@@ -96,7 +96,9 @@ class Task extends DataLayer {
         "cod_status" => $task->cod_status,
         "opening_date" => $task->opening_date,
         "finishing_date" => $task->finishing_date,
-        "categories" => ["id" => $category->id, "name" => $category->name, "color" => $category->color]
+        "categories" => [
+          ["id" => $category->id, "name" => $category->name, "color" => $category->color]
+        ]
       ];
     } else {
       $tasksToJson = [
