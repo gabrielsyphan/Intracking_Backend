@@ -86,6 +86,7 @@ class TaskResource {
     if(!$task) {
       http_response_code(500);
       echo json_encode(["error" => "Essa task não existe"]);
+      exit();
     }
 
     $taskCategory = (new TaskCategory)->find("task_id = {$task->id}")->fetch(true);
@@ -388,10 +389,10 @@ class TaskResource {
     if($tasks) {
       foreach($tasks as $task) {
         $finishingDate = new \DateTime($task->finishing_date);
-        $finishingDate = $finishingDate->format("Y-m-d h:i:s");
         $currentDate = new \DateTime();
-        $currentDate = $currentDate->format("Y-m-d h:i:s");
-        $dates[] = strtotime($currentDate->diff($finishingDate));
+
+        $currentDate->diff($finishingDate);
+        $dates[] = ;
       }
     }
     
