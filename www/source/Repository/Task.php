@@ -42,6 +42,13 @@ class Task extends DataLayer {
       }
 
       if ($taskDto->getCategoryId()) {
+        $categories = (new TaskCategory)->find("task_id = :tId", "tId={$this->id}")->fetch(false);
+        if ($categories) {
+          foreach ($categories as $category) {
+            $category->destroyd();
+          }
+        }
+
         $taskCategory = new TaskCategory();
         if(!$taskCategory->find("task_id = :tId AND category_id = :cId", "tId={$this->id}&cId={$taskDto->getCategoryId()}")->fetch(false)) {
           $taskCategory->task_id = $this->id;
