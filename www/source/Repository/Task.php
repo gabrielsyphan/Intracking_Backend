@@ -66,11 +66,30 @@ class Task extends DataLayer {
    * Method to convert a task into a array to be converted to json
   */
   private function taskConvert($task, $category = null): array {
+    $tasksToJson = [];
     if ($category) {
-      $tasksToJson = $task->data();
-      $tasksToJson["categories"] = ["id" => $category->id, "name" => $category->name, "color" => $category->color];
+      $tasksToJson = [
+        "id" => $task->id,
+        "user_id" => $task->user_id,
+        "title" => $task->title,
+        "description" => $task->description,
+        "deadline" => $task->deadline,
+        "cod_status" => $task->cod_status,
+        "opening_date" => $task->opening_date,
+        "finishing_date" => $task->finishing_date,
+        "categories" => ["id" => $category->id, "name" => $category->name, "color" => $category->color]
+      ];
     } else {
-      $tasksToJson = $task->data();
+      $tasksToJson = [
+        "id" => $task->id,
+        "user_id" => $task->user_id,
+        "title" => $task->title,
+        "description" => $task->description,
+        "deadline" => $task->deadline,
+        "cod_status" => $task->cod_status,
+        "opening_date" => $task->opening_date,
+        "finishing_date" => $task->finishing_date
+      ];
     }
 
     return $tasksToJson;

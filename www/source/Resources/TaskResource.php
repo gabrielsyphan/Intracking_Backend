@@ -8,7 +8,6 @@ use Source\Repository\Task;
 use Source\Models\TaskDto;
 use Source\Models\TaskCategoryDto;
 use Source\Repository\Category;
-use Source\Repository\Status;
 use Source\Repository\TaskCategory;
 use Source\Repository\Time;
 use Source\Resources\AuthenticationResource;
@@ -436,7 +435,7 @@ class TaskResource {
     $tableName = "relatorio";
     $content = "";
 
-    // $content = "<tr><td>Total de atividades cadastradas</td><td>". json_decode($this->totalRegisteredTasks())->total ."</td></tr>";
+    $content = "<tr><td>Total de atividades cadastradas</td><td>". $this->task->find("user_id = :userId", "userId={$this->userId}")->count() ."</td></tr>";
     // $content .= "<tr><td>Total de atividades pendentes</td><td>". json_decode($this->totalPendingTasks())->total ."</td></tr>";
     // $content .= "<tr><td>Total de atividades em atraso;</td><td>". json_decode($this->totalOverdueTasks())->total ."</td></tr>";
     // $content .= "<tr><td>Total de atividades em dia;</td><td>". json_decode($this->totalPendingTasks())->total ."</td></tr>";
