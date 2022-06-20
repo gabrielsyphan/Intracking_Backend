@@ -40,7 +40,7 @@ $router->get("/total-registered-tasks", "TaskResource:totalRegisteredTasks", "ta
 $router->get("/total-pending-tasks", "TaskResource:totalPendingTasks", "taskResource.totalPendingTasks");
 $router->get("/total-overdue-tasks", "TaskResource:totalOverdueTasks", "taskResource.totalOverdueTasks");
 $router->get("/total-punctual-tasks", "TaskResource:totalPunctualTasks", "taskResource.totalPunctualTasks");
-$router->get("/total-tasks-by-category/{categoryId}", "TaskResource:totalTasksByCategory", "taskResource.totalTasksByCategory");
+$router->get("/total-tasks-by-categories", "TaskResource:totalTasksByCategories", "taskResource.totalTasksByCategories");
 $router->get("/total-done-tasks", "TaskResource:totalDoneTasks", "taskResource.totalDoneTasks");
 $router->get("/tasks-by-category/{categoryId}", "TaskResource:tasksByCategory", "taskResource.tasksByCategory");
 $router->get("/tasks-by-time-status-category/{timeId}/{statusId}/{categoryId}", "TaskResource:tasksByTime", "taskResource.tasksByTime");

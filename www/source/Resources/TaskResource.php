@@ -259,19 +259,18 @@ class TaskResource {
    * Method to get total tasks by category
    * GET Method /task/total-tasks-by-category
   */
-  public function totalTasksByCategory($data) {
-    $total = 0;
-    $taskCategory = (new TaskCategory)->find("category_id = :id", "id={$data["categoryId"]}")->fetch(true);
-    if($taskCategory) {
-      foreach($taskCategory as $tCategory) {
-        $task = (new Task)->find("id = :id AND user_id = :userId", "id={$tCategory->task_id}&userId={$this->userId}");
-        if($task) {
-          $total += 1;
-        }
+  public function totalTasksByCategories() {
+    $total = [];
+
+    $categories = (new Category)->find("user_id = {$this->userId}")->fetch(true);
+    if($categories) {
+      foreach($categories as $category) {
+        $taskCategoryCount = (new TaskCategory)->find("category_id = :id", "id={$category->id}")->count();
+        $total[] = ["name" => $category->name, "total" => $taskCategoryCount];
       }
     }
 
-    echo json_encode(["total" => $total]);
+    echo json_encode($total);
   }
 
     /**
@@ -386,10 +385,12 @@ class TaskResource {
     $standardTime = null;
     $count = 0;
 
-    foreach($tasks as $task) {
-      $finishingDate = new \DateTime($task->finishing_date);
-      $currentDate = new \DateTime();
-      $dates[] = strtotime($currentDate->diff($finishingDate)->format("%H:%I:%S %Y-%m-%d"));
+    if($tasks) {
+      foreach($tasks as $task) {
+        $finishingDate = new \DateTime($task->finishing_date);
+        $currentDate = new \DateTime();
+        $dates[] = strtotime($currentDate->diff($finishingDate)->format("%H:%I:%S %Y-%m-%d"));
+      }
     }
 
     foreach($dates as $date) {
@@ -406,12 +407,26 @@ class TaskResource {
   private function taskConvert($task, $categories = null): array {
     if ($categories) {
       $tasksToJson = [
-        $task->data(),
+        "id" => $task->id,
+        "user_id" => $task->user_id,
+        "title" => $task->title,
+        "description" => $task->description,
+        "deadline" => $task->deadline,
+        "cod_status" => $task->cod_status,
+        "opening_date" => $task->opening_date,
+        "finishing_date" => $task->finishing_date,
         "categories" => $categories
       ];
     } else {
       $tasksToJson = [
-        $task->data()
+        "id" => $task->id,
+        "user_id" => $task->user_id,
+        "title" => $task->title,
+        "description" => $task->description,
+        "deadline" => $task->deadline,
+        "cod_status" => $task->cod_status,
+        "opening_date" => $task->opening_date,
+        "finishing_date" => $task->finishing_date
       ];
     }
 
