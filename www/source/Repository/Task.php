@@ -43,14 +43,16 @@ class Task extends DataLayer {
 
       if ($taskDto->getCategoryId()) {
         $taskCategory = new TaskCategory();
-        $taskCategory->task_id = $this->id;
-        $taskCategory->category_id = $taskDto->getCategoryId();
-        $taskCategory->save();
-
-        if ($taskCategory->fail()) {
-          $this->setPortInternalServerError();
-          echo json_encode(["error" => $taskCategory->fail()->getMessage()]);
-          exit();
+        if(!$taskCategory->find("task_id = :tId AND category_id = :cId", "tId={$this->id}&cId={$taskDto->getCategoryId()}")->fetch(false)) {
+          $taskCategory->task_id = $this->id;
+          $taskCategory->category_id = $taskDto->getCategoryId();
+          $taskCategory->save();
+  
+          if ($taskCategory->fail()) {
+            $this->setPortInternalServerError();
+            echo json_encode(["error" => $taskCategory->fail()->getMessage()]);
+            exit();
+          } 
         }
       }
 

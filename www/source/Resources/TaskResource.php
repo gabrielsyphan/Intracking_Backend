@@ -412,8 +412,12 @@ class TaskResource {
         $finishingDate = new \DateTime($task->finishing_date);
         $currentDate = new \DateTime();
 
+        var_dump($finishingDate);
+        var_dump($currentDate);
         $currentDate->diff($finishingDate);
-        $dates[] = [];
+        var_dump($currentDate);
+        $dates[] = $currentDate;
+        exit();
       }
     }
     
@@ -421,7 +425,7 @@ class TaskResource {
       $standardTime += $date;
     }
 
-    echo json_encode(date("H:i:s", $standardTime));
+    echo date("H:i:s", $standardTime);
   }
 
   /**
